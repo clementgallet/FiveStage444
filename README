@@ -1,0 +1,7 @@
+TODO:
+
+- Remove comments that are unused code.
+
+- Remove unused code
+-- metric 6 is not used anymore
+-- ...
