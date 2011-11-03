@@ -2,7 +2,6 @@
 //
 
 #include <iostream>
-#include <tchar.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -3294,7 +3293,7 @@ update_cube_listPACK10 (UINT n)
 }
 #endif
 
-int _tmain (int argc, _TCHAR* argv[])
+int main (int argc, char* argv[])
 //int
 //main (int argc, char** argv)
 {
@@ -8032,7 +8031,7 @@ get_distanceSQS (const CubeSqsCoord& cube1, int metric)
 int
 solveitIDA_SQS (const CubeSqsCoord& init_cube, int* move_list, int metric)
 {
-	static init_move_state[3] = { 12, 23, 6 };
+	static UINT init_move_state[3] = { 12, 23, 6 };
 	int move_count;
 	int g1;
 	//my_debug_print ();
@@ -11702,7 +11701,7 @@ sym_on_cen12x12x12 (UINT cen12x12x12, UINT sym)
 void
 init_4of8 ()
 {
-	static bitcount[16] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
+	static UINT bitcount[16] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
 	int a1, a2, a3, a4;
 	//int a5x, a6x, a7x, a8x, x;
 	int i;
@@ -11741,7 +11740,7 @@ init_4of8 ()
 void
 init_eloc ()
 {
-	static bitcount[16] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
+	static UINT bitcount[16] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
 	const UINT POW2_24 = 4096*4096;
 	int a1, a2, a3, a4, a5, a6, a7, a8;
 	int i;
@@ -12013,7 +12012,7 @@ scrambleSTAGE2 (CubeStage2* pcube, int move_count, const int* move_arr)
 void
 init_cloc ()
 {
-	static bitcount[16] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
+	static UINT bitcount[16] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
 	const UINT POW2_24 = 4096*4096;
 	int a1, a2, a3, a4; //, a5, a6, a7, a8;
 	//int a5x, a6x, a7x, a8x, x;
@@ -12577,7 +12576,7 @@ stage2_cen_move (UINT cen, int move_code)
 void
 init_stage3 ()
 {
-	static bitcount[16] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
+	static UINT bitcount[16] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
 	const UINT POW2_16 = 256*256;
 	int a1, a2, a3, a4, a5, a6, a7, a8;
 	int sym;
@@ -17221,11 +17220,11 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 	solved_table[2] = stage1_solved2.m_co;
 	switch (metric) {
 	case 0:		// single-slice
-		pcpt_cor1 = new CubePruningTable (N_CORNER_ORIENT, &prune_table_cor1[0], do_move_COR_STAGE1_STM, 1, metric, 0x2);
+		pcpt_cor1 = new CubePruningTable (N_CORNER_ORIENT, &prune_table_cor1[0], (void*) do_move_COR_STAGE1_STM, 1, metric, 0x2);
 		pcpt_cor1->init_move_list (0, N_BASIC_MOVES, NULL);
 		break;
 	case 1:		// twist
-		pcpt_cor1 = new CubePruningTable (N_CORNER_ORIENT, &prune_table_cor1[0], do_move_COR_STAGE1_STM, 1, metric, 0x2);
+		pcpt_cor1 = new CubePruningTable (N_CORNER_ORIENT, &prune_table_cor1[0], (void*) do_move_COR_STAGE1_STM, 1, metric, 0x2);
 		for (i = 0; i < N_STAGE1_TWIST_MOVES; ++i) {
 			tmp_list[2*i] = stage1_twist_moves[i][0];
 			tmp_list[2*i+1] = stage1_twist_moves[i][1];
@@ -17233,7 +17232,7 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 		pcpt_cor1->init_move_list (2, N_STAGE1_TWIST_MOVES, &tmp_list[0]);
 		break;
 	case 2:		// block
-		pcpt_cor1 = new CubePruningTable (N_CORNER_ORIENT, &prune_table_cor1[0], do_move_COR_STAGE1_STM, 1, metric, 0x2);
+		pcpt_cor1 = new CubePruningTable (N_CORNER_ORIENT, &prune_table_cor1[0], (void*) do_move_COR_STAGE1_STM, 1, metric, 0x2);
 		for (i = 0; i < N_STAGE1_BLOCK_MOVES; ++i) {
 			tmp_list[2*i] = stage1_block_moves[i][0];
 			tmp_list[2*i+1] = stage1_block_moves[i][1];
@@ -17258,17 +17257,17 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 		switch (metric) {
 		case 0:
 			pcpt_edg1 = new CubePruningTable (N_EDGE_COMBO8, &prune_table_edg1[0],
-				do_move_EDGE_STAGE1_STM, 1, metric, 0x1);
+				(void*) do_move_EDGE_STAGE1_STM, 1, metric, 0x1);
 			pcpt_edg1->init_move_list (0, N_BASIC_MOVES, NULL);
 			break;
 		case 1:
 			pcpt_edg1 = new CubePruningTable (N_EDGE_COMBO8, &prune_table_edg1[0],
-				do_move_EDGE_STAGE1_STM, 1, metric, 0x1);
+				(void*) do_move_EDGE_STAGE1_STM, 1, metric, 0x1);
 				pcpt_edg1->init_move_list (2, N_STAGE1_TWIST_MOVES, &tmp_list[0]);
 			break;
 		case 2:
 			pcpt_edg1 = new CubePruningTable (N_EDGE_COMBO8, &prune_table_edg1[0],
-				do_move_EDGE_STAGE1_STM, 1, metric, 0x1);
+				(void*) do_move_EDGE_STAGE1_STM, 1, metric, 0x1);
 				pcpt_edg1->init_move_list (2, N_STAGE1_BLOCK_MOVES, &tmp_list[0]);
 			break;
 		}
@@ -17514,7 +17513,7 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 		}
 		switch (metric) {
 		case 0:
-			pcpt_edgcen2 = new CubePruningTable (N_CENTER_COMBO4*N_STAGE2_EDGE_CONFIGS, &prune_table_edgcen2[0], do_move_EDGCENF_STAGE2_STM, 2, metric, 0x5);
+			pcpt_edgcen2 = new CubePruningTable (N_CENTER_COMBO4*N_STAGE2_EDGE_CONFIGS, &prune_table_edgcen2[0], (void*) do_move_EDGCENF_STAGE2_STM, 2, metric, 0x5);
 			if (use_old_stage2) {
 				n_moves = N_STAGE2_SLICE_MOVES_OLD;
 			} else {
@@ -17523,7 +17522,7 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 			pcpt_edgcen2->init_move_list (0, n_moves, NULL);
 			break;
 		case 1:
-			pcpt_edgcen2 = new CubePruningTable (N_CENTER_COMBO4*N_STAGE2_EDGE_CONFIGS, &prune_table_edgcen2[0], do_move_EDGCENF_STAGE2_STM, 2, metric, 0x5);
+			pcpt_edgcen2 = new CubePruningTable (N_CENTER_COMBO4*N_STAGE2_EDGE_CONFIGS, &prune_table_edgcen2[0], (void*) do_move_EDGCENF_STAGE2_STM, 2, metric, 0x5);
 			for (i = 0; i < N_STAGE2_TWIST_MOVES; ++i) {
 				tmp_list[2*i] = stage2_twist_moves[i][0];
 				tmp_list[2*i+1] = stage2_twist_moves[i][1];
@@ -17536,7 +17535,7 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 			pcpt_edgcen2->init_move_list2 (2, N_STAGE2_2TWIST_MOVES, &tmp_list[0]);
 			break;
 		case 2:
-			pcpt_edgcen2 = new CubePruningTable (N_CENTER_COMBO4*N_STAGE2_EDGE_CONFIGS, &prune_table_edgcen2[0], do_move_EDGCENF_STAGE2_STM, 2, metric, 0x5);
+			pcpt_edgcen2 = new CubePruningTable (N_CENTER_COMBO4*N_STAGE2_EDGE_CONFIGS, &prune_table_edgcen2[0], (void*) do_move_EDGCENF_STAGE2_STM, 2, metric, 0x5);
 			for (i = 0; i < N_STAGE2_BLOCK_MOVES; ++i) {
 				tmp_list[2*i] = stage2_block_moves[i][0];
 				tmp_list[2*i+1] = stage2_block_moves[i][1];
@@ -17572,12 +17571,12 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 	switch (metric) {
 	case 0:
 		pcpt_cen3 = new CubePruningTable (N_STAGE3_CENTER_CONFIGS,
-			&prune_table_cen3[0], do_move_CEN_STAGE3_STM, 3, metric, 0x4);
+			&prune_table_cen3[0], (void*) do_move_CEN_STAGE3_STM, 3, metric, 0x4);
 		pcpt_cen3->init_move_list (0, N_STAGE3_SLICE_MOVES, NULL);
 		break;
 	case 1:
 		pcpt_cen3 = new CubePruningTable (N_STAGE3_CENTER_CONFIGS,
-			&prune_table_cen3[0], do_move_CEN_STAGE3_STM, 3, metric, 0x4);
+			&prune_table_cen3[0], (void*) do_move_CEN_STAGE3_STM, 3, metric, 0x4);
 		for (i = 0; i < N_STAGE3_TWIST_MOVES; ++i) {
 			tmp_list[2*i] = stage3_twist_moves[i][0];
 			tmp_list[2*i+1] = stage3_twist_moves[i][1];
@@ -17591,7 +17590,7 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 		break;
 	case 2:
 		pcpt_cen3 = new CubePruningTable (N_STAGE3_CENTER_CONFIGS,
-			&prune_table_cen3[0], do_move_CEN_STAGE3_STM, 3, metric, 0x4);
+			&prune_table_cen3[0], (void*) do_move_CEN_STAGE3_STM, 3, metric, 0x4);
 		for (i = 0; i < N_STAGE3_BLOCK_MOVES; ++i) {
 			tmp_list[2*i] = stage3_block_moves[i][0];
 			tmp_list[2*i+1] = stage3_block_moves[i][1];
@@ -17606,10 +17605,10 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 	solved_table[0] = stage3_solved.m_edge;
 	switch (metric) {
 	case 0:
-		pcpt_edg3 = new CubePruningTable (N_STAGE3_EDGE_PAR*N_STAGE3_EDGE_CONFIGS, &prune_table_edg3[0], do_move_EDGE_STAGE3_STM, 3, metric, 0x1);
+		pcpt_edg3 = new CubePruningTable (N_STAGE3_EDGE_PAR*N_STAGE3_EDGE_CONFIGS, &prune_table_edg3[0], (void*) do_move_EDGE_STAGE3_STM, 3, metric, 0x1);
 		break;
 	case 1:
-		pcpt_edg3 = new CubePruningTable (N_STAGE3_EDGE_PAR*N_STAGE3_EDGE_CONFIGS, &prune_table_edg3[0], do_move_EDGE_STAGE3_STM, 3, metric, 0x1);
+		pcpt_edg3 = new CubePruningTable (N_STAGE3_EDGE_PAR*N_STAGE3_EDGE_CONFIGS, &prune_table_edg3[0], (void*) do_move_EDGE_STAGE3_STM, 3, metric, 0x1);
 		for (i = 0; i < N_STAGE3_TWIST_MOVES; ++i) {
 			tmp_list[2*i] = stage3_twist_moves[i][0];
 			tmp_list[2*i+1] = stage3_twist_moves[i][1];
@@ -17622,7 +17621,7 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 		pcpt_edg3->init_move_list2 (2, N_STAGE3_2TWIST_MOVES, &tmp_list[0]);
 		break;
 	case 2:
-		pcpt_edg3 = new CubePruningTable (N_STAGE3_EDGE_PAR*N_STAGE3_EDGE_CONFIGS, &prune_table_edg3[0], do_move_EDGE_STAGE3_STM, 3, metric, 0x1);
+		pcpt_edg3 = new CubePruningTable (N_STAGE3_EDGE_PAR*N_STAGE3_EDGE_CONFIGS, &prune_table_edg3[0], (void*) do_move_EDGE_STAGE3_STM, 3, metric, 0x1);
 		//for (i = 0; i < N_STAGE3_BLOCK_MOVES; ++i) {
 		//	tmp_list[2*i] = stage3_block_moves[i][0];
 		//	tmp_list[2*i+1] = stage3_block_moves[i][1];
@@ -17643,12 +17642,12 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 	switch (metric) {
 	case 0:
 		pcpt_cencor4 = new CubePruningTable (N_STAGE4_CORNER_CONFIGS*N_STAGE4_CENTER_CONFIGS,
-			&prune_table_cencor4[0], do_move_CENCOR_STAGE4_STM, 4, metric, 0x6);
+			&prune_table_cencor4[0], (void*) do_move_CENCOR_STAGE4_STM, 4, metric, 0x6);
 		pcpt_cencor4->init_move_list (0, N_STAGE4_SLICE_MOVES, NULL);
 		break;
 	case 1:
 		pcpt_cencor4 = new CubePruningTable (N_STAGE4_CORNER_CONFIGS*N_STAGE4_CENTER_CONFIGS,
-			&prune_table_cencor4[0], do_move_CENCOR_STAGE4_STM, 4, metric, 0x6);
+			&prune_table_cencor4[0], (void*) do_move_CENCOR_STAGE4_STM, 4, metric, 0x6);
 		for (i = 0; i < N_STAGE4_TWIST_MOVES; ++i) {
 			tmp_list[2*i] = stage4_twist_moves[i][0];
 			tmp_list[2*i+1] = stage4_twist_moves[i][1];
@@ -17657,7 +17656,7 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 		break;
 	case 2:
 		pcpt_cencor4 = new CubePruningTable (N_STAGE4_CORNER_CONFIGS*N_STAGE4_CENTER_CONFIGS,
-			&prune_table_cencor4[0], do_move_CENCOR_STAGE4_STM, 4, metric, 0x6);
+			&prune_table_cencor4[0], (void*) do_move_CENCOR_STAGE4_STM, 4, metric, 0x6);
 		for (i = 0; i < N_STAGE4_BLOCK_MOVES; ++i) {
 			tmp_list[2*i] = stage4_block_moves[i][0];
 			tmp_list[2*i+1] = stage4_block_moves[i][1];
@@ -17706,12 +17705,12 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 		switch (metric) {
 		case 0:
 			pcpt_edgcen4 = new CubePruningTable (N_STAGE4_EDGE_CONFIGS*N_STAGE4_CENTER_CONFIGS,
-				&prune_table_edgcen4[0], do_move_EDGCEN_STAGE4_STM, 4, metric, 0x5);
+				&prune_table_edgcen4[0], (void*) do_move_EDGCEN_STAGE4_STM, 4, metric, 0x5);
 			pcpt_edgcen4->init_move_list (0, N_STAGE4_SLICE_MOVES, NULL);
 			break;
 		case 1:
 			pcpt_edgcen4 = new CubePruningTable (N_STAGE4_EDGE_CONFIGS*N_STAGE4_CENTER_CONFIGS,
-				&prune_table_edgcen4[0], do_move_EDGCEN_STAGE4_STM, 4, metric, 0x5);
+				&prune_table_edgcen4[0], (void*) do_move_EDGCEN_STAGE4_STM, 4, metric, 0x5);
 			//for (i = 0; i < N_STAGE4_TWIST_MOVES; ++i) {
 			//	tmp_list[2*i] = stage4_twist_moves[i][0];
 			//	tmp_list[2*i+1] = stage4_twist_moves[i][1];
@@ -17720,7 +17719,7 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 			break;
 		case 2:
 			pcpt_edgcen4 = new CubePruningTable (N_STAGE4_EDGE_CONFIGS*N_STAGE4_CENTER_CONFIGS,
-				&prune_table_edgcen4[0], do_move_EDGCEN_STAGE4_STM, 4, metric, 0x5);
+				&prune_table_edgcen4[0], (void*) do_move_EDGCEN_STAGE4_STM, 4, metric, 0x5);
 			//for (i = 0; i < N_STAGE4_BLOCK_MOVES; ++i) {
 			//	tmp_list[2*i] = stage4_block_moves[i][0];
 			//	tmp_list[2*i+1] = stage4_block_moves[i][1];
@@ -17764,11 +17763,11 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 	}
 	switch (metric) {
 	case 0:
-		pcpt_cencor5 = new CubePruningTable (N_SQS_CENTER_PERM*N_SQS_CORNER_PERM, &prune_table_cencor5[0], do_move_CENCOR_STAGE5, 5, 0, 0x6);
+		pcpt_cencor5 = new CubePruningTable (N_SQS_CENTER_PERM*N_SQS_CORNER_PERM, &prune_table_cencor5[0], (void*) do_move_CENCOR_STAGE5, 5, 0, 0x6);
 		pcpt_cencor5->init_move_list (0, 12, NULL);
 		break;
 	case 1:
-		pcpt_cencor5 = new CubePruningTable (N_SQS_CENTER_PERM*N_SQS_CORNER_PERM, &prune_table_cencor5[0], do_move_CENCOR_STAGE5, 5, 0, 0x6);
+		pcpt_cencor5 = new CubePruningTable (N_SQS_CENTER_PERM*N_SQS_CORNER_PERM, &prune_table_cencor5[0], (void*) do_move_CENCOR_STAGE5, 5, 0, 0x6);
 		for (i = 0; i < N_SQ_TWIST_MOVES; ++i) {
 			tmp_list[2*i] = sq_twist_moves[i][0];
 			tmp_list[2*i+1] = sq_twist_moves[i][1];
@@ -17776,7 +17775,7 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 		pcpt_cencor5->init_move_list (2, N_SQ_TWIST_MOVES, &tmp_list[0]);
 		break;
 	case 2:
-		pcpt_cencor5 = new CubePruningTable (N_SQS_CENTER_PERM*N_SQS_CORNER_PERM, &prune_table_cencor5[0], do_move_CENCOR_STAGE5, 5, 0, 0x6);
+		pcpt_cencor5 = new CubePruningTable (N_SQS_CENTER_PERM*N_SQS_CORNER_PERM, &prune_table_cencor5[0], (void*) do_move_CENCOR_STAGE5, 5, 0, 0x6);
 		for (i = 0; i < N_SQ_BLOCK_MOVES; ++i) {
 			tmp_list[2*i] = sq_block_moves[i][0];
 			tmp_list[2*i+1] = sq_block_moves[i][1];
@@ -17832,11 +17831,11 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 		}
 		switch (metric) {
 		case 0:
-			pcpt_edgcor5 = new CubePruningTable (N_SQS_EDGE_PERM*N_SQS_CORNER_PERM, &prune_table_edgcor5[0], do_move_EDGCOR_STAGE5, 5, 0, 0x3);
+			pcpt_edgcor5 = new CubePruningTable (N_SQS_EDGE_PERM*N_SQS_CORNER_PERM, &prune_table_edgcor5[0], (void*) do_move_EDGCOR_STAGE5, 5, 0, 0x3);
 			pcpt_edgcor5->init_move_list (0, 12, NULL);
 			break;
 		case 1:
-			pcpt_edgcor5 = new CubePruningTable (N_SQS_EDGE_PERM*N_SQS_CORNER_PERM, &prune_table_edgcor5[0], do_move_EDGCOR_STAGE5, 5, 0, 0x3);
+			pcpt_edgcor5 = new CubePruningTable (N_SQS_EDGE_PERM*N_SQS_CORNER_PERM, &prune_table_edgcor5[0], (void*) do_move_EDGCOR_STAGE5, 5, 0, 0x3);
 			//for (i = 0; i < N_SQ_TWIST_MOVES; ++i) {
 			//	tmp_list[2*i] = sq_twist_moves[i][0];
 			//	tmp_list[2*i+1] = sq_twist_moves[i][1];
@@ -17844,7 +17843,7 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 			pcpt_edgcor5->init_move_list (2, N_SQ_TWIST_MOVES, &tmp_list[0]);
 			break;
 		case 2:
-			pcpt_edgcor5 = new CubePruningTable (N_SQS_EDGE_PERM*N_SQS_CORNER_PERM, &prune_table_edgcor5[0], do_move_EDGCOR_STAGE5, 5, 0, 0x3);
+			pcpt_edgcor5 = new CubePruningTable (N_SQS_EDGE_PERM*N_SQS_CORNER_PERM, &prune_table_edgcor5[0], (void*) do_move_EDGCOR_STAGE5, 5, 0, 0x3);
 			//for (i = 0; i < N_SQ_BLOCK_MOVES; ++i) {
 			//	tmp_list[2*i] = sq_block_moves[i][0];
 			//	tmp_list[2*i+1] = sq_block_moves[i][1];
@@ -26906,7 +26905,7 @@ facelets_to_std_cube (const char* facelet_str, CubeState* result_cube)
 		9, 6, 10, 5, 86, 89, 85, 90, 22, 25, 21, 26,
 		54, 57, 53, 58, 37, 42, 41, 38, 74, 69, 70, 73
 	};
-	static corner_facelets[8][3] = {
+	static Face corner_facelets[8][3] = {
 		{UP, FRONT, LEFT}, {UP, RIGHT, FRONT},
 		{UP, BACK, RIGHT}, {UP, LEFT, BACK},
 		{DOWN, LEFT, FRONT}, {DOWN, FRONT, RIGHT},
