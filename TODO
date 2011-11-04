@@ -1,0 +1,12 @@
+TODO:
+
+- Remove unused code
+-- metric 6 is not used anymore
+
+- Find a set of preprocessing options and delete the remaining code
+
+- Separate in different files
+
+- Move more functions to classes
+
+- Port to java :(( We will have to deal with some C-specific commands like unsigned integers, operations on pointers, etc.

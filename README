@@ -1,7 +1,10 @@
-TODO:
+The five stage solver for 4x4x4 is C++ program originally written by Bruce Norskog. Some information can be found on this page: http://cubezzz.dyndns.org/drupal/?q=node/view/62 and on other posts by Bruce on the same forum.
+This is an attempt to use it as a WCA scrambler program.
 
-- Remove comments that are unused code.
+Some conditions are required for this:
+- it must print sufficiently short scrambles. Actual WCA scrambles are 40 twist turns long, so it should be close to this.
+- it must generate solutions in a reasonable amount of time, less than a few seconds.
+- it must not use big stored tables, as the program should be able to be distributed. Well, the program could generate and store those table locally during the first execution, but it's not very nice.
+- it must be written in java, to be incorporated in Jeremy's awesome noodle program.
 
-- Remove unused code
--- metric 6 is not used anymore
--- ...
+About first point, Bruce's program outputs solutions in 53 block turns on average and 66 twist turns (see old_doc.txt for metric definition), so the program should be improved to get shorter solutions. Current program only take the first best solution of every stage. An idea would be to try every solution for every stage...

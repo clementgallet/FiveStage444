@@ -1,0 +1,136 @@
+*** Documentation of the original program by Bruce Norskog ***
+
+Five Stage 4x4x4 Solver Program
+Developed by Bruce Norskog
+
+Introduction
+FiveStage444 is a program that solves the 4x4x4 cube by breaking up the solution into five stages (steps or phases). Each stage uses a more restricted set of cube moves than the previous stage, so that the progress achieved by a given stage is not lost in subsequent stages. In the final stage, only half-turn moves are performed. The program currently supports three metrics, single-slice turns, twist turns, and block turns. This will be discussed more later.
+
+System requirements:
+The program runs under the Windows platform. I would recommend a system with no less than 512MB of RAM. The program also creates about 145 MB of files to store pruning table data, so that the much time can be saved when the same pruning tables are needed again. By default, these files are written in the current working directory.
+
+Startup:
+The program uses a command line interface and runs within a command prompt window. The program may take a few minutes to start up. The first time the program is run, it may take a few minutes more to generate pruning tables. The first time a metric is used, several pruning tables are generated. Some of the pruning tables that are the most time-consuming to generate are saved to files, so that the next time the pruning tables generated, these saved pruning tables are simply loaded from files, instead of being recalculated. Multiple metrics are supported, and the user can change the metric used without restarting the program. However, pruning tables are regenerated each time the user changes metric. The first time a metric is used, certain pruning tables are saved to files. This helps to make switching between metrics faster the next time that metric is selected.
+
+Command line arguments:
+-b or -B  --  specifies to use block turns.
+-t or -T  --  specifies to use twist turns.
+-s or -S  --  specifies to use single-slice turns (default).
+path=<string>  --  specifies the directory path where pruning table files are to be saved; should generally have trailing backslash ( \ ).
+random  --  causes the program to generate and solve 100 random scrambles.
+random=<integer>  --  specifies number of random scrambles to be generated and solved.
+
+If a command line argument does not start with "-" or is not one of the above, it is assumed to be a string specifying a scrambled cube. The scrambled cube can be specified by using a sequence of single-slice moves, or it can be specified by a sticker specification format to be described later. Either way the string should have no embedded white space unless the string is quoted.
+
+Interactive mode:
+If no scramble string is present and "random" (whether or not followed by "=" and an integer) is not present, the program will execute a loop where scrambles are accepted from the standard input stream (normally via the keyboard). The scrambles can be of either format that can be used for a command line scrambled cube specification, except that white space is allowed and quotes should not be used around the input. In this mode, you can also change what metric is used to solve the cube by entering -s, -t, or -b followed by pressing Enter. If it it takes some time to find the solution, you can abort by typing a single Ctrl-C. Hopefully, after aborting you should get a new prompt so you can try another scramble without having to restart the program.
+
+Single-slice move format:
+When using single-slice moves to specify a scrambled cube, the various moves are specified as given below.
+U, D, L, R, F, B specify clockwise quarter-turns of the various face layers (up, down, left, right, front, back). The clockwise direction is considered to be the clockwise direction when looking at that face.
+U', D', L', R', F', B' specify counter-clockwise (or anticlockwise) quarter-turns of the various face layers (up, down, left, right, front, back).
+U2, D2, L2, R2, F2, B2 specify half-turns of the various face layers (up, down, left, right, front, back).
+u, d, l, r, f, b specify clockwise quarter-turns of the inner layer adjacent to the various face layers (up, down, left, right, front, back). The clockwise direction is considered to be the clockwise direction when looking at that face.
+u', d', l', r', f', b' specify counter-clockwise quarter-turns of the inner layer adjacent to the various face layers (up, down, left, right, front, back).
+u2, d2, l2, r2, f2, b2 specify half-turns of the inner layer adjacent to the various face layers (up, down, left, right, front, back).
+Example: U r' f b'
+
+Sticker specification format
+The sticker specification format is a character string containing characters representing the color of the stickers on the cube to be solved. The six colors can be represented by UDLRFB (up, down, left, right, front, back) or by WYORGB (white, yellow, orange, red, green, blue). Note that the program assumes the standard color scheme where a solved cube can be oriented such that up=white, down=yellow, left=orange, right=red, front=green, back=blue. In fact, the program considers U and W to be synonymous, as well as D and Y, L and O, and also F and G.
+
+The sticker format uses contains 6 sub-strings, each terminated by a "/". A colon ( : ) or vertical bar ( | ) can be used in place of "/". The six sub-strings represent the six faces of the cube: top (up), left, front, right, back, bottom (down). The sixteen stickers on each face are specified in order from left-to-right for each row, starting with the top row, and proceeding to the bottom row.
+
+Consider the cube to be flattened by folding the top face up from the front face, the bottom face down from the front face, the left face folded out from the front face, and the right and back faces folded out from the front face. The left-to-right and top-to-bottom order for each face is in relation to this flattened cube.
+
+    +---+
+    | U |
++---+---+---+---+
+| L | F | R | B |
++---+---+---+---+
+    | D |
+    +---+
+
+For example, the scramble U r' f b' can be represented in sticker specification format as:
+
+WWBW3OG3OGWWOW/GYYGOYYOOGGOOYYO/RRWRGGW3GW3GWG/BWWBRWWRRBBRRWWR/OYOOBY3BY3BYBB/YYRY3RB3RBYYGY/
+
+Metrics
+The program currently supports three metrics. These metrics are referred to in the program as slice turn (single-slice turn), twist turn, and block turn. (Metric is a mathematical term. I will not go into what exactly a metric is, but in describing this program it should be sufficient to think of a metric as something that defines what can be counted a single move of the puzzle.) For single-slice turn metric, a move can only consist of moving a single layer on any of the three axes. For twist turn metric, a move can only consist of "twisting" the puzzle along one of the boundaries between two adjacent layers of the puzzle. For block turns, any 4x4x1 block (a single layer) can be turned with respect to the rest of the puzzle, or any 4x4x2 block (any two adjacent layers that move along the same axis). These three metrics allow both quarter-turns and half-turns being counted as a single move. To be clear, the allowable turns for each metric are listed below.
+
+single-slice turns
+U      U'     U2     u      u'     u2
+D      D'     D2     d      d'     d2
+L      L'     L2     l      l'     l2
+R      R'     R2     r      r'     r2
+F      F'     F2     f      f'     f2
+B      B'     B2     b      b'     b2
+
+twist turns
+U      U'     U2     (Uu)   (Uu)'  (Uu)2
+D      D'     D2     (Dd)   (Dd)'  (Dd)2
+L      L'     L2     (Ll)   (Ll)'  (Ll)2
+R      R'     R2     (Rr)   (Rr)'  (Rr)2
+F      F'     F2     (Ff)   (Ff)'  (Ff)2
+B      B'     B2     (Bb)   (Bb)'  (Bb)2
+
+block turns
+U      U'     U2     u      u'     u2     (Uu)   (Uu)'  (Uu)2
+D      D'     D2     d      d'     d2     (Dd)   (Dd)'  (Dd)2
+L      L'     L2     l      l'     l2     (Ll)   (Ll)'  (Ll)2
+R      R'     R2     r      r'     r2     (Rr)   (Rr)'  (Rr)2
+F      F'     F2     f      f'     f2     (Ff)   (Ff)'  (Ff)2
+B      B'     B2     b      b'     b2     (Bb)   (Bb)'  (Bb)2
+(ud')  (u'd)  (ud')2 (lr')  (l'r)  (lr')2 (fb')  (f'b)  (fb')2
+
+General Information:
+The program uses an IDA* search algorithm to solve each of the five stages. Only one solution is found for each stage. No attempt is made to try alternate solutions for a given stage that might yield shorter solutions for the remaining stages. Such an appropriate could be used to find shorter solutions, but could result in much larger execution time. Later versions of this program may be developed to find the best of several solution paths, in order to improve average solution length.
+
+The solution is divided up into five stages. Internally, some stages are completed by a whole cube rotation. To avoid having the cube rotations being extra moves in the solution, the remaining moves are translated to compensate. For example, stage 1 orients the U/D facelets of the eight corner cubies. (It also has a certain effect on the edge cubies.) However, it doesn't matter whether all these facelets are on the U and D faces, the L and R faces, or the F and B faces. If stage 1 ends up with the U/D facelets of the corners oriented to the front and back faces of the cube, then the cube will eventually be solved with the "up" color on either the front or the back face of the cube. Internally, the program will be treating the front and back faces of the cube as if they were the up and down faces. But when outputting the solution, the moves are translated so that no actual cube rotation needs to be performed, and the cube can end up solved in any of the 24 possible orientations. So you may notice that the set of moves being used in stages 2, 3, and 4 is dependent on what orientation the preceding stages put the cube in. (The set of moves in stage 5 isn't so affected because of the symmetry of that stage.)
+
+The program displays the solution sequence by stages. The number of moves for each stage is output inside square brackets. The actual moves follow that. For example:
+
+Enter: U r' f b' D2 R2 u' l' d F L r2 B R' f' U' l2 F2 b'
+scramble: [19]  U r' f b' D2 R2 u' l' d F L r2 B R' f' U' l2 F2 b'
+Stage1: [ 8]  L2 U L' r' F' U' r2 F
+Stage2: [ 8]  d2 F2 d' l' r2 d B2 l
+Stage3: [ 9]  L b u2 B2 L F2 f L' b
+Stage4: [14]  L' B2 L F2 u2 L B2 L' U2 F2 L' U2 b2 L
+Stage5: [12]  B2 U2 l2 B2 R2 U2 r2 b2 U2 l2 f2 L2
+
+Note that since a scramble sequence was entered, the program outputs the scramble sequence along with its length, and then outputs the solution. In the example the scramble is 19 moves. Stages 1 and 2 are solved in 8 moves each. Stage 3 is solved in 9 moves. Stage 4 is solved in 14 moves. Finally, stage 5 is solved in 12 moves.
+
+Below, is an example showing switching to twist turns, followed by solving the same scramble. Then switching to block turns, and solving the same scramble again.
+
+Enter: -t
+Creating pruning tables for twist turns.
+Stage1...
+Stage2...
+Stage3...
+Stage4...
+Stage5...
+Enter: U r' f b' D2 R2 u' l' d F L r2 B R' f' U' l2 F2 b'
+scramble: [19]  U r' f b' D2 R2 u' l' d F L r2 B R' f' U' l2 F2 b'
+Stage1: [ 9]  U' F' (Uu)' B' U' (Ff)2 D2 (Uu)' F
+Stage2: [14]  (Dd) D (Ll) R2 U2 F2 (Ll) U2 (Rr)' (Dd)' D' (Ll) (Uu)2 (Ll)
+Stage3: [14]  (Bb) B' L' (Uu)2 (Ll)2 U2 (Ff) F (Uu)2 L D2 (Uu)2 (Bb) B'
+Stage4: [12]  U2 (Bb)2 L U2 L' (Uu)2 L B2 U2 L2 (Bb)2 L
+Stage5: [16]  L2 U2 B2 R2 U2 (Bb)2 (Ll)2 (Uu)2 B2 L2 B2 R2 D2 R2 D2 (Bb)2
+Enter: -b
+Creating pruning tables for block turns.
+Stage1...
+Stage2...
+Stage3...
+Stage4...
+Stage5...
+Enter: U r' f b' D2 R2 u' l' d F L r2 B R' f' U' l2 F2 b'
+scramble: [19]  U r' f b' D2 R2 u' l' d F L r2 B R' f' U' l2 F2 b'
+Stage1: [ 8]  u2 B2 (Ll)' F' u' l2 R' F
+Stage2: [11]  l' F2 l' (ud') (Ff)2 l' D2 (fb')2 l (Uu)2 l
+Stage3: [ 8]  (fb')2 u2 (Ff)2 R (u'd) f2 R d
+Stage4: [11]  L b2 D2 (Ff)2 L D2 f2 L (Ff)2 U2 L
+Stage5: [12]  r2 U2 B2 (Uu)2 R2 (Ff)2 L2 b2 (Ll)2 U2 B2 D2
+
+The program currently often takes a fair amount of time (several minutes) to solve in terms of twist turns. So it is not particularly recommended to use that mode.
+
+The program can be terminated by typing Ctrl-Z (holding down the Ctrl key and pressing Z), and pressing the Enter key.
+
