@@ -952,15 +952,12 @@ int sq_block_map[N_SQ_BLOCK_MOVES] = {
 	Us2Ds2, Ls2Rs2, Fs2Bs2
 };
 
-const int N_SQ_AXM_MOVES = 48;
-int squares_axm_map[N_SQ_AXM_MOVES];
-
 const int N_MINIMAL_SQS_MOVES = 7;
 int sq_minimal_sqs_moves[N_SQ_BLOCK_MOVES] = {
 	Uf2/3, Us2/3, Df2/3, Lf2/3, Ls2/3, Ff2/3, Fs2/3
 };
 
-int n_moves_metric_stg5[7] = { N_SQMOVES, N_SQ_TWIST_MOVES, N_SQ_BLOCK_MOVES, 0, 0, 0, N_SQ_AXM_MOVES };
+int n_moves_metric_stg5[3] = { N_SQMOVES, N_SQ_TWIST_MOVES, N_SQ_BLOCK_MOVES};
 
 const int N_STAGE1_TWIST_MOVES_ALL = 54;
 const int N_STAGE1_TWIST_MOVES = 36;
@@ -1132,7 +1129,7 @@ int stage1_block_list[N_STAGE1_BLOCK_MOVES] = {
 	Ffs, Ffs3, Ffs2, Bfs, Bfs3, Bfs2, FsBs3, Fs3Bs, Fs2Bs2
 };
 
-int n_moves_metric_stg1[7] = { N_BASIC_MOVES, N_STAGE1_TWIST_MOVES, N_STAGE1_BLOCK_MOVES, 0, 0, 0, 192 };
+int n_moves_metric_stg1[3] = { N_BASIC_MOVES, N_STAGE1_TWIST_MOVES, N_STAGE1_BLOCK_MOVES};
 
 const int N_STAGE2_SLICE_MOVES_OLD = 24;
 int stage2_slice_moves_old[N_STAGE2_SLICE_MOVES_OLD] = {
@@ -1295,11 +1292,10 @@ int stage2_block_map[N_STAGE2_BLOCK_MOVES] = {
 };
 
 const int N_STAGE2_AXM_MOVES = 336;
-int stage2_axm_map[N_STAGE2_AXM_MOVES];
 
-int n_moves_metric_stg2[14] = {
-	N_STAGE2_SLICE_MOVES, N_STAGE2_TWIST_MOVES, N_STAGE2_BLOCK_MOVES, 0, 0, 0, N_STAGE2_AXM_MOVES,
-	N_STAGE2_SLICE_MOVES_OLD, N_STAGE2_TWIST_MOVES, N_STAGE2_BLOCK_MOVES, 0, 0, 0, N_STAGE2_AXM_MOVES
+int n_moves_metric_stg2[6] = {
+	N_STAGE2_SLICE_MOVES, N_STAGE2_TWIST_MOVES, N_STAGE2_BLOCK_MOVES,
+	N_STAGE2_SLICE_MOVES_OLD, N_STAGE2_TWIST_MOVES, N_STAGE2_BLOCK_MOVES
 };
 
 const int N_STAGE3_SLICE_MOVES = 20;
@@ -1423,12 +1419,7 @@ int stage3_block_map[N_STAGE3_BLOCK_MOVES] = {
 	Ffs2, Bfs2, FsBs3, Fs3Bs, Fs2Bs2
 };
 
-const int N_STAGE3_AXM_MOVES = 144;
-int stage3_axm_map[N_STAGE3_AXM_MOVES];
-
-int n_moves_metric_stg3[7] = { N_STAGE3_SLICE_MOVES, N_STAGE3_TWIST_MOVES,
-								N_STAGE3_BLOCK_MOVES, 0, 0, 0, N_STAGE3_AXM_MOVES
-};
+int n_moves_metric_stg3[3] = { N_STAGE3_SLICE_MOVES, N_STAGE3_TWIST_MOVES, N_STAGE3_BLOCK_MOVES};
 
 const int N_STAGE4_SLICE_MOVES = 16;
 int stage4_slice_moves[N_STAGE4_SLICE_MOVES] = {
@@ -1512,13 +1503,10 @@ int stage4_block_map[N_STAGE4_BLOCK_MOVES] = {
 	Ff2, Fs2, Bf2, Bs2,	Ffs2, Bfs2, Fs2Bs2
 };
 
-const int N_STAGE4_AXM_MOVES = 96;
-int stage4_axm_map[N_STAGE4_AXM_MOVES];
+int n_moves_metric_stg4[3] = { N_STAGE4_SLICE_MOVES, N_STAGE4_TWIST_MOVES, N_STAGE4_BLOCK_MOVES };
 
-int n_moves_metric_stg4[7] = { N_STAGE4_SLICE_MOVES, N_STAGE4_TWIST_MOVES, N_STAGE4_BLOCK_MOVES, 0, 0, 0, N_STAGE4_AXM_MOVES };
-
-const char* metric_names [7] = { "stm", "ttm", "btm", "sqtm", "tqtm", "bqtm", "axm" };
-const char* metric_long_names[7] = { "slice", "twist", "block", "-", "-", "-", "axial" };
+const char* metric_names [3] = { "stm", "ttm", "btm" };
+const char* metric_long_names[3] = { "slice", "twist", "block" };
 static int sqs_perm_to_rep[24] = {
 	0, 1, 2, 3, 4, 5,
 	1, 0, 4, 5, 2, 3,
@@ -1749,12 +1737,6 @@ int xlate_r6[63][6] = {
 	{54, 60, 57, 54, 60, 57}, {55, 61, 58, 55, 61, 58}, {56, 62, 59, 56, 62, 59},
 	{57, 54, 60, 60, 57, 54}, {58, 55, 61, 61, 58, 55}, {59, 56, 62, 62, 59, 56},
 	{60, 57, 54, 58, 55, 61}, {61, 58, 55, 57, 54, 60}, {62, 59, 56, 59, 56, 62}
-};
-
-int xlate_axm_r6[3][6] = {
-	{ 0, 2, 1, 0, 2, 1 },
-	{ 1, 0, 2, 2, 1, 0 },
-	{ 2, 1, 0, 1, 0, 2 }
 };
 
 bool show_full_move_list = false;
@@ -2196,7 +2178,6 @@ int multiplicitySQS (const CubeSqsCoord& cube1);
 int multiplicitySCSQS (const CubeSuperSqsCoord& cube1);
 void print_allsymSQS (const CubeSqsCoord& cube1);
 void init_squares ();
-void init_squares_axm_map ();
 #endif
 int get_parity8 (UINT x);
 #ifdef STAGE4_INIT
@@ -2216,7 +2197,6 @@ int solveitSTAGE2 (const CubeStage2& init_cube, int* move_list, int metric);
 int get_distanceSTAGE2 (const CubeStage2& cube1, int metric);
 int get_mod_distanceSTAGE2 (const CubeStage2& cube1, int metric);
 int solveitIDA_STAGE2 (const CubeStage2& init_cube, int* move_list, int metric);
-bool treesearchSTAGE2_AXM (const CubeStage2& cube1, int depth, int moves_done, UINT last_axis, int goal, int* move_list, int* pmove_count);
 bool treesearchSTAGE2 (const CubeStage2& cube1, int depth, int moves_done, UINT move_state, int goal, int metric, int* move_list, int* pmove_count);
 void check_stage2_files ();
 void check_stage2_btm_files ();
@@ -2300,7 +2280,6 @@ void init_cloc ();
 #endif
 #ifdef STAGE2_INIT
 void init_stage2 ();
-void init_stage2_axm_map ();
 void stage2_cen_to_cloc4s (UINT cen, UINT *pclocf, UINT* pclocb);
 UINT stage2_cen_move_fast (UINT cen, int move_code);
 UINT stage2_cen_move (UINT cen, int move_code);
@@ -2308,7 +2287,6 @@ void scrambleSTAGE2 (CubeStage2* pcube, int move_count, const int* move_arr);
 #endif
 #ifdef STAGE3_INIT
 void init_stage3 ();
-void init_stage3_axm_map ();
 void init_move_tablesSTAGE3 ();
 void stage3_solved_center_configs ();
 #endif
@@ -2329,7 +2307,6 @@ bool lrfb_isrep9216_old (UINT u); //, Bitvec* bv);
 UINT lrfb_find9216 (UINT u, Bitvec* bv, UINT* mylist);
 UINT lrfb_get_edge_rep (UINT u);
 #ifdef STAGE4_INIT
-void init_stage4_axm_map ();
 void init_stage4_edge_tables ();
 void lrfb_check ();
 void stage4_edge_table_init ();
@@ -2391,7 +2368,6 @@ void reorient_cube_hCUBE (const CubeState& init_cube, CubeState* result_cube);
 void reorient_cube_vCUBE (const CubeState& init_cube, CubeState* result_cube);
 void mirror_cube_rlCUBE (const CubeState& init_cube, CubeState* result_cube);
 void scrambleCUBE (CubeState* pcube, int move_count, const int* move_arr);
-void scrambleCUBE_AXM (CubeState* pcube, int move_count, const int* move_arr);
 void scrambleSQS (CubeSqsCoord* pcube, int move_count, const int* move_arr);
 void scrambleSCSQS (CubeSuperSqsCoord* pcube, int move_count, const int* move_arr);
 UINT perm_n_pack (UINT n, const Face* array_in);
@@ -2424,8 +2400,6 @@ UINT do_move_CEN_STAGE2_STM (UINT idx, int move_code);
 UINT do_move_CENF_STAGE2_STM (UINT idx, int move_code);
 UINT do_move_EDGE_STAGE2_STM (UINT idx, int move_code);
 UINT do_move_EDGCENF_STAGE2_STM (UINT idx, int move_code);
-UINT do_move_CEN_STAGE2_AXM (UINT idx, int move_code);
-UINT do_move_EDGE_STAGE2_AXM (UINT idx, int move_code);
 UINT do_move_CEN_STAGE3_STM (UINT idx, int move_code);
 UINT do_move_EDGE_STAGE3_STM (UINT idx, int move_code);
 UINT do_move_CENCOR_STAGE4_STM (UINT idx, int move_code);
@@ -2433,8 +2407,6 @@ UINT do_move_EDGE_STAGE4_STM (UINT idx, int move_code);
 UINT do_move_EDGCEN_STAGE4_STM (UINT idx, int move_code);
 int prune_funcCOR_STAGE1 (const CubeStage1& cube1);
 int prune_funcEDGE_STAGE1 (const CubeStage1& cube1);
-int prune_funcCEN_STAGE2_AXM (const CubeStage2& cube2);
-int prune_funcEDGE_STAGE2_AXM (const CubeStage2& cube2);
 int prune_funcCEN_STAGE2 (const CubeStage2& cube2);
 int prune_funcEDGE_STAGE2 (const CubeStage2& cube2);
 int prune_funcEDGCEN_STAGE2 (const CubeStage2& cube2);
@@ -2695,7 +2667,6 @@ int get_parity_ep (UINT ep);
 void disp_cycles (int n, const Face* elements);
 void print_move_list (int count, const int* move_list);
 void axm_move (const char* layers, int mc, char* buffer);
-void print_move_list_axm (int count, const int* move_list);
 int string_to_move_list (const char* input, int* move_list);
 Face facelet_color (int facelet_idx);
 bool facelets_to_std_cube (const char* facelet_str, CubeState* result_cube);
@@ -2871,7 +2842,6 @@ int main (int argc, char* argv[])
 #ifdef STAGE2_INIT
 	printf ("Performing stage 2 initializations...\n");
 	init_stage2 ();
-	init_stage2_axm_map ();
 #endif
 
 #ifdef ANALYZE_STAGE2
@@ -2936,7 +2906,6 @@ int main (int argc, char* argv[])
 #ifdef STAGE3_INIT
 	printf ("Performing stage 3 initializations...\n");
 	init_stage3 ();
-	init_stage3_axm_map ();
 #endif
 
 #ifdef STAGE4_INIT
@@ -2945,7 +2914,6 @@ int main (int argc, char* argv[])
 	init_stage4_edge_tables ();
 	lrfb_check ();
 	init_stage4 ();
-	init_stage4_axm_map ();
 #endif
 
 #ifdef ANALYZE_STAGE3
@@ -2981,7 +2949,6 @@ int main (int argc, char* argv[])
 	printf ("Performing stage 5 initializations...\n");
 	init_squares ();
 	init_edgemapSQS ();
-	init_squares_axm_map ();
 	CubeSqsCoord cube5, cube5a;
 	cube5.init ();
 	cube5a.init ();
@@ -3267,19 +3234,11 @@ do_user_input (int def_metric)
 				continue;
 			}
 			if (show_full_move_list) {
-				if (metric == 6) {
-					print_move_list_axm (solveme1_count, &solveme_moves[0]);
-				} else {
-					print_move_list (solveme1_count, &solveme_moves[0]);
-				}
+				print_move_list (solveme1_count, &solveme_moves[0]);
 				printf ("\n");
 			}
 			CubeState ycube = solveme1;
-			if (metric == 6) {
-				scrambleCUBE_AXM (&ycube, solveme1_count, &solveme_moves[0]);
-			} else {
-				scrambleCUBE (&ycube, solveme1_count, &solveme_moves[0]);
-			}
+			scrambleCUBE (&ycube, solveme1_count, &solveme_moves[0]);
 			//Solved cube may not have the "ordinary" whole cube orientation.
 			//We will, assuming the cube is solved, force the U face up, and the L face on the left.
 			//Then we can compare against the solved cube in standard orientation.
@@ -3379,19 +3338,11 @@ do_random_cubes (int metric, int count)
 		printf ("\n");
 		int solveme_count = solveit4x4x4IDA (solveme, &solveme_moves[0], metric);
 		if (show_full_move_list) {
-			if (metric == 6) {
-				print_move_list_axm (solveme_count, &solveme_moves[0]);
-			} else {
-				print_move_list (solveme_count, &solveme_moves[0]);
-			}
+			print_move_list (solveme_count, &solveme_moves[0]);
 			printf ("\n");
 		}
 		CubeState ycube = solveme;
-		if (metric == 6) {
-			scrambleCUBE_AXM (&ycube, solveme_count, &solveme_moves[0]);
-		} else {
-			scrambleCUBE (&ycube, solveme_count, &solveme_moves[0]);
-		}
+		scrambleCUBE (&ycube, solveme_count, &solveme_moves[0]);
 		CubeState zcube = ycube;
 		Face f1 = 6;
 		for (i1 = 0; i1 < 6; ++i1) {
@@ -3500,19 +3451,11 @@ do_commandline_cube (int metric, const char* cube_str)
 	if (ok) {
 		int solveme_count = solveit4x4x4IDA (solveme, &solveme_moves[0], metric);
 		if (show_full_move_list) {
-			if (metric == 6) {
-				print_move_list_axm (solveme_count, &solveme_moves[0]);
-			} else {
-				print_move_list (solveme_count, &solveme_moves[0]);
-			}
+			print_move_list (solveme_count, &solveme_moves[0]);
 			printf ("\n");
 		}
 		CubeState ycube = solveme;
-		if (metric == 6) {
-			scrambleCUBE_AXM (&ycube, solveme_count, &solveme_moves[0]);
-		} else {
-			scrambleCUBE (&ycube, solveme_count, &solveme_moves[0]);
-		}
+		scrambleCUBE (&ycube, solveme_count, &solveme_moves[0]);
 		//Solved cube may not have the "ordinary" whole cube orientation.
 		//We will, assuming the cube is solved, force the U face up, and the L face on the left.
 		//Then we can compare against the solved cube in standard orientation.
@@ -5201,19 +5144,6 @@ init_squares ()
 	}
 }
 
-void
-init_squares_axm_map ()
-{
-	int i;
-	for (i = 0; i < N_SQ_AXM_MOVES; ++i) {
-		int Umove = ((i & 0x1) == 0 ? 0 : 3);	//actually U, L or F
-		int umove = ((i & 0x2) == 0 ? 0 : 3);	//actually u, l or f
-		int Dmove = ((i & 0x4) == 0 ? 0 : 3);	//actually D, R or B
-		int dmove = ((i & 0x8) == 0 ? 0 : 3);	//actually d, r or b
-		int axis = i/16;
-		squares_axm_map[i] = 256*axis + 64*dmove + 16*Dmove + 4*umove + Umove;
-	}
-}
 #endif
 
 int
@@ -5931,22 +5861,6 @@ solveitSQS (const CubeSqsCoord& init_cube, int* move_list, int metric)
 					cube2.do_move (sq_block_moves[i][1]);
 				}
 				break;
-			case 6:
-				j = i/16;
-				jx4 = 4*j;
-				if ((i & 0x1) != 0) {
-					cube2.do_move (jx4);
-				}
-				if ((i & 0x2) != 0) {
-					cube2.do_move (jx4 + 1);
-				}
-				if ((i & 0x4) != 0) {
-					cube2.do_move (jx4 + 2);
-				}
-				if ((i & 0x8) != 0) {
-					cube2.do_move (jx4 + 3);
-				}
-				break;
 			}
 			dist2 = get_mod_distanceSQS (cube2, metric);
 			if (dist2 == ((dist - 1) & 0x3)) {
@@ -5966,9 +5880,6 @@ solveitSQS (const CubeSqsCoord& init_cube, int* move_list, int metric)
 							break;
 						case 2:
 							move_list[count++] = sq_block_map[i];
-							break;
-						case 6:
-							move_list[count++] = squares_axm_map[i];
 							break;
 						}
 					}
@@ -6118,10 +6029,6 @@ solveitIDA_SQS (const CubeSqsCoord& init_cube, int* move_list, int metric)
 	static UINT init_move_state[3] = { 12, 23, 6 };
 	int move_count;
 	int g1;
-	if (! (metric >= 0 && metric <= 2)) {
-		printf ("Metric %d not supported.\n", metric);
-		return -1;
-	}
 	for (g1 = 0; g1 <= 30; ++g1) {
 		if (treesearchSQS (init_cube, g1, 0, init_move_state[metric], g1, metric,
 				move_list, &move_count)) {
@@ -6504,9 +6411,6 @@ get_distanceSTAGE1 (const CubeStage1& cube1, int metric)
 	if (metric == 2) {
 		fdist = 10;
 	}
-	if (metric == 6) {
-		fdist = 8;
-	}
 	if (stg1_file == NULL) {
 		sprintf (&fname[0], "%sstage1_%s_dist_%02d.rbk", &datafiles_path[0], metric_names[metric], fdist);
 	
@@ -6584,22 +6488,6 @@ solveitSTAGE1 (const CubeStage1& init_cube, int* move_list, int metric)
 					cube2.do_move (mc);		//!!! metric dependency
 				}
 				break;
-			case 6:
-				j = i/64;
-				j *= 12;
-				j1 = (i % 64) / 16;
-				j2 = (i % 16) / 4;
-				j3 = i % 4;
-				if (j3 != 0) {
-					cube2.do_move (j + j3 - 1);
-				}
-				if (j2 != 0) {
-					cube2.do_move (j + 3 + j2 - 1);
-				}
-				if (j1 != 0) {
-					cube2.do_move (j + 6 + j1 - 1);
-				}
-				break;
 			}
 			dist2 = get_distanceSTAGE1 (cube2, metric);
 			if (dist2 == dist - 1) {
@@ -6642,10 +6530,6 @@ solveitIDA_STAGE1 (const CubeStage1& init_cube, int* move_list, int metric)
 	int move_count;
 	int g1;
 
-	if (! (metric >= 0 && metric <= 2)) {
-		printf ("Metric %d not supported.\n", metric);
-		return -1;
-	}
 	for (g1 = 0; g1 <= 30; ++g1) {
 		if (treesearchSTAGE1 (init_cube, g1, 0, 4, g1, metric, move_list, &move_count)) {
 			return g1;
@@ -6721,13 +6605,9 @@ solveitSTAGE2 (const CubeStage2& init_cube, int* move_list, int metric)
 	cube2.init ();
 	cube3.init ();
 	int count = 0;
-	if (metric >= 7 || metric < 0) {
-		printf ("solveitSTAGE2: invalid metric code!\n");
-		return -1;
-	}
 	int xmetric = metric;
 	if (use_old_stage2) {
-		xmetric += 7;
+		xmetric += 3;
 	}
 	int n_moves = n_moves_metric_stg2[xmetric];
 	int n_moves2 = 0;
@@ -6787,55 +6667,6 @@ solveitSTAGE2 (const CubeStage2& init_cube, int* move_list, int metric)
 					cube2.do_move (stage2_block_moves[i][j]);
 				}
 				break;
-			case 6:
-				j = 0;
-				j1e = 4;
-				j2e = 4;
-				j1b = -1;
-				j2b = 2;
-				j3b = 5;
-				j4b = 8;
-				j1 = i % 4;
-				j2 = (i % 16)/4;
-				j3 = (i % 64)/16;
-				j4 = i/64;
-				if (i >= 256) {
-					++j;
-					j1e = 2;
-					j2e = 2;
-					j1b = 11;
-					j2b = 12;
-					j3b = 13;
-					j4b = 14;
-					j1 = (i & 0x1);		// i mod 2,4,8,16 equals (i-256) mod 2,4,8,16
-					j2 = (i % 4)/2;
-					j3 = (i % 8)/4;
-					j4 = (i % 16)/8;
-				}
-				if (i >= 272) {
-					++j;
-					j2e = 4;	//j1e = 2; (set above)
-					j1b = 15;
-					j2b = 16;
-					j3b = 19;
-					j4b = 20;
-					j1 = (i & 0x1);		//don't really need to subtract 272 from i
-					j2 = (i % 8)/2;		//don't really need to subtract 272
-					j3 = (i % 16)/8;	//don't really need to subtract 272
-					j4 = (i - 272)/16;
-				}
-				if (j1 != 0) {
-					cube2.do_move (j1b + j1);
-				}
-				if (j2 != 0) {
-					cube2.do_move (j2b + j2);
-				}
-				if (j3 != 0) {
-					cube2.do_move (j3b + j3);
-				}
-				if (j4 != 0) {
-					cube2.do_move (j4b + j4);
-				}
 			}
 			dist2 = get_mod_distanceSTAGE2 (cube2, metric);
 #if 1
@@ -6885,9 +6716,6 @@ solveitSTAGE2 (const CubeStage2& init_cube, int* move_list, int metric)
 				case 2:
 					move_list[count++] = stage2_block_map[move_code];
 					break;
-				case 6:
-					move_list[count++] = stage2_axm_map[move_code];
-					break;
 				}
 			}
 			cube1 = cube2;
@@ -6915,9 +6743,6 @@ get_distanceSTAGE2 (const CubeStage2& cube1, int metric)
 	int dist_f2 = 5;
 	if (metric == 1) {
 		dist_f1 = 19;
-	}
-	if (metric == 6) {
-		dist_f1 = 11;
 	}
 
 	FILE* f = NULL;
@@ -7326,74 +7151,12 @@ solveitIDA_STAGE2 (const CubeStage2& init_cube, int* move_list, int metric)
 	int move_count;
 	int g1;
 
-	if (! ((metric >= 0 && metric <= 2) || metric == 6)) {
-		printf ("Metric %d not supported.\n", metric);
-		return -1;
-	}
 	for (g1 = 0; g1 <= 30; ++g1) {
-		if (metric == 6) {
-			if (treesearchSTAGE2_AXM (init_cube, g1, 0, 4, g1, move_list, &move_count)) {
-				return g1;
-			}
-		} else {
-			if (treesearchSTAGE2 (init_cube, g1, 0, 0, g1, metric, move_list, &move_count)) {
-				return g1;
-			}
+		if (treesearchSTAGE2 (init_cube, g1, 0, 0, g1, metric, move_list, &move_count)) {
+			return g1;
 		}
 	}
 	return 999;
-}
-
-bool
-treesearchSTAGE2_AXM (const CubeStage2& cube1, int depth, int moves_done, UINT last_axis, int goal, int* move_list, int* pmove_count)
-{
-	CubeStage2 cube2;
-	int axis, m, mc_b, mc_e;
-	if (move_list == NULL || pmove_count == NULL || depth < 0) {
-		printf ("arg error\n");
-		exit (1);
-	}
-	if (depth == 0) {
-		if (! cube1.is_solved ()) {
-			return false;
-		}
-		*pmove_count = moves_done;
-		return true;
-	}
-	int dist = prune_funcCEN_STAGE2_AXM (cube1);
-	if (dist <= depth) {
-		dist = prune_funcEDGE_STAGE2_AXM (cube1);
-	}
-	if (dist <= depth) {
-		for (axis = 0; axis < 3; ++axis) {
-			if (axis == last_axis) {
-				continue;
-			}
-			mc_b = 272;
-			mc_e = N_STAGE2_AXM_MOVES;
-			switch (axis) {
-			case 0:
-				mc_b = 0;
-				mc_e = 256;
-				break;
-			case 1:
-				mc_b = 256;
-				mc_e = 272;
-				break;
-			}
-			for (m = mc_b; m < mc_e; ++m) {
-				cube2.m_centerFB = do_move_CEN_STAGE2_AXM (cube1.m_centerFB, m);
-				cube2.m_edge = do_move_EDGE_STAGE2_AXM (cube1.m_edge, m);
-				move_list[moves_done] = stage2_axm_map[m];
-				if (treesearchSTAGE2_AXM (cube2, depth - 1, moves_done + 1,
-						axis, goal,	move_list, pmove_count))
-				{
-					return true;
-				}
-			}
-		}
-	}
-	return false;
 }
 
 bool
@@ -7443,7 +7206,7 @@ treesearchSTAGE2 (const CubeStage2& cube1, int depth, int moves_done, UINT move_
 		}
 		int xmetric = metric;
 		if (use_old_stage2) {
-			xmetric += 7;
+			xmetric += 3;
 		}
 		for (mov_idx = 0; mov_idx < n_moves_metric_stg2[xmetric]; ++mov_idx) {
 			bool did_move = false;
@@ -7478,7 +7241,7 @@ treesearchSTAGE2 (const CubeStage2& cube1, int depth, int moves_done, UINT move_
 					did_move = true;
 				}
 				break;
-			case 0 + 7:
+			case 0 + 3:
 				if ((stage2_slice_moves_to_try_old[move_state] & (1 << mov_idx)) != 0) {
 					cube2 = cube1;
 					cube2.do_move (mov_idx);
@@ -7784,10 +7547,6 @@ solveitSTAGE3 (const CubeStage3& init_cube, int* move_list, int metric)
 	int n_moves = N_STAGE3_SLICE_MOVES;
 	if (metric == 2) {
 		n_moves = N_STAGE3_BLOCK_MOVES;
-	} else {
-		if (metric == 6) {
-			n_moves = N_STAGE3_AXM_MOVES;
-		}
 	}
 	while (dist > 0) {
 		int dist2 = dist;
@@ -7805,55 +7564,6 @@ solveitSTAGE3 (const CubeStage3& init_cube, int* move_list, int metric)
 					cube2.do_move (stage3_block_moves[i][j]);
 				}
 				break;
-			case 6:
-				j = 0;
-				j1e = 4;
-				j2e = 2;
-				j1b = -1;
-				j2b = 2;
-				j3b = 3;
-				j4b = 6;
-				j1 = i % 4;
-				j2 = (i % 8)/4;
-				j3 = (i % 32)/8;
-				j4 = i/32;
-				if (i >= 64) {
-					++j;
-					j1e = 2;
-					j1b = 7;
-					j2b = 8;
-					j3b = 9;
-					j4b = 10;
-					j1 = (i & 0x1);		// i mod 2,4,8,16 equals (i-64) mod 2,4,8,16
-					j2 = (i % 4)/2;
-					j3 = (i % 8)/4;
-					j4 = (i % 16)/8;
-				}
-				if (i >= 80) {
-					++j;
-					j2e = 4;	//j1e = 2; (set above)
-					j1b = 11;
-					j2b = 12;
-					j3b = 15;
-					j4b = 16;
-					j1 = (i & 0x1);		//don't really need to subtract 80 from i
-					j2 = (i % 8)/2;		//don't really need to subtract 80
-					j3 = (i % 16)/8;	//don't really need to subtract 80
-					j4 = (i - 80)/16;
-				}
-				if (j1 != 0) {
-					cube2.do_move (j1b + j1);
-				}
-				if (j2 != 0) {
-					cube2.do_move (j2b + j2);
-				}
-				if (j3 != 0) {
-					cube2.do_move (j3b + j3);
-				}
-				if (j4 != 0) {
-					cube2.do_move (j4b + j4);
-				}
-				break;
 			}
 			dist2 = get_distanceSTAGE3 (cube2, metric);
 			if (dist2 == dist - 1) {
@@ -7866,11 +7576,7 @@ solveitSTAGE3 (const CubeStage3& init_cube, int* move_list, int metric)
 						if (metric == 0) {
 							move_list[count++] = i;
 						} else {
-							if (metric == 6) {
-								move_list[count++] = stage3_axm_map[i];
-							} else {
-								move_list[count++] = stage3_block_map[i];
-							}
+							move_list[count++] = stage3_block_map[i];
 						}
 					}
 					found = true;
@@ -8024,10 +7730,6 @@ solveitIDA_STAGE3 (const CubeStage3& init_cube, int* move_list, int metric)
 	int move_count;
 	int g1;
 
-	if (! (metric >= 0 && metric <= 2)) {
-		printf ("Metric %d not supported.\n", metric);
-		return -1;
-	}
 	for (g1 = 0; g1 <= 30; ++g1) {
 		if (treesearchSTAGE3 (init_cube, g1, 0, 0, g1, metric, move_list, &move_count)) {
 			return g1;
@@ -8160,49 +7862,6 @@ solveitSTAGE4 (const CubeStage4& init_cube, int* move_list, int metric)
 					cube2.do_move (stage4_block_moves[i][j]);
 				}
 				break;
-			case 6:
-				j = 0;
-				j1e = 4;
-				j1b = -1;
-				j2b = 2;
-				j3b = 3;
-				j4b = 6;
-				j1 = i % 4;
-				j2 = (i % 8)/4;
-				j3 = (i % 32)/8;
-				j4 = i/32;
-				if (i >= 64) {
-					++j;
-					j1e = 2;
-					j1b = 7;
-					j2b = 8;
-					j3b = 9;
-					j4b = 10;
-					j1 = (i & 0x1);		// i mod 2,4,8,16 equals (i-64) mod 2,4,8,16
-					j2 = (i % 4)/2;
-					j3 = (i % 8)/4;
-					j4 = (i % 16)/8;
-				}
-				if (i >= 80) {
-					++j;
-					j1b = 11;
-					j2b = 12;
-					j3b = 13;
-					j4b = 14;
-				}
-				if (j1 != 0) {
-					cube2.do_move (j1b + j1);
-				}
-				if (j2 != 0) {
-					cube2.do_move (j2b + j2);
-				}
-				if (j3 != 0) {
-					cube2.do_move (j3b + j3);
-				}
-				if (j4 != 0) {
-					cube2.do_move (j4b + j4);
-				}
-				break;
 			}
 			dist2 = get_distanceSTAGE4 (cube2, metric);
 			if (dist2 == dist - 1) {
@@ -8221,9 +7880,6 @@ solveitSTAGE4 (const CubeStage4& init_cube, int* move_list, int metric)
 							break;
 						case 2:
 							move_list[count++] = stage4_block_map[i];
-							break;
-						case 6:
-							move_list[count++] = stage4_axm_map[i];
 							break;
 						}
 					}
@@ -8271,9 +7927,6 @@ get_distanceSTAGE4 (const CubeStage4& cube1, int metric)
 	int fdist = fdist_metric[metric];
 	FILE* f = NULL;
 	FILE* fx = NULL;
-	if (metric < 0 || (metric > 2 && metric != 6)) {
-		return 999;
-	}
 	if (stg4_file == NULL) {
 #ifdef USE_SYMMETRY
 		sprintf (&fname[0], "%sstage4_%s_dist_%02d.rbk", &datafiles_path[0], metric_names[metric], fdist);
@@ -8312,10 +7965,6 @@ solveitIDA_STAGE4 (const CubeStage4& init_cube, int* move_list, int metric)
 	int move_count;
 	int g1;
 
-	if (! (metric >= 0 && metric <= 2)) {
-		printf ("Metric %d not supported.\n", metric);
-		return -1;
-	}
 	for (g1 = 0; g1 <= 30; ++g1) {
 		if (treesearchSTAGE4 (init_cube, g1, 0, 0, g1, metric, move_list, &move_count)) {
 			return g1;
@@ -8456,29 +8105,14 @@ solveit4x4x4 (const CubeState& init_cube, int* move_list, int metric)
 			move_list[i] = stage1_block_list[move_list[i]];
 		}
 		break;
-	case 6:
-		for (i = 0; i < count1; ++i) {
-			int axis = move_list[i]/64;
-			int mc = (move_list[i] & 0x3F);
-			move_list[i] = 256*axis + mc;
-		}
-		break;
 	}
 	if (show_per_stage_move_lists) {
 		printf ("Stage1: ");
-		if (metric == 6) {
-			print_move_list_axm (count1, move_list);
-		} else {
-			print_move_list (count1, move_list);
-		}
+		print_move_list (count1, move_list);
 		printf ("\n");
 	}
 
-	if (metric == 6) {
-		scrambleCUBE_AXM (&cube1, count, move_list);
-	} else {
-		scrambleCUBE (&cube1, count, move_list);
-	}
+	scrambleCUBE (&cube1, count, move_list);
 	int r3 = cube1.m_cor[0] >> 3;
 	switch (r3) {
 	case 0:
@@ -8539,33 +8173,16 @@ solveit4x4x4 (const CubeState& init_cube, int* move_list, int metric)
 			move_list[i] = stage2_slice_moves[move_list[i]];
 		}
 	}
-	if (metric == 6) {
-		scrambleCUBE_AXM (&cube2, count2, &move_list[count]);
-		//translate move codes for whole cube rotations performed
-		for (i = count; i < count + count2; ++i) {
-			int mc = (move_list[i] & 0xFF);
-			int axis = move_list[i]/256;
-			int new_axis = 256*xlate_axm_r6[axis][r3];
-			move_list[i] = new_axis + mc;
-			// for r6, may not to swap nibbles of mc
-		}
-		if (show_per_stage_move_lists) {
-			printf ("Stage2: ");
-			print_move_list_axm (count2, &move_list[count]);
-			printf ("\n");
-		}
-	} else {
-		scrambleCUBE (&cube2, count2, &move_list[count]);
+	scrambleCUBE (&cube2, count2, &move_list[count]);
 
-			//translate move codes for whole cube rotations performed
-		for (i = count; i < count + count2; ++i) {
-			move_list[i] = xlate_r6[move_list[i]][r3];
-		}
-		if (show_per_stage_move_lists) {
-			printf ("Stage2: ");
-			print_move_list (count2, &move_list[count]);
-			printf ("\n");
-		}
+		//translate move codes for whole cube rotations performed
+	for (i = count; i < count + count2; ++i) {
+		move_list[i] = xlate_r6[move_list[i]][r3];
+	}
+	if (show_per_stage_move_lists) {
+		printf ("Stage2: ");
+		print_move_list (count2, &move_list[count]);
+		printf ("\n");
 	}
 
 	count += count2;
@@ -8606,34 +8223,15 @@ solveit4x4x4 (const CubeState& init_cube, int* move_list, int metric)
 			move_list[i] = stage3_slice_moves[move_list[i]];
 		}
 	}
-	if (metric == 6) {
-		scrambleCUBE_AXM (&cube3, count3, &move_list[count]);
-		//translate move codes for whole cube rotations performed
-		for (i = count; i < count + count3; ++i) {
-			int mc = (move_list[i] & 0xFF);
-			int axis = move_list[i]/256;
-			int new_axis = 256*xlate_axm_r6[axis][r6];
-			int mc2 = mc;
-			if (r6 >= 3 && axis == 2) {
-				mc2 = ((mc >> 4) & 0xF) | ((mc << 4) & 0xF0);
-			}
-			move_list[i] = new_axis + mc2;
-		}
-		if (show_per_stage_move_lists) {
-			printf ("Stage3: ");
-			print_move_list_axm (count3, &move_list[count]);
-			printf ("\n");
-		}
-	} else {
-		scrambleCUBE (&cube3, count3, &move_list[count]);
-		for (i = count; i < count + count3; ++i) {
-			move_list[i] = xlate_r6[move_list[i]][r6];
-		}
-		if (show_per_stage_move_lists) {
-			printf ("Stage3: ");
-			print_move_list (count3, &move_list[count]);
-			printf ("\n");
-		}
+
+	scrambleCUBE (&cube3, count3, &move_list[count]);
+	for (i = count; i < count + count3; ++i) {
+		move_list[i] = xlate_r6[move_list[i]][r6];
+	}
+	if (show_per_stage_move_lists) {
+		printf ("Stage3: ");
+		print_move_list (count3, &move_list[count]);
+		printf ("\n");
 	}
 	count += count3;
 
@@ -8664,34 +8262,14 @@ solveit4x4x4 (const CubeState& init_cube, int* move_list, int metric)
 			move_list[i] = stage4_slice_moves[move_list[i]];
 		}
 	}
-	if (metric == 6) {
-		scrambleCUBE_AXM (&cube4, count4, &move_list[count]);
-		//translate move codes for whole cube rotations performed
-		for (i = count; i < count + count4; ++i) {
-			int mc = (move_list[i] & 0xFF);
-			int axis = move_list[i]/256;
-			int new_axis = 256*xlate_axm_r6[axis][r6];
-			int mc2 = mc;
-			if (r6 >= 3 && axis == 2) {
-				mc2 = ((mc >> 4) & 0xF) | ((mc << 4) & 0xF0);
-			}
-			move_list[i] = new_axis + mc2;
-		}
-		if (show_per_stage_move_lists) {
-			printf ("Stage 4: ");
-			print_move_list_axm (count4, &move_list[count]);
-			printf ("\n");
-		}
-	} else {
-		scrambleCUBE (&cube4, count4, &move_list[count]);
-		for (i = count; i < count + count4; ++i) {
-			move_list[i] = xlate_r6[move_list[i]][r6];
-		}
-		if (show_per_stage_move_lists) {
-			printf ("Stage4: ");
-			print_move_list (count4, &move_list[count]);
-			printf ("\n");
-		}
+	scrambleCUBE (&cube4, count4, &move_list[count]);
+	for (i = count; i < count + count4; ++i) {
+		move_list[i] = xlate_r6[move_list[i]][r6];
+	}
+	if (show_per_stage_move_lists) {
+		printf ("Stage4: ");
+		print_move_list (count4, &move_list[count]);
+		printf ("\n");
 	}
 	count += count4;
 
@@ -8722,31 +8300,13 @@ solveit4x4x4 (const CubeState& init_cube, int* move_list, int metric)
 			move_list[i] = sq_moves[move_list[i]];
 		}
 	}
-	if (metric == 6) {
-		for (i = count; i < count + count5; ++i) {
-			int mc = (move_list[i] & 0xFF);
-			int axis = move_list[i]/256;
-			int new_axis = 256*xlate_axm_r6[axis][r6];
-			int mc2 = mc;
-			if (r6 >= 3 && axis == 2) {
-				mc2 = ((mc >> 4) & 0xF) | ((mc << 4) & 0xF0);
-			}
-			move_list[i] = new_axis + mc2;
-		}
-		if (show_per_stage_move_lists) {
-			printf ("Stage 5: ");
-			print_move_list_axm (count5, &move_list[count]);
-			printf ("\n");
-		}
-	} else {
-		for (i = count; i < count + count5; ++i) {
-			move_list[i] = xlate_r6[move_list[i]][r6];
-		}
-		if (show_per_stage_move_lists) {
-			printf ("Stage5: ");
-			print_move_list (count5, &move_list[count]);
-			printf ("\n");
-		}
+	for (i = count; i < count + count5; ++i) {
+		move_list[i] = xlate_r6[move_list[i]][r6];
+	}
+	if (show_per_stage_move_lists) {
+		printf ("Stage5: ");
+		print_move_list (count5, &move_list[count]);
+		printf ("\n");
 	}
 	count += count5;
 #endif
@@ -8793,29 +8353,14 @@ solveit4x4x4IDA (const CubeState& init_cube, int* move_list, int metric)
 			move_list[i] = stage1_block_list[move_list[i]];
 		}
 		break;
-	case 6:
-		for (i = 0; i < count1; ++i) {
-			int axis = move_list[i]/64;
-			int mc = (move_list[i] & 0x3F);
-			move_list[i] = 256*axis + mc;
-		}
-		break;
 	}
 	if (show_per_stage_move_lists) {
 		printf ("Stage1: ");
-		if (metric == 6) {
-			print_move_list_axm (count1, move_list);
-		} else {
-			print_move_list (count1, move_list);
-		}
+		print_move_list (count1, move_list);
 		printf ("\n");
 	}
 
-	if (metric == 6) {
-		scrambleCUBE_AXM (&cube1, count, move_list);
-	} else {
-		scrambleCUBE (&cube1, count, move_list);
-	}
+	scrambleCUBE (&cube1, count, move_list);
 	int r3 = cube1.m_cor[0] >> 3;
 	switch (r3) {
 	case 0:
@@ -8858,33 +8403,16 @@ solveit4x4x4IDA (const CubeState& init_cube, int* move_list, int metric)
 			move_list[i] = stage2_slice_moves[move_list[i]];
 		}
 	}
-	if (metric == 6) {
-		scrambleCUBE_AXM (&cube2, count2, &move_list[count]);
-		//translate move codes for whole cube rotations performed
-		for (i = count; i < count + count2; ++i) {
-			int mc = (move_list[i] & 0xFF);
-			int axis = move_list[i]/256;
-			int new_axis = 256*xlate_axm_r6[axis][r3];
-			move_list[i] = new_axis + mc;
-			// for r6, may not to swap nibbles of mc
-		}
-		if (show_per_stage_move_lists) {
-			printf ("Stage2: ");
-			print_move_list_axm (count2, &move_list[count]);
-			printf ("\n");
-		}
-	} else {
-		scrambleCUBE (&cube2, count2, &move_list[count]);
+	scrambleCUBE (&cube2, count2, &move_list[count]);
 
-		//translate move codes for whole cube rotations performed
-		for (i = count; i < count + count2; ++i) {
-			move_list[i] = xlate_r6[move_list[i]][r3];
-		}
-		if (show_per_stage_move_lists) {
-			printf ("Stage2: ");
-			print_move_list (count2, &move_list[count]);
-			printf ("\n");
-		}
+	//translate move codes for whole cube rotations performed
+	for (i = count; i < count + count2; ++i) {
+		move_list[i] = xlate_r6[move_list[i]][r3];
+	}
+	if (show_per_stage_move_lists) {
+		printf ("Stage2: ");
+		print_move_list (count2, &move_list[count]);
+		printf ("\n");
 	}
 
 	count += count2;
@@ -8910,34 +8438,14 @@ solveit4x4x4IDA (const CubeState& init_cube, int* move_list, int metric)
 			move_list[i] = stage3_slice_moves[move_list[i]];
 		}
 	}
-	if (metric == 6) {
-		scrambleCUBE_AXM (&cube3, count3, &move_list[count]);
-		//translate move codes for whole cube rotations performed
-		for (i = count; i < count + count3; ++i) {
-			int mc = (move_list[i] & 0xFF);
-			int axis = move_list[i]/256;
-			int new_axis = 256*xlate_axm_r6[axis][r6];
-			int mc2 = mc;
-			if (r6 >= 3 && axis == 2) {
-				mc2 = ((mc >> 4) & 0xF) | ((mc << 4) & 0xF0);
-			}
-			move_list[i] = new_axis + mc2;
-		}
-		if (show_per_stage_move_lists) {
-			printf ("Stage3: ");
-			print_move_list_axm (count3, &move_list[count]);
-			printf ("\n");
-		}
-	} else {
-		scrambleCUBE (&cube3, count3, &move_list[count]);
-		for (i = count; i < count + count3; ++i) {
-			move_list[i] = xlate_r6[move_list[i]][r6];
-		}
-		if (show_per_stage_move_lists) {
-			printf ("Stage3: ");
-			print_move_list (count3, &move_list[count]);
-			printf ("\n");
-		}
+	scrambleCUBE (&cube3, count3, &move_list[count]);
+	for (i = count; i < count + count3; ++i) {
+		move_list[i] = xlate_r6[move_list[i]][r6];
+	}
+	if (show_per_stage_move_lists) {
+		printf ("Stage3: ");
+		print_move_list (count3, &move_list[count]);
+		printf ("\n");
 	}
 	count += count3;
 
@@ -8953,34 +8461,14 @@ solveit4x4x4IDA (const CubeState& init_cube, int* move_list, int metric)
 			move_list[i] = stage4_slice_moves[move_list[i]];
 		}
 	}
-	if (metric == 6) {
-		scrambleCUBE_AXM (&cube4, count4, &move_list[count]);
-		//translate move codes for whole cube rotations performed
-		for (i = count; i < count + count4; ++i) {
-			int mc = (move_list[i] & 0xFF);
-			int axis = move_list[i]/256;
-			int new_axis = 256*xlate_axm_r6[axis][r6];
-			int mc2 = mc;
-			if (r6 >= 3 && axis == 2) {
-				mc2 = ((mc >> 4) & 0xF) | ((mc << 4) & 0xF0);
-			}
-			move_list[i] = new_axis + mc2;
-		}
-		if (show_per_stage_move_lists) {
-			printf ("Stage 4: ");
-			print_move_list_axm (count4, &move_list[count]);
-			printf ("\n");
-		}
-	} else {
-		scrambleCUBE (&cube4, count4, &move_list[count]);
-		for (i = count; i < count + count4; ++i) {
-			move_list[i] = xlate_r6[move_list[i]][r6];
-		}
-		if (show_per_stage_move_lists) {
-			printf ("Stage4: ");
-			print_move_list (count4, &move_list[count]);
-			printf ("\n");
-		}
+	scrambleCUBE (&cube4, count4, &move_list[count]);
+	for (i = count; i < count + count4; ++i) {
+		move_list[i] = xlate_r6[move_list[i]][r6];
+	}
+	if (show_per_stage_move_lists) {
+		printf ("Stage4: ");
+		print_move_list (count4, &move_list[count]);
+		printf ("\n");
 	}
 	count += count4;
 
@@ -8996,32 +8484,13 @@ solveit4x4x4IDA (const CubeState& init_cube, int* move_list, int metric)
 			move_list[i] = sq_moves[move_list[i]];
 		}
 	}
-	if (metric == 6) {
-		//translate move codes for whole cube rotations performed
-		for (i = count; i < count + count5; ++i) {
-			int mc = (move_list[i] & 0xFF);
-			int axis = move_list[i]/256;
-			int new_axis = 256*xlate_axm_r6[axis][r6];
-			int mc2 = mc;
-			if (r6 >= 3 && axis == 2) {
-				mc2 = ((mc >> 4) & 0xF) | ((mc << 4) & 0xF0);
-			}
-			move_list[i] = new_axis + mc2;
-		}
-		if (show_per_stage_move_lists) {
-			printf ("Stage 5: ");
-			print_move_list_axm (count5, &move_list[count]);
-			printf ("\n");
-		}
-	} else {
-		for (i = count; i < count + count5; ++i) {
-			move_list[i] = xlate_r6[move_list[i]][r6];
-		}
-		if (show_per_stage_move_lists) {
-			printf ("Stage5: ");
-			print_move_list (count5, &move_list[count]);
-			printf ("\n");
-		}
+	for (i = count; i < count + count5; ++i) {
+		move_list[i] = xlate_r6[move_list[i]][r6];
+	}
+	if (show_per_stage_move_lists) {
+		printf ("Stage5: ");
+		print_move_list (count5, &move_list[count]);
+		printf ("\n");
 	}
 	count += count5;
 #endif
@@ -9066,12 +8535,6 @@ open_distance_files (int metric)
 		fdist_stg1 = 10;
 		fdist_stg2 = 15;
 		fdist_stg3 = 12;
-		fdist_stg4 = 15;
-		fdist_stg5 = 16;
-	} else if (metric == 6) {
-		fdist_stg1 = 8;
-		fdist_stg2 = 11;
-		fdist_stg3 = 10;
 		fdist_stg4 = 15;
 		fdist_stg5 = 16;
 	}
@@ -9664,29 +9127,6 @@ init_stage2 ()
 }
 
 void
-init_stage2_axm_map ()
-{
-	int i;
-	for (i = 0; i < 256; ++i) {
-		stage2_axm_map[i] = i;
-	}
-	for (i = 0; i < 16; ++i) {
-		int Lmove = ((i & 0x1) == 0 ? 0 : 3);
-		int lmove = ((i & 0x2) == 0 ? 0 : 3);
-		int Rmove = ((i & 0x4) == 0 ? 0 : 3);
-		int rmove = ((i & 0x8) == 0 ? 0 : 3);
-		stage2_axm_map[256 + i] = 256 + 64*rmove + 16*Rmove + 4*lmove + Lmove;
-	}
-	for (i = 0; i < 64; ++i) {
-		int Fmove = ((i & 0x1) == 0 ? 0 : 3);
-		int fmove = ((i & 0x6) >> 1);
-		int Bmove = ((i & 0x8) == 0 ? 0 : 3);
-		int bmove = ((i & 0x30) >> 4);
-		stage2_axm_map[272 + i] = 512 + 64*bmove + 16*Bmove + 4*fmove + Fmove;
-	}
-}
-
-void
 stage2_cen_to_cloc4s (UINT cen, UINT *pclocf, UINT* pclocb)
 {
 	UINT cenbm = eloc2ebm[cen / 70];
@@ -9937,32 +9377,6 @@ init_move_tablesSTAGE3 ()
 	}
 }
 
-void
-init_stage3_axm_map ()
-{
-	int i;
-	for (i = 0; i < 64; ++i) {
-		int Umove = (i & 0x3);
-		int umove = ((i & 0x4) == 0 ? 0 : 3);
-		int Dmove = ((i & 0x18) >> 3);
-		int dmove = ((i & 0x20) == 0 ? 0 : 3);
-		stage3_axm_map[i] = 64*dmove + 16*Dmove + 4*umove + Umove;
-	}
-	for (i = 0; i < 16; ++i) {
-		int Lmove = ((i & 0x1) == 0 ? 0 : 3);
-		int lmove = ((i & 0x2) == 0 ? 0 : 3);
-		int Rmove = ((i & 0x4) == 0 ? 0 : 3);
-		int rmove = ((i & 0x8) == 0 ? 0 : 3);
-		stage3_axm_map[64 + i] = 256 + 64*rmove + 16*Rmove + 4*lmove + Lmove;
-	}
-	for (i = 0; i < 64; ++i) {
-		int Fmove = ((i & 0x1) == 0 ? 0 : 3);
-		int fmove = ((i & 0x6) >> 1);
-		int Bmove = ((i & 0x8) == 0 ? 0 : 3);
-		int bmove = ((i & 0x30) >> 4);
-		stage3_axm_map[80 + i] = 512 + 64*bmove + 16*Bmove + 4*fmove + Fmove;
-	}
-}
 #endif
 
 USHORT map8a[40320];
@@ -10371,33 +9785,6 @@ lrfb_get_edge_rep (UINT u) //, Bitvec* bv)
 }
 
 #ifdef STAGE4_INIT
-void
-init_stage4_axm_map ()
-{
-	int i;
-	for (i = 0; i < 64; ++i) {
-		int Umove = (i & 0x3);
-		int umove = ((i & 0x4) == 0 ? 0 : 3);
-		int Dmove = ((i & 0x18) >> 3);
-		int dmove = ((i & 0x20) == 0 ? 0 : 3);
-		stage4_axm_map[i] = 64*dmove + 16*Dmove + 4*umove + Umove;
-	}
-	for (i = 0; i < 16; ++i) {
-		int Lmove = ((i & 0x1) == 0 ? 0 : 3);
-		int lmove = ((i & 0x2) == 0 ? 0 : 3);
-		int Rmove = ((i & 0x4) == 0 ? 0 : 3);
-		int rmove = ((i & 0x8) == 0 ? 0 : 3);
-		stage4_axm_map[64 + i] = 256 + 64*rmove + 16*Rmove + 4*lmove + Lmove;
-	}
-	for (i = 0; i < 16; ++i) {
-		int Fmove = ((i & 0x1) == 0 ? 0 : 3);
-		int fmove = ((i & 0x2) == 0 ? 0 : 3);
-		int Bmove = ((i & 0x4) == 0 ? 0 : 3);
-		int bmove = ((i & 0x8) == 0 ? 0 : 3);
-		stage4_axm_map[80 + i] = 512 + 64*bmove + 16*Bmove + 4*fmove + Fmove;
-	}
-}
-
 void
 init_stage4_edge_tables ()
 {
@@ -12485,24 +11872,6 @@ scrambleCUBE (CubeState* pcube, int move_count, const int* move_arr)
 }
 
 void
-scrambleCUBE_AXM (CubeState* pcube, int move_count, const int* move_arr)
-{
-	//Supports axial metric moves: 0.. 767
-	int i, j;
-	for (i = 0; i < move_count; ++i) {
-		int mc = (move_arr[i] & 0xFF);
-		int axis = move_arr[i]/256;
-		for (j = 0; j < 4; ++j) {
-			int mc2 = (mc & 0x3);
-			if (mc2 != 0) {
-				pcube->do_move (12*axis + 3*j + mc2 - 1);
-			}
-			mc >>= 2;
-		}
-	}
-}
-
-void
 scrambleSQS (CubeSqsCoord* pcube, int move_count, const int* move_arr)
 {
 	int i;
@@ -13548,142 +12917,6 @@ do_move_EDGCENF_STAGE2_STM (UINT idx, int move_code)
 }
 
 UINT
-do_move_CEN_STAGE2_AXM (UINT idx, int move_code)
-{
-	UINT idx2 = idx;
-	int mc = stage2_axm_map[move_code];
-	int mcx;
-	switch (mc / 256) {
-	case 0:		//U,u,D,d, etc.
-		mcx = (mc & 0x3);
-		if (mcx != 0) {
-			idx2 = stage2_cen_move_fast (idx2, -1 + mcx);
-		}
-		mcx = ((mc >> 2) & 0x3);
-		if (mcx != 0) {
-			idx2 = stage2_cen_move_fast (idx2, 2 + mcx);
-		}
-		mcx = ((mc >> 4) & 0x3);
-		if (mcx != 0) {
-			idx2 = stage2_cen_move_fast (idx2, 5 + mcx);
-		}
-		mcx = ((mc >> 6) & 0x3);
-		if (mcx != 0) {
-			idx2 = stage2_cen_move_fast (idx2, 8 + mcx);
-		}
-		break;
-	case 1:		//L2,l2,R2,l2
-		mcx = (mcx & 0x3);
-		if (mcx == 3) {
-			idx2 = stage2_cen_move_fast (idx2, 12);
-		}
-		mcx = ((mc >> 2) & 0x3);
-		if (mcx == 3) {
-			idx2 = stage2_cen_move_fast (idx2, 13);
-		}
-		mcx = ((mc >> 4) & 0x3);
-		if (mcx == 3) {
-			idx2 = stage2_cen_move_fast (idx2, 14);
-		}
-		mcx = ((mc >> 6) & 0x3);
-		if (mcx == 3) {
-			idx2 = stage2_cen_move_fast (idx2, 15);
-		}
-		break;
-	case 2:		//F2,f,B2,b, etc.
-		mcx = (mc & 0x3);
-		if (mcx == 3) {
-			idx2 = stage2_cen_move_fast (idx2, 16);
-		}
-		mcx = ((mc >> 2) & 0x3);
-		if (mcx != 0) {
-			idx2 = stage2_cen_move_fast (idx2, 16 + mcx);
-		}
-		mcx = ((mc >> 4) & 0x3);
-		if (mcx == 3) {
-			idx2 = stage2_cen_move_fast (idx2, 20);
-		}
-		mcx = ((mc >> 6) & 0x3);
-		if (mcx != 0) {
-			idx2 = stage2_cen_move_fast (idx2, 20 + mcx);
-		}
-		break;
-	default:
-		printf ("Bad move code\n");
-		exit (1);
-	}
-	return idx2;
-}
-
-UINT
-do_move_EDGE_STAGE2_AXM (UINT idx, int move_code)
-{
-	UINT idx2 = idx;
-	int mc = stage2_axm_map[move_code];
-	int mcx;
-	switch (mc / 256) {
-	case 0:		//U,u,D,d, etc.
-		mcx = (mc & 0x3);
-		if (mcx != 0) {
-			idx2 = move_table_edgeSTAGE2[idx2][-1 + mcx];
-		}
-		mcx = ((mc >> 2) & 0x3);
-		if (mcx != 0) {
-			idx2 = move_table_edgeSTAGE2[idx2][2 + mcx];
-		}
-		mcx = ((mc >> 4) & 0x3);
-		if (mcx != 0) {
-			idx2 = move_table_edgeSTAGE2[idx2][5 + mcx];
-		}
-		mcx = ((mc >> 6) & 0x3);
-		if (mcx != 0) {
-			idx2 = move_table_edgeSTAGE2[idx2][8 + mcx];
-		}
-		break;
-	case 1:		//L2,l2,R2,l2
-		mcx = (mcx & 0x3);
-		if (mcx == 3) {
-			idx2 = move_table_edgeSTAGE2[idx2][12];
-		}
-		mcx = ((mc >> 2) & 0x3);
-		if (mcx == 3) {
-			idx2 = move_table_edgeSTAGE2[idx2][13];
-		}
-		mcx = ((mc >> 4) & 0x3);
-		if (mcx == 3) {
-			idx2 = move_table_edgeSTAGE2[idx2][14];
-		}
-		mcx = ((mc >> 6) & 0x3);
-		if (mcx == 3) {
-			idx2 = move_table_edgeSTAGE2[idx2][15];
-		}
-		break;
-	case 2:		//F2,f,B2,b, etc.
-		mcx = (mc & 0x3);
-		if (mcx == 3) {
-			idx2 = move_table_edgeSTAGE2[idx2][16];
-		}
-		mcx = ((mc >> 2) & 0x3);
-		if (mcx != 0) {
-			idx2 = move_table_edgeSTAGE2[idx2][16 + mcx];
-		}
-		mcx = ((mc >> 4) & 0x3);
-		if (mcx == 3) {
-			idx2 = move_table_edgeSTAGE2[idx2][20];
-		}
-		mcx = ((mc >> 6) & 0x3);
-		if (mcx != 0) {
-			idx2 = move_table_edgeSTAGE2[idx2][20 + mcx];
-		}
-		break;
-	default:
-		printf ("Bad move code\n");
-		exit (1);
-	}
-	return idx2;
-}
-
-UINT
 do_move_CEN_STAGE3_STM (UINT idx, int move_code)
 {
 	CubeStage3 cube1;
@@ -13749,18 +12982,6 @@ int
 prune_funcEDGE_STAGE1 (const CubeStage1& cube1)
 {
 	return get_dist_4bit (cube1.m_edge_ud_combo8, &prune_table_edg1[0]);
-}
-
-int
-prune_funcCEN_STAGE2_AXM (const CubeStage2& cube2)
-{
-	return get_dist_4bit (cube2.m_centerFB, &prune_table_cen2[0]);
-}
-
-int
-prune_funcEDGE_STAGE2_AXM (const CubeStage2& cube2)
-{
-	return get_dist_4bit (cube2.m_edge, &prune_table_edg2[0]);
 }
 
 int
@@ -14746,58 +13967,6 @@ generateSTAGE1 (UINT idx, int dist, int metric)
 			add_to_cube_listSTAGE1 (cube2, dist, metric);		//adds it to the list if not already there
 		}
 		break;
-	case 4:
-		for (i = 0; i < N_STAGE1_TWIST_MOVES; ++i) {
-			if (i % 3 == 2) {
-				continue;
-			}
-			cube2 = cube1;
-			for (j = 0; stage1_twist_moves[i][j] >= 0; ++j) {
-				cube2.do_move (stage1_twist_moves[i][j]);
-			}
-			add_to_cube_listSTAGE1 (cube2, dist, metric);		//adds it to the list if not already there
-		}
-		break;
-	case 5:
-		for (i = 0; i < 63 /* N_STAGE1_BLOCK_MOVES */ ; ++i) {
-			if (i % 3 == 2) {
-				continue;
-			}
-			if (i > iii) {
-				iii = i;
-				printf ("... %d ...\n", iii);
-			}
-			cube2 = cube1;
-			for (j = 0; stage1_block_moves[i][j] >= 0; ++j) {
-				if (stage1_block_moves[i][j] >= 0) {
-					cube2.do_move (stage1_block_moves[i][j]);
-				}
-			}
-			add_to_cube_listSTAGE1 (cube2, dist, metric);		//adds it to the list if not already there
-		}
-		break;
-	case 6:
-		for (j = 0; j < 36; j += 12) {
-			for (j1 = 0; j1 < 4; ++j1) {
-				for (j2 = 0; j2 < 4; ++j2) {
-					for (j3 = 0; j3 < 4; ++j3) {
-						cube2 = cube1;
-						if (j3 != 0) {
-							cube2.do_move (j + j3 - 1);
-						}
-						if (j2 != 0) {
-							cube2.do_move (j + 3 + j2 - 1);
-						}
-						if (j1 != 0) {
-							cube2.do_move (j + 6 + j1 - 1);
-						}
-						cube2.m_distance = dist;	//!! wasn't needed with sym-version
-						add_to_cube_listSTAGE1 (cube2, dist, 6);		//adds it to the list if not already there
-					}
-				}
-			}
-		}
-		break;
 	}
 }
 
@@ -15065,33 +14234,6 @@ generateSTAGE1_HASH (const CubeStage1& init_cube, int dist, int metric)
 				}
 			}
 			add_to_cube_listSTAGE1_HASH (cube1, dist);		//adds it to the list if not already there
-		}
-		break;
-	case 6:
-		for (j = 0; j < 36; j += 12) {
-			for (j1 = 0; j1 < 4; ++j1) {
-				for (j2 = 0; j2 < 4; ++j2) {
-					for (j3 = 0; j3 < 4; ++j3) {
-						for (j4 = 0; j4 < 4; ++j4) {
-							cube1 = init_cube;
-							if (j4 != 0) {
-								cube1.do_move (j + j4 - 1);
-							}
-							if (j3 != 0) {
-								cube1.do_move (j + 3 + j3 - 1);
-							}
-							if (j2 != 0) {
-								cube1.do_move (j + 9 + j2 - 1);
-							}
-							if (j1 != 0) {
-								cube1.do_move (j + 6 + j1 - 1);
-							}
-							cube1.m_distance = dist;	//!! wasn't needed with sym-version
-							add_to_cube_listSTAGE1_HASH (cube1, dist);		//adds it to the list if not already there
-						}
-					}
-				}
-			}
 		}
 		break;
 	}
@@ -15371,62 +14513,6 @@ generateSTAGE2 (UINT edge, UINT cen, int dist, int metric)
 				cube2.do_move (stage2_block_moves[i][j]);
 			}
 			add_to_cube_listSTAGE2 (cube2, dist, metric);		//adds it to the list if not already there
-		}
-		break;
-	case 6:
-		for (j = 0; j < 3; ++j) {
-			int j1, j2, j3, j4, j1b, j2b, j3b, j4b;
-			int j1e = 2;
-			int j2e = 2;
-			if (j == 0) {
-				j1e = 4;
-				j2e = 4;
-				j1b = -1;
-				j2b = 2;
-				j3b = 5;
-				j4b = 8;
-			} else {
-				if (j == 1) {
-					j1b = 11;
-					j2b = 12;
-					j3b = 13;
-					j4b = 14;
-				} else {
-					j2e = 4;
-					j1b = 15;
-					j2b = 16;
-					j3b = 19;
-					j4b = 20;
-				}
-			}
-			for (j1 = 0; j1 < j1e; ++j1) {
-				cube2a = cube1;
-				if (j1 != 0) {
-					cube2a.do_move (j1b + j1);
-				}
-				for (j2 = 0; j2 < j2e; ++j2) {
-					cube2b = cube2a;
-					if (j2 != 0) {
-						cube2b.do_move (j2b + j2);
-					}
-					for (j3 = 0; j3 < j1e; ++j3) {
-						cube2c = cube2b;
-						if (j3 != 0) {
-							cube2c.do_move (j3b + j3);
-						}
-						for (j4 = 0; j4 < j2e; ++j4) {
-#if 1
-							cube2 = cube2c;
-							if (j4 != 0) {
-								cube2.do_move (j4b + j4);
-							}
-#endif
-							cube2.m_distance = dist;	//!! wasn't needed with sym-version
-							add_to_cube_listSTAGE2 (cube2, dist, 6);		//adds it to the list if not already there
-						}
-					}
-				}
-			}
 		}
 		break;
 	}
@@ -16391,62 +15477,6 @@ generateSTAGE2_HASH (const CubeStage2& init_cube, int dist, int metric)
 			add_to_cube_listSTAGE2_HASH (cube1, dist);		//adds it to the list if not already there
 		}
 		break;
-	case 6:
-		for (j = 0; j < 3; ++j) {
-			int j1, j2, j3, j4, j1b, j2b, j3b, j4b;
-			int j1e = 2;
-			int j2e = 2;
-			if (j == 0) {
-				j1e = 4;
-				j2e = 4;
-				j1b = -1;
-				j2b = 2;
-				j3b = 5;
-				j4b = 8;
-			} else {
-				if (j == 1) {
-					j1b = 11;
-					j2b = 12;
-					j3b = 13;
-					j4b = 14;
-				} else {
-					j2e = 4;
-					j1b = 15;
-					j2b = 16;
-					j3b = 19;
-					j4b = 20;
-				}
-			}
-			for (j1 = 0; j1 < j1e; ++j1) {
-				cube2a = init_cube;
-				if (j1 != 0) {
-					cube2a.do_move (j1b + j1);
-				}
-				for (j2 = 0; j2 < j2e; ++j2) {
-					cube2b = cube2a;
-					if (j2 != 0) {
-						cube2b.do_move (j2b + j2);
-					}
-					for (j3 = 0; j3 < j1e; ++j3) {
-						cube2c = cube2b;
-						if (j3 != 0) {
-							cube2c.do_move (j3b + j3);
-						}
-						for (j4 = 0; j4 < j2e; ++j4) {
-#if 1
-							cube1 = cube2c;
-							if (j4 != 0) {
-								cube1.do_move (j4b + j4);
-							}
-#endif
-							cube1.m_distance = dist;	//!! wasn't needed with sym-version
-							add_to_cube_listSTAGE2_HASH (cube1, dist);		//adds it to the list if not already there
-						}
-					}
-				}
-			}
-		}
-		break;
 	}
 }
 
@@ -16810,67 +15840,6 @@ generateSTAGE3 (UINT idx, int dist, int metric)
 				}
 			}
 			add_to_cube_listSTAGE3 (cube2, dist, metric);		//adds it to the list if not already there
-		}
-		break;
-	case 3:
-		break;
-	case 4:
-		break;
-	case 5:
-		break;
-	case 6:
-		for (j = 0; j < 3; ++j) {
-			int j1, j2, j3, j4, j1b, j2b, j3b, j4b;
-			int j1e = 2;
-			int j2e = 2;
-			if (j == 0) {
-				j1e = 4;
-				j1b = -1;
-				j2b = 2;
-				j3b = 3;
-				j4b = 6;
-			} else {
-				if (j == 1) {
-					j1b = 7;
-					j2b = 8;
-					j3b = 9;
-					j4b = 10;
-				} else {
-					j2e = 4;
-					j1b = 11;
-					j2b = 12;
-					j3b = 15;
-					j4b = 16;
-				}
-			}
-			for (j1 = 0; j1 < j1e; ++j1) {
-				cube2a = cube1;
-				if (j1 != 0) {
-					cube2a.do_move (j1b + j1);
-				}
-				for (j2 = 0; j2 < j2e; ++j2) {
-					cube2b = cube2a;
-					if (j2 != 0) {
-						cube2b.do_move (j2b + j2);
-					}
-					for (j3 = 0; j3 < j1e; ++j3) {
-						cube2c = cube2b;
-						if (j3 != 0) {
-							cube2c.do_move (j3b + j3);
-						}
-						for (j4 = 0; j4 < j2e; ++j4) {
-#if 1
-							cube2 = cube2c;
-							if (j4 != 0) {
-								cube2.do_move (j4b + j4);
-							}
-#endif
-							cube2.m_distance = dist;	//!! wasn't needed with sym-version
-							add_to_cube_listSTAGE3 (cube2, dist, metric);		//adds it to the list if not already there
-						}
-					}
-				}
-			}
 		}
 		break;
 	}
@@ -17320,61 +16289,6 @@ generateSTAGE3_HASH (const CubeStage3& init_cube, int dist, int metric)
 			add_to_cube_listSTAGE3_HASH (cube1, dist, metric);		//adds it to the list if not already there
 		}
 		break;
-	case 6:
-		for (j = 0; j < 3; ++j) {
-			int j1, j2, j3, j4, j1b, j2b, j3b, j4b;
-			int j1e = 2;
-			int j2e = 2;
-			if (j == 0) {
-				j1e = 4;
-				j1b = -1;
-				j2b = 2;
-				j3b = 3;
-				j4b = 6;
-			} else {
-				if (j == 1) {
-					j1b = 7;
-					j2b = 8;
-					j3b = 9;
-					j4b = 10;
-				} else {
-					j2e = 4;
-					j1b = 11;
-					j2b = 12;
-					j3b = 15;
-					j4b = 16;
-				}
-			}
-			for (j1 = 0; j1 < j1e; ++j1) {
-				cube2a = init_cube;
-				if (j1 != 0) {
-					cube2a.do_move (j1b + j1);
-				}
-				for (j2 = 0; j2 < j2e; ++j2) {
-					cube2b = cube2a;
-					if (j2 != 0) {
-						cube2b.do_move (j2b + j2);
-					}
-					for (j3 = 0; j3 < j1e; ++j3) {
-						cube2c = cube2b;
-						if (j3 != 0) {
-							cube2c.do_move (j3b + j3);
-						}
-						for (j4 = 0; j4 < j2e; ++j4) {
-#if 1
-							cube2 = cube2c;
-							if (j4 != 0) {
-								cube2.do_move (j4b + j4);
-							}
-#endif
-							cube2.m_distance = dist;	//!! wasn't needed with sym-version
-							add_to_cube_listSTAGE3_HASH (cube2, dist, metric);		//adds it to the list if not already there
-						}
-					}
-				}
-			}
-		}
-		break;
 	}
 }
 
@@ -17662,65 +16576,6 @@ generateSTAGE4 (UINT idx, int dist, int metric)
 				cube2.do_move (stage4_block_moves[i][j]);
 			}
 			add_to_cube_listSTAGE4 (cube2, dist, metric);		//adds it to the list if not already there
-		}
-		break;
-	case 3:
-		break;
-	case 4:
-		break;
-	case 5:
-		break;
-	case 6:
-		for (j = 0; j < 3; ++j) {
-			int j1, j2, j3, j4, j1b, j2b, j3b, j4b;
-			int j1e = 2;
-			if (j == 0) {
-				j1e = 4;
-				j1b = -1;
-				j2b = 2;
-				j3b = 3;
-				j4b = 6;
-			} else {
-				j1b = 4*j + 3;
-				j2b = j1b + 1;
-				j3b = j2b + 1;
-				j4b = j3b + 1;
-			}
-			for (j1 = 0; j1 < j1e; ++j1) {
-				cube2a = cube1;
-				if (j1 != 0) {
-					cube2a.do_move (j1b + j1);
-				}
-				for (j2 = 0; j2 < 2; ++j2) {
-					cube2b = cube2a;
-					if (j2 != 0) {
-						cube2b.do_move (j2b + j2);
-					}
-					for (j3 = 0; j3 < j1e; ++j3) {
-						cube2c = cube2b;
-						if (j3 != 0) {
-							cube2c.do_move (j3b + j3);
-						}
-						for (j4 = 0; j4 < 2; ++j4) {
-							cube2 = cube1;
-							if (j1 != 0) {
-								cube2.do_move (j1b + j1);
-							}
-							if (j2 != 0) {
-								cube2.do_move (j2b + j2);
-							}
-							if (j3 != 0) {
-								cube2.do_move (j3b + j3);
-							}
-							if (j4 != 0) {
-								cube2.do_move (j4b + j4);
-							}
-							cube2.m_distance = dist;	//!! wasn't needed with sym-version
-							add_to_cube_listSTAGE4 (cube2, dist, 6);		//adds it to the list if not already there
-						}
-					}
-				}
-			}
 		}
 		break;
 	}
@@ -19750,35 +18605,6 @@ axm_move (const char* layers, int mc, char* buffer)
 		mc2 >>= 2;
 	}
 	*p = '\0';
-}
-
-void
-print_move_list_axm (int count, const int* move_list)
-{
-	int j;
-	char buf[16];
-	if (count >= 0) {
-		printf ("[%2d] ", count);
-		for (j = 0; j < count; ++j) {
-			int mc = move_list[j];
-			switch (mc/256) {
-			case 0:
-				axm_move ("UuDd", mc & 0xFF, &buf[0]);
-				break;
-			case 1:
-				axm_move ("LlRr", mc & 0xFF, &buf[0]);
-				break;
-			case 2:
-				axm_move ("FfBb", mc & 0xFF, &buf[0]);
-				break;
-			default:
-				strcpy (&buf[0], "(?)");
-			}
-			printf (" (%s)", &buf[0]);
-		}
-	} else {
-		printf ("[Did not solve]");
-	}
 }
 
 void
