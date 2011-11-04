@@ -2244,7 +2244,6 @@ void read_cg_4bit_fileLM (int d, UINT cg, int rel_cg);
 void read_cg_4bit_fileLM_FTM (UINT cg, int rel_cg);
 void read_cg_4bit_file_as_1bitFTM (int d, int file_dist, UINT cg, UBYTE* ep_map);
 void SummaryFTMQTM (int start_dist, UINT start_cgi);
-void read_cg_4bit_fileFTMQTM (int d, UINT cg);
 #ifdef CALC_REAL_SIZE
 void calculate_real_size ();
 #endif
@@ -2501,90 +2500,6 @@ int main (int argc, char* argv[])
 		return 0;
 	}
 #endif
-
-#ifdef DO_SOLVE_SQS
-#ifdef USE_CUBE_LIST_TABLE
-#endif
-#endif
-
-#ifdef GET_SUMMARYX
-#ifdef OLD_VERSION
-	for (i2 = 0; i2 < 16; ++i2) {
-		stat_total[i2] = 0.0;
-		stat_total_real[i2] = 0.0;
-		stat_total_mpinv[i2] = 0.0;
-		stat_total_full[i2] = 0.0;
-	}
-	if ((start_dist & 0x1) == 0) {
-		//even
-		for (i = start_cgi; i < N_CORNER_GROUPS/2; ++i) {
-			UINT cg = cg_remap_table[i];
-			read_cg_4bit_file_slow (start_dist, cg);
-			for (i2 = 0; i2 < 16; ++i2) {
-				stat_total[i2] += static_cast<double>(stat_dist[i2]);
-				stat_total_real[i2] += static_cast<double>(stat_dist_real[i2]);
-				stat_total_mpinv[i2] += static_cast<double>(stat_dist_mpinv[i2]);
-				stat_total_full[i2] += stat_dist_full[i2];
-			}
-			if (i % N_CGG_SIZE == N_CGG_SIZE - 1) {
-				printf ("TOTALS\n");
-				for (i2 = 0; i2 < 16; ++i2) {
-					if (stat_total[i2] != 0) {
-						printf ("dist %2d: %13.0f  %13.0f  %14.0f\n",
-							2*i2 + (start_dist & 1), stat_total[i2], stat_total_real[i2], stat_total_full[i2]);
-					}
-				}
-			}
-		}
-	} else {
-		//odd
-		for (i = N_CORNER_GROUPS/2 + start_cgi; i < N_CORNER_GROUPS; ++i) {
-			UINT cg = cg_remap_table[i];
-			read_cg_4bit_file_slow (start_dist, cg);
-			for (i2 = 0; i2 < 16; ++i2) {
-				stat_total[i2] += static_cast<double>(stat_dist[i2]);
-				stat_total_real[i2] += static_cast<double>(stat_dist_real[i2]);
-				stat_total_mpinv[i2] += static_cast<double>(stat_dist_mpinv[i2]);
-				stat_total_full[i2] += stat_dist_full[i2];
-			}
-			if (i % N_CGG_SIZE == N_CGG_SIZE - 1) {
-				printf ("TOTALS\n");
-				for (i2 = 0; i2 < 16; ++i2) {
-					if (stat_total[i2] != 0) {
-						printf ("dist %2d: %13.0f  %13.0f  %14.0f\n",
-							2*i2 + (start_dist & 1), stat_total[i2], stat_total_real[i2], stat_total_full[i2]);
-					}
-				}
-			}
-		}
-	}
-#else	//else not OLD_VERSION
-	for (i2 = 0; i2 < 16; ++i2) {
-		stat_total[i2] = 0.0;
-		stat_total_real[i2] = 0.0;
-		stat_total_mpinv[i2] = 0.0;
-		stat_total_full[i2] = 0.0;
-	}
-	for (i = start_cg; i < N_CORNER_GROUPS; ++i) {
-		read_cg_4bit_fileFTM (start_dist, i);
-		for (i2 = 0; i2 < 16; ++i2) {
-			stat_total[i2] += static_cast<double>(stat_dist[i2]);
-			stat_total_real[i2] += static_cast<double>(stat_dist_real[i2]);
-			stat_total_mpinv[i2] += static_cast<double>(stat_dist_mpinv[i2]);
-			stat_total_full[i2] += stat_dist_full[i2];
-		}
-		if (i % N_CGG_SIZE == N_CGG_SIZE - 1) {
-			printf ("TOTALS\n");
-			for (i2 = 0; i2 < 16; ++i2) {
-				if (stat_total[i2] != 0) {
-					printf ("dist %2d: %13.0f  %13.0f  %13.0f  %14.0f\n",
-						i2, stat_total[i2], stat_total_real[i2], stat_total_mpinv[i2], stat_total_full[i2]);
-				}
-			}
-		}
-	}
-#endif	//OLD_VERSION
-#endif	//GET_SUMMARYX
 
 #ifdef OUTPUT_DIAGNOSTICS
 	printtime ();
