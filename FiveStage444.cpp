@@ -19,9 +19,9 @@ void SignalHandler(int signal)
 }
 
 // Program options (compile-time)
-#define USE_TITLE_BAR
-#define OUTPUT_DIAGNOSTICS
-#define	WRITE_TABLE_FILES
+//#define USE_TITLE_BAR
+//#define OUTPUT_DIAGNOSTICS
+//#define WRITE_TABLE_FILES
 //#define GEN_ONEBIT_FILES
 //#define USE_CUBE_LIST_TABLE
 #define USE_SYMMETRY
@@ -46,7 +46,6 @@ void SignalHandler(int signal)
 #define REGULAR_MOVES
 //#define DRB_FIXED_MOVES
 #define PRUNING_TABLES
-//#define DUAL_SOLVE
 
 #ifdef DO_SOLVE_WHOLE_CUBE
 #define DO_SOLVE_STAGE1
@@ -2181,6 +2180,7 @@ void init_squares ();
 #endif
 int get_parity8 (UINT x);
 
+
 #ifdef STAGE4_INIT
 void init_parity_table ();
 #endif
@@ -2229,7 +2229,6 @@ int solveitIDA_STAGE1 (const CubeStage1& init_cube, int* move_list, int metric);
 bool treesearchSTAGE1 (const CubeStage1& cube1, int depth, int moves_done, UINT move_state, int goal, int metric, int* move_list, int* pmove_count);
 #endif
 void solveitFTM (UINT cp, UINT ep, int depth, int d0, const CubeState& cube1, bool do_output);
-#endif
 UINT sym_on_cp96 (UINT cp96, UINT sym);
 UINT sym_on_cen12x12x12 (UINT cen12x12x12, UINT sym);
 UINT sym_on_eperm (UINT ep, UINT sym);
@@ -16784,6 +16783,7 @@ CubeState::do_move (int move_code)
 }
 
 void
+
 CubeState::compose_edge (const CubeState& cs1, const CubeState& cs2)
 {
 	int i;
