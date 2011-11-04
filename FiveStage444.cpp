@@ -8,19 +8,12 @@
 #include <string.h>
 #include <time.h>
 #include <signal.h>
-//#include <tchar.h>
-//#include <setjmp.h>
-
-//#using <mscorlib.dll>
-
-//using namespace System;
 
 bool got_interrupt = false;
 
 void SignalHandler(int signal)
 {
 	if (signal == SIGINT) {
-	    //longjump ();
 		got_interrupt = true;
 	}
 }
@@ -30,7 +23,6 @@ void SignalHandler(int signal)
 #define OUTPUT_DIAGNOSTICS
 #define	WRITE_TABLE_FILES
 //#define GEN_ONEBIT_FILES
-//#define GEN_1BIT_FROM_4BIT
 //#define USE_CUBE_LIST_TABLE
 #define USE_SYMMETRY
 //#define DO_ANALYZE_4X4X4
@@ -40,12 +32,10 @@ void SignalHandler(int signal)
 //#define ANALYZE_STAGE2
 //#define ANALYZE_STAGE3
 //#define ANALYZE_STAGE4
-//#define BACKWARD_SEARCH
 //#define GET_SUMMARY
 //#define COLLAPSE_4BIT_FILES
 //#define CONVERT_8BIT_TO_2BIT
 //#define CONVERT_8BIT_TO_MOD6
-//#define WRITE_4BIT_FILES
 #define DO_SOLVE_TEST
 //#define DO_SOLVE_SQS
 //#define DO_SOLVE_STAGE1
@@ -53,9 +43,6 @@ void SignalHandler(int signal)
 //#define DO_SOLVE_STAGE3
 //#define DO_SOLVE_STAGE4
 #define DO_SOLVE_WHOLE_CUBE
-//#define DISPLAY_POSITIONS
-//#define DO_LOCAL_MAXIMA
-//#define GRID_SUMMARY
 #define REGULAR_MOVES
 //#define DRB_FIXED_MOVES
 #define PRUNING_TABLES
@@ -103,36 +90,25 @@ void SignalHandler(int signal)
 #ifdef ANALYZE_STAGE3
 #define STAGE3_INIT
 #define ELOC_INIT
-//#define CLOC_INIT
 #endif
 #ifdef DO_SOLVE_STAGE3
 #define STAGE3_INIT
 #define ELOC_INIT
-//#define CLOC_INIT
 #endif
 
 #ifdef ANALYZE_STAGE4
-//?
 #define STAGE4_INIT
 #define ELOC_INIT
-//#define CLOC_INIT
 #endif
 #ifdef DO_SOLVE_STAGE4
-//?
 #define STAGE4_INIT
 #define ELOC_INIT
-//#define CLOC_INIT
 #endif
 
-//#ifndef ELOC_INIT
-//#define ELOC_INIT
-//#endif
 
 typedef unsigned int UINT;
 typedef unsigned short USHORT;
 typedef unsigned char UBYTE;
-//typedef UINT FUNC (UINT,int);		//do_move type function
-//typedef FUNC* FUNC_PTR;
 typedef UINT (*FUNC_PTR)(UINT,int);
 
 // Revenge.cpp : Program to generate a table of distances for various subsets of states
@@ -2296,9 +2272,6 @@ int solveitIDA_STAGE1 (const CubeStage1& init_cube, int* move_list, int metric);
 bool treesearchSTAGE1 (const CubeStage1& cube1, int depth, int moves_done, UINT move_state, int goal, int metric, int* move_list, int* pmove_count);
 #endif
 void solveitFTM (UINT cp, UINT ep, int depth, int d0, const CubeState& cube1, bool do_output);
-#ifdef DISPLAY_POSITIONS
-void display_positions (int dist, UINT cg);
-void display_positionsFTM (int dist, int file_dist, UINT cg);
 #endif
 UINT sym_on_cp96 (UINT cp96, UINT sym);
 UINT sym_on_cen12x12x12 (UINT cen12x12x12, UINT sym);
@@ -4083,6 +4056,7 @@ multiplicitySCSQS (const CubeSuperSqsCoord& cube1)
 
 void
 print_allsymSQS (const CubeSqsCoord& cube1)
+
 {
 	int sym1;
 	CubeSqsCoord cube2;
@@ -8559,6 +8533,7 @@ solveit4x4x4 (const CubeState& init_cube, int* move_list, int metric)
 	}
 #endif
 	//translate from stage2 move indices to standard move codes
+
 	if (metric == 0) {
 		for (i = count; i < count + count2; ++i) {
 			move_list[i] = stage2_slice_moves[move_list[i]];
@@ -10873,6 +10848,7 @@ init_stage4 ()
 				reorient_cubeSTAGE4 (s4a, sym1, &s4b);
 				UINT u2 = s4b.m_edge;
 				if (stage4_edge88200_to_edge_sym[u2] == 99000) {
+
 					stage4_edge88200_to_edge_sym[u2] = stage4_edge88200_to_edge_sym[u] + sym1;
 				} else {
 					if (stage4_edge88200_to_edge_sym[u2]/N_SYM_STAGE4 != stage4_edge88200_to_edge_sym[u]/N_SYM_STAGE4) {
@@ -19839,6 +19815,7 @@ disp_cycles (int n, const Face* elements)
 
 int
 string_to_move_list (const char* input, int* move_list)
+
 {
 	int i = 0;
 	int count = 0;
