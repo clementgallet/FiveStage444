@@ -33,9 +33,6 @@ void SignalHandler(int signal)
 //#define ANALYZE_STAGE3
 //#define ANALYZE_STAGE4
 //#define GET_SUMMARY
-//#define COLLAPSE_4BIT_FILES
-//#define CONVERT_8BIT_TO_2BIT
-//#define CONVERT_8BIT_TO_MOD6
 #define DO_SOLVE_TEST
 //#define DO_SOLVE_SQS
 //#define DO_SOLVE_STAGE1
@@ -2474,15 +2471,6 @@ bool read_4bit_file_as_1bitSTAGE2 (int dist, int metric, UINT edge, UBYTE* file_
 bool read_8bit_file_as_1bitSTAGE2 (int dist, int metric, UINT edge, UBYTE* file_buffer);
 bool read_4bit_fileSTAGE2 (int dist, int metric, UINT edge);
 bool read_8bit_fileSTAGE2 (int dist, int metric, UINT edge);
-#ifdef COLLAPSE_4BIT_FILES
-void collapse_4bit_filesSTAGE2 (int dist_file, int dist, int metric);
-#endif
-#ifdef CONVERT_8BIT_TO_2BIT
-void write_2bit_fileSTAGE2 (int dist, int metric);
-#endif
-#ifdef CONVERT_8BIT_TO_MOD6
-void write_m6_fileSTAGE2 (int dist, int metric);
-#endif
 void
 delete_8bit_filesSTAGE2 (int dist, int metric);
 void calculate_real_sizeSTAGE2 ();
@@ -2735,7 +2723,6 @@ int main (int argc, char* argv[])
 	int random_count = 100;
 	static char cmd_cubestring[300];
 	bool do_cmd_cube = false;
-#ifdef EPSYMM
 	if (argc > 1) {
 		start_dist = atoi (argv[1]);
 		if (start_dist < 0 || start_dist >= 479001600) {
@@ -2743,7 +2730,6 @@ int main (int argc, char* argv[])
 			exit (1);
 		}
 	}
-#else
 	bool resume = false;
 	if (argc > 1) {
 		start_dist = atoi (argv[1]);
@@ -2797,7 +2783,6 @@ int main (int argc, char* argv[])
 		}
 	}
 #endif
-#endif
 	printf ("Performing misc. initializations...\n");
 	init_4of8 ();
 	init_invsym ();
@@ -2822,26 +2807,6 @@ int main (int argc, char* argv[])
 
 #ifdef ANALYZE_STAGE2
 #ifdef USE_CUBE_LIST_TABLE
-#ifdef COLLAPSE_4BIT_FILES
-	collapse_4bit_filesSTAGE2 (15, 14, 0);
-	printtime ();
-	if (true) {
-		return 0;
-	}
-#endif
-#ifdef CONVERT_8BIT_TO_2BIT
-	write_2bit_fileSTAGE2 (23, 2);
-	printtime ();
-	if (true) {
-		return 0;
-	}
-#endif
-#ifdef CONVERT_8BIT_TO_MOD6
-	write_m6_fileSTAGE2 (18, 1);
-	if (true) {
-		return 0;
-	}
-#endif
 #ifdef GET_SUMMARY
 	summarySTAGE2 (start_dist, 2);
 	printtime ();
@@ -13668,208 +13633,6 @@ read_8bit_fileSTAGE2 (int dist, int metric, UINT edge)
 	}
 	return true;
 }
-
-#ifdef COLLAPSE_4BIT_FILES
-void
-collapse_4bit_filesSTAGE2 (int dist_file, int dist, int metric)
-{
-	UINT i, edge;
-	UINT j, k;
-	double count = 0.0;
-	const int N_FILE_SIZE = 16*N_STAGE2_CEN_TABLE_SIZE;
-	char fname1[64];
-	char fname2[64];
-	for (edge = 0; edge < N_STAGE2_EDGE_SYMCONFIGS; ++edge) {
-		sprintf (&fname1[0], "H:\\Revenge\\stage2_%s_dist_e%02u_%02d.rbk", metric_names[metric], edge, dist_file);
-		sprintf (&fname2[0], "H:\\Revenge\\stage2_%s_dist_e%02u_%02d.rbk", metric_names[metric], edge, 1);
-		FILE* f = NULL;
-		f = fopen (&fname1[0], "rb");
-		if (f == NULL) {
-			printf ("could not open '%s'\n", &fname1[0]);
-			exit (1);
-		}
-		int n = fread (&file_buffer[0], 1, N_FILE_SIZE, f);
-		if (n != N_FILE_SIZE) {
-			printf ("file read error in '%s'.\n", &fname1[0]);
-		}
-		fclose (f);
-		f = fopen (&fname2[0], "wb");
-		if (f == NULL) {
-			printf ("could not create '%s'\n", &fname2[0]);
-			exit (1);
-		}
-
-#ifdef USE_TITLE_BAR
-		if (true) {
-			char str[48];
-			sprintf (&str[0], "title writing 4bit file %u %u", 1, edge);
-			system (&str[0]);
-		}
-#endif
-		for (j = 0; j < N_FILE_SIZE; ++j) {
-			UBYTE x = file_buffer[j];
-			UINT x1 = x & 0xF;
-			if (x1 != 0xF) {
-				if (x1 == dist) {
-					x1 = 1;
-				} else {
-					x1 = 0;
-				}
-				x &= 0xF0;
-				x |= x1;
-			}
-			x1 = (x >> 4) & 0x0F;
-			if (x1 != 0xF) {
-				if (x1 == dist) {
-					x1 = 1;
-				} else {
-					x1 = 0;
-				}
-				x &= 0x0F;
-				x |= (x1 << 4);
-			}
-			file_buffer[j] = x;
-		}
-		n = fwrite (&file_buffer[0], 1, N_FILE_SIZE, f);
-		if (n != N_FILE_SIZE) {
-			printf ("file write error in '%s'.\n", &fname2[0]);
-		}
-		fclose (f);
-		printf ("new count: %12.0f\n", count);
-	}
-}
-#endif
-
-#ifdef CONVERT_8BIT_TO_2BIT
-void
-write_2bit_fileSTAGE2 (int dist, int metric)
-{
-	UINT i, edge;
-	UINT j, k;
-	const UINT N_IN_FILE_SIZE = 32*N_STAGE2_CEN_TABLE_SIZE;
-	const UINT N_OUT_BUFFER_SIZE = N_IN_FILE_SIZE/4u;
-	static unsigned char outbuffer[N_OUT_BUFFER_SIZE];
-	char fname[64], fname1[64];
-	TableIndex ti;
-	sprintf (&fname[0], "H:\\Revenge\\stage2_%s_distm4_%02d.rbk", metric_names[metric], dist);
-	FILE* f = NULL;
-
-	f = fopen (&fname[0], "wb");
-	if (f == NULL) {
-		printf ("could not create '%s'\n", &fname[0]);
-		exit (1);
-	}
-
-	for (edge = 0; edge < N_STAGE2_EDGE_SYMCONFIGS; ++edge) {
-#ifdef USE_TITLE_BAR
-		if (true) {
-			char str[48];
-			sprintf (&str[0], "title writing 2bit file %u (%u)", dist, edge);
-			system (&str[0]);
-		}
-#endif
-		memset (&outbuffer[0], 0, N_OUT_BUFFER_SIZE);
-
-		sprintf (&fname1[0], "H:\\Revenge\\stage2_%s_dist_e%02u_%02d.rbk", metric_names[metric], edge, dist);
-		FILE* f1 = NULL;
-
-		f1 = fopen (&fname1[0], "rb");
-		if (f1 == NULL) {
-			printf ("could not open '%s'\n", &fname1[0]);
-			exit (1);
-		}
-
-		int n1 = fread (&file_buffer[0], 1, N_IN_FILE_SIZE, f1);
-		if (n1 != N_IN_FILE_SIZE) {
-			printf ("file read error in '%s'.\n", &fname1[0]);
-			exit (1);
-		}
-		fclose (f1);
-
-		for (j = 0; j < N_OUT_BUFFER_SIZE; ++j) {
-			UBYTE u = 0;
-			for (k = 0; k < 4; ++k) {
-				UINT idx = 4*j + k;
-				UBYTE d = file_buffer[idx];
-				d &= 0x3;
-				u |= d << (2*k);
-			}
-			outbuffer[j] = u;
-		}
-		int n = fwrite (&outbuffer[0], 1, N_OUT_BUFFER_SIZE, f);
-		if (n != N_OUT_BUFFER_SIZE) {
-			printf ("file write error in '%s'.\n", &fname[0]);
-		}
-	}
-	fclose (f);
-}
-#endif
-
-#ifdef CONVERT_8BIT_TO_MOD6
-void
-write_m6_fileSTAGE2 (int dist, int metric)
-{
-	UINT i, edge;
-	UINT j, k;
-	static UINT pow6tbl[3] = { 1, 6, 36 };
-	const UINT N_IN_FILE_SIZE = 32*N_STAGE2_CEN_TABLE_SIZE;
-	const UINT N_OUT_BUFFER_SIZE = N_IN_FILE_SIZE/3u;
-	static unsigned char outbuffer[N_OUT_BUFFER_SIZE];
-	char fname[64], fname1[64];
-	TableIndex ti;
-	sprintf (&fname[0], "H:\\Revenge\\stage2_%s_distm6_%02d.rbk", metric_names[metric], dist);
-	FILE* f = NULL;
-
-	f = fopen (&fname[0], "wb");
-	if (f == NULL) {
-		printf ("could not create '%s'\n", &fname[0]);
-		exit (1);
-	}
-
-	for (edge = 0; edge < N_STAGE2_EDGE_SYMCONFIGS; ++edge) {
-#ifdef USE_TITLE_BAR
-		if (true) {
-			char str[48];
-			sprintf (&str[0], "title writing 2bit file %u (%u)", dist, edge);
-			system (&str[0]);
-		}
-#endif
-		memset (&file_buffer[0], 0, N_OUT_BUFFER_SIZE);
-
-		sprintf (&fname1[0], "H:\\Revenge\\stage2_%s_dist_e%02u_%02d.rbk", metric_names[metric], edge, dist);
-		FILE* f1 = NULL;
-
-		f1 = fopen (&fname1[0], "rb");
-		if (f1 == NULL) {
-			printf ("could not open '%s'\n", &fname1[0]);
-			exit (1);
-		}
-
-		int n1 = fread (&file_buffer[0], 1, N_IN_FILE_SIZE, f1);
-		if (n1 != N_IN_FILE_SIZE) {
-			printf ("file read error in '%s'.\n", &fname1[0]);
-			exit (1);
-		}
-		fclose (f1);
-
-		for (j = 0; j < N_OUT_BUFFER_SIZE; ++j) {
-			UBYTE u = 0;
-			for (k = 0; k < 3; ++k) {
-				UINT idx = 3*j + k;
-				UBYTE d = file_buffer[idx];
-				d %= 6;
-				u += d * pow6tbl[k];
-			}
-			outbuffer[j] = u;
-		}
-		int n = fwrite (&outbuffer[0], 1, N_OUT_BUFFER_SIZE, f);
-		if (n != N_OUT_BUFFER_SIZE) {
-			printf ("file write error in '%s'.\n", &fname[0]);
-		}
-	}
-	fclose (f);
-}
-#endif
 
 void
 delete_8bit_filesSTAGE2 (int dist, int metric)
