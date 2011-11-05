@@ -2922,7 +2922,6 @@ CubeSuperSqsCoord::get_representative (CubeSuperSqsCoord* rep) const
 	//DO IT THE LONG WAY FOR NOW
 	UINT sym1;
 	CubeSuperSqsCoord cube2;
-#if 1
 	CubeSuperSqsCoord lowest = *this;
 	for (sym1 = 1; sym1 < N_SYMX; ++sym1) {
 		reorient_cubeSCSQS (*this, sym1, &cube2);
@@ -2931,7 +2930,6 @@ CubeSuperSqsCoord::get_representative (CubeSuperSqsCoord* rep) const
 		}
 	}
 	*rep = lowest;
-#else
 	CubeSuperSqsCoord normcube, repcube;
 	UINT my_sym = sqs_ep96x96x96_to_sym[m_ep96x96x96];
 	UINT invsym = cube_sym_inv[my_sym % N_CUBESYM];
@@ -3618,7 +3616,6 @@ CubeStage2::is_representative2 () const
 }
 
 
-#if 1
 void
 CubeStage2::get_representative (CubeStage2* rep, int* mult) const
 {
@@ -3680,7 +3677,6 @@ CubeStage2::get_representative (CubeStage2* rep, int* mult) const
 	}
 #endif
 }
-#endif
 
 int
 CubeStage2::distinct_count () const
@@ -3827,7 +3823,6 @@ CubeStage3::is_representative () const
 	return true;
 }
 
-#if 1
 void
 CubeStage3::get_representative (CubeStage3* rep, int* mult) const
 {
@@ -3854,7 +3849,6 @@ CubeStage3::get_representative (CubeStage3* rep, int* mult) const
 		*mult = m;
 	}
 }
-#endif
 
 int
 CubeStage3::distinct_count () const
@@ -5118,7 +5112,6 @@ get_mod_distanceSTAGE2 (const CubeStage2& cube1, int metric)
 }
 
 #ifdef PRUNING_TABLES
-#if 1
 
 const UINT STG2_SL_MS_X = 0;
 const UINT STG2_SL_MS_U = 1;
@@ -5164,7 +5157,6 @@ const UINT STG2_TW_MS_B = 12;
 #define STG2S_F2x3	STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b
 #define	STG2S_F3	STG2_SL_MS_B
 
-//#define	STG2T_X		STG2_TW_MS_X
 #define	STG2T_Xx3	STG2_TW_MS_X,STG2_TW_MS_X,STG2_TW_MS_X
 #define	STG2T_Xx4	STG2_TW_MS_X,STG2_TW_MS_X,STG2_TW_MS_X,STG2_TW_MS_X
 #define	STG2T_U0x3	STG2_TW_MS_u,STG2_TW_MS_u,STG2_TW_MS_u
@@ -5539,7 +5531,6 @@ treesearchSTAGE2 (const CubeStage2& cube1, int depth, int moves_done, UINT move_
 	}
 	return false;
 }
-#endif
 #endif
 #endif
 
@@ -6207,7 +6198,6 @@ init_eloc ()
 			map96[4*a1 + 3][i] = t[i];
 		}
 	}
-#if 1
 //optimization in progress...
 	for (u = 0; u < 4096; ++u) {
 		UINT bc = bitcount[u & 0xF] + bitcount[(u >> 4) & 0xF] + bitcount[(u >> 8) & 0xF];
@@ -6275,7 +6265,6 @@ init_eloc ()
 			gen_MofN8[u][u1] = u3;
 		}
 	}
-#endif
 }
 #endif
 
@@ -7983,7 +7972,6 @@ init_edgemapSQS ()
 #ifdef OUTPUT_DIAGNOSTICS
 	printf ("edge group count = %d\n", count);
 #endif
-#if 1
 	for (u = 0; u < N_SYMCOUNT; ++u) {
 		UINT sym;
 		Stab sym_bm;
@@ -8008,7 +7996,6 @@ init_edgemapSQS ()
 		sqs_edge_stab[u] = sym_bm;
 		sqs_edge_mult[u] = N_SYMX / sym_count;
 	}
-#endif
 #ifdef WHOLE_CUBE
 	UINT cori;
 	int i;
@@ -8675,7 +8662,6 @@ reorient_cubeSQS (const CubeSqsCoord& init_cube, int sym, CubeSqsCoord* result_c
 		reorient_cube_hSQS (cube1, &cube2);
 		reorient_cube_vSQS (cube2, &cube1);
 	}
-#if 1
 	//++ check code: remove for better performance
 	switch (sym3) {
 	case 0:
@@ -8694,7 +8680,6 @@ reorient_cubeSQS (const CubeSqsCoord& init_cube, int sym, CubeSqsCoord* result_c
 		}
 	}
 	//-- end check code
-#endif
 	if (sym2 != 0) {
 		reorient_cube_hSQS (cube1, &cube2);
 		reorient_cube_hSQS (cube2, &cube1);
@@ -9437,7 +9422,6 @@ perm_n_pack2 (UINT n, UINT m, const Face* array_in)
 	return idx;
 }
 
-#if 1
 void
 perm_n_unpack2 (UINT n, UINT m, UINT idx, Face* array_out)
 {
@@ -9456,9 +9440,7 @@ perm_n_unpack2 (UINT n, UINT m, UINT idx, Face* array_out)
 		}
 	}
 }
-#endif
 
-#if 1
 bool
 get_raw_coordinates (const CubeState& cube1, UINT* cp, UINT* co, UINT* ep, UINT* eo)
 {
@@ -9511,7 +9493,6 @@ unpack_raw_coordinates (UINT cp, UINT co, UINT ep, UINT eo, CubeState* cube1)
 	cube1->m_cor[7] = tmp[7] + (((24 - orientcmod3) % 3) << 3);
 	return true;	//no validity checking done... presume valid cube coordinates...
 }
-#endif
 
 bool
 get_raw_coordinatesPERM (const CubeState& cube1, UINT* cp, UINT* ep)
@@ -11161,7 +11142,6 @@ countbits (UINT x)
 	return static_cast<int>(x8) % 255;
 }
 
-#if 1
 //swapbits () - return a value with two bits interchanged.
 //x = input value
 //b = value (bit mask) specifying the two bits to be swapped (must have countbits (b) == 2)
@@ -11174,7 +11154,6 @@ swapbits (UINT x, UINT b)
 	}
 	return x ^ b;
 }
-#endif
 
 int
 find_next_0bit (UINT bm, int b)
