@@ -1601,12 +1601,10 @@ int xlate_r6[63][6] = {
 bool show_full_move_list = false;
 bool show_per_stage_move_lists = true;
 
-#ifdef SQUARES_INIT
 #ifdef PRUNING_TABLES
 UBYTE prune_table_cencor5[N_SQS_CENTER_PERM*N_SQS_CORNER_PERM/2];
 UBYTE prune_table_edg5[N_SQS_EDGE_PERM/2];
 UBYTE prune_table_edgcor5[N_SQS_EDGE_PERM*N_SQS_CORNER_PERM/2];
-#endif
 #endif
 
 USHORT reorient_co[2187][16];
