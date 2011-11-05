@@ -19,7 +19,6 @@ void SignalHandler(int signal)
 }
 
 // Program options (compile-time)
-//#define USE_TITLE_BAR
 #define USE_SYMMETRY
 #define PRUNING_TABLES
 
@@ -935,14 +934,6 @@ int stage1_block_list[N_STAGE1_BLOCK_MOVES] = {
 
 int n_moves_metric_stg1[3] = { N_BASIC_MOVES, N_STAGE1_TWIST_MOVES, N_STAGE1_BLOCK_MOVES};
 
-const int N_STAGE2_SLICE_MOVES_OLD = 24;
-int stage2_slice_moves_old[N_STAGE2_SLICE_MOVES_OLD] = {
-	Uf, Uf3, Uf2, Us, Us3, Us2,
-	Df, Df3, Df2, Ds, Ds3, Ds2,
-	Lf2, Ls2, Rf2, Rs2,
-	Ff2, Fs, Fs3, Fs2, Bf2, Bs, Bs3, Bs2
-};
-
 const int N_STAGE2_SLICE_MOVES = 28;
 int stage2_slice_moves[N_STAGE2_SLICE_MOVES] = {
 	Uf, Uf3, Uf2, Us, Us3, Us2,
@@ -998,7 +989,6 @@ int stage2_twist_moves[30 /* *0 + N_STAGE2_TWIST_MOVES */ ][4] = {
 };
 
 //Also allow 2-twist moves such as (Ff) F which is the same as F2 f.
-const int N_STAGE2_2TWIST_MOVES_OLD = 8;	// number of slice moves that can not be done by two allowed twist moves, excl L/R axis
 const int N_STAGE2_2TWIST_MOVES = 16;	// number of slice moves that can not be done by two allowed twist moves
 int stage2_2twist_moves[N_STAGE2_2TWIST_MOVES][3] = {
 	{ stg2_Fs, -1, -1 },
@@ -1095,9 +1085,8 @@ int stage2_block_map[N_STAGE2_BLOCK_MOVES] = {
 	Ffs2, Bfs2, FsBs3, Fs3Bs, Fs2Bs2
 };
 
-int n_moves_metric_stg2[6] = {
-	N_STAGE2_SLICE_MOVES, N_STAGE2_TWIST_MOVES, N_STAGE2_BLOCK_MOVES,
-	N_STAGE2_SLICE_MOVES_OLD, N_STAGE2_TWIST_MOVES, N_STAGE2_BLOCK_MOVES
+int n_moves_metric_stg2[3] = {
+	N_STAGE2_SLICE_MOVES, N_STAGE2_TWIST_MOVES, N_STAGE2_BLOCK_MOVES
 };
 
 const int N_STAGE3_SLICE_MOVES = 20;
@@ -1720,7 +1709,6 @@ FILE* stg2_file = NULL;
 FILE* stg3_file = NULL;
 FILE* stg4_file = NULL;
 FILE* stg5_file = NULL;
-bool use_old_stage2 = false;
 
 int cube_sym_inv[N_CUBESYM];
 
@@ -1733,14 +1721,6 @@ USHORT sqs_edge_mult[N_SYMCOUNT];
 
 UBYTE sqs_sym_cp96_table[N_SQS_CORNER_PERM][N_ANTISYM];
 USHORT sqs_sym_cen_table[N_SQS_CENTER_PERM][N_ANTISYM];
-
-struct MoveItem {
-	UINT m_src_cg;
-	UINT m_move_code;
-	UINT m_dst_cg;
-};
-
-const int MOVE_ITEM_LIST_MAX = 280;
 
 int display_count = 0;
 int display_limit = 100;
@@ -3711,13 +3691,6 @@ loadSQS (int dist, int metric, UINT* pcube_list)
 		exit (1);
 	}
 
-#ifdef USE_TITLE_BAR
-	if (true) {
-		char str[48];
-		sprintf (&str[0], "title reading 1bit file %u", dist);
-		system (&str[0]);
-	}
-#endif
 	for (i = 0; i < N_BUFFERS; ++i) {
 		int n = fread (&file_buffer[0], 1, N_BUFFER_SIZE, f);
 		if (n != N_BUFFER_SIZE) {
@@ -4164,13 +4137,6 @@ loadSTAGE1 (int dist, int metric, UINT* pcube_list)
 		exit (1);
 	}
 
-#ifdef USE_TITLE_BAR
-	if (true) {
-		char str[64];
-		sprintf (&str[0], "title reading stage1 1bit file %u", dist);
-		system (&str[0]);
-	}
-#endif
 	for (i = 0; i < N_BUFFERS; ++i) {
 		int n = fread (&file_buffer[0], 1, N_BUFFER_SIZE, f);
 		if (n != N_BUFFER_SIZE) {
@@ -4214,13 +4180,6 @@ loadSTAGE1_1bit_to_4bit (int dist, int metric, int fsect, UINT* pcube_list)
 		exit (1);
 	}
 
-#ifdef USE_TITLE_BAR
-	if (true) {
-		char str[64];
-		sprintf (&str[0], "title reading stage1 1bit file %u", dist);
-		system (&str[0]);
-	}
-#endif
 	if (fsect == 1) {
 		int result = fseek (f, N_BUFFERS_SECT*N_BUFFER_SIZE + N_ELTS_LAST_BUFFER_SECT1/8, SEEK_SET);
 		if (result != 0) {
@@ -4277,13 +4236,6 @@ writeSTAGE1_4bit (FILE* f, int fsect, UINT* pcube_list)
 	const UINT NBYTES_LAST_BUFFER_SECT1 = NBYTES_SECT1 - N_BUFFER_SIZE*N_BUFFERS;
 	const UINT NBYTES_LAST_BUFFER_SECT2 = NBYTES_SECT2 - N_BUFFER_SIZE*N_BUFFERS;
 
-#ifdef USE_TITLE_BAR
-	if (true) {
-		char str[64];
-		sprintf (&str[0], "title writing stage1 4bit file %d", fsect);
-		system (&str[0]);
-	}
-#endif
 	for (i = 0; i <= N_BUFFERS; ++i) {	// Use "<=" because we have extra partial buffer
 		int nwrite = static_cast<int>(N_BUFFER_SIZE);
 		if (i == N_BUFFERS) {
@@ -4384,18 +4336,12 @@ get_mod_distanceSTAGE2 (const CubeStage2& cube1, int metric)
 	CubeStage2 repcube;
 	char fname[64];
 	const int stg2_fdist[7] = { 16, 18, 15, 0, 0, 0, 11 };		//old twist result, max dist was 19
-	const int stg2_fdist_old[7] = { 18, 18, 15, 0, 0, 11 }; 
 	cube1.get_representative (&repcube, NULL);
 	UINT edge = stage2_edge_to_edgesym[repcube.m_edge]/N_SYM_STAGE2;
 	UINT center = repcube.m_centerFB;
 	double idx;
-	if (use_old_stage2 && metric == 0) {
-		idx = static_cast<double>(N_STAGE2_CENTER_CONFIGS) * static_cast<double>(edge) +
-			static_cast<double>(center);
-	} else {
-		idx = static_cast<double>(N_STAGE2_CENTER_CONFIGS + 6) * static_cast<double>(edge) +
-			static_cast<double>(center);
-	}
+	idx = static_cast<double>(N_STAGE2_CENTER_CONFIGS + 6) * static_cast<double>(edge) +
+		static_cast<double>(center);
 	FILE* f = NULL;
 	FILE* fx = NULL;
 	int fdist = stg2_fdist[metric];
@@ -4517,36 +4463,11 @@ const UINT STG2_TW_MS_B = 12;
 #define	STG2T_LRXB	STG2_TW_MS_L,STG2_TW_MS_R,STG2_TW_MS_X,STG2_TW_MS_B
 #define	STG2T_LRXX	STG2_TW_MS_L,STG2_TW_MS_R,STG2_TW_MS_X,STG2_TW_MS_X
 
-UINT stage2_slice_moves_to_try_old [13] = {
-	0xFF99FFF,
-	0xFF99FF8, 0xFF99FC0, 0xFF991C0, 0xFF99000,
-	0xFF98FFF, 0xFF90FFF, 0x0000000, 0x0000000,
-	0xFE99FFF, 0xF099FFF, 0x1099FFF, 0x0099FFF
-};
-
 UINT stage2_slice_moves_to_try [13] = {
 	0xFFFFFFF,
 	0xFFFFFF8, 0xFFFFFC0, 0xFFFF1C0, 0xFFFF000,
 	0xFFFEFFF, 0xFFF0FFF, 0xFF10FFF, 0xFF00FFF,
 	0xFEFFFFF, 0xF0FFFFF, 0x10FFFFF, 0x00FFFFF
-};
-
-UINT stage2_stm_next_ms_old[13][N_STAGE2_SLICE_MOVES] = {
-	{	STG2S_U0x3,STG2S_U1x3,STG2S_U3x3,STG2S_U2x3,STG2S_L0,STG2S_L1x3_OLD,STG2S_F0,STG2S_F1x3,STG2S_F3,STG2S_F2x3 },
-	{	STG2S_Xx3,STG2S_U1x3,STG2S_U3x3,STG2S_U2x3,STG2S_L0,STG2S_L1x3_OLD,STG2S_F0,STG2S_F1x3,STG2S_F3,STG2S_F2x3 },
-	{	STG2S_Xx3,STG2S_Xx3,STG2S_U3x3,STG2S_U2x3,STG2S_L0,STG2S_L1x3_OLD,STG2S_F0,STG2S_F1x3,STG2S_F3,STG2S_F2x3 },
-	{	STG2S_Xx3,STG2S_Xx3,STG2S_U3x3,STG2S_Xx3,STG2S_L0,STG2S_L1x3_OLD,STG2S_F0,STG2S_F1x3,STG2S_F3,STG2S_F2x3 },
-	{	STG2S_Xx3,STG2S_Xx3,STG2S_Xx3,STG2S_Xx3,STG2S_L0,STG2S_L1x3_OLD,STG2S_F0,STG2S_F1x3,STG2S_F3,STG2S_F2x3 },
-	{	STG2S_U0x3,STG2S_U1x3,STG2S_U3x3,STG2S_U2x3,STG2S_X,STG2S_L1x3_OLD,STG2S_F0,STG2S_F1x3,STG2S_F3,STG2S_F2x3 },
-	{	STG2S_U0x3,STG2S_U1x3,STG2S_U3x3,STG2S_U2x3,STG2S_X,STG2S_Xx3,STG2S_X,STG2S_Xx3,STG2S_F0,STG2S_F1x3,STG2S_F3,STG2S_F2x3 },
-
-	{	STG2S_X,STG2S_Xx3,STG2S_Xx3,STG2S_Xx3,STG2S_Xx3 },
-	{	STG2S_X,STG2S_Xx3,STG2S_Xx3,STG2S_Xx3,STG2S_Xx3 },
-
-	{	STG2S_U0x3,STG2S_U1x3,STG2S_U3x3,STG2S_U2x3,STG2S_L0,STG2S_L1x3_OLD,STG2S_X,STG2S_F1x3,STG2S_F3,STG2S_F2x3 },
-	{	STG2S_U0x3,STG2S_U1x3,STG2S_U3x3,STG2S_U2x3,STG2S_L0,STG2S_L1x3_OLD,STG2S_X,STG2S_Xx3,STG2S_F3,STG2S_F2x3 },
-	{	STG2S_U0x3,STG2S_U1x3,STG2S_U3x3,STG2S_U2x3,STG2S_L0,STG2S_L1x3_OLD,STG2S_X,STG2S_Xx3,STG2S_F3,STG2S_Xx3 },
-	{	STG2S_U0x3,STG2S_U1x3,STG2S_U3x3,STG2S_U2x3,STG2S_L0,STG2S_L1x3_OLD,STG2S_X,STG2S_Xx3,STG2S_X,STG2S_Xx3 }
 };
 
 UINT stage2_stm_next_ms[13][N_STAGE2_SLICE_MOVES] = {
@@ -4804,13 +4725,9 @@ treesearchSTAGE2 (const CubeStage2& cube1, int depth, int moves_done, UINT move_
 				}
 			}
 		}
-		int xmetric = metric;
-		if (use_old_stage2) {
-			xmetric += 3;
-		}
-		for (mov_idx = 0; mov_idx < n_moves_metric_stg2[xmetric]; ++mov_idx) {
+		for (mov_idx = 0; mov_idx < n_moves_metric_stg2[metric]; ++mov_idx) {
 			bool did_move = false;
-			switch (xmetric) {
+			switch (metric) {
 			case 0:
 				if ((stage2_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
 					cube2 = cube1;
@@ -4838,14 +4755,6 @@ treesearchSTAGE2 (const CubeStage2& cube1, int depth, int moves_done, UINT move_
 						cube2.do_move (mc);		//!!! metric dependency
 					}
 					next_ms = stage2_btm_next_ms[move_state][mov_idx];
-					did_move = true;
-				}
-				break;
-			case 0 + 3:
-				if ((stage2_slice_moves_to_try_old[move_state] & (1 << mov_idx)) != 0) {
-					cube2 = cube1;
-					cube2.do_move (mov_idx);
-					next_ms = stage2_stm_next_ms_old[move_state][mov_idx];
 					did_move = true;
 				}
 				break;
@@ -5323,9 +5232,6 @@ open_distance_files (int metric)
 
 	int stg2_fmod[7] = { 4, 6, 4, 0, 0, 0, 4 };
 	int stg3_fmod[7] = { 0, 15, 0, 0, 0, 0, 0 };
-	if (metric == 0 && use_old_stage2) {
-		fdist_stg2 = 18;
-	}
 	if (metric == 1) {
 		fdist_stg1 = 11;
 		fdist_stg2 = 18;
@@ -6459,13 +6365,6 @@ init_stage4_edge_tables ()
 	cs1.init ();
 	cs2.init ();
 	for (u = 0; u < 40320; ++u) {
-#ifdef USE_TITLE_BAR
-		if (u % 1000 == 0) {
-			char str[64];
-			sprintf (&str[0], "title hB hgB %u", u);
-			system (&str[0]);
-		}
-#endif
 		cs2.init ();
 		lrfb_to_cube_state (40320*u, &cs2);
 		UINT rep = 999;
@@ -6495,13 +6394,6 @@ init_stage4_edge_tables ()
 	}
 	cs1.init ();
 	for (u = 0; u < 40320; ++u) {
-#ifdef USE_TITLE_BAR
-		if (u % 1000 == 0) {
-			char str[64];
-			sprintf (&str[0], "title hA hgA %u", u);
-			system (&str[0]);
-		}
-#endif
 		cs2.init ();
 		lrfb_to_cube_state (u, &cs2);
 		UINT Blr, Bfb;
@@ -6542,45 +6434,12 @@ lrfb_check ()
 	cs2.init ();
 
 	stage4_edge_table_init ();
-	if (false) {
-		Face t4[16];
-		UINT Alr, Blr, Afb, Bfb;
-		Alr = 0; Blr = 0; Afb = 0; Bfb = 0;
-		perm_n_unpack (4, Alr, &t4[0]);
-		perm_n_unpack (4, Afb, &t4[12]);
-		perm_n_unpack (4, Blr, &t4[4]);
-		perm_n_unpack (4, Bfb, &t4[8]);
-		for (i = 0; i < 16; ++i) {
-			cs1.m_edge[i] = t4[i] + (4*(i/4));
-		}
-		UINT u = cube_state_to_lrfb (cs1);
-		printf ("first: %10u\n", u);
-		Afb = 19;
-		perm_n_unpack (4, Alr, &t4[0]);
-		perm_n_unpack (4, Afb, &t4[12]);
-		perm_n_unpack (4, Blr, &t4[4]);
-		perm_n_unpack (4, Bfb, &t4[8]);
-		for (i = 0; i < 16; ++i) {
-			cs1.m_edge[i] = t4[i] + (4*(i/4));
-		}
-		u = cube_state_to_lrfb (cs1);
-		printf ("  2nd: %10u\n", u);
-		u = 27326*40320 + 13837;
-		printf ("rep for lr 15,4 fb 14,9 is %u\n", lrfb_get_edge_rep (u));
-	}
 	UINT count = 0;
 	UINT repcount = 0;
 	UINT repcount2 = 0;
 	const UINT n = 40320u*40320u;
 	for (u1 = 0; u1 < n; ++u1) {
 		if (u1 % 1000 == 0) {
-#ifdef USE_TITLE_BAR
-			if (u1 == 1000 || u1 == 10000 || u1 == 100000 || u1 == 1000000 || u1 % 10000000 == 0) {
-				char str[64];
-				sprintf (&str[0], "title lrcheck %u %u", u1, repcount);
-				system (&str[0]);
-			}
-#endif
 			if (repcount == 44100 && u1 < 200000000) {
 				u1 = 40320u*20160u;
 			}
@@ -8471,13 +8330,6 @@ CubePruningTable::analyze ()
 	for (dist = 1; dist <= max_dist && new_count > 0; ++dist) {
 		UINT old_count = m_count;
 		for (idx = 0; idx < m_num_positions; ++idx) {
-#ifdef USE_TITLE_BAR
-			if (idx % 200000 == 0) {
-				char str[64];
-				sprintf (&str[0], "title analyzePRUNE %u", idx);
-				system (&str[0]);
-			}
-#endif
 			//UINT idx2 = idx/2;
 			//UINT j = idx & 0x1;
 			int dx = get_dist_4bit (idx, m_ptable);
@@ -8690,11 +8542,7 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 		switch (metric) {
 		case 0:
 			pcpt_edgcen2 = new CubePruningTable (N_CENTER_COMBO4*N_STAGE2_EDGE_CONFIGS, &prune_table_edgcen2[0], (void*) do_move_EDGCENF_STAGE2_STM, 2, metric, 0x5);
-			if (use_old_stage2) {
-				n_moves = N_STAGE2_SLICE_MOVES_OLD;
-			} else {
-				n_moves = N_STAGE2_SLICE_MOVES;
-			}
+			n_moves = N_STAGE2_SLICE_MOVES;
 			pcpt_edgcen2->init_move_list (0, n_moves, NULL);
 			break;
 		case 1:
