@@ -488,33 +488,6 @@ struct CubeSymSqsCoord {
 	bool check () const;
 };
 
-struct CubeSuperSqsCoord {
-	UINT m_ep96x96x96;
-	UINT m_cen96x96x96;
-	UBYTE m_cp96;
-	UBYTE m_distance;
-	void init ();
-	bool compare (const CubeSuperSqsCoord& cube2) const;
-	int cmp (const CubeSuperSqsCoord& cube2) const;
-	void do_move (int sqs_move_code);
-	void do_whole_cube_move (int sqs_whole_cube_move);
-	bool is_representative () const;
-	void get_representative (CubeSuperSqsCoord* rep) const;
-	void print () const;
-};
-
-struct CubeSymSuperSqsCoord {
-	UINT m_ep_sym;	//96*epval+symval
-	UINT m_cen9x12x12;
-	UBYTE m_cp96;
-	UBYTE m_distance;
-	void init ();
-	bool compare (const CubeSymSuperSqsCoord& cube2) const;
-	void do_move (int sqs_move_code);
-	bool is_representative () const;
-	void get_representative (CubeSuperSqsCoord* rep) const;
-};
-
 struct CubeStage1 {
 	USHORT m_co;	//corner orientation
 	UINT m_edge_ud_combo8;
@@ -1815,8 +1788,6 @@ USHORT move_table_edgeSTAGE2[420][N_STAGE2_SLICE_MOVES];
 UINT e16bm2eloc[256*256];
 UINT eloc2e16bm[N_COMBO_16_8];
 
-USHORT perm_to_420[40320];
-
 unsigned char file_buffer[28000000];
 FILE* stg1_file = NULL;
 FILE* stg2_file = NULL;
@@ -1902,7 +1873,6 @@ UINT supersqs_move_centers (UINT pos96, int sqs_move_code, int cen_group);
 void squares_unpack_centers (UINT cen1, UINT cen2, UINT cen3, Face* arr);
 UINT squares_pack_centers (const Face* arr);
 int multiplicitySQS (const CubeSqsCoord& cube1);
-int multiplicitySCSQS (const CubeSuperSqsCoord& cube1);
 void print_allsymSQS (const CubeSqsCoord& cube1);
 void init_squares ();
 
@@ -1978,14 +1948,11 @@ void array8_to_set_b (const Face* t, CubeState* result_cube);
 void set_b_to_array8 (const CubeState& init_cube, Face* t);
 void lrfb_to_cube_state (UINT u, CubeState* result_cube);
 int set_a_find96 (UINT u, UINT idx);
-void set_a_check ();
 void lrnum_to_cs (UINT u, CubeState* result_cube);
 UINT cs_to_lrnum (const CubeState& init_cube);
 UINT lr_neighbor (UINT lrnum, int mc);
 int set_lr_find96 (UINT u, UINT idx);
-void set_lr_check ();
 bool lrfb_isrep9216_old (UINT u); //, Bitvec* bv);
-UINT lrfb_find9216 (UINT u, Bitvec* bv, UINT* mylist);
 UINT lrfb_get_edge_rep (UINT u);
 
 void init_stage4_edge_tables ();
@@ -2000,7 +1967,6 @@ UINT cor_find96 (UINT u, Bitvec* bv, UINT* mylist);
 void stage4_cor_check ();
 
 void init_edgemapSQS ();
-void check_rep (const CubeSymSqsCoord& cube1);
 void init_invsym ();
 void rotate_sliceEDGE (int move_code, const CubeState& init_cube, CubeState* result_cube);
 void rotate_sliceCORNER (int move_code, const CubeState& init_cube, CubeState* result_cube);
@@ -2023,13 +1989,6 @@ void reorient_cube_hSQS (const CubeState& init_cube, CubeState* result_cube);
 void reorient_cube_vSQS (const CubeState& init_cube, CubeState* result_cube);
 void mirror_cube_rlSQS (const CubeState& init_cube, CubeState* result_cube);
 void inverse_cubeSQS (const CubeState& init_cube, CubeState* result_cube);
-void pack_cubeSCSQS (const CubeState& cube1, CubeSuperSqsCoord* result_cube);
-void unpack_cubeSCSQS (const CubeSuperSqsCoord& cube1, CubeState* result_cube);
-void reorient_cubeSCSQS (const CubeSuperSqsCoord& init_cube, int sym, CubeSuperSqsCoord* result_cube);
-void reorient_cube_hSCSQS (const CubeState& init_cube, CubeState* result_cube);
-void reorient_cube_vSCSQS (const CubeState& init_cube, CubeState* result_cube);
-void mirror_cube_rlSCSQS (const CubeState& init_cube, CubeState* result_cube);
-void inverse_cubeSCSQS (const CubeState& init_cube, CubeState* result_cube);
 void reorient_cubeSTAGE1_slow (const CubeStage1& init_cube, int sym, CubeStage1* result_cube);
 
 void reorient_cubeSTAGE1 (const CubeStage1& init_cube, int sym, CubeStage1* result_cube);
@@ -2048,7 +2007,6 @@ void reorient_cube_vCUBE (const CubeState& init_cube, CubeState* result_cube);
 void mirror_cube_rlCUBE (const CubeState& init_cube, CubeState* result_cube);
 void scrambleCUBE (CubeState* pcube, int move_count, const int* move_arr);
 void scrambleSQS (CubeSqsCoord* pcube, int move_count, const int* move_arr);
-void scrambleSCSQS (CubeSuperSqsCoord* pcube, int move_count, const int* move_arr);
 UINT perm_n_pack (UINT n, const Face* array_in);
 void perm_n_unpack (UINT n, UINT idx, Face* array_out);
 UINT perm_n_pack2 (UINT n, UINT m, const Face* array_in);
@@ -2686,220 +2644,6 @@ CubeSqsCoord::get_representative (CubeSqsCoord* rep) const
 	*rep = repcube;
 }
 
-void
-CubeSuperSqsCoord::init ()
-{
-	m_ep96x96x96 = 0;
-	m_cp96 = 0;
-	m_cen96x96x96 = 0;
-	m_distance = 255;
-}
-
-bool
-CubeSuperSqsCoord::compare (const CubeSuperSqsCoord& cube2) const
-{
-	return m_ep96x96x96 == cube2.m_ep96x96x96 && m_cp96 == cube2.m_cp96 &&
-		m_cen96x96x96 == cube2.m_cen96x96x96;
-}
-
-int
-CubeSuperSqsCoord::cmp (const CubeSuperSqsCoord& cube2) const
-{
-	if (m_ep96x96x96 < cube2.m_ep96x96x96) {
-		return -1;
-	}
-	if (m_ep96x96x96 > cube2.m_ep96x96x96) {
-		return 1;
-	}
-	if (m_cp96 < cube2.m_cp96) {
-		return -1;
-	}
-	if (m_cp96 > cube2.m_cp96) {
-		return 1;
-	}
-	if (m_cen96x96x96 < cube2.m_cen96x96x96) {
-		return -1;
-	}
-	if (m_cen96x96x96 > cube2.m_cen96x96x96) {
-		return 1;
-	}
-	return 0;
-}
-
-void
-CubeSuperSqsCoord::do_move (int sqs_move_code)
-{
-	UINT cen = m_cen96x96x96;
-	UINT cp = m_cp96;
-	UINT ep = m_ep96x96x96;
-	UINT ep0 = ep%96;
-	UINT ep1 = (ep/96) % 96;
-	UINT ep2 = ep/(96*96);
-	m_ep96x96x96 = squares_move_edges (ep0, sqs_move_code, 0) +
-		96*squares_move_edges (ep1, sqs_move_code, 1) +
-		96*96*squares_move_edges (ep2, sqs_move_code, 2);
-	m_cp96 = squares_move_corners (cp, sqs_move_code);
-	UINT cen0 = cen % 96;
-	UINT cen1 = (cen/96) % 96;
-	UINT cen2 = cen/(96*96);
-	m_cen96x96x96 = supersqs_move_centers (cen0, sqs_move_code, 0) +
-		96*supersqs_move_centers (cen1, sqs_move_code, 1) +
-		96*96*supersqs_move_centers (cen2, sqs_move_code, 2);
-}
-
-void
-CubeSuperSqsCoord::do_whole_cube_move (int sqs_whole_cube_move)
-{
-	switch (sqs_whole_cube_move) {
-	case 1:
-		do_move (Uf2/3);
-		do_move (Us2/3);
-		do_move (Df2/3);
-		do_move (Ds2/3);
-		break;
-	case 2:
-		do_move (Ff2/3);
-		do_move (Fs2/3);
-		do_move (Bf2/3);
-		do_move (Bs2/3);
-		break;
-	case 3:
-		do_move (Lf2/3);
-		do_move (Ls2/3);
-		do_move (Rf2/3);
-		do_move (Rs2/3);
-		break;
-	default: //case 0
-		break;
-	}
-}
-
-void
-CubeSuperSqsCoord::get_representative (CubeSuperSqsCoord* rep) const
-{
-	//DO IT THE LONG WAY FOR NOW
-	UINT sym1;
-	CubeSuperSqsCoord cube2;
-	CubeSuperSqsCoord lowest = *this;
-	for (sym1 = 1; sym1 < N_SYMX; ++sym1) {
-		reorient_cubeSCSQS (*this, sym1, &cube2);
-		if (cube2.cmp (lowest) < 0) {
-			lowest = cube2;
-		}
-	}
-	*rep = lowest;
-	CubeSuperSqsCoord normcube, repcube;
-	UINT my_sym = sqs_ep96x96x96_to_sym[m_ep96x96x96];
-	UINT invsym = cube_sym_inv[my_sym % N_CUBESYM];
-	if (my_sym >= N_CUBESYM) {
-		reorient_cubeSCSQS (*this, N_CUBESYM, &repcube);	//invert the position first
-	} else {
-		repcube = *this;
-	}
-	UINT my_edge = sqs_ep96x96x96_to_edge[repcube.m_ep96x96x96];
-	repcube.m_ep96x96x96 = normcube.m_ep96x96x96 = sqs_edge_to_ep96x96x96[N_SYMX*my_edge];
-	repcube.m_cp96 = normcube.m_cp96 = sqs_sym_cp96_table[repcube.m_cp96][invsym];
-	repcube.m_cen96x96x96 = normcube.m_cen96x96x96 = scsqs_sym_cen_table[repcube.m_cen96x96x96][invsym];
-
-	if (! sqs_edge_stab[my_edge].is_equal (stab1)) {
-		const Stab& stab = sqs_edge_stab[my_edge];
-		cube2.m_ep96x96x96 = normcube.m_ep96x96x96;
-		for (sym1 = 1; sym1 < N_SYMX; ++sym1) {
-			if (stab.test_bit (sym1)) {
-				cube2.m_cp96 = sqs_sym_cp96_table[normcube.m_cp96][sym1];
-				cube2.m_cen96x96x96 = scsqs_sym_cen_table[normcube.m_cen96x96x96][sym1];
-				if (cube2.cmp (repcube) < 0) {
-					repcube = cube2;
-				}
-			}
-		}
-	}
-	*rep = repcube;
-#endif
-}
-
-void
-CubeSuperSqsCoord::print () const
-{
-	int j;
-	CubeState cs1;
-	cs1.init ();
-	if (true) {
-	UINT epLR = this->m_ep96x96x96 % 96;
-	UINT epx = this->m_ep96x96x96 / 96;
-	UINT first_perm = epLR / 4;
-	UINT second_perm = squares_2nd_perm[first_perm][epLR % 4];
-	perm_n_unpack (4, first_perm, &cs1.m_edge[0]);
-	perm_n_unpack (4, second_perm, &cs1.m_edge[4]);
-	for (j = 4; j < 8; ++j) {
-		cs1.m_edge[j] += 4;
-	}
-	UINT epFB = epx % 96;
-	UINT epUD = epx / 96;
-	first_perm = epFB / 4;
-	second_perm = squares_2nd_perm[first_perm][epFB % 4];
-	perm_n_unpack (4, first_perm, &cs1.m_edge[8]);
-	perm_n_unpack (4, second_perm, &cs1.m_edge[12]);
-	for (j = 8; j < 12; ++j) {
-		cs1.m_edge[j] += 8;
-	}
-	for (j = 12; j < 16; ++j) {
-		cs1.m_edge[j] += 12;
-	}
-	first_perm = epUD / 4;
-	second_perm = squares_2nd_perm[first_perm][epUD % 4];
-	perm_n_unpack (4, first_perm, &cs1.m_edge[16]);
-	perm_n_unpack (4, second_perm, &cs1.m_edge[20]);
-	for (j = 16; j < 20; ++j) {
-		cs1.m_edge[j] += 16;
-	}
-	for (j = 20; j < 24; ++j) {
-		cs1.m_edge[j] += 20;
-	}}
-	if (true) {
-	UINT cenUD = m_cen96x96x96 % 96;
-	UINT cenx = m_cen96x96x96 / 96;
-	UINT first_perm = cenUD / 4;
-	UINT second_perm = squares_2nd_perm[first_perm][cenUD % 4];
-	perm_n_unpack (4, first_perm, &cs1.m_cen[0]);
-	perm_n_unpack (4, second_perm, &cs1.m_cen[4]);
-	for (j = 4; j < 8; ++j) {
-		cs1.m_cen[j] += 4;
-	}
-	UINT cenLR = cenx % 96;
-	UINT cenFB = cenx / 96;
-	first_perm = cenLR / 4;
-	second_perm = squares_2nd_perm[first_perm][cenLR % 4];
-	perm_n_unpack (4, first_perm, &cs1.m_cen[8]);
-	perm_n_unpack (4, second_perm, &cs1.m_cen[12]);
-	for (j = 8; j < 12; ++j) {
-		cs1.m_cen[j] += 8;
-	}
-	for (j = 12; j < 16; ++j) {
-		cs1.m_cen[j] += 12;
-	}
-	first_perm = cenFB / 4;
-	second_perm = squares_2nd_perm[first_perm][cenFB % 4];
-	perm_n_unpack (4, first_perm, &cs1.m_cen[16]);
-	perm_n_unpack (4, second_perm, &cs1.m_cen[20]);
-	for (j = 16; j < 20; ++j) {
-		cs1.m_cen[j] += 16;
-	}
-	for (j = 20; j < 24; ++j) {
-		cs1.m_cen[j] += 20;
-	}}
-	if (true) {
-	UINT cp = m_cp96;
-	UINT first_perm = m_cp96 / 4;
-	UINT second_perm = squares_2nd_perm[first_perm][m_cp96 % 4];
-	perm_n_unpack (4, first_perm, &cs1.m_cor[0]);
-	perm_n_unpack (4, second_perm, &cs1.m_cor[4]);
-	for (j = 4; j < 8; ++j) {
-		cs1.m_cor[j] += 4;
-	}}
-	cs1.print_super ();
-}
-
 int
 multiplicitySQS (const CubeSqsCoord& cube1)
 {
@@ -2913,23 +2657,6 @@ multiplicitySQS (const CubeSqsCoord& cube1)
 			++count;
 		}
 	}
-	return N_SYMX / count;
-}
-
-int
-multiplicitySCSQS (const CubeSuperSqsCoord& cube1)
-{
-	CubeSuperSqsCoord cube2;
-	cube2.init ();
-	int sym1;
-	int count = 1;
-	for (sym1 = 1; sym1 < N_SYMX; ++sym1) {
-		reorient_cubeSCSQS (cube1, sym1, &cube2);
-		if (cube1.compare (cube2)) {
-			++count;
-		}
-	}
-	int xxx = N_SYMX / count;
 	return N_SYMX / count;
 }
 
@@ -6802,25 +6529,6 @@ set_a_find96 (UINT u, UINT idx)
 }
 
 void
-set_a_check ()
-{
-	UINT u;
-	UINT idx = 0;
-	for (u = 0; u < 40320; ++u) {
-		map8a[u] = 65000;
-	}
-	for (u = 0; u < 40320; ++u) {
-		if (map8a[u] == 65000) {
-			int x = set_a_find96 (u, idx++);
-			if (x != 96) {
-				printf ("u = %u: count is %d\n", u, x);
-			}
-		}
-	}
-	printf ("idx count is %u\n", idx);
-}
-
-void
 lrnum_to_cs (UINT u, CubeState* result_cube)
 {
 	int i, j;
@@ -6933,62 +6641,6 @@ set_lr_find96 (UINT u, UINT idx)
 	return list_count;
 }
 
-void
-set_lr_check ()
-{
-	UINT N = 1680*1680;
-	UINT u, u1, v;
-	UINT idx = 0;
-	for (u = 0; u < N; ++u) {
-		maplr[u] = 65000;
-	}
-	for (u = 0; u < N; ++u) {
-		if (maplr[u] == 65000) {
-			int x = set_lr_find96 (u, idx++);
-			if (x != 96) {
-				printf ("u = %u: count is %d\n", u, x);
-			}
-		}
-	}
-	printf ("idx count is %u\n", idx);
-	for (u = 0; u < N; ++u) {
-		maplr_U[u] = lr_neighbor (u, Uf);
-		maplr_U3[u] = lr_neighbor (u, Uf3);
-		maplr_D[u] = lr_neighbor (u, Uf);
-		maplr_D3[u] = lr_neighbor (u, Uf);
-	}
-	for (u = 0; u < N; ++u) {
-#ifdef USE_TITLE_BAR
-		if (u % 10 == 0) {
-			char str[64];
-			sprintf (&str[0], "title lrcheck %u", u);
-			system (&str[0]);
-		}
-#endif
-		for (u1 = 0; u1 < N; ++u1) {
-			if (maplr[u1] != maplr[u]) {
-				continue;
-			}
-			if (maplr_U[u1] == maplr_U[u] && maplr_U3[u1] == maplr_U3[u] &&
-					maplr_D[u1] == maplr_D[u] && maplr_D3[u1] == maplr_D3[u])
-			{
-				++countlr[u];
-			}
-		}
-	}
-	int minval = 9999999;
-	int maxval = 0;
-	for (u = 0; u < N; ++u) {
-		if (countlr[u] < minval) {
-			minval = countlr[u];
-		}
-		if (countlr[u] > maxval) {
-			maxval = countlr[u];
-		}
-	}
-	printf ("setlr check min count %u max count %u\n", minval, maxval);
-}
-
 UINT repval = 1700000000;
 UINT repval_Abm = 0;
 UINT repval_Alr6 = 0;
@@ -7095,125 +6747,6 @@ init_stage4_edge_tables ()
 			stage4_edge_hgA[u][h1] = repl;
 		}
 	}
-}
-
-void
-check_lrfb_elt (UINT u, bool is_rep)
-{
-	int i;
-	static UINT rep_counter = 0;
-	static int count0A0A = 0;
-	static int countlr0A0A = 0;
-	static int countlrA_0A = 0;
-	CubeState cs1;
-	Face t[8];
-	cs1.init ();
-	lrfb_to_cube_state (u, &cs1);
-	set_a_to_array8 (cs1, &t[0]);
-	UINT bm = 0;
-	for (i = 0; i < 8; ++i) {
-		if (t[i] < 4) {
-			bm |= (1 << i);
-		}
-	}
-	UINT Abm = bm;
-	UINT Alr = perm_n_pack (4, &t[0]);
-	UINT Afb = perm_n_pack (4, &t[4]);
-	UINT Alr6 = sqs_perm_to_rep[Alr];
-	UINT Alr1 = Alr/6;
-	UINT Afb6 = sqs_perm_to_rep[Afb];
-	UINT Afb1 = Afb/6;
-	set_b_to_array8 (cs1, &t[0]);
-	bm = 0;
-	for (i = 0; i < 8; ++i) {
-		if (t[i] < 4) {
-			bm |= (1 << i);
-		}
-	}
-	UINT Bbm = bm;
-	UINT Blr = perm_n_pack (4, &t[0]);
-	UINT Bfb = perm_n_pack (4, &t[4]);
-	UINT Blr6 = sqs_perm_to_rep[Blr];
-	UINT Blr1 = Blr/6;
-	UINT Bfb6 = sqs_perm_to_rep[Bfb];
-	UINT Bfb1 = Bfb/6;
-	if (is_rep) {
-		++rep_counter;
-		if (! (count0A0A == 16 || count0A0A == 256 || count0A0A == 0 || count0A0A == 576)) {
-			printf ("AA0a0a count not 0,16,256,or576 rep %u (%d)\n", rep_counter - 1u, count0A0A);
-		}
-		if (! (countlr0A0A == 0 || countlr0A0A == 16 || countlr0A0A == 64 ||
-			countlr0A0A == 96 || countlr0A0A == 192 || countlr0A0A == 256 ||
-			countlr0A0A == 384 || countlr0A0A == 576)) {
-			printf ("lr0a0a count not 0,16,64,96,192,256,384or576 rep %u (%d)\n", rep_counter - 1u, countlr0A0A);
-		}
-		if (! (countlrA_0A == 0 || countlrA_0A == 384 || countlrA_0A == 1536 || countlrA_0A == 2304)) {
-			printf ("lrA0a count not 384,1536 rep %u (%d)\n", rep_counter - 1u, countlrA_0A);
-		}
-		count0A0A = 0;
-		countlr0A0A = 0;
-
-		countlrA_0A = 0;
-		repval = u;
-		repval_Abm = Abm;
-		repval_Alr6 = Alr6;
-		repval_Alr1 = Alr1;
-		repval_Afb6 = Afb6;
-		repval_Afb1 = Afb1;
-		repval_Bbm = Bbm;
-		repval_Blr6 = Blr6;
-		repval_Blr1 = Blr1;
-		repval_Bfb6 = Bfb6;
-		repval_Bfb1 = Bfb1;
-		repval_lr_Agoesto = sqs_rep_revmap[Alr6][Blr6];
-		repval_fb_Agoesto = sqs_rep_revmap[Afb6][Bfb6];
-	} else {
-		if (Abm != repval_Abm) {
-			printf ("Abm mismatch %10u (%10u) %3u vs %3u\n", u, repval, Abm, repval_Abm);
-		}
-		if (Bbm != repval_Bbm) {
-			printf ("Bbm mismatch %10u (%10u) %3u vs %3u\n", u, repval, Bbm, repval_Bbm);
-		}
-	}
-	if (Alr == 0 && Afb == 0) {
-		++count0A0A;
-	}
-	if (Alr == 0 && Blr == 0) {
-		++countlr0A0A;
-	}
-	if (Alr == 0) {
-		++countlrA_0A;
-	}
-}
-
-UINT
-lrfb_find9216 (UINT u, Bitvec* bv, UINT* mylist)
-{
-	int mc, i, j, q;
-	int h;
-	CubeState cs1, cs2, cs3;
-	cs1.init ();
-	cs2.init ();
-	cs3.init ();
-	lrfb_to_cube_state (u, &cs2);
-	mylist[0] = u;
-	bv->setb (u);
-	for (h = 1; h < N_STAGE4_RAW_EDGE_SOLVED_CONFIGS; ++h) {
-		UINT u1 = stage4_solved_edge_configs[h];
-		lrfb_to_cube_state (u1, &cs1);
-		cs3 = cs1;
-		cs3.compose_edge (cs1, cs2);
-		UINT u3 = cube_state_to_lrfb (cs3);
-		if (! bv->tstb (u3)) {
-			mylist[h] = u3;
-			bv->setb (u3);
-		} else {
-			//This version should not reach same element more than once
-			printf ("lrfb_find9216 inconsistency!\n");
-			exit (1);
-		}
-	}
-	return N_STAGE4_RAW_EDGE_SOLVED_CONFIGS;	//9216
 }
 
 void
@@ -7779,25 +7312,6 @@ init_edgemapSQS ()
 	}
 	printf ("conversion test: good %10u  bad %10u\n", good_count, bad_count);
 #endif
-}
-
-void
-check_rep (const CubeSymSqsCoord& cube1)
-{
-	int sym1;
-	CubeSqsCoord rep, cube2, rep2;
-	rep.m_ep96x96x96 = sqs_edge_to_ep96x96x96[cube1.m_ep_sym];
-	rep.m_cp96 = cube1.m_cp96;
-	rep.m_cen12x12x12 = cube1.m_cen12x12x12;
-	rep.m_distance = cube1.m_distance;
-	for (sym1 = 1; sym1 < N_SYMX; ++sym1) {
-		cube2.init ();
-		reorient_cubeSQS (rep, sym1, &cube2);
-		cube2.get_representative (&rep2);
-		if (! rep.compare (rep2)) {
-			printf ("Representative inconsistency\n");
-		}
-	}
 }
 
 void
@@ -8373,24 +7887,6 @@ reorient_cubeSQS (const CubeSqsCoord& init_cube, int sym, CubeSqsCoord* result_c
 		reorient_cube_hSQS (cube1, &cube2);
 		reorient_cube_vSQS (cube2, &cube1);
 	}
-	//++ check code: remove for better performance
-	switch (sym3) {
-	case 0:
-		squares_unpack_centers (cen1, cen2, cen3, &t[0]);
-		break;
-	case 1:
-		squares_unpack_centers (cen2, cen3, cen1, &t[0]);
-		break;
-	case 2:
-		squares_unpack_centers (cen3, cen1, cen2, &t[0]);
-		break;
-	}
-	for (i = 0; i < 24; ++i) {
-		if (t[i] != cube1.m_cen[i]) {
-			printf ("cube centers mismatch!\n");
-		}
-	}
-	//-- end check code
 	if (sym2 != 0) {
 		reorient_cube_hSQS (cube1, &cube2);
 		reorient_cube_hSQS (cube2, &cube1);
@@ -8415,112 +7911,6 @@ reorient_cubeSQS (const CubeSqsCoord& init_cube, int sym, CubeSqsCoord* result_c
 		printf ("inconsistent CubeSqsCoord state.\n");
 		exit (1);
 	}
-}
-
-void
-pack_cubeSCSQS (const CubeState& cube1, CubeSuperSqsCoord* result_cube)
-{
-	int i;
-
-	result_cube->m_distance = cube1.m_distance;
-	UINT ep1 = perm_n_pack (4, &cube1.m_edge[0]);
-	UINT ep2 = perm_n_pack (4, &cube1.m_edge[8]);
-	UINT ep3 = perm_n_pack (4, &cube1.m_edge[16]);
-	result_cube->m_ep96x96x96 = 96*96*(4*ep3 + (cube1.m_edge[20] - 20)) + 96*(4*ep2 + (cube1.m_edge[12] - 12)) +
-		4*ep1 + (cube1.m_edge[4] - 4);
-	result_cube->m_cp96 = 4*perm_n_pack (4, &cube1.m_cor[0]) + (cube1.m_cor[4] - 4);
-	UINT cen1 = perm_n_pack (4, &cube1.m_cen[0]);
-	UINT cen2 = perm_n_pack (4, &cube1.m_cen[8]);
-	UINT cen3 = perm_n_pack (4, &cube1.m_cen[16]);
-	result_cube->m_cen96x96x96 = 96*96*(4*cen3 + (cube1.m_cen[20] - 20)) + 96*(4*cen2 + (cube1.m_cen[12] - 12)) +
-		4*cen1 + (cube1.m_cen[4] - 4);
-}
-
-void
-unpack_cubeSCSQS (const CubeSuperSqsCoord& cube1, CubeState* result_cube)
-{
-	int i;
-	Face t[24];
-
-	result_cube->m_distance = cube1.m_distance;
-	UINT ep1 = cube1.m_ep96x96x96 % 96;
-	UINT ep2 = (cube1.m_ep96x96x96/96) % 96;
-	UINT ep3 = cube1.m_ep96x96x96 / (96*96);
-	UINT rep = sqs_perm_to_rep[ep1/4];
-	perm_n_unpack (4, ep1/4, &t[0]);
-	perm_n_unpack (4, sqs_rep_to_perm[rep][ep1 % 4], &t[4]);
-	rep = sqs_perm_to_rep[ep2/4];
-	perm_n_unpack (4, ep2/4, &t[8]);
-	perm_n_unpack (4, sqs_rep_to_perm[rep][ep2 % 4], &t[12]);
-	rep = sqs_perm_to_rep[ep3/4];
-	perm_n_unpack (4, ep3/4, &t[16]);
-	perm_n_unpack (4, sqs_rep_to_perm[rep][ep3 % 4], &t[20]);
-	for (i = 0; i < 24; ++i) {
-		result_cube->m_edge[i] = 4*(i/4) + t[i];
-	}
-	rep = sqs_perm_to_rep[cube1.m_cp96/4];
-	perm_n_unpack (4, cube1.m_cp96/4, &t[0]);
-	perm_n_unpack (4, sqs_rep_to_perm[rep][cube1.m_cp96 % 4], &t[4]);
-	for (i = 0; i < 8; ++i) {
-		result_cube->m_cor[i] = 4*(i/4) + t[i];
-	}
-	UINT cen1 = cube1.m_cen96x96x96 % 96;
-	UINT cen2 = (cube1.m_cen96x96x96/96) % 96;
-	UINT cen3 = cube1.m_cen96x96x96/(96*96);
-	rep = sqs_perm_to_rep[cen1/4];
-	perm_n_unpack (4, cen1/4, &t[0]);
-	perm_n_unpack (4, sqs_rep_to_perm[rep][cen1 % 4], &t[4]);
-	rep = sqs_perm_to_rep[cen2/4];
-	perm_n_unpack (4, cen2/4, &t[8]);
-	perm_n_unpack (4, sqs_rep_to_perm[rep][cen2 % 4], &t[12]);
-	rep = sqs_perm_to_rep[cen3/4];
-	perm_n_unpack (4, cen3/4, &t[16]);
-	perm_n_unpack (4, sqs_rep_to_perm[rep][cen3 % 4], &t[20]);
-	for (i = 0; i < 24; ++i) {
-		result_cube->m_cen[i] = 4*(i/4) + t[i];
-	}
-}
-
-void
-reorient_cubeSCSQS (const CubeSuperSqsCoord& init_cube, int sym, CubeSuperSqsCoord* result_cube)
-{
-	//sym is a symmetry/antisymmetry code (0..95) for the 48 symmetries of the cube, and inverses.
-	UINT u;
-	int i;
-	Face t[24];
-	CubeState cube1;
-	cube1.init_super ();
-	unpack_cubeSCSQS (init_cube, &cube1);
-	CubeState cube2;
-	UINT sym1 = (sym/2) % 4;
-	UINT sym2 = (sym/8) % 2;
-	UINT sym3 = (sym/16) % 3;
-	bool inverse = (sym >= N_CUBESYM);
-	for (u = 0; u < sym3; ++u) {
-		reorient_cube_hSCSQS (cube1, &cube2);
-		reorient_cube_hSCSQS (cube2, &cube1);
-		reorient_cube_hSCSQS (cube1, &cube2);
-		reorient_cube_vSCSQS (cube2, &cube1);
-	}
-	if (sym2 != 0) {
-		reorient_cube_hSCSQS (cube1, &cube2);
-		reorient_cube_hSCSQS (cube2, &cube1);
-		reorient_cube_vSCSQS (cube1, &cube2);
-		reorient_cube_vSCSQS (cube2, &cube1);
-	}
-	for (u = 0; u < sym1; ++u) {
-		reorient_cube_hSCSQS (cube1, &cube2);
-		cube1 = cube2;
-	}
-	if ((sym & 0x1) == 0x1) {
-		mirror_cube_rlSCSQS (cube1, &cube2);
-		cube1 = cube2;
-	}
-	if (inverse) {
-		inverse_cubeSCSQS (cube1, &cube2);
-		cube1 = cube2;
-	}
-	pack_cubeSCSQS (cube1, result_cube);
 }
 
 void
@@ -9043,16 +8433,6 @@ scrambleSQS (CubeSqsCoord* pcube, int move_count, const int* move_arr)
 		pcube->do_move (move_arr[i]/3);
 	}
 }
-
-void
-scrambleSCSQS (CubeSuperSqsCoord* pcube, int move_count, const int* move_arr)
-{
-	int i;
-	for (i = 0; i < move_count; ++i) {
-		pcube->do_move (move_arr[i]/3);
-	}
-}
-
 
 UINT
 perm_n_pack (UINT n, const Face* array_in)
