@@ -20,8 +20,6 @@ void SignalHandler(int signal)
 
 // Program options (compile-time)
 //#define USE_TITLE_BAR
-//#define OUTPUT_DIAGNOSTICS
-//#define USE_CUBE_LIST_TABLE
 #define USE_SYMMETRY
 #define PRUNING_TABLES
 
@@ -278,62 +276,6 @@ Stab::to_string () const
 }
 
 Stab stab1;
-
-class Bitvec {
-	UINT* m_p;
-	UINT m_n;
-	Bitvec ();	//no default ctor
-public:
-	Bitvec (UINT N) {
-		UINT i;
-		UINT n = N/32u;
-		if ((N % 32u) != 0) ++n;
-		m_p = new UINT[n];
-		m_n = N;
-		for (i = 0; i < n; ++i) {
-			m_p[i] = 0;
-		}
-	}
-	virtual ~Bitvec () {
-		delete [] m_p;
-	}
-	void setb (UINT b) {
-		if (b < m_n) {
-			int i = b >> 5;
-			int j = b & 0x1F;
-			m_p[i] |= (1 << j);
-		}
-	}
-	void clrb (UINT b) {
-		if (b < m_n) {
-			int i = b >> 5;
-			int j = b & 0x1F;
-			m_p[i] &= ~(1 << j);
-		}
-	}
-	bool tstb (UINT b) {
-		if (b < m_n) {
-			int i = b >> 5;
-			int j = b & 0x1F;
-			return (m_p[i] & (1 << j)) != 0;
-		}
-		return false;
-	}
-	void mergewith (const Bitvec& bv2) {
-		UINT i;
-		UINT n = m_n;
-		if (bv2.m_n < n) {
-			n = bv2.m_n;
-		}
-		UINT n2 = n >> 5;
-		if ((n & 0x1F) != 0) {
-			++n2;
-		}
-		for (i = 0; i < n2; ++i) {
-			m_p[i] |= bv2.m_p[i];	//if bv2 bigger than "this" bv, could cause extraneous "1's" in last element.
-		}
-	}
-};
 
 UINT byte_clr_masks[4] = { 0xFFFFFF00, 0xFFFF00FF, 0xFF00FFFF, 0x00FFFFFF };
 UINT pow3tab[5] = { 1, 3, 9, 27, 81 };
@@ -1672,14 +1614,6 @@ UBYTE prune_table_edg2[N_STAGE2_EDGE_CONFIGS/2];
 UBYTE prune_table_edgcen2[N_CENTER_COMBO4*N_STAGE2_EDGE_CONFIGS/2];
 #endif
 
-#ifdef USE_CUBE_LIST_TABLE
-UINT cube_list[N_STAGE3_TABLE_SIZE];
-UINT cube_list_count = 0;
-UINT cube_list_new_count = 0;
-double cube_list_mult_count = 0.0;
-double cube_list_new_mult_count = 0.0;
-#endif
-
 bool parity_perm8_table[40320];
 
 #ifdef PRUNING_TABLES
@@ -1745,12 +1679,6 @@ CubePruningTableMgr::delete_cpts ()
 }
 #endif
 
-#ifdef USE_CUBE_LIST_TABLE
-UINT cube_list[N_SQS_TABLE_SIZE];
-UINT cube_list_count = 0;
-UINT cube_list_new_count = 0;
-#endif
-
 UINT cube_list[N_STAGE1_TABLE_SIZE];
 UINT cube_list_count = 0;
 UINT cube_list_new_count = 0;
@@ -1795,14 +1723,6 @@ FILE* stg5_file = NULL;
 bool use_old_stage2 = false;
 
 int cube_sym_inv[N_CUBESYM];
-
-#ifdef WHOLE_CUBE
-int evenodd[8] = { 0, 1, 0, 1, 1, 0, 1, 0 };	//"handedness" of corner positions
-UBYTE cornerperm_to_evenoddbm[N_CORNER_PERM];  //tells which positions contain the "odd" cubies
-
-USHORT esym_on_cornerori[N_CORNER_ORIENT][N_ESYM];
-USHORT luf_on_cornerori[N_CORNER_ORIENT][N_CORNER_BM];
-#endif
 
 UINT sqs_edge_to_ep96x96x96[N_SQS_EDGE_ANTISYM_COUNT*N_ANTISYM];	//N_SQS_EDGE_SYMCOUNT*N_CUBESYM is somewhat smaller
 USHORT sqs_ep96x96x96_to_edge[N_SQS_EDGE_PERM];
@@ -1913,14 +1833,7 @@ UINT sym_on_cen12x12x12 (UINT cen12x12x12, UINT sym);
 UINT sym_on_eperm (UINT ep, UINT sym);
 UINT sym_on_eperm_unpacked (const CubeState& cube1, UINT sym);
 UINT sym_on_cperm (UINT cp, UINT sym);
-#ifdef WHOLE_CUBE
-void csym_calc (UINT co, UINT esym, USHORT* p_co2);
-void esym_calc (UINT eo, UINT sym, USHORT* p_eo2);
-bool init_edgemap ();
-UINT compute_luf_on_cornerori_slow (UINT cornerori, UINT cornerperm);
-UINT compute_luf_on_cornerori (UINT cornerori, UINT cornerperm);
-UINT sym_on_cornerori (UINT sym, UINT co, UINT cp);
-#endif
+
 void init_4of8 ();
 void init_eloc ();
 
@@ -1950,7 +1863,6 @@ void lrnum_to_cs (UINT u, CubeState* result_cube);
 UINT cs_to_lrnum (const CubeState& init_cube);
 UINT lr_neighbor (UINT lrnum, int mc);
 int set_lr_find96 (UINT u, UINT idx);
-bool lrfb_isrep9216_old (UINT u); //, Bitvec* bv);
 UINT lrfb_get_edge_rep (UINT u);
 
 void init_stage4_edge_tables ();
@@ -1961,7 +1873,6 @@ void add_to_stage4_edge_table (UINT val, UINT idx);
 void stage4_solved_edges ();
 void init_stage4 ();
 void init_move_tablesSTAGE4 ();
-UINT cor_find96 (UINT u, Bitvec* bv, UINT* mylist);
 void stage4_cor_check ();
 
 void init_edgemapSQS ();
@@ -2066,10 +1977,6 @@ void read_cg_4bit_file_slow (int d, UINT cg);
 void write_cg_1bit_file (int dist, UINT src_cg, UINT rel_cg, UBYTE* ep_map);
 void write_cg_1bit_fileFTM (int dist, UINT src_cg, const UBYTE* ep_map);
 
-#ifdef USE_CUBE_LIST_TABLE
-void write_2bit_fileSQS (int dist, int metric, UINT* pcube_list);
-#endif
-
 void write_cg_4bit_file (int dist, UINT cg, UBYTE* ep_map);
 void write_cg_4bit_fileFTM (int dist, UINT cg, UBYTE* ep_map);
 void read_cg_4bit_fileLM (int d, UINT cg, int rel_cg);
@@ -2102,79 +2009,10 @@ UINT swapbits (UINT x, UINT b);
 int find_next_0bit (UINT bm, int b);
 int random (int n);
 
-#ifdef USE_CUBE_LIST_TABLE
-inline int
-get_cube_listPACK16 (UINT idx)
-{
-	int i = idx / 16;
-	int j = idx % 16;
-	return (cube_list[i] >> (2*j)) & 0x3;
-}
-
-inline int get_cube_listPACK10 (UINT idx)
-{
-	int i = idx / 10;
-	int j = idx % 10;
-	return (cube_list[i] >> (3*j)) & 0x7;
-}
-
-inline int get_cube_listPACK12 (UINT idx)
-{
-	int i = idx / 12;
-	int j = idx % 12;
-	int b = j / 3;
-	j %= 3;
-	UINT x = (cube_list[i] >> (8*b)) & 0xFF;
-	if (j == 0) {
-		return x % 5;
-	}
-	if (j == 1) {
-		return (x/5) % 5;
-	}
-	return x / 25;
-}
-
-void
-update_cube_listPACK16 (UINT n)
-{
-	UINT i;
-	const UINT N = (n + 15u)/16u;
-	for (i = 0; i < N; ++i) {
-		UINT x = cube_list[i];
-		UINT y1 = (x ^ (x >> 1)) & 0x55555555;
-		UINT y2 = (x & (x << 1)) & 0xAAAAAAAA;
-		cube_list[i] = y1 | y2;
-	}
-}
-
-void
-update_cube_listPACK10 (UINT n)
-{
-	//This mapping keeps compatibility with codes of 2-bit mapping.
-	// 000 (unknown) -> 000 (unknown)
-	// 001 (old)     -> 001 (old)
-	// 101 (2nd prev)-> 001 (old)
-	// 010 (previous)-> 101 (2nd prev)
-	// 011 (new)     -> 010 (previous)
-	UINT i;
-	const UINT N = (n + 9)/10;
-	for (i = 0; i < N; ++i) {
-		UINT x = cube_list[i];
-		UINT y1 = (x ^ (x >> 1)) & 0x09249249;
-		UINT y2 = (x & (x << 1)) & 0x12492492;
-		UINT y3 = ((x << 1) & ((~x) << 2)) & 0x24924924;
-		cube_list[i] = y1 | y2 | y3;
-	}
-}
-#endif
-
 int main (int argc, char* argv[])
 {
 	UINT i;
 	int Xlist[12] = { Uf2, Rs2, Bf2, Fs2, Ds2, Lf2, Us2, Rf2, Ff2, Ls2, Bs2, Df2 };
-#ifdef OUTPUT_DIAGNOSTICS
-	printtime ();
-#endif
 	srand( (unsigned)time( NULL ) );
 	strcpy (&datafiles_path[0], &default_datafile_path[0]);
 
@@ -2284,9 +2122,6 @@ int main (int argc, char* argv[])
 	cpt_mgr.init_pruning_tables (metric);
 #endif
 
-#ifdef OUTPUT_DIAGNOSTICS
-	printtime ();
-#endif
 	CubeStage1 solved, solved2;
 	solved.init ();
 	solved.m_distance = 0;
@@ -2303,9 +2138,6 @@ int main (int argc, char* argv[])
 		return 0;
 	}
 
-#ifdef OUTPUT_DIAGNOSTICS
-	printtime ();
-#endif
 	return 0;
 }
 
@@ -2419,9 +2251,6 @@ do_random_cubes (int metric, int count)
 		}
 	}
 	printf ("Successful solves: %d\n", success_count);
-#ifdef OUTPUT_DIAGNOSTICS
-	printtime ();
-#endif
 }
 
 UINT
@@ -4002,11 +3831,6 @@ get_mod_distanceSQS (const CubeSqsCoord& cube1, int metric)
 
 	UINT idx_edge = N_SQS_CORNER_PERM*N_SQS_CENTER_PERM*my_edge;
 	UINT idx = idx_edge + N_SQS_CENTER_PERM*normcube.m_cp96 + normcube.m_cen12x12x12;
-#ifdef USE_CUBE_LIST_TABLE
-	TableIndex ti;
-	ti.init (idx);
-	return ti.get_value (&cube_list[0]);
-#else
 	int x;
 	char fname[64];
 	FILE* stg5_file = NULL;	//!!!
@@ -4046,7 +3870,6 @@ get_mod_distanceSQS (const CubeSqsCoord& cube1, int metric)
 		fclose (f);
 	}
 	return (x >> (2*idxj)) & 0x3;
-#endif
 }
 
 int
@@ -5630,18 +5453,12 @@ init_4of8 ()
 			}
 		}
 	}
-#ifdef OUTPUT_DIAGNOSTICS
-	printf ("4of8 count = %d\n", count);
-#endif
 	count = 0;
 	for (i = 0; i < 256; ++i) {
 		if (bitcount[i & 0xF] == bitcount[(i >> 4) & 0xF]) {
 			wi4of8_bm_to_idx[i] = count++;
 		}
 	}
-#ifdef OUTPUT_DIAGNOSTICS
-	printf ("wi4of8 count = %u\n", count);
-#endif
 }
 
 void
@@ -5677,9 +5494,6 @@ init_eloc ()
 	  }
 	 }
 	}
-#ifdef OUTPUT_DIAGNOSTICS
-	printf ("Eloc count is %d\n", count);
-#endif
 	for (a1 = 0; a1 < 24; ++a1) {
 		perm_n_unpack (4, a1, &t[0]);
 		for (i = 0; i < 4; ++i) {
@@ -6045,33 +5859,6 @@ init_stage2 ()
 			}
 		}
 	}
-#ifdef OUTPUT_DIAGNOSTICS
-	printf ("edge group count = %d\n", count);
-#endif
-#ifdef USE_CUBE_LIST_TABLE
-	s1.init ();
-	for (u = 0; u < N_STAGE2_EDGE_SYMCONFIGS; ++u) {
-		Stab sym_bm;
-		sym_bm.set_bit (0);
-		int sym_count = 1;
-
-		s1.m_edge = stage2_edgesym_to_edge[N_SYM_STAGE2*u];
-		for (sym = 1; sym < N_SYM_STAGE2; ++sym) {
-			UINT cp2, ep2;
-			reorient_cubeSTAGE2_slow (s1, sym, &s2);
-			if (s2.m_edge < s1.m_edge) {
-				printf ("stage 2 edgemap gen error!\n");
-				exit (1);
-			}
-			if (s2.m_edge == s1.m_edge) {
-				sym_bm.set_bit (sym);
-				++sym_count;
-			}
-		}
-		stage2e_stab[u] = sym_bm;
-		stage2e_mult[u] = N_SYM_STAGE2 / sym_count;
-	}
-#endif
 	cs2a.init();
 	cs2b.init ();
 	for (u = 0; u < N_CENTER_COMBO4; ++u) {
@@ -6219,10 +6006,6 @@ init_stage3 ()
 	  }
 	 }
 	}
-#ifdef OUTPUT_DIAGNOSTICS
-	printf ("Eloc16 count is %d\n", count);
-#endif
-
 	s1.init ();
 	s2.init ();
 	for (u1 = 0; u1 < N_STAGE3_EDGE_CONFIGS; ++u1) {
@@ -6274,9 +6057,6 @@ init_stage3 ()
 			}
 		}
 	}
-#ifdef OUTPUT_DIAGNOSTICS
-	printf ("edge group count = %d\n", count);
-#endif
 }
 
 void
@@ -6655,7 +6435,7 @@ UINT repval_fb_Agoesto = 0;
 
 
 UINT
-lrfb_get_edge_rep (UINT u) //, Bitvec* bv)
+lrfb_get_edge_rep (UINT u)
 {
 	int mc, i, j, q;
 	UINT h, h1, h2;
@@ -6818,9 +6598,6 @@ lrfb_check ()
 			add_to_stage4_edge_table (myrep, repcount++);
 		}
 	}
-#ifdef OUTPUT_DIAGNOSTICS
-	printf ("lrfb check representative count is %u\n", repcount);
-#endif
 }
 
 void
@@ -6911,9 +6688,6 @@ stage4_solved_edges ()
 			}
 		}
 	}
-#ifdef OUTPUT_DIAGNOSTICS
-	printf ("solved edge configurations: %u\n", count);
-#endif
 }
 
 void
@@ -7013,9 +6787,6 @@ init_stage4 ()
 			}
 		}
 	}
-#ifdef OUTPUT_DIAGNOSTICS
-	printf ("edge group count = %d\n", count);
-#endif
 }
 
 void
@@ -7068,60 +6839,6 @@ init_move_tablesSTAGE4 ()
 	}
 }
 
-UINT
-cor_find96 (UINT u, Bitvec* bv, UINT* mylist)
-{
-	int mc, i, j, q;
-	int h;
-	CubeState cs1, cs2, cs3;
-	cs1.init ();
-	cs2.init ();
-	cs3.init ();
-	perm_n_unpack (8, u, &cs2.m_cor[0]);
-	mylist[0] = u;
-	bv->setb (u);
-	UINT x = perm_to_420[u];
-	UINT samerepcount = 1;
-	for (h = 1; h < 96; ++h) {
-		UINT u1 = stage4_solved_corner_configs[h];
-		perm_n_unpack (8, u1, &cs1.m_cor[0]);
-		cs3 = cs1;
-		cs3.compose_corner (cs1, cs2);
-		UINT u3 = perm_n_pack (8, &cs3.m_cor[0]);
-		if (u3 < u) {		//comment out if you won't require this function to be called with the representative value.
-			printf ("%u not representative (%u is less)\n", u, u3);
-			return 0;
-		}
-		bool found = false;
-		for (j = 0; j < h && !found; ++j) {
-			if (u3 == mylist[j]) {
-				found = true;
-			}
-		}
-		if (found) {
-			printf ("duplicate element in mylist\n");
-		}
-		if (! bv->tstb (u3)) {
-			mylist[h] = u3;
-			bv->setb (u3);
-			UINT x3 = perm_to_420[u3];
-			if (x3 != x) {
-				printf ("different representative: %u->%u %u->%u\n", u, x, u3, x3);
-			} else {
-				++samerepcount;
-			}
-		} else {
-			//This version should not reach same element more than once
-			printf ("cor_find96 inconsistency!\n");
-			exit (1);
-		}
-	}
-	if (samerepcount != 96) {
-		printf ("%u same reps count %u\n", u, samerepcount);
-	}
-	return 96;
-}
-
 void
 stage4_cor_check ()
 {
@@ -7135,9 +6852,6 @@ stage4_cor_check ()
 	cs1.init ();
 	cs2.init ();
 
-#ifdef OUTPUT_DIAGNOSTICS
-	printf ("stage4 corner check\n");
-#endif
 	int solved_count = 0;
 	for (u1 = 0; u1 < 24; ++u1) {
 		for (u2 = 0; u2 < 24; ++u2) {
@@ -7152,41 +6866,6 @@ stage4_cor_check ()
 			stage4_solved_corner_configs[solved_count++] = perm_n_pack (8, &t1[0]);
 		}
 	}
-#ifdef OUTPUT_DIAGNOSTICS
-	printf ("solved corner count %d\n", solved_count);
-	Bitvec cor_bm (40320u);
-	UINT count = 0;
-	UINT repcount = 0;
-	UINT ycount = 0;
-	const UINT n = 40320u;
-	for (u1 = 0; u1 < n; ++u1) {
-#ifdef USE_TITLE_BAR
-		if (u1 % 1000 == 0) {
-			char str[64];
-			sprintf (&str[0], "title lrcheck %u %u", u1, repcount);
-			system (&str[0]);
-		}
-#endif
-		if (! cor_bm.tstb (u1)) {
-			count += cor_find96 (u1, &cor_bm, &mylist[0]);
-			++repcount;
-			UINT x = perm_to_420[u1];
-			UINT xcount = 0;
-			for (c1 = 0; c1 < u1; ++c1) {
-				if (perm_to_420[c1] == x) {
-					++xcount;
-					printf ("%u not a rep (%u)\n", u1, c1);
-				}
-			}
-			if (xcount == 0) {
-				++ycount;
-			}
-		}
-	}
-	printf ("lrfb check count is %u\n", count);
-	printf ("lrfb check representative count is %u\n", repcount);
-	printf ("'ycount' is %u\n", ycount);
-#endif
 }
 
 void
@@ -7229,9 +6908,6 @@ init_edgemapSQS ()
 			}
 		}
 	}
-#ifdef OUTPUT_DIAGNOSTICS
-	printf ("edge group count = %d\n", count);
-#endif
 	for (u = 0; u < N_SYMCOUNT; ++u) {
 		UINT sym;
 		Stab sym_bm;
@@ -7256,60 +6932,6 @@ init_edgemapSQS ()
 		sqs_edge_stab[u] = sym_bm;
 		sqs_edge_mult[u] = N_SYMX / sym_count;
 	}
-#ifdef WHOLE_CUBE
-	UINT cori;
-	int i;
-	Face t[8];
-	for (u = 0; u < N_CORNER_PERM; ++u) {
-		if (u == 8064) {
-			int xswer = 1234;
-		}
-		perm_n_unpack (8, u, &t[0]);	//t[] contains "what's at" info
-		UINT bm = 0;
-		for (i = 0; i < 8; ++i) {
-			if (evenodd[t[i]] != 0) {	//perhaps we should unroll this loop... (but still need to loop to init t2[]
-				bm |= (1 << i);
-			}
-		}
-		cornerperm_to_evenoddbm[u] = bm;	//tells which positions contain the "odd" cubies
-	}
-	for (u = 0; u < 256; ++u) {
-		for (cori = 0; cori < N_CORNER_ORIENT; ++cori) {
-			luf_on_cornerori[cori][u] = 9999;
-		}
-	}
-	for (u = 0; u < N_CORNER_PERM; ++u) {
-		UINT bm = cornerperm_to_evenoddbm[u];
-		for (cori = 0; cori < N_CORNER_ORIENT; ++cori) {
-			if (luf_on_cornerori[cori][bm] == 9999) {
-				luf_on_cornerori[cori][bm] = compute_luf_on_cornerori_slow (cori, u);
-			}
-		}
-	}
-	for (u = 0; u < N_CORNER_ORIENT; ++u) {
-		esym_on_cornerori[u][0] = u;
-	}
-	for (cori = 0; cori < N_CORNER_ORIENT; ++cori) {
-		for (sym = 1; sym < N_ESYM; ++sym) {
-			csym_calc (cori, sym, &esym_on_cornerori[cori][sym]);
-		}
-	}
-#endif
-#ifdef OUTPUT_DIAGNOSTICS
-	UINT u1, u2;
-	UINT good_count = 0;
-	UINT bad_count = 0;
-	for (u = 0; u < N_SQS_EDGE_PERM; ++u) {
-		UINT epsym = N_SYMX * sqs_ep96x96x96_to_edge[u] + sqs_ep96x96x96_to_sym[u];
-		UINT ep2 = sqs_edge_to_ep96x96x96[epsym];
-		if (ep2 == u) {
-			++good_count;
-		} else {
-			++bad_count;
-		}
-	}
-	printf ("conversion test: good %10u  bad %10u\n", good_count, bad_count);
-#endif
 }
 
 void
@@ -8846,9 +8468,6 @@ CubePruningTable::analyze ()
 		add_to_table (m_psolved[i], 0);
 	}
 	UINT new_count = m_count;
-#ifdef OUTPUT_DIAGNOSTICS
-	printf ("dist %2d: pos %8d total %8d\n", 0, new_count, m_count);
-#endif
 	for (dist = 1; dist <= max_dist && new_count > 0; ++dist) {
 		UINT old_count = m_count;
 		for (idx = 0; idx < m_num_positions; ++idx) {
@@ -8870,9 +8489,6 @@ CubePruningTable::analyze ()
 			}
 		}
 		new_count = m_count - old_count;
-#ifdef OUTPUT_DIAGNOSTICS
-		printf ("dist %2d: pos %8d total %8u\n", dist, new_count, m_count);
-#endif
 		//special case: distance 1 could have 0 positions when there are "moves" that count as 2 moves.
 		if (new_count == 0 && m_num_moves2 > 0 && dist == 1) {
 			new_count = 1;	//fake new count to prevent exiting loop prematurely.
@@ -9659,55 +9275,6 @@ splitup_fileSTAGE4 ()
 	}
 	fclose (f1);
 }
-
-#ifdef USE_CUBE_LIST_TABLE
-void
-write_2bit_fileSQS (int dist, int metric, UINT* pcube_list)
-{
-	UINT i;
-	UINT j, k;
-	const int N_FILE_SIZE = N_SQS/4;
-	const int N_BUFFER_SIZE = N_SQS_CORNER_PERM*N_SQS_CENTER_PERM/4;
-	const int N_BUFFERS = N_FILE_SIZE/N_BUFFER_SIZE;
-	char fname[64];
-	TableIndex ti;
-	sprintf (&fname[0], "H:\\Revenge\\squares_%s_distm4_%02d.rbk", metric_names[metric], dist);
-	FILE* f = NULL;
-
-	f = fopen (&fname[0], "wb");
-	if (f == NULL) {
-		printf ("could not create '%s'\n", &fname[0]);
-		exit (1);
-	}
-
-#ifdef USE_TITLE_BAR
-	if (true) {
-		char str[48];
-		sprintf (&str[0], "title writing 2bit file %u", dist);
-		system (&str[0]);
-	}
-#endif
-	for (i = 0; i < N_BUFFERS; ++i) {
-		memset (&file_buffer[0], 0, N_BUFFER_SIZE);
-		for (j = 0; j < N_BUFFER_SIZE; ++j) {
-			UBYTE u = 0;
-			for (k = 0; k < 4; ++k) {
-				UINT idx = 4*N_BUFFER_SIZE*i + 4*j + k;
-				ti.init (idx);
-				int d = ti.get_value (&cube_list[0]);
-				d &= 0x3;	//to be safe, shouldn't affect value
-				u |= d << (2*k);
-			}
-			file_buffer[j] = u;
-		}
-		int n = fwrite (&file_buffer[0], 1, N_BUFFER_SIZE, f);
-		if (n != N_BUFFER_SIZE) {
-			printf ("file write error in '%s'.\n", &fname[0]);
-		}
-	}
-	fclose (f);
-}
-#endif
 
 void
 CubeState::init ()
