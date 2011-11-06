@@ -1305,24 +1305,6 @@ static int sqs_perm_to_rep[24] = {
 	5, 4, 3, 2, 1, 0
 };
 
-static int sqs_rep_map[6][6] = {
-	{ 0, 1, 2, 3, 4, 5 },
-	{ 1, 0, 4, 5, 2, 3 },
-	{ 2, 3, 0, 1, 5, 4 },
-	{ 3, 2, 5, 4, 0, 1 },
-	{ 4, 5, 1, 0, 3, 2 },
-	{ 5, 4, 3, 2, 1, 0 }
-};
-
-static int sqs_rep_revmap[6][6] = {
-	{ 0, 1, 2, 3, 4, 5 },
-	{ 1, 0, 4, 5, 2, 3 },
-	{ 2, 3, 0, 1, 5, 4 },
-	{ 4, 5, 1, 0, 3, 2 },
-	{ 3, 2, 5, 4, 0, 1 },
-	{ 5, 4, 3, 2, 1, 0 }
-};
-
 static int sqs_rep_to_perm[6][4] = {
 	{  0,  7, 16, 23 },
 	{  1,  6, 17, 22 },
@@ -1992,13 +1974,10 @@ int random (int n);
 int main (int argc, char* argv[])
 {
 	UINT i;
-	int Xlist[12] = { Uf2, Rs2, Bf2, Fs2, Ds2, Lf2, Us2, Rf2, Ff2, Ls2, Bs2, Df2 };
 	srand( (unsigned)time( NULL ) );
 	strcpy (&datafiles_path[0], &default_datafile_path[0]);
 
 	int start_dist = 0;
-	int start_cg = 0;
-	int start_cgg = 0;
 	bool do_random = false;
 	int random_count = 100;
 	static char cmd_cubestring[300];
@@ -2131,7 +2110,7 @@ callfunc (void* pfunc, UINT idx, int move_code)
 void
 do_random_cubes (int metric, int count)
 {
-	int i, i1, j;
+	int i, i1;
 	static int random_list[160];	//must be >= scramble_len
 	CubeState solveme;
 	CubeState solved;
@@ -2307,7 +2286,6 @@ squares_pack_centers (const Face* arr)
 void
 CubeSqsCoord::init ()
 {
-	int i;
 	m_cen12x12x12 = 0;
 	m_cp96 = 0;
 	m_ep96x96x96 = 0;
@@ -3457,7 +3435,6 @@ init_squares ()
 	};
 	UINT i, j, sym;
 	CubeState cube1, cube2;
-	Face t[8];
 	for (i = 0; i < 24; ++i) {
 		switch (sqs_perm_to_rep[i]) {
 		case 0:
@@ -3719,7 +3696,6 @@ int
 solveitSQS (const CubeSqsCoord& init_cube, int* move_list, int metric)
 {
 	int i;
-	int j, jx4;
 	CubeSqsCoord cube1 = init_cube;
 	CubeSqsCoord cube2, cube3;
 	cube2.init ();
@@ -4170,7 +4146,6 @@ loadSTAGE1_1bit_to_4bit (int dist, int metric, int fsect, UINT* pcube_list)
 	const UINT N_ELTS_LAST_BUFFER_SECT2 = N_STAGE1 - (8u*2u*N_BUFFER_SIZE*N_BUFFERS_SECT) - N_ELTS_LAST_BUFFER_SECT1;	//13058*8 - 11;
 
 	char fname[64];
-	TableIndex ti;
 	sprintf (&fname[0], "H:\\Revenge\\stage1_%s_new_%02d.rbk", metric_names[metric], dist);
 	FILE* f = NULL;
 
@@ -5033,11 +5008,8 @@ treesearchSTAGE4 (const CubeStage4& cube1, int depth, int moves_done, UINT move_
 int
 solveit4x4x4IDA (const CubeState& init_cube, int* move_list, int metric)
 {
-	int xmove_list[64];
-	int xcount = 0;
 
 	int i;
-	bool usexm = false;
 	CubeStage1 s1;
 	CubeStage2 s2;
 	CubeStage3 s3;
@@ -5370,7 +5342,6 @@ init_4of8 ()
 void
 init_eloc ()
 {
-	static UINT bitcount[16] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
 	const UINT POW2_24 = 4096*4096;
 	int a1, a2, a3, a4, a5, a6, a7, a8;
 	int i;
@@ -5426,7 +5397,6 @@ init_eloc ()
 	}
 //optimization in progress...
 	for (u = 0; u < 4096; ++u) {
-		UINT bc = bitcount[u & 0xF] + bitcount[(u >> 4) & 0xF] + bitcount[(u >> 8) & 0xF];
 		UINT u1;
 		for (u1 = 0; u1 < 70; ++u1) {
 			UINT u12 = u;
@@ -5496,7 +5466,6 @@ init_eloc ()
 void
 init_stage1 ()
 {
-	int i;
 	UINT u, sym1;
 	CubeStage1 cube1;
 	CubeStage1 cube2;
@@ -5601,20 +5570,14 @@ scrambleSTAGE2 (CubeStage2* pcube, int move_count, const int* move_arr)
 void
 init_cloc ()
 {
-	static UINT bitcount[16] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
-	const UINT POW2_24 = 4096*4096;
 	int a1, a2, a3, a4; //, a5, a6, a7, a8;
 	int count = 0;
 
 	count = 0;
 	for (a1 = 0; a1 < 24-3; ++a1) {
-	 UINT bm1 = 1 << a1;
 	 for (a2 = a1 + 1; a2 < 24-2; ++a2) {
-	  UINT bm2 = bm1 | (1 << a2);
 	  for (a3 = a2 + 1; a3 < 24-1; ++a3) {
-	   UINT bm3 = bm2 | (1 << a3);
 	   for (a4 = a3 + 1; a4 < 24; ++a4) {
-		UINT bm4 = bm3 | (1 << a4);
 		cloc_to_bm[count] = (1 << a1) | (1 << a2) | (1 << a3) | (1 << a4);
 		c4_to_cloc[24*24*24*a1 + 24*24*a2 + 24*a3 + a4] = count;
 		c4_to_cloc[24*24*24*a1 + 24*24*a2 + 24*a4 + a3] = count;
@@ -5692,7 +5655,6 @@ init_stage2 ()
 		}
 	}
 	CubeState cube2;
-	double goodcount = 0.0;
 	cube2.init ();
 	int mc, udlrf;
 	CubeState cube1;//, cube2;
@@ -5770,7 +5732,6 @@ init_stage2 ()
 	for (u = 0; u < N_CENTER_COMBO4; ++u) {
 		UINT bm = cloc_to_bm[u];
 		j = 0;
-		UINT bm2 = 0;
 		for (i = 0; i < 8 && j < 4; ++i) {
 			if ((bm & (1 << i)) == 0) {
 				t[j++] = i;
@@ -5881,7 +5842,6 @@ stage2_cen_move (UINT cen, int move_code)
 void
 init_stage3 ()
 {
-	static UINT bitcount[16] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
 	const UINT POW2_16 = 256*256;
 	int a1, a2, a3, a4, a5, a6, a7, a8;
 	int sym;
@@ -6013,9 +5973,6 @@ init_move_tablesSTAGE3 ()
 	s3.init ();
 	for (u = 0; u < N_STAGE3_CENTER_CONFIGS; ++u) {
 		s3.m_edge = 0;
-		if (u == 900830) {
-			int xyzabc = 789012;
-		}
 		for (mc = 0; mc < N_STAGE3_SLICE_MOVES; ++mc) {
 			s3.m_centerLR = u;
 			s3.do_move_slow (mc);
@@ -6171,7 +6128,7 @@ lrfb_to_cube_state (UINT u, CubeState* result_cube)
 int
 set_a_find96 (UINT u, UINT idx)
 {
-	int mc, i, q;
+	int mc, q;
 	Face t[8], t2[8];
 	CubeState cs1, cs2;
 	UINT mylist[600];
@@ -6250,10 +6207,9 @@ lrnum_to_cs (UINT u, CubeState* result_cube)
 UINT
 cs_to_lrnum (const CubeState& init_cube)
 {
-	int i, j;
+	int i;
 	Face t1[8];
 	Face t2[8];
-	Face x[24];
 	for (i = 0; i < 4; ++i) {
 		Face f = init_cube.m_edge[i];
 		if (f >= 12) {
@@ -6286,7 +6242,7 @@ lr_neighbor (UINT lrnum, int mc)
 int
 set_lr_find96 (UINT u, UINT idx)
 {
-	int mc, i, q;
+	int mc, q;
 	CubeState cs1, cs2;
 	UINT mylist[600];
 	int list_count = 0;
@@ -6343,8 +6299,6 @@ UINT repval_fb_Agoesto = 0;
 UINT
 lrfb_get_edge_rep (UINT u)
 {
-	int mc, i, j, q;
-	UINT h, h1, h2;
 	UINT rep = stage4_edge_hB[u/40320];	//65000*40320;
 	UINT reph = stage4_edge_hgB[u/40320];	//65000;
 	UINT Blr, Bfb;
@@ -6359,8 +6313,8 @@ lrfb_get_edge_rep (UINT u)
 void
 init_stage4_edge_tables ()
 {
-	int mc, i, j, q;
-	UINT u, h, h1, h2;
+	int i;
+	UINT u, h1, h2;
 	CubeState cs1, cs2, cs3;
 	cs1.init ();
 	cs2.init ();
@@ -6396,7 +6350,6 @@ init_stage4_edge_tables ()
 	for (u = 0; u < 40320; ++u) {
 		cs2.init ();
 		lrfb_to_cube_state (u, &cs2);
-		UINT Blr, Bfb;
 		for (h1 = 0; h1 < 36; ++h1) {
 			UINT repl = 65000;
 			UINT replr = h1 / 6;
@@ -6422,21 +6375,13 @@ init_stage4_edge_tables ()
 void
 lrfb_check ()
 {
-	UINT N = 1680*1680;
-	UINT c1, c2, u1, u2, v;
-	UINT idx = 0;
-	int i;
-	UINT mylist[N_STAGE4_RAW_EDGE_SOLVED_CONFIGS];
-	Face t1[8], t2[8];
-	Face tx[8];
+	UINT u1;
 	CubeState cs1, cs2;
 	cs1.init ();
 	cs2.init ();
 
 	stage4_edge_table_init ();
-	UINT count = 0;
 	UINT repcount = 0;
-	UINT repcount2 = 0;
 	const UINT n = 40320u*40320u;
 	for (u1 = 0; u1 < n; ++u1) {
 		if (u1 % 1000 == 0) {
@@ -6519,25 +6464,21 @@ stage4_solved_edges ()
 	for (u1 = 0; u1 < 24; ++u1) {	//Alr
 		perm_n_unpack (4, u1, &t[0]);
 		UINT Alr6 = sqs_perm_to_rep[u1];
-		UINT Alr1 = u1/6;
 		for (u2 = 0; u2 < 24; ++u2) {	//Afb
 			perm_n_unpack (4, u2, &t[12]);
 			UINT Afb6 = sqs_perm_to_rep[u2];
-			UINT Afb1 = u2/6;
 			for (u3 = 0; u3 < 24; ++u3) {	//Blr
 				perm_n_unpack (4, u3, &t[4]);
 				UINT Blr6 = sqs_perm_to_rep[u3];
 				if (Blr6 != Alr6) {
 					continue;
 				}
-				UINT Blr1 = u3/6;
 				for (u4 = 0; u4 < 24; ++u4) {	//Bfb
 					perm_n_unpack (4, u4, &t[8]);
 					UINT Bfb6 = sqs_perm_to_rep[u4];
 					if (Bfb6 != Afb6) {
 						continue;
 					}
-					UINT Bfb1 = u4/6;
 					for (i = 0; i < 16; ++i) {
 						cs1.m_edge[i] = t[i] + (4*(i/4));
 					}
@@ -6552,7 +6493,7 @@ stage4_solved_edges ()
 void
 init_stage4 ()
 {
-	int i, j;
+	int i;
 	UINT u, v, w, u2, sym1;
 	CubeStage4 s4a, s4b;
 	s4a.init ();
@@ -6701,12 +6642,9 @@ init_move_tablesSTAGE4 ()
 void
 stage4_cor_check ()
 {
-	UINT c1, c2, u1, u2, v;
-	UINT idx = 0;
+	UINT u1, u2;
 	int i;
-	UINT mylist[96];
-	Face t1[8], t2[8];
-	Face tx[8];
+	Face t1[8];
 	CubeState cs1, cs2;
 	cs1.init ();
 	cs2.init ();
@@ -6776,7 +6714,7 @@ init_edgemapSQS ()
 		UINT ep1 = sqs_edge_to_ep96x96x96[N_SYMX*u];
 		cube1.m_ep96x96x96 = ep1;
 		for (sym = 1; sym < N_SYMX; ++sym) {
-			UINT cp2, ep2;
+			UINT ep2;
 			reorient_cubeSQS (cube1, sym, &cube2);
 			ep2 = cube2.m_ep96x96x96;
 			if (ep2 < ep1) {
@@ -7038,7 +6976,6 @@ void
 convert_stage3_to_std_cube (const CubeStage3& init_cube, CubeState* result_cube)
 {
 	int i;
-	Face t6[4];
 	UINT cenbm = eloc2e16bm[init_cube.m_centerLR/70];
 	UINT cenbm4of8 = bm4of8[init_cube.m_centerLR % 70];
 	int ud = 0;
@@ -7160,6 +7097,7 @@ convert_std_cube_to_stage4_raw_edge (const CubeState& init_cube)
 			t1[i] = f;
 		}
 	}
+
 	for (i = 0; i < 8; ++i) {
 		f = init_cube.m_edge[i + 4];
 		if (f < 4 || f >= 12) {
@@ -7235,7 +7173,6 @@ convert_std_cube_to_stage4 (const CubeState& init_cube, CubeStage4* result_cube)
 	UINT u = perm_n_pack (8, &t6[0]);
 	result_cube->m_corner = perm_to_420[u];
 	UINT cenbm4of8 = 0;
-	int j = 0;
 	for (i = 0; i < 8; ++i) {
 		if (init_cube.m_cen[i] >= 2) {
 			printf ("error: cube state not a stage4 position\n");
@@ -7274,8 +7211,6 @@ convert_std_cube_to_squares (const CubeState& init_cube, CubeSqsCoord* result_cu
 void
 pack_cubeSQS (const CubeState& cube1, CubeSqsCoord* result_cube)
 {
-	int i;
-
 	result_cube->m_distance = cube1.m_distance;
 	UINT ep1 = perm_n_pack (4, &cube1.m_edge[0]);
 	UINT ep2 = perm_n_pack (4, &cube1.m_edge[8]);
@@ -7396,13 +7331,9 @@ void
 reorient_cubeSTAGE1_slow (const CubeStage1& init_cube, int sym, CubeStage1* result_cube)
 {
 	//sym is a symmetry code (0..15) for the 16 symmetries of the cube preserving the set of u- and d- layer edges
-	int i;
 	UINT u;
 	CubeState cube1;
 	CubeState cube2;
-	Face t[24];
-	UINT edge = init_cube.m_edge_ud_combo8;
-	UINT co = init_cube.m_co;
 	convert_stage1_to_std_cube (init_cube, &cube1);
 	UINT sym1 = (sym/2) % 4;
 	UINT sym2 = (sym/8) % 2;
@@ -7441,11 +7372,8 @@ void
 reorient_cubeSTAGE2_slow (const CubeStage2& init_cube, int sym, CubeStage2* result_cube)
 {
 	//sym is a symmetry code (0..7) for the 8 symmetries of the cube using 180-degree rotations and reflection
-	int i;
-	UINT u;
 	CubeState cube1;
 	CubeState cube2;
-	Face t[24];
 	convert_stage2_to_std_cube (init_cube, &cube1);
 	UINT sym1 = (sym/2) & 0x1;
 	UINT sym2 = (sym/4) & 0x1;
@@ -7547,11 +7475,8 @@ void
 reorient_cubeSTAGE3_slow (const CubeStage3& init_cube, int sym, CubeStage3* result_cube)
 {
 	//sym is a symmetry code (0..7) for the 8 symmetries of the cube using 180-degree rotations and reflection
-	int i;
-	UINT u;
 	CubeState cube1;
 	CubeState cube2;
-	Face t[24];
 	convert_stage3_to_std_cube (init_cube, &cube1);
 	UINT sym1 = (sym/2) & 0x1;
 	UINT sym2 = (sym/4) & 0x1;
@@ -7592,13 +7517,9 @@ reorient_cubeSTAGE4_slow (const CubeStage4& init_cube, int sym, CubeStage4* resu
 {
 	//sym is a symmetry code (0..15) for the 16 symmetries of the cube that keep
 	//the top/bottom faces facing up and down.
-	int i;
-	UINT u;
 	CubeState cube1;
 	CubeState cube2;
-	Face t[24];
 	convert_stage4_to_std_cube (init_cube, &cube1);
-	UINT sym0 = sym & 0x1;
 	UINT sym1 = (sym >> 1) & 0x3;
 	UINT sym2 = (sym >> 3) & 0x1;
 	if (sym >= 16) {
@@ -7646,7 +7567,6 @@ reorient_cube_hSQS (const CubeState& init_cube, CubeState* result_cube)
 	for (i = 0; i < 8; ++i) {
 		int pos = reorient_hCORSQS[i];
 		int sf = init_cube.m_cor[i];
-		int df = reorient_hCORSQS[sf];
 		result_cube->m_cor[pos] = reorient_hCORSQS[sf];
 	}
 	for (i = 0; i < 24; ++i) {
@@ -7668,7 +7588,6 @@ reorient_cube_vSQS (const CubeState& init_cube, CubeState* result_cube)
 	for (i = 0; i < 8; ++i) {
 		int pos = reorient_vCORSQS[i];
 		int sf = init_cube.m_cor[i];
-		int df = reorient_vCORSQS[sf];
 		result_cube->m_cor[pos] = reorient_vCORSQS[sf];
 	}
 	for (i = 0; i < 24; ++i) {
@@ -7741,7 +7660,6 @@ reorient_cube_hSCSQS (const CubeState& init_cube, CubeState* result_cube)
 	for (i = 0; i < 8; ++i) {
 		int pos = reorient_hCORSQS[i];
 		int sf = init_cube.m_cor[i];
-		int df = reorient_hCORSQS[sf];
 		result_cube->m_cor[pos] = reorient_hCORSQS[sf];
 	}
 	for (i = 0; i < 24; ++i) {
@@ -7763,7 +7681,6 @@ reorient_cube_vSCSQS (const CubeState& init_cube, CubeState* result_cube)
 	for (i = 0; i < 8; ++i) {
 		int pos = reorient_vCORSQS[i];
 		int sf = init_cube.m_cor[i];
-		int df = reorient_vCORSQS[sf];
 		result_cube->m_cor[pos] = reorient_vCORSQS[sf];
 	}
 	for (i = 0; i < 24; ++i) {
@@ -7980,7 +7897,6 @@ perm_n_unpack2 (UINT n, UINT m, UINT idx, Face* array_out)
 	int i, j;
 	int nn = static_cast<int>(n);
 	int mm = static_cast<int>(m);
-	int d = static_cast<int>(n - m);
 
 	for (i = mm - 1; i >= 0; --i) {
 		array_out[i] = idx % (nn - i);
@@ -8123,7 +8039,6 @@ analyzeGEN (UBYTE* ptable, UINT npositions, int nmoves, int* pmove_map, int solv
 	int i;
 	UINT idx;
 	int dist;
-	int count = 0;
 
 	int max_dist = 14;	//MAX_DISTANCE;
 	initGEN (ptable, npositions);
@@ -8135,8 +8050,6 @@ analyzeGEN (UBYTE* ptable, UINT npositions, int nmoves, int* pmove_map, int solv
 	for (dist = 1; dist <= max_dist && new_count > 0; ++dist) {
 		UINT old_count = prune_table_count;
 		for (idx = 0; idx < npositions; ++idx) {
-			UINT idx2 = idx/2;
-			UINT j = idx & 0x1;
 			if (get_dist_4bit (idx, ptable) == dist - 1) {
 				generateGEN (idx, dist, metric, ptable, nmoves, pmove_map, stage);
 			}
@@ -8149,7 +8062,7 @@ analyzeGEN (UBYTE* ptable, UINT npositions, int nmoves, int* pmove_map, int solv
 void
 generateGEN (UINT idx, int dist, int metric, UBYTE* ptable, int nmoves, int* pmove_map, int stage)
 {
-	int i, j;
+	int i;
 
 	for (i = 0; i < nmoves; ++i) {
 		UINT idx2 = do_moveGEN (idx, metric, pmove_map[i], stage);
@@ -8180,7 +8093,6 @@ do_moveGEN (UINT idx, int metric, int move_code, int stage)
 	case 5:
 		{
 			CubeSqsCoord cube1;
-			CubeSqsCoord cube2;
 			cube1.init ();
 			cube1.m_cen12x12x12 = idx;	//need to know that this is the "centers" analysis
 			cube1.do_move (move_code);	//need loop to do more complicated moves than single-slice moves
@@ -8221,7 +8133,7 @@ CubePruningTable::~CubePruningTable ()
 void
 CubePruningTable::init_move_list (int dim2, int num_moves, int* move_list)
 {
-	int i, j;
+	int i;
 	m_num_moves = num_moves;
 	m_move_list = new int[3*m_num_moves];
 	switch (dim2) {
@@ -8267,7 +8179,7 @@ CubePruningTable::init_move_list (int dim2, int num_moves, int* move_list)
 void
 CubePruningTable::init_move_list2 (int dim2, int num_moves, int* move_list)
 {
-	int i, j;
+	int i;
 	m_num_moves2 = num_moves;
 	m_move_list2 = new int[3*m_num_moves];
 	switch (dim2) {
@@ -8401,8 +8313,8 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 	char fname[320];
 	CubeStage1 stage1_solved, stage1_solved2;
 	CubeStage2 stage2_solved, stage2_solved2;
-	CubeStage3 stage3_solved, stage3_solved2;
-	CubeStage4 stage4_solved, stage4_solved2;
+	CubeStage3 stage3_solved;
+	CubeStage4 stage4_solved;
 	static Face switch_list[5][4] = {
 		{ 17, 19, 20, 22 },
 		{ 17, 19, 21, 23 },
@@ -8611,6 +8523,7 @@ CubePruningTableMgr::init_pruning_tables (int metric)
 			tmp_list[2*i+1] = stage3_2twist_moves[i][1];
 		}
 		pcpt_cen3->init_move_list2 (2, N_STAGE3_2TWIST_MOVES, &tmp_list[0]);
+
 		break;
 	case 2:
 		pcpt_cen3 = new CubePruningTable (N_STAGE3_CENTER_CONFIGS,
@@ -9082,11 +8995,9 @@ void
 splitup_fileSTAGE4 ()
 {
 	static unsigned char file_buffer[N_STAGE4_CENTER_CONFIGS*N_STAGE4_EDGE_CONFIGS];
-	UINT i1, i, edge;
-	UINT j, k;
+	UINT i1, i;
 	int dist = 17;
 	int metric = 0;
-	const UINT N_FILE_SIZE = static_cast<int>(N_STAGE4);
 	const int N_BUFFER_SIZE = static_cast<int>(N_STAGE4_CENTER_CONFIGS*N_STAGE4_EDGE_CONFIGS);
 	char fname1[64];
 	char fname2[64];
@@ -9197,7 +9108,6 @@ CubeState::init_sqs ()
 void
 CubeState::do_move (int move_code)
 {
-	int i;
 	CubeState result_cube = *this;	//fast copy to initialize result cube
 	rotate_sliceEDGE (move_code, *this, &result_cube);
 	rotate_sliceCORNER (move_code, *this, &result_cube);
@@ -9457,7 +9367,6 @@ void
 CubeCoord::convert_to_std_cube (CubeState* result_cube) const
 {
 	int i, count;
-	UINT bm1, bm2;
 	Face t[8];
 	count = 0;
 
@@ -9576,8 +9485,6 @@ disp_cycles (int n, const Face* elements)
 {
 	int i;
 	bool xx[12];
-	Face cycle[12];
-	int len = 0;
 
 	if (n > 12 || n < 1) {
 		printf ("bad argument\n");
