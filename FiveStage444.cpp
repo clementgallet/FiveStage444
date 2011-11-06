@@ -1766,10 +1766,10 @@ bool treesearchSTAGE2 (const CubeStage2& cube1, int depth, int moves_done, UINT 
 
 int get_mod_distanceSTAGE3 (const CubeStage3& cube1, int metric);
 int solveitIDA_STAGE3 (const CubeStage3& init_cube, int* move_list, int metric);
-bool treesearchSTAGE3 (const CubeStage3& cube1, int depth, int moves_done, UINT move_state, int goal, int metric, int* move_list, int* pmove_count);
+bool treesearchSTAGE3 (const CubeStage3& cube1, int depth, int moves_done, int goal, int metric, int* move_list, int* pmove_count);
 
 int solveitIDA_STAGE4 (const CubeStage4& init_cube, int* move_list, int metric);
-bool treesearchSTAGE4 (const CubeStage4& cube1, int depth, int moves_done, UINT move_state, int goal, int metric, int* move_list, int* pmove_count);
+bool treesearchSTAGE4 (const CubeStage4& cube1, int depth, int moves_done, int goal, int metric, int* move_list, int* pmove_count);
 
 int solveit4x4x4IDA (const CubeState& init_cube, int* move_list, int metric);
 void open_distance_files (int metric);
@@ -1787,7 +1787,7 @@ void loadSTAGE1_1bit_to_4bit (int dist, int metric, int fsect, UINT* pcube_list)
 void writeSTAGE1_4bit (FILE* f, int fsect, UINT* pcube_list);
 int get_mod_distanceSTAGE1 (const CubeStage1& cube1);
 int solveitIDA_STAGE1 (const CubeStage1& init_cube, int* move_list, int metric);
-bool treesearchSTAGE1 (const CubeStage1& cube1, int depth, int moves_done, UINT move_state, int goal, int metric, int* move_list, int* pmove_count);
+bool treesearchSTAGE1 (const CubeStage1& cube1, int depth, int moves_done, int goal, int metric, int* move_list, int* pmove_count);
 
 void solveitFTM (UINT cp, UINT ep, int depth, int d0, const CubeState& cube1, bool do_output);
 UINT sym_on_cp96 (UINT cp96, UINT sym);
@@ -1891,13 +1891,6 @@ void three_cycle (Face* pArr, Face f1, Face f2, Face f3);
 void four_cycle (Face* pArr, Face f1, Face f2, Face f3, Face f4);
 void perm_n_compose (int n, const Face* perm0_in, const Face* perm1_in, Face* perm_out);
 #ifdef PRUNING_TABLES
-void initGEN (UBYTE* ptable, int npositions);
-void analyzeGEN (UBYTE* ptable, UINT npositions, int nmoves, int* pmove_map, int solved_positions,
-				 int* psolved_list, int metric, int stage);
-void generateGEN (UINT idx, int dist, int metric, UBYTE* ptable, int nmoves, int* pmove_map, int stage);
-bool check_newGEN (UINT idx, UBYTE* ptable);
-void add_to_cube_listGEN (UBYTE* ptable, UINT idx, int dist, int metric);
-UINT do_moveGEN (UINT idx, int metric, int move_code, int stage);
 UINT do_move_CEN_STAGE5 (UINT idx, int move_code);
 UINT do_move_EDGE_STAGE5 (UINT idx, int sqs_move_code);
 UINT do_move_CENCOR_STAGE5 (UINT idx, int sqs_move_code);
@@ -4242,7 +4235,7 @@ solveitIDA_STAGE1 (const CubeStage1& init_cube, int* move_list, int metric)
 	int g1;
 
 	for (g1 = 0; g1 <= 30; ++g1) {
-		if (treesearchSTAGE1 (init_cube, g1, 0, 4, g1, metric, move_list, &move_count)) {
+		if (treesearchSTAGE1 (init_cube, g1, 0, g1, metric, move_list, &move_count)) {
 			return g1;
 		}
 	}
@@ -4250,7 +4243,7 @@ solveitIDA_STAGE1 (const CubeStage1& init_cube, int* move_list, int metric)
 }
 
 bool
-treesearchSTAGE1 (const CubeStage1& cube1, int depth, int moves_done, UINT move_state, int goal, int metric, int* move_list, int* pmove_count)
+treesearchSTAGE1 (const CubeStage1& cube1, int depth, int moves_done, int goal, int metric, int* move_list, int* pmove_count)
 {
 	CubeStage1 cube2;
 	int mov_idx, mc, j;
@@ -4293,8 +4286,7 @@ treesearchSTAGE1 (const CubeStage1& cube1, int depth, int moves_done, UINT move_
 				break;
 			}
 			move_list[moves_done] = mov_idx;
-			if (treesearchSTAGE1 (cube2, depth - 1, moves_done + 1,
-						0, goal, metric, move_list, pmove_count))
+			if (treesearchSTAGE1 (cube2, depth - 1, moves_done + 1, goal, metric, move_list, pmove_count))
 			{
 				return true;
 			}
@@ -4553,7 +4545,6 @@ UBYTE stage2_btm_mtt_idx[N_STAGE2_BLOCK_MOVES] = {
 #define S2BMTT_MK_D1 ((1 << S2BMTT_d3) | (1 << S2BMTT_d2))
 #define S2BMTT_MK_D3 ((1 << S2BMTT_d) | (1 << S2BMTT_d2))
 #define S2BMTT_MK_D2 ((1 << S2BMTT_d) | (1 << S2BMTT_d3))
-#define S2BMTT_MK_Uu (1 << S2BMTT_ud3)
 #define S2BMTT_MK_xll3 (1 << S2BMTT_l)
 #define S2BMTT_MK_xrr3 ((1 << S2BMTT_r) | (1 << S2BMTT_r3))
 #define S2BMTT_MK_xlr3 (1 << S2BMTT_lr3)
@@ -4825,7 +4816,7 @@ solveitIDA_STAGE3 (const CubeStage3& init_cube, int* move_list, int metric)
 	int g1;
 
 	for (g1 = 0; g1 <= 30; ++g1) {
-		if (treesearchSTAGE3 (init_cube, g1, 0, 0, g1, metric, move_list, &move_count)) {
+		if (treesearchSTAGE3 (init_cube, g1, 0, g1, metric, move_list, &move_count)) {
 			return g1;
 		}
 	}
@@ -4835,7 +4826,7 @@ solveitIDA_STAGE3 (const CubeStage3& init_cube, int* move_list, int metric)
 UINT tss3x = 0x3;
 
 bool
-treesearchSTAGE3 (const CubeStage3& cube1, int depth, int moves_done, UINT move_state, int goal, int metric, int* move_list, int* pmove_count)
+treesearchSTAGE3 (const CubeStage3& cube1, int depth, int moves_done, int goal, int metric, int* move_list, int* pmove_count)
 {
 	CubeStage3 cube2;
 	int mov_idx, mc, j;
@@ -4872,8 +4863,7 @@ treesearchSTAGE3 (const CubeStage3& cube1, int depth, int moves_done, UINT move_
 				}
 				move_list[moves_done] = stage3_twist_map1[N_STAGE3_TWIST_MOVES + mov_idx];
 				move_list[moves_done + 1] = stage3_twist_map2[N_STAGE3_TWIST_MOVES + mov_idx];
-				if (treesearchSTAGE3 (cube2, depth - 2, moves_done + 2,
-						0, goal, metric, move_list, pmove_count))
+				if (treesearchSTAGE3 (cube2, depth - 2, moves_done + 2, goal, metric, move_list, pmove_count))
 				{
 					return true;
 				}
@@ -4910,8 +4900,7 @@ treesearchSTAGE3 (const CubeStage3& cube1, int depth, int moves_done, UINT move_
 				break;
 			}
 			move_list[moves_done] = mc;
-			if (treesearchSTAGE3 (cube2, depth - 1, moves_done + 1,
-						0, goal, metric, move_list, pmove_count))
+			if (treesearchSTAGE3 (cube2, depth - 1, moves_done + 1, goal, metric, move_list, pmove_count))
 			{
 				return true;
 			}
@@ -4929,7 +4918,7 @@ solveitIDA_STAGE4 (const CubeStage4& init_cube, int* move_list, int metric)
 	int g1;
 
 	for (g1 = 0; g1 <= 30; ++g1) {
-		if (treesearchSTAGE4 (init_cube, g1, 0, 0, g1, metric, move_list, &move_count)) {
+		if (treesearchSTAGE4 (init_cube, g1, 0, g1, metric, move_list, &move_count)) {
 			return g1;
 		}
 	}
@@ -4939,7 +4928,7 @@ solveitIDA_STAGE4 (const CubeStage4& init_cube, int* move_list, int metric)
 UINT stg4_prune_bits = 0x3;
 
 bool
-treesearchSTAGE4 (const CubeStage4& cube1, int depth, int moves_done, UINT move_state, int goal, int metric, int* move_list, int* pmove_count)
+treesearchSTAGE4 (const CubeStage4& cube1, int depth, int moves_done, int goal, int metric, int* move_list, int* pmove_count)
 {
 	CubeStage4 cube2;
 	int mov_idx, mc, j;
@@ -4994,8 +4983,7 @@ treesearchSTAGE4 (const CubeStage4& cube1, int depth, int moves_done, UINT move_
 				break;
 			}
 			move_list[moves_done] = mc;
-			if (treesearchSTAGE4 (cube2, depth - 1, moves_done + 1,
-						0, goal, metric, move_list, pmove_count))
+			if (treesearchSTAGE4 (cube2, depth - 1, moves_done + 1, goal, metric, move_list, pmove_count))
 			{
 				return true;
 			}
@@ -8022,87 +8010,7 @@ perm_n_compose (int n, const Face* perm0_in, const Face* perm1_in, Face* perm_ou
 }
 
 #ifdef PRUNING_TABLES
-void
-initGEN (UBYTE* ptable, int npositions)
-{
-	UINT i;
-	UINT n = npositions/2 + (npositions & 0x1);
-	prune_table_count = 0;
-	for (i = 0; i < n; ++i) {
-		ptable[i] = 0xFF;
-	}
-}
 
-void
-analyzeGEN (UBYTE* ptable, UINT npositions, int nmoves, int* pmove_map, int solved_positions, int* psolved_list, int metric, int stage)
-{
-	int i;
-	UINT idx;
-	int dist;
-
-	int max_dist = 14;	//MAX_DISTANCE;
-	initGEN (ptable, npositions);
-	for (i = 0; i < solved_positions; ++i) {
-		add_to_cube_listGEN (ptable, psolved_list[i], 0, metric);
-	}
-	UINT new_count = prune_table_count;	//?????
-	printf ("dist %2d: pos %8d total %8d\n", 0, new_count, prune_table_count);
-	for (dist = 1; dist <= max_dist && new_count > 0; ++dist) {
-		UINT old_count = prune_table_count;
-		for (idx = 0; idx < npositions; ++idx) {
-			if (get_dist_4bit (idx, ptable) == dist - 1) {
-				generateGEN (idx, dist, metric, ptable, nmoves, pmove_map, stage);
-			}
-		}
-		new_count = prune_table_count - old_count;
-		printf ("dist %2d: pos %8d total %8u\n", dist, new_count, prune_table_count);
-	}
-}
-
-void
-generateGEN (UINT idx, int dist, int metric, UBYTE* ptable, int nmoves, int* pmove_map, int stage)
-{
-	int i;
-
-	for (i = 0; i < nmoves; ++i) {
-		UINT idx2 = do_moveGEN (idx, metric, pmove_map[i], stage);
-		add_to_cube_listGEN (ptable, idx2, dist, metric);
-	}
-}
-
-bool
-check_newGEN (UINT idx, UBYTE* ptable)
-{
-	return get_dist_4bit (idx, ptable) == 0xF;	//only "unknown" positions are considered "new"
-}
-
-void
-add_to_cube_listGEN (UBYTE* ptable, UINT idx, int dist, int metric)
-{
-	if (check_newGEN (idx, ptable)) {
-		set_dist_4bit (idx, dist, ptable);
-		++prune_table_count;
-	}
-}
-
-UINT
-do_moveGEN (UINT idx, int metric, int move_code, int stage)
-{
-	UINT idx2 = idx;
-	switch (stage) {
-	case 5:
-		{
-			CubeSqsCoord cube1;
-			cube1.init ();
-			cube1.m_cen12x12x12 = idx;	//need to know that this is the "centers" analysis
-			cube1.do_move (move_code);	//need loop to do more complicated moves than single-slice moves
-			idx2 = cube1.m_cen12x12x12;
-		}
-		break;
-	}
-	return idx2;
-}
-//===========
 CubePruningTable::CubePruningTable (UINT num_positions, UBYTE* ptable, void* move_func, int stage, int metric, UINT cencoredg) :
 	m_num_positions (num_positions),
 	m_ptable (ptable),
@@ -9541,6 +9449,8 @@ swapbits (UINT x, UINT b)
 	}
 	return x ^ b;
 }
+
+int altest(int a ){ a=a +1;}
 
 int
 find_next_0bit (UINT bm, int b)
