@@ -1546,16 +1546,10 @@ int random (int n);
 
 int main (int argc, char* argv[])
 {
-	UINT i;
 	srand( (unsigned)time( NULL ) );
 	strcpy (&datafiles_path[0], &default_datafile_path[0]);
 
-	int start_dist = 0;
-	bool do_random = true;
 	int random_count = 100;
-	static char cmd_cubestring[300];
-	bool do_cmd_cube = false;
-	bool resume = false;
 	int metric = 0;
 	int i2;
 	for (i2 = 1; i2 < argc; ++i2) {
@@ -1579,11 +1573,10 @@ int main (int argc, char* argv[])
 	init_parity_table ();
 
 	init_eloc ();
+	init_cloc ();
 
 	printf ("Performing stage 1 initializations...\n");
 	init_move_tablesSTAGE1 ();
-
-	init_cloc ();
 
 	printf ("Performing stage 2 initializations...\n");
 	init_stage2 ();
@@ -1594,7 +1587,7 @@ int main (int argc, char* argv[])
 	printf ("Performing stage 4 initializations...\n");
 	init_stage4_edge_tables ();
 	lrfb_check ();
-	init_move_tablesSTAGE4 ()
+	init_move_tablesSTAGE4 ();
 
 	printf ("Performing stage 5 initializations...\n");
 	init_squares ();
@@ -1952,11 +1945,6 @@ CubeStage2::do_move (int move_code)
 	Face t2[4];
 	UINT cenbm = eloc2ebm[m_centerFB / 70];
 	UINT cenbm4of8 = bm4of8[m_centerFB % 70];
-	int idx1a = bm12_4of8_to_high_idx[cenbm >> 12][m_centerFB % 70];
-	idx1a += bm12_4of8_to_low_idx[cenbm & 0xFFF][m_centerFB % 70];
-	UINT comp_70 = bm4of8_to_70[(~cenbm4of8) & 0xFF];	//could be a direct lookup
-	int idx2a = bm12_4of8_to_high_idx[cenbm >> 12][comp_70];
-	idx2a += bm12_4of8_to_low_idx[cenbm & 0xFFF][comp_70];
 	int j1 = 0;
 	int j2 = 0;
 	for (i = 0; cenbm != 0; ++i) {
@@ -1972,13 +1960,7 @@ CubeStage2::do_move (int move_code)
 	}
 	int idx1 = 24*24*24*t1[0] + 24*24*t1[1] + 24*t1[2] + t1[3];
 	int idx2 = 24*24*24*t2[0] + 24*24*t2[1] + 24*t2[2] + t2[3];
-	if (idx1a != idx1) {
-		printf ("do_move: idx1 mismatch (%d vs %d)\n", idx1, idx1a);
-	} else {
-		if (idx2a != idx2) {
-			printf ("do_move: idx2 mismatch (%d vs %d)\n", idx2, idx2a);
-		}
-	}
+
 	UINT cloc1 = c4_to_cloc[idx1];
 	UINT cloc2 = c4_to_cloc[idx2];
 	UINT cloc1b = move_table_cenSTAGE2[cloc1][move_code];
@@ -1986,13 +1968,6 @@ CubeStage2::do_move (int move_code)
 	UINT cbm1b = cloc_to_bm[cloc1b];
 	UINT cbm2b = cloc_to_bm[cloc2b];
 	UINT cenbm2 = cbm1b | cbm2b;
-	UINT bm48lo = gen_MofN8[cenbm2 & 0xFF][cbm1b & 0xFF];
-	int bclo = bitcount8[cenbm2 & 0xFF];
-	UINT bm48mid = gen_MofN8[(cenbm2 >> 8) & 0xFF][(cbm1b >> 8) & 0xFF];
-	int bcmid = bitcount8[(cenbm2 >> 8) & 0xFF];
-	UINT bm48hi = gen_MofN8[(cenbm2 >> 16) & 0xFF][(cbm1b >> 16) & 0xFF];
-	UINT bm4of8b2 = (bm48mid << bclo) | bm48lo;
-	bm4of8b2 |= (bm48hi << (bclo + bcmid));
 	j1 = 0;
 	UINT bm4of8b = 0;
 	for (i = 0; i < 24; ++i) {
@@ -2003,9 +1978,7 @@ CubeStage2::do_move (int move_code)
 			++j1;
 		}
 	}
-	if (bm4of8b2 != bm4of8b) {
-		printf ("bm40f8 mismatch (%u vs. %u)\n", bm4of8b, bm4of8b2);
-	}
+
 	UINT cen1 = bm4of8_to_70[bm4of8b];
 	UINT cen2 = ebm2eloc[cenbm2];
 	m_centerFB = 70*cen2 + cen1;
@@ -2154,7 +2127,7 @@ init_squares ()
 		0x84, 0x48, //Fs2
 		0x21, 0x12  //Bs2
 	};
-	UINT i, j, sym;
+	UINT i, j;
 	CubeState cube1, cube2;
 	for (i = 0; i < 24; ++i) {
 		switch (sqs_perm_to_rep[i]) {
@@ -2946,8 +2919,6 @@ solveitIDA_STAGE3 (const CubeStage3& init_cube, int* move_list, int metric)
 	return 999;
 }
 
-UINT tss3x = 0x3;
-
 bool
 treesearchSTAGE3 (const CubeStage3& cube1, int depth, int moves_done, int goal, int metric, int* move_list, int* pmove_count)
 {
@@ -2968,10 +2939,10 @@ treesearchSTAGE3 (const CubeStage3& cube1, int depth, int moves_done, int goal, 
 		return true;
 	}
 	int dist = 0;
-	if ((tss3x & 0x1) != 0) {
+	if ((0x3 & 0x1) != 0) {
 		dist = prune_funcCEN_STAGE3 (cube1);
 	}
-	if ((tss3x & 0x2) != 0 && dist <= depth) {
+	if ((0x3 & 0x2) != 0 && dist <= depth) {
 		dist = prune_funcEDGE_STAGE3 (cube1);
 	}
 	if (dist <= depth) {
@@ -3292,7 +3263,6 @@ solveit4x4x4IDA (const CubeState& init_cube, int* move_list, int metric)
 void
 init_4of8 ()
 {
-	static UINT bitcount[16] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
 	int a1, a2, a3, a4;
 	int i;
 	int count = 0;
@@ -3540,7 +3510,7 @@ void
 init_stage2 ()
 {
 	int i, j;
-	UINT u, v, w, u2, sym, cloc_f, cloc_b;
+	UINT u, v, w, u2;
 	CubeStage2 cs2a, cs2b;
 	cs2a.init ();
 	cs2b.init ();
@@ -3639,10 +3609,6 @@ init_stage3 ()
 {
 	const UINT POW2_16 = 256*256;
 	int a1, a2, a3, a4, a5, a6, a7, a8;
-	int sym;
-	USHORT u;
-	UINT u1;
-	CubeStage3 s1, s2;
 
 	int count = 0;
 	for (a1 = 0; a1 < POW2_16; ++a1) {
