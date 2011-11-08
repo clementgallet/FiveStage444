@@ -1,9 +1,6 @@
 TODO:
 
 - Remove unused code
--- metric 6 is not used anymore
-
-- Find a set of preprocessing options and delete the remaining code
 
 - Separate in different files
 
