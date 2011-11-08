@@ -18,11 +18,6 @@ void SignalHandler(int signal)
 	}
 }
 
-// Program options (compile-time)
-#define USE_SYMMETRY
-#define PRUNING_TABLES
-
-
 typedef unsigned int UINT;
 typedef unsigned short USHORT;
 typedef unsigned char UBYTE;
@@ -219,83 +214,8 @@ const Face FaceD = 3;
 const Face FaceB = 4;
 const Face FaceR = 5;
 
-class Stab {
-private:
-	USHORT m_stab[N_SYMX/16];
-public:
-	Stab ();
-	void set_bit (int n);
-	bool test_bit (int n) const;
-	bool is_equal (const Stab& s) const;
-	const char* to_string () const;
-};
-
-Stab::Stab ()
-{
-	int i;
-	for (i = 0; i < N_SYMX/16; ++i) {
-		m_stab[i] = 0;
-	}
-}
-
-void
-Stab::set_bit (int n)
-{
-	m_stab[n/16] |= 1 << (n & 0xF);
-}
-
-bool
-Stab::test_bit (int n) const
-{
-	return (m_stab[n/16] & (1 << (n & 0xF))) != 0;
-}
-
-bool
-Stab::is_equal (const Stab& s) const
-{
-	int i;
-	for (i = 0; i < N_SYMX/16; ++i) {
-		if (m_stab[i] != s.m_stab[i]) {
-			return false;
-		}
-	}
-	return true;
-}
-
-const char*
-Stab::to_string () const
-{
-	int i;
-	static char s1[16];		//DANGER! uses static buffer
-	for (i = 0; i < N_SYMX/16; ++i) {
-		sprintf (&s1[4*i], "%04X", static_cast<int>(m_stab[2-i]));
-	}
-	s1[12] = '\0';
-	return &s1[0];
-}
-
 UINT byte_clr_masks[4] = { 0xFFFFFF00, 0xFFFF00FF, 0xFF00FFFF, 0x00FFFFFF };
 UINT pow3tab[5] = { 1, 3, 9, 27, 81 };
-
-struct TableIndex {
-	int m_word_index;
-	int m_element;
-	void init (UINT x)
-	{
-		m_word_index = x / 16u;
-		m_element = x % 16u;
-	}
-	void set_value (UINT* p, int x) const	//x = 0 (unknown), 1 (old), 2 (new)
-	{
-		//p is the base address of the array.
-		p[m_word_index] &= ~(0x3 << (2*m_element));
-		p[m_word_index] |= (x << (2*m_element));
-	}
-	int get_value (const UINT* p) const		//p is the base address of the array.
-	{
-		return (p[m_word_index] >> (2*m_element)) & 0x3;
-	}
-};
 
 //CubeState structure: a cubie-level representation of the cube.
 struct CubeState {
@@ -311,31 +231,6 @@ struct CubeState {
 	bool edgeUD_parity_odd () const;	//compute edge parity for stage 3 purposes.
 };
 
-//CubeCoord represents the state of a cube with these coordinates:
-//	m_ep1: where edges 0, 8, 16 are
-//  m_ep2lr: where edges 1..7 are
-//  m_ep2fb: where edges 9..15 are
-//	m_ep2ud: where edges 17..23 are
-//	m_cp: corner permutation coordinate
-//  m_co: corner orientation coordinate
-//  m_cen: 
-//The structure contains a miscellaneous data parameter, normally used
-//to store the distance from solved state, if applicable.
-//Total size should be 12 bytes.
-struct CubeCoord {
-	UINT m_cen_ud;
-	UINT m_cen_lr;
-	UINT m_cen_fb;
-	UINT m_ep2lr;
-	UINT m_ep2fb;
-	UINT m_ep2ud;
-	USHORT m_ep1;
-	USHORT m_cp;
-	USHORT m_co;
-	USHORT m_distance;
-	void init ();
-};
-
 struct CubeSqsCoord {
 	UINT m_ep96x96x96;
 	USHORT m_cen12x12x12;
@@ -345,15 +240,6 @@ struct CubeSqsCoord {
 	void do_move (int sqs_move_code);
 	void do_whole_cube_move (int sqs_whole_cube_move);
 	bool is_solved () const;
-};
-
-struct CubeSymSqsCoord {
-	UINT m_ep_sym;	//96*epval+symval
-	USHORT m_cen12x12x12;
-	UBYTE m_cp96;
-	UBYTE m_distance;
-	void init ();
-	void do_move (int sqs_move_code);
 };
 
 struct CubeStage1 {
@@ -398,7 +284,6 @@ struct CubeStage4 {
 	bool is_solved () const;
 };
 
-#ifdef PRUNING_TABLES
 class CubePruningTable {
 private:
 	UINT m_num_positions;
@@ -437,8 +322,6 @@ public:
 	}
 	void init_pruning_tables (int metric);
 } cpt_mgr;
-#endif
-
 
 //slice rotate codes
 const int Uf  = 0;	//Up "face" (top slice) clockwise wrt top
@@ -1244,15 +1127,6 @@ int rotateEDGE_tidx[18*3] = {
 	73, 72, 74, 79, 78, 80, 85, 84, 86, 91, 90, 92, 97, 96, 98,103,102,104
 };
 
-int reorient_hEDGE[24] = {
-	14, 12, 15, 13, 10,  8, 11,  9,  4,  6,  5,  7,
-	 0,  2,  1,  3, 21, 23, 20, 22, 17, 19, 16, 18
-};
-int reorient_vEDGE[24] = {
-	 6,  4,  7,  5,  2,  0,  3,  1, 20, 22, 21, 23,
-	16, 18, 17, 19, 13, 15, 12, 14,  9, 11,  8, 10
-};
-
 int rotateEDGE_ft[18*6] = {
 	 0, 12,  1, 14,  0, 12, //up face, set 1
      4,  8,  5, 10,  4,  8, //up face, set 2
@@ -1292,20 +1166,7 @@ int rotateCOR_ori[4] = { 1, 2, 1, 2 };
 int rotateCOR_fidx[18] = {  0,  2,  0,  6,  8,  6, 12, 14, 12, 18, 20, 18, 24, 26, 24, 30, 32, 30 };
 int rotateCOR_tidx[18] = {  1,  1,  2,  7,  7,  8, 13, 13, 14, 19, 19, 20, 25, 25, 26, 31, 31, 32 };
 
-int reorient_hCOR[8] = { 1, 2, 3, 0, 5, 6, 7, 4 };
-int reorient_hCORx[24] = {  3,  4,  5,  6,  7,  8,  9, 10, 11,  0,  1,  2,
-                          15, 16, 17, 18, 19, 20, 21, 22, 23, 12, 13, 14
-};
-
-int reorient_vCOR[8] = { 4, 5, 1, 0, 7, 6, 2, 3 };
-int reorient_vCORx[24] = { 14, 12, 13, 16, 17, 15,  5,  3,  4,  1,  2,  0,
-                          22, 23, 21, 20, 18, 19,  7,  8,  6, 11,  9, 10
-};
-
 int reorientoc_vCOR[8] = { 2, 1, 2, 1, 1, 2, 1, 2 };
-
-int reorient_hCORSQS[8] = { 4, 5, 7, 6, 1, 0, 2, 3 };
-int reorient_vCORSQS[8] = { 6, 4, 7, 5, 2, 0, 3, 1 };
 
 #define rotateCEN_fidx	rotateEDGE_fidx
 #define rotateCEN_tidx	rotateEDGE_tidx
@@ -1336,56 +1197,6 @@ int rotateCEN_ft[18*6] = {
 	 3,  9,  7, 12,  3,  9  //back slice, set 2
 };
 
-int reorient_hCEN[24] = {
-	 2,  3,  1,  0,  7,  6,  4,  5, 19, 18, 16, 17,
-	22, 23, 21, 20, 14, 15, 13, 12, 11, 10,  8,  9
-};
-
-int reorient_vCEN[24] = {
-	18, 19, 17, 16, 23, 22, 20, 21, 11, 10,  8,  9,
-	14, 15, 13, 12,  6,  7,  5,  4,  3,  2,  0,  1
-};
-
-int reorient_hCENSQS[24] = {
-	 1,  3,  0,  2,  5,  7,  4,  6, 18, 16, 19, 17,
-	22, 20, 23, 21, 12, 14, 13, 15,  8, 10,  9, 11
-};
-
-int reorient_vCENSQS[24] = {
-	17, 19, 16, 18, 21, 23, 20, 22, 10,  8, 11,  9,
-	14, 12, 15, 13,  4,  6,  5,  7,  0,  2,  1,  3
-};
-
-int reorient_hSCCEN[24] = {
-	 4,  5,  7,  6,  1,  0,  2,  3, 21, 20, 22, 23,
-	16, 17, 19, 18, 14, 15, 13, 12, 11, 10,  8,  9
-};
-
-int reorient_vSCCEN[24] = {
-	20, 21, 23, 22, 17, 16, 18, 19, 13, 12, 14, 15,
-	 8,  9, 11, 10,  6,  7,  5,  4,  3,  2,  0,  1
-};
-
-int mirror_rlEDGE[24] = {
-	 4,  5,  6,  7,  0,  1,  2,  3, 14, 15, 12, 13,
-	10, 11,  8,  9, 21, 20, 23, 22, 17, 16, 19, 18
-};
-
-int mirror_rlCENSQS[24] = {
-	 1,  0,  3,  2,  5,  4,  7,  6, 12, 13, 14, 15,
-	 8,  9, 10, 11, 18, 19, 16, 17, 22, 23, 20, 21
-};
-
-int mirror_rlCEN[24] = {
-	 2,  3,  0,  1,  6,  7,  4,  5, 14, 15, 12, 13,
-	10, 11,  8,  9, 19, 18, 17, 16, 23, 22, 21, 20
-};
-
-int mirror_rlSCCEN[24] = {
-	 4,  5,  6,  7,  0,  1,  2,  3, 14, 15, 12, 13,
-	10, 11,  8,  9, 21, 20, 23, 22, 17, 16, 19, 18
-};
-
 int xlate_r6[63][6] = {
 	{ 0, 24, 12,  0, 24, 12}, { 1, 25, 13,  1, 25, 13}, { 2, 26, 14,  2, 26, 14},
 	{ 3, 27, 15,  3, 27, 15}, { 4, 28, 16,  4, 28, 16}, { 5, 29, 17,  5, 29, 17},
@@ -1413,34 +1224,21 @@ int xlate_r6[63][6] = {
 bool show_full_move_list = false;
 bool show_per_stage_move_lists = true;
 
-#ifdef PRUNING_TABLES
 UBYTE prune_table_cencor5[N_SQS_CENTER_PERM*N_SQS_CORNER_PERM/2];
 UBYTE prune_table_edg5[N_SQS_EDGE_PERM/2];
 UBYTE prune_table_edgcor5[N_SQS_EDGE_PERM*N_SQS_CORNER_PERM/2];
-#endif
 
 USHORT reorient_co[2187][16];
 UINT reorient_s1edge[N_EDGE_COMBO8][16];
-#ifndef USE_SYMMETRY
 UINT stage1_rep_count = 0;
-#endif
-#ifdef PRUNING_TABLES
 UBYTE prune_table_cor1[(N_CORNER_ORIENT+1)/2];
 UBYTE prune_table_edg1[(N_EDGE_COMBO8+1)/2];
-#endif
 
-UINT reorient_s3cen[N_STAGE3_CENTER_CONFIGS][N_SYM_STAGE3];	//29MB
-USHORT reorient_s3edge[N_STAGE3_EDGE_CONFIGS][N_SYM_STAGE3];
 UINT move_table_cenSTAGE3[N_STAGE3_CENTER_CONFIGS][N_STAGE3_SLICE_MOVES];	//72MB
 USHORT move_table_edgeSTAGE3[N_STAGE3_EDGE_CONFIGS][N_STAGE3_SLICE_MOVES];
-#ifdef PRUNING_TABLES
 UBYTE prune_table_cen3[N_STAGE3_CENTER_CONFIGS/2];
 UBYTE prune_table_edg3[N_STAGE3_EDGE_CONFIGS*N_STAGE3_EDGE_PAR/2];
-#endif
 
-USHORT reorient_s4cen[N_STAGE4_CENTER_CONFIGS][N_SYM_STAGE4];
-UINT reorient_s4edge[N_STAGE4_EDGE_CONFIGS][N_SYM_STAGE4];
-USHORT reorient_s4cor[N_STAGE4_CORNER_CONFIGS][N_SYM_STAGE4];
 UINT move_table_cenSTAGE4[N_STAGE4_CENTER_CONFIGS][N_STAGE4_SLICE_MOVES];
 USHORT move_table_cornerSTAGE4[N_STAGE4_CORNER_CONFIGS][N_STAGE4_SLICE_MOVES];
 USHORT stage4_edge_hB[40320];
@@ -1452,11 +1250,10 @@ UINT stage4_edge_rep_table[N_STAGE4_EDGE_CONFIGS];
 USHORT move_table_AedgeSTAGE4[40320][N_STAGE4_SLICE_MOVES];
 USHORT move_table_BedgeSTAGE4[40320][N_STAGE4_SLICE_MOVES];
 int stage4repcount = 0;
-#ifdef PRUNING_TABLES
+
 UBYTE prune_table_cencor4[N_STAGE4_CORNER_CONFIGS*N_STAGE4_CENTER_CONFIGS/2];
 UBYTE prune_table_edg4[N_STAGE4_EDGE_CONFIGS/2];
 UBYTE prune_table_edgcen4[N_STAGE4_EDGE_CONFIGS*N_STAGE4_CENTER_CONFIGS/2];
-#endif
 
 const UINT STAGE3_NUM_SOLVED_CENTER_CONFIGS = 12;
 UINT stage3_solved_centers[STAGE3_NUM_SOLVED_CENTER_CONFIGS] = {
@@ -1469,15 +1266,12 @@ USHORT stage4_solved_centers_bm[STAGE4_NUM_SOLVED_CENTER_CONFIGS] = {
 	0x0F, 0xF0, 0x55, 0xAA, 0x5A, 0xA5, 0x69, 0x96, 0x66, 0x99, 0x3C, 0xC3
 };
 
-#ifdef PRUNING_TABLES
 UBYTE prune_table_cen2[N_STAGE2_CENTER_CONFIGS/2];
 UBYTE prune_table_edg2[N_STAGE2_EDGE_CONFIGS/2];
 UBYTE prune_table_edgcen2[N_CENTER_COMBO4*N_STAGE2_EDGE_CONFIGS/2];
-#endif
 
 bool parity_perm8_table[40320];
 
-#ifdef PRUNING_TABLES
 UINT prune_table_count = 0;
 UINT prune_table_new_count = 0;
 
@@ -1538,7 +1332,6 @@ CubePruningTableMgr::delete_cpts ()
 		delete pcpt_edgcor5;
 	}
 }
-#endif
 
 UINT cube_list[N_STAGE1_TABLE_SIZE];
 UINT cube_list_count = 0;
@@ -1560,11 +1353,6 @@ UINT cloc_to_bm[N_CENTER_COMBO4];
 
 UINT move_table_edgeSTAGE1[N_EDGE_COMBO8][N_BASIC_MOVES];	// > 100MB !
 UINT move_table_co[N_CORNER_ORIENT][N_FACE_MOVES];
-
-#ifdef USE_SYMMETRY
-double cube_list_mult_count = 0.0;
-double cube_list_new_mult_count = 0.0;
-#endif
 
 USHORT perm_to_420[40320];
 USHORT move_table_cenSTAGE2[N_CENTER_COMBO4][N_STAGE2_SLICE_MOVES];
@@ -1625,7 +1413,6 @@ UINT squares_move (UINT pos96, int move_code6);
 UINT squares_move_corners (UINT pos96, int sqs_move_code);
 UINT squares_move_edges (UINT pos96, int sqs_move_code, int edge_group);
 UINT squares_move_centers (UINT pos96, int sqs_move_code, int cen_group);
-void squares_unpack_centers (UINT cen1, UINT cen2, UINT cen3, Face* arr);
 UINT squares_pack_centers (const Face* arr);
 void init_squares ();
 
@@ -1652,8 +1439,6 @@ int solveitIDA_STAGE1 (const CubeStage1& init_cube, int* move_list, int metric);
 bool treesearchSTAGE1 (const CubeStage1& cube1, int depth, int moves_done, int goal, int metric, int* move_list, int* pmove_count);
 
 void solveitFTM (UINT cp, UINT ep, int depth, int d0, const CubeState& cube1, bool do_output);
-UINT sym_on_cp96 (UINT cp96, UINT sym);
-UINT sym_on_cen12x12x12 (UINT cen12x12x12, UINT sym);
 UINT sym_on_eperm (UINT ep, UINT sym);
 UINT sym_on_eperm_unpacked (const CubeState& cube1, UINT sym);
 UINT sym_on_cperm (UINT cp, UINT sym);
@@ -1683,7 +1468,6 @@ void lrfb_check ();
 void stage4_edge_table_init ();
 bool stage4_edge_table_lookup (UINT val, UINT* hash_loc);
 void add_to_stage4_edge_table (UINT val, UINT idx);
-void init_stage4 ();
 void init_move_tablesSTAGE4 ();
 
 void rotate_sliceEDGE (int move_code, const CubeState& init_cube, CubeState* result_cube);
@@ -1701,30 +1485,11 @@ void convert_stage4_to_std_cube (const CubeStage4& init_cube, CubeState* result_
 void convert_std_cube_to_stage4 (const CubeState& init_cube, CubeStage4* result_cube);
 void convert_std_cube_to_squares (const CubeState& init_cube, CubeSqsCoord* result_cube);
 void pack_cubeSQS (const CubeState& cube1, CubeSqsCoord* result_cube);
-void reorient_cubeSQS (const CubeSqsCoord& init_cube, int sym, CubeSqsCoord* result_cube);
-void reorient_cube_hSQS (const CubeState& init_cube, CubeState* result_cube);
-void reorient_cube_vSQS (const CubeState& init_cube, CubeState* result_cube);
-void mirror_cube_rlSQS (const CubeState& init_cube, CubeState* result_cube);
-void inverse_cubeSQS (const CubeState& init_cube, CubeState* result_cube);
 
-void reorient_cubeSTAGE2_slow (const CubeStage2& init_cube, int sym, CubeStage2* result_cube);
-void get_clocFB (UINT centerFB, UINT* pcloc_f, UINT* pcloc_b);
-UINT get_centerFB (UINT cloc_f, UINT cloc_b);
-void reorient_cubeSTAGE3_slow (const CubeStage3& init_cube, int sym, CubeStage3* result_cube);
-void reorient_cubeSTAGE3 (const CubeStage3& init_cube, int sym, CubeStage3* result_cube);
-void reorient_cubeSTAGE4_slow (const CubeStage4& init_cube, int sym, CubeStage4* result_cube);
-void reorient_cubeSTAGE4 (const CubeStage4& init_cube, int sym, CubeStage4* result_cube);
-void reorient_cube_hCUBE (const CubeState& init_cube, CubeState* result_cube);
-void reorient_cube_vCUBE (const CubeState& init_cube, CubeState* result_cube);
-void mirror_cube_rlCUBE (const CubeState& init_cube, CubeState* result_cube);
 void scrambleCUBE (CubeState* pcube, int move_count, const int* move_arr);
 UINT perm_n_pack (UINT n, const Face* array_in);
 void perm_n_unpack (UINT n, UINT idx, Face* array_out);
-void perm_n_init (int n, Face* out_arr);
-void three_cycle (Face* pArr, Face f1, Face f2, Face f3);
-void four_cycle (Face* pArr, Face f1, Face f2, Face f3, Face f4);
-void perm_n_compose (int n, const Face* perm0_in, const Face* perm1_in, Face* perm_out);
-#ifdef PRUNING_TABLES
+
 UINT do_move_CENCOR_STAGE5 (UINT idx, int sqs_move_code);
 UINT do_move_EDGCOR_STAGE5 (UINT idx, int sqs_move_code);
 UINT do_move_COR_STAGE1_STM (UINT idx, int move_code);
@@ -1743,7 +1508,6 @@ int prune_funcCENCOR_STAGE4 (const CubeStage4& cube1);
 int prune_funcEDGCEN_STAGE4 (const CubeStage4& cube1);
 int prune_funcCENCOR_STAGE5 (const CubeSqsCoord& cube1);
 int prune_funcEDGCOR_STAGE5 (const CubeSqsCoord& cube1);
-#endif
 
 void read_cg_1bit_file (int dist, UINT src_cg, UBYTE* ep_map);
 bool read_cg_1bit_fileFTM (int dist, UINT src_cg, UBYTE* ep_map);
@@ -1762,9 +1526,7 @@ void read_cg_4bit_fileLM (int d, UINT cg, int rel_cg);
 void read_cg_4bit_fileLM_FTM (UINT cg, int rel_cg);
 void read_cg_4bit_file_as_1bitFTM (int d, int file_dist, UINT cg, UBYTE* ep_map);
 void SummaryFTMQTM (int start_dist, UINT start_cgi);
-#ifdef CALC_REAL_SIZE
-void calculate_real_size ();
-#endif
+
 int get_distance (UINT cperm, UINT eperm);
 int get_distanceFTM (UINT cperm, UINT eperm);
 void build_single_move_tables ();
@@ -1832,14 +1594,13 @@ int main (int argc, char* argv[])
 	printf ("Performing stage 4 initializations...\n");
 	init_stage4_edge_tables ();
 	lrfb_check ();
-	init_stage4 ();
+	init_move_tablesSTAGE4 ()
 
 	printf ("Performing stage 5 initializations...\n");
 	init_squares ();
 
-#ifdef PRUNING_TABLES
 	cpt_mgr.init_pruning_tables (metric);
-#endif
+
 	do_random_cubes (metric, random_count);
 	return 0;
 }
@@ -1980,18 +1741,6 @@ squares_move_centers (UINT pos12, int sqs_move_code, int cen_group)
 	return squares_cen_movemap[pos12][move_code6];
 }
 
-void
-squares_unpack_centers (UINT cen1, UINT cen2, UINT cen3, Face* arr)
-{
-	int i;
-	UINT x = (squares_cen_map[cen1] << 16) | (squares_cen_map[cen2] << 8) | squares_cen_map[cen3];
-	UINT b = 0x800000;
-	for (i = 0; i < 24; ++i) {
-		arr[i] = 2*(i/8) + ((x & b) == 0 ? 0 : 1);
-		b >>= 1;
-	}
-}
-
 UINT
 squares_pack_centers (const Face* arr)
 {
@@ -2083,15 +1832,6 @@ CubeSqsCoord::is_solved () const
 		return true;
 	}
 	return false;
-}
-
-void
-CubeSymSqsCoord::init ()
-{
-	m_ep_sym = 0;
-	m_cp96 = 0;
-	m_cen12x12x12 = 0;
-	m_distance = 255;
 }
 
 void
@@ -2535,7 +2275,6 @@ init_parity_table ()
 	}
 }
 
-#ifdef PRUNING_TABLES
 int
 solveitIDA_SQS (const CubeSqsCoord& init_cube, int* move_list, int metric)
 {
@@ -2665,9 +2404,7 @@ UINT sqs_block_next_ms[7][21] = {
 	{ SQSB_XU, SQSB_XL, SQSB_XX, SQS_BL_MS_XU, SQS_BL_MS_XL, SQS_BL_MS_X },
 	{ SQSB_XU, SQSB_XL, SQSB_XF, SQS_BL_MS_XU, SQS_BL_MS_XL, SQS_BL_MS_XF }
 };
-#endif
 
-#ifdef PRUNING_TABLES
 bool
 treesearchSQS (const CubeSqsCoord& cube1, int depth, int moves_done, UINT move_state, int goal, int metric, int* move_list, int* pmove_count)
 {
@@ -2746,9 +2483,7 @@ treesearchSQS (const CubeSqsCoord& cube1, int depth, int moves_done, UINT move_s
 	}
 	return false;
 }
-#endif
 
-#ifdef PRUNING_TABLES
 int
 solveitIDA_STAGE1 (const CubeStage1& init_cube, int* move_list, int metric)
 {
@@ -2815,9 +2550,6 @@ treesearchSTAGE1 (const CubeStage1& cube1, int depth, int moves_done, int goal, 
 	}
 	return false;
 }
-#endif
-
-#ifdef PRUNING_TABLES
 
 const UINT STG2_SL_MS_X = 0;
 const UINT STG2_SL_MS_U = 1;
@@ -3199,9 +2931,7 @@ treesearchSTAGE2 (const CubeStage2& cube1, int depth, int moves_done, UINT move_
 	}
 	return false;
 }
-#endif
 
-#ifdef PRUNING_TABLES
 int
 solveitIDA_STAGE3 (const CubeStage3& init_cube, int* move_list, int metric)
 {
@@ -3301,9 +3031,7 @@ treesearchSTAGE3 (const CubeStage3& cube1, int depth, int moves_done, int goal, 
 	}
 	return false;
 }
-#endif
 
-#ifdef PRUNING_TABLES
 int
 solveitIDA_STAGE4 (const CubeStage4& init_cube, int* move_list, int metric)
 {
@@ -3317,8 +3045,6 @@ solveitIDA_STAGE4 (const CubeStage4& init_cube, int* move_list, int metric)
 	}
 	return 999;
 }
-
-UINT stg4_prune_bits = 0x3;
 
 bool
 treesearchSTAGE4 (const CubeStage4& cube1, int depth, int moves_done, int goal, int metric, int* move_list, int* pmove_count)
@@ -3340,10 +3066,10 @@ treesearchSTAGE4 (const CubeStage4& cube1, int depth, int moves_done, int goal, 
 		return true;
 	}
 	int dist = 0;
-	if ((stg4_prune_bits & 0x1) != 0) {
+	if ((0x3 & 0x1) != 0) {
 		dist = prune_funcCENCOR_STAGE4 (cube1);
 	}
-	if (dist <= depth && (stg4_prune_bits & 0x2) != 0) {
+	if (dist <= depth && (0x3 & 0x2) != 0) {
 		dist = prune_funcEDGCEN_STAGE4 (cube1);
 	}
 	if (dist <= depth) {
@@ -3384,7 +3110,6 @@ treesearchSTAGE4 (const CubeStage4& cube1, int depth, int moves_done, int goal, 
 	}
 	return false;
 }
-#endif
 
 int
 solveit4x4x4IDA (const CubeState& init_cube, int* move_list, int metric)
@@ -3460,7 +3185,7 @@ solveit4x4x4IDA (const CubeState& init_cube, int* move_list, int metric)
 	}
 
 	convert_std_cube_to_stage2 (cube1, &s2);
-    int count2 = solveitIDA_STAGE2 (s2, &move_list[count], metric);
+	int count2 = solveitIDA_STAGE2 (s2, &move_list[count], metric);
 	if (count2 < 0 || count2 > 90) {
 		printf ("Solve failure!\n");
 		return -1;
@@ -3562,26 +3287,6 @@ solveit4x4x4IDA (const CubeState& init_cube, int* move_list, int metric)
 	}
 	count += count5;
 	return count;
-}
-
-UINT
-sym_on_cp96 (UINT cp96, UINT sym)
-{
-	CubeSqsCoord cube1, cube2;
-	cube1.init ();
-	cube1.m_cp96 = cp96;
-	reorient_cubeSQS (cube1, sym, &cube2);
-	return cube2.m_cp96;
-}
-
-UINT
-sym_on_cen12x12x12 (UINT cen12x12x12, UINT sym)
-{
-	CubeSqsCoord cube1, cube2;
-	cube1.init ();
-	cube1.m_cen12x12x12 = cen12x12x12;
-	reorient_cubeSQS (cube1, sym, &cube2);
-	return cube2.m_cen12x12x12;
 }
 
 void
@@ -3962,23 +3667,6 @@ init_stage3 ()
 	  }
 	 }
 	}
-	s1.init ();
-	s2.init ();
-	for (u1 = 0; u1 < N_STAGE3_EDGE_CONFIGS; ++u1) {
-		s1.m_edge = u1;
-		for (sym = 0; sym < N_SYM_STAGE3; ++sym) {
-			reorient_cubeSTAGE3_slow (s1, sym, &s2);
-			reorient_s3edge[u1][sym] = s2.m_edge;
-		}
-	}
-	s1.init ();
-	for (u1 = 0; u1 < N_STAGE3_CENTER_CONFIGS; ++u1) {
-		s1.m_centerLR = u1;
-		for (sym = 0; sym < N_SYM_STAGE3; ++sym) {
-			reorient_cubeSTAGE3_slow (s1, sym, &s2);
-			reorient_s3cen[u1][sym] = s2.m_centerLR;
-		}
-	}
 	init_move_tablesSTAGE3 ();
 }
 
@@ -4268,44 +3956,6 @@ add_to_stage4_edge_table (UINT val, UINT idx)
 		stage4_edge_hash_table_idx[hash_idx] = idx;
 		stage4_edge_rep_table[idx] = val;
 	}
-}
-
-void
-init_stage4 ()
-{
-	int i;
-	UINT u, v, w, u2, sym1;
-	CubeStage4 s4a, s4b;
-	s4a.init ();
-	s4b.init ();
-	Face t[8];
-	Face t2[8];
-	Face t3[8];
-
-	for (u = 0; u < N_STAGE4_CORNER_CONFIGS; ++u) {
-		s4a.m_corner = u;
-		for (sym1 = 0; sym1 < 16; ++sym1) {
-			reorient_cubeSTAGE4_slow (s4a, sym1, &s4b);
-			reorient_s4cor[u][sym1] = s4b.m_corner;
-		}
-	}
-	s4a.init ();
-	for (u = 0; u < N_STAGE4_CENTER_CONFIGS; ++u) {
-		s4a.m_centerUD = u;
-		for (sym1 = 0; sym1 < 16; ++sym1) {
-            reorient_cubeSTAGE4_slow (s4a, sym1, &s4b);
-			reorient_s4cen[u][sym1] = s4b.m_centerUD;
-		}
-	}
-	s4a.init ();
-	for (u = 0; u < N_STAGE4_EDGE_CONFIGS; ++u) {
-		s4a.m_edge = u;
-		for (sym1 = 0; sym1 < 16; ++sym1) {
-            reorient_cubeSTAGE4_slow (s4a, sym1, &s4b);
-			reorient_s4edge[u][sym1] = s4b.m_edge;
-		}
-	}
-	init_move_tablesSTAGE4 ();
 }
 
 void
@@ -4726,400 +4376,6 @@ pack_cubeSQS (const CubeState& cube1, CubeSqsCoord* result_cube)
 }
 
 void
-reorient_cubeSQS (const CubeSqsCoord& init_cube, int sym, CubeSqsCoord* result_cube)
-{
-	//sym is a symmetry/antisymmetry code (0..95) for the 48 symmetries of the cube, and inverses.
-	UINT u;
-	int i;
-	Face t[24];
-	UINT ep = init_cube.m_ep96x96x96;
-	UINT ep1 = ep % 96;
-	UINT ep2 = (ep/96) % 96;
-	UINT ep3 = ep/(96*96);
-	UINT rep = sqs_perm_to_rep[ep1/4];
-	perm_n_unpack (4, ep1/4, &t[0]);
-	perm_n_unpack (4, sqs_rep_to_perm[rep][ep1 % 4], &t[4]);
-	rep = sqs_perm_to_rep[ep2/4];
-	perm_n_unpack (4, ep2/4, &t[8]);
-	perm_n_unpack (4, sqs_rep_to_perm[rep][ep2 % 4], &t[12]);
-	rep = sqs_perm_to_rep[ep3/4];
-	perm_n_unpack (4, ep3/4, &t[16]);
-	perm_n_unpack (4, sqs_rep_to_perm[rep][ep3 % 4], &t[20]);
-	CubeState cube1;
-	cube1.init ();
-	for (i = 0; i < 24; ++i) {
-		cube1.m_edge[i] = 4*(i/4) + t[i];
-	}
-	rep = sqs_perm_to_rep[init_cube.m_cp96/4];
-	perm_n_unpack (4, init_cube.m_cp96/4, &t[0]);
-	perm_n_unpack (4, sqs_rep_to_perm[rep][init_cube.m_cp96 % 4], &t[4]);
-	for (i = 0; i < 8; ++i) {
-		cube1.m_cor[i] = 4*(i/4) + t[i];
-	}
-	UINT cen1 = init_cube.m_cen12x12x12 % 12;
-	UINT cen2 = (init_cube.m_cen12x12x12/12) % 12;
-	UINT cen3 = init_cube.m_cen12x12x12/(12*12);
-	squares_unpack_centers (cen1, cen2, cen3, &cube1.m_cen[0]);
-	CubeState cube2;
-	UINT sym1 = (sym/2) % 4;
-	UINT sym2 = (sym/8) % 2;
-	UINT sym3 = (sym/16) % 3;
-	bool inverse = (sym >= N_CUBESYM);
-	for (u = 0; u < sym3; ++u) {
-		reorient_cube_hSQS (cube1, &cube2);
-		reorient_cube_hSQS (cube2, &cube1);
-		reorient_cube_hSQS (cube1, &cube2);
-		reorient_cube_vSQS (cube2, &cube1);
-	}
-	if (sym2 != 0) {
-		reorient_cube_hSQS (cube1, &cube2);
-		reorient_cube_hSQS (cube2, &cube1);
-		reorient_cube_vSQS (cube1, &cube2);
-		reorient_cube_vSQS (cube2, &cube1);
-	}
-	for (u = 0; u < sym1; ++u) {
-		reorient_cube_hSQS (cube1, &cube2);
-		cube1 = cube2;
-	}
-	if ((sym & 0x1) == 0x1) {
-		mirror_cube_rlSQS (cube1, &cube2);
-		cube1 = cube2;
-	}
-	if (inverse) {
-		inverse_cubeSQS (cube1, &cube2);
-		cube1 = cube2;
-	}
-	pack_cubeSQS (cube1, result_cube);
-	result_cube->m_distance = 255;
-}
-
-void
-reorient_cubeSTAGE2_slow (const CubeStage2& init_cube, int sym, CubeStage2* result_cube)
-{
-	//sym is a symmetry code (0..7) for the 8 symmetries of the cube using 180-degree rotations and reflection
-	CubeState cube1;
-	CubeState cube2;
-	convert_stage2_to_std_cube (init_cube, &cube1);
-	UINT sym1 = (sym/2) & 0x1;
-	UINT sym2 = (sym/4) & 0x1;
-	if (sym >= 8) {
-		printf ("reorient_cubeSTAGE2: bad symmetry code\n");
-		exit (1);
-	}
-	if (sym2 != 0) {
-		reorient_cube_hCUBE (cube1, &cube2);
-		reorient_cube_hCUBE (cube2, &cube1);
-		reorient_cube_vCUBE (cube1, &cube2);
-		reorient_cube_vCUBE (cube2, &cube1);
-	}
-	if (sym1 != 0) {
-		reorient_cube_hCUBE (cube1, &cube2);
-		reorient_cube_hCUBE (cube2, &cube1);
-	}
-	if ((sym & 0x1) == 0x1) {
-		mirror_cube_rlCUBE (cube1, &cube2);
-		cube1 = cube2;
-	}
-	convert_std_cube_to_stage2 (cube1, result_cube);
-}
-
-void
-get_clocFB (UINT centerFB, UINT* pcloc_f, UINT* pcloc_b)
-{
-	int i;
-	UINT cenbm = eloc2ebm[centerFB / 70];
-	UINT cenbm4of8 = bm4of8[centerFB % 70];
-	Face t1[4], t2[4];
-	int j1 = 0;
-	int j2 = 0;
-	for (i = 0; cenbm != 0; ++i) {
-		if ((cenbm & 0x1) != 0) {
-			if ((cenbm4of8 & 0x1) == 0) {
-				t2[j2++] = i;
-			} else {
-				t1[j1++] = i;
-			}
-			cenbm4of8 >>= 1;
-		}
-		cenbm >>= 1;
-	}
-	int idx1 = 24*24*24*t1[0] + 24*24*t1[1] + 24*t1[2] + t1[3];
-	int idx2 = 24*24*24*t2[0] + 24*24*t2[1] + 24*t2[2] + t2[3];
-	*pcloc_f = c4_to_cloc[idx1];		//which is which here?
-	*pcloc_b = c4_to_cloc[idx2];
-}
-
-UINT
-get_centerFB (UINT cloc_f, UINT cloc_b)
-{
-	int i;
-	UINT fbm = cloc_to_bm[cloc_f];
-	UINT bbm = cloc_to_bm[cloc_b];
-	UINT cenbm2 = fbm | bbm;
-	int j1 = 0;
-	UINT bm4of8b = 0;
-	for (i = 0; i < 24; ++i) {
-		if ((cenbm2 & (1 << i)) != 0) {
-			if ((fbm & (1 << i)) != 0) {
-				bm4of8b |= (1 << j1);
-			}
-			++j1;
-		}
-	}
-	UINT cen1 = bm4of8_to_70[bm4of8b];
-	UINT cen2 = ebm2eloc[cenbm2];
-	return 70*cen2 + cen1;
-}
-
-void
-reorient_cubeSTAGE3_slow (const CubeStage3& init_cube, int sym, CubeStage3* result_cube)
-{
-	//sym is a symmetry code (0..7) for the 8 symmetries of the cube using 180-degree rotations and reflection
-	CubeState cube1;
-	CubeState cube2;
-	convert_stage3_to_std_cube (init_cube, &cube1);
-	UINT sym1 = (sym/2) & 0x1;
-	UINT sym2 = (sym/4) & 0x1;
-	if (sym >= 8) {
-		printf ("reorient_cubeSTAGE2: bad symmetry code\n");
-		exit (1);
-	}
-	if (sym2 != 0) {
-		reorient_cube_hCUBE (cube1, &cube2);
-		reorient_cube_hCUBE (cube2, &cube1);
-		reorient_cube_vCUBE (cube1, &cube2);
-		reorient_cube_vCUBE (cube2, &cube1);
-	}
-	if (sym1 != 0) {
-		reorient_cube_hCUBE (cube1, &cube2);
-		reorient_cube_hCUBE (cube2, &cube1);
-	}
-	if ((sym & 0x1) == 0x1) {
-		mirror_cube_rlCUBE (cube1, &cube2);
-		cube1 = cube2;
-	}
-	convert_std_cube_to_stage3 (cube1, result_cube);
-}
-
-void
-reorient_cubeSTAGE3 (const CubeStage3& init_cube, int sym, CubeStage3* result_cube)
-{
-	//sym is a symmetry code (0..7) for the 8 symmetries of the cube
-	//using 180-degree rotations and reflection.
-	USHORT edge = init_cube.m_edge;
-	UINT cen = init_cube.m_centerLR;
-	result_cube->m_edge = reorient_s3edge[edge][sym];
-	result_cube->m_centerLR = reorient_s3cen[cen][sym];
-}
-
-void
-reorient_cubeSTAGE4_slow (const CubeStage4& init_cube, int sym, CubeStage4* result_cube)
-{
-	//sym is a symmetry code (0..15) for the 16 symmetries of the cube that keep
-	//the top/bottom faces facing up and down.
-	CubeState cube1;
-	CubeState cube2;
-	convert_stage4_to_std_cube (init_cube, &cube1);
-	UINT sym1 = (sym >> 1) & 0x3;
-	UINT sym2 = (sym >> 3) & 0x1;
-	if (sym >= 16) {
-		printf ("reorient_cubeSTAGE2: bad symmetry code\n");
-		exit (1);
-	}
-	if (sym2 != 0) {
-		reorient_cube_hCUBE (cube1, &cube2);
-		reorient_cube_hCUBE (cube2, &cube1);
-		reorient_cube_vCUBE (cube1, &cube2);
-		reorient_cube_vCUBE (cube2, &cube1);
-	}
-	if ((sym1 & 0x2) != 0) {
-		reorient_cube_hCUBE (cube1, &cube2);
-		reorient_cube_hCUBE (cube2, &cube1);
-	}
-	if ((sym1 & 0x1) != 0) {
-		reorient_cube_hCUBE (cube1, &cube2);
-		cube1 = cube2;
-	}
-	if ((sym & 0x1) == 0x1) {
-		mirror_cube_rlCUBE (cube1, &cube2);
-		cube1 = cube2;
-	}
-	convert_std_cube_to_stage4 (cube1, result_cube);
-}
-
-void
-reorient_cubeSTAGE4 (const CubeStage4& init_cube, int sym, CubeStage4* result_cube)
-{
-	//sym is a symmetry code (0..15) for the 16 symmetries of the cube
-	//using 180-degree rotations and reflection.
-	UINT edge = init_cube.m_edge;
-	USHORT cen = init_cube.m_centerUD;
-	USHORT cor = init_cube.m_corner;
-	result_cube->m_edge = reorient_s4edge[edge][sym];
-	result_cube->m_centerUD = reorient_s4cen[cen][sym];
-	result_cube->m_corner = reorient_s4cor[cor][sym];
-}
-
-void
-reorient_cube_hSQS (const CubeState& init_cube, CubeState* result_cube)
-{
-	int i;
-	for (i = 0; i < 8; ++i) {
-		int pos = reorient_hCORSQS[i];
-		int sf = init_cube.m_cor[i];
-		result_cube->m_cor[pos] = reorient_hCORSQS[sf];
-	}
-	for (i = 0; i < 24; ++i) {
-		int pos = reorient_hEDGE[i];
-		Face sf = init_cube.m_edge[i];
-		result_cube->m_edge[pos] = reorient_hEDGE[sf];
-	}
-	for (i = 0; i < 24; ++i) {
-		int pos = reorient_hCENSQS[i];
-		Face sf = 4*init_cube.m_cen[i];
-		result_cube->m_cen[pos] = reorient_hCENSQS[sf]/4;
-	}
-}
-
-void
-reorient_cube_vSQS (const CubeState& init_cube, CubeState* result_cube)
-{
-	int i;
-	for (i = 0; i < 8; ++i) {
-		int pos = reorient_vCORSQS[i];
-		int sf = init_cube.m_cor[i];
-		result_cube->m_cor[pos] = reorient_vCORSQS[sf];
-	}
-	for (i = 0; i < 24; ++i) {
-		int pos = reorient_vEDGE[i];
-		Face sf = init_cube.m_edge[i];
-		result_cube->m_edge[pos] = reorient_vEDGE[sf];
-	}
-	for (i = 0; i < 24; ++i) {
-		int pos = reorient_vCENSQS[i];
-		Face sf = 4*init_cube.m_cen[i];
-		result_cube->m_cen[pos] = reorient_vCENSQS[sf]/4;
-	}
-}
-
-void
-mirror_cube_rlSQS (const CubeState& init_cube, CubeState* result_cube)
-{
-	int i;
-	for (i = 0; i < 8; ++i) {
-		Face sf = init_cube.m_cor[i];
-		result_cube->m_cor[i ^ 4] = sf ^ 4;  // note different than for regular corner numbering
-	}
-	for (i = 0; i < 24; ++i) {
-		Face sf = init_cube.m_edge[i];
-		result_cube->m_edge[mirror_rlEDGE[i]] = mirror_rlEDGE[sf];
-	}
-	for (i = 0; i < 24; ++i) {
-		Face sf = 4*init_cube.m_cen[i];
-		result_cube->m_cen[mirror_rlCENSQS[i]] = mirror_rlCENSQS[sf]/4;
-	}
-}
-
-void
-inverse_cubeSQS (const CubeState& init_cube, CubeState* result_cube)
-{
-	int i;
-	Face t[24];
-	Face x[6];
-	for (i = 0; i < 8; ++i) {
-		t[init_cube.m_cor[i]] = i;
-	}
-	for (i = 0; i < 8; ++i) {
-		result_cube->m_cor[i] = t[i];
-	}
-	for (i = 0; i < 24; ++i) {
-		t[init_cube.m_edge[i]] = i;
-	}
-	for (i = 0; i < 24; ++i) {
-		result_cube->m_edge[i] = t[i];
-	}
-	for (i = 0; i < 6; ++i) {
-		x[i] = 4*i;
-	}
-	for (i = 0; i < 24; ++i) {
-		t[i] = x[init_cube.m_cen[i]]++; //Assign a "distinguishable" value for each cubie.
-	}
-	if (! (x[0] == 4 && x[1] == 8 && x[2] == 12 && x[3] == 16 && x[4] == 20 && x[5] == 24)) {
-		printf ("inconsistency in centers\n");
-		exit (1);
-	}
-	for (i = 0; i < 24; ++i) {
-		result_cube->m_cen[t[i]] = i/4;
-	}
-}
-
-void
-reorient_cube_hCUBE (const CubeState& init_cube, CubeState* result_cube)
-{
-	int i;
-	for (i = 0; i < 8; ++i) {
-		int pos = reorient_hCOR[i];
-		int sf = init_cube.m_cor[i];
-		result_cube->m_cor[pos] = reorient_hCOR[sf & 0x7] | (sf & 0x18);
-	}
-	for (i = 0; i < 24; ++i) {
-		int pos = reorient_hEDGE[i];
-		Face sf = init_cube.m_edge[i];
-		result_cube->m_edge[pos] = reorient_hEDGE[sf];
-	}
-	for (i = 0; i < 24; ++i) {
-		int pos = reorient_hCEN[i];
-		Face sf = 4*init_cube.m_cen[i];
-		result_cube->m_cen[pos] = reorient_hCEN[sf]/4;
-	}
-}
-
-void
-reorient_cube_vCUBE (const CubeState& init_cube, CubeState* result_cube)
-{
-	int i;
-	for (i = 0; i < 8; ++i) {
-		int pos = reorient_vCOR[i];
-		int sf = init_cube.m_cor[i];
-		int ori = ((sf & 0x18) >> 3) + reorientoc_vCOR[i];
-		ori %= 3;
-		result_cube->m_cor[pos] = reorient_vCOR[sf & 0x7] | (ori << 3);
-	}
-	for (i = 0; i < 24; ++i) {
-		int pos = reorient_vEDGE[i];
-		Face sf = init_cube.m_edge[i];
-		result_cube->m_edge[pos] = reorient_vEDGE[sf];
-	}
-	for (i = 0; i < 24; ++i) {
-		int pos = reorient_vCEN[i];
-		Face sf = 4*init_cube.m_cen[i];
-		result_cube->m_cen[pos] = reorient_vCEN[sf]/4;
-	}
-}
-
-void
-mirror_cube_rlCUBE (const CubeState& init_cube, CubeState* result_cube)
-{
-	int i;
-	for (i = 0; i < 8; ++i) {
-		Face sf = init_cube.m_cor[i];
-		int ori = sf & 0x18;
-		if (ori != 0) {
-			ori = 0x18 - ori;
-		}
-		result_cube->m_cor[i ^ 1] = ((sf & 0x7) ^ 1) | ori;
-	}
-	for (i = 0; i < 24; ++i) {
-		Face sf = init_cube.m_edge[i];
-		result_cube->m_edge[mirror_rlEDGE[i]] = mirror_rlEDGE[sf];
-	}
-	for (i = 0; i < 24; ++i) {
-		Face sf = 4*init_cube.m_cen[i];
-		result_cube->m_cen[mirror_rlCEN[i]] = mirror_rlCEN[sf]/4;
-	}
-}
-
-void
 scrambleCUBE (CubeState* pcube, int move_count, const int* move_arr)
 {
 	//Now supports double-layer twist turns: Ufs (36) .. Bfs2 (53)
@@ -5172,51 +4428,6 @@ perm_n_unpack (UINT n, UINT idx, Face* array_out)
 		}
 	}
 }
-
-void
-perm_n_init (int n, Face* out_arr)
-{
-	int i;
-
-	for (i = 0; i < n; ++i) {
-		out_arr[i] = i;
-	}
-}
-
-void
-three_cycle (Face* pArr, Face f1, Face f2, Face f3)
-{
-	Face temp;
-
-	temp = pArr[f1];
-	pArr[f1] = pArr[f2];
-	pArr[f2] = pArr[f3];
-	pArr[f3] = temp;
-}
-
-void
-four_cycle (Face* pArr, Face f1, Face f2, Face f3, Face f4)
-{
-	Face temp;
-
-	temp = pArr[f1];
-	pArr[f1] = pArr[f2];
-	pArr[f2] = pArr[f3];
-	pArr[f3] = pArr[f4];
-	pArr[f4] = temp;
-}
-
-void
-perm_n_compose (int n, const Face* perm0_in, const Face* perm1_in, Face* perm_out)
-{
-	int i;
-
-	for (i = 0; i < n; ++i) {
-		perm_out[i] = perm0_in[perm1_in[i]];
-	}
-}
-
-#ifdef PRUNING_TABLES
 
 CubePruningTable::CubePruningTable (UINT num_positions, UBYTE* ptable, void* move_func, int stage, int metric, UINT cencoredg) :
 	m_num_positions (num_positions),
@@ -6006,7 +5217,6 @@ prune_funcEDGCOR_STAGE5 (const CubeSqsCoord& cube1)
 	UINT idx = N_SQS_CORNER_PERM*cube1.m_ep96x96x96 + cube1.m_cp96;
 	return get_dist_4bit (idx, &prune_table_edgcor5[0]);
 }
-#endif
 
 void
 CubeState::init ()
@@ -6085,21 +5295,6 @@ CubeState::edgeUD_parity_odd () const
 		parity ^= 1;
 	}
 	return parity != 0;
-}
-
-void
-CubeCoord::init ()
-{
-	m_cen_fb = 0;
-	m_cen_ud = 0;
-	m_cen_lr = 0;
-	m_co = 0;
-	m_cp = 0;
-	this->m_ep1 = 0;
-	this->m_ep2fb = 0;
-	this->m_ep2lr = 0;
-	this->m_ep2ud = 0;
-	m_distance = 255;
 }
 
 void
