@@ -1447,8 +1447,6 @@ UINT reorient_s4edge[N_STAGE4_EDGE_CONFIGS][N_SYM_STAGE4];
 USHORT reorient_s4cor[N_STAGE4_CORNER_CONFIGS][N_SYM_STAGE4];
 UINT move_table_cenSTAGE4[N_STAGE4_CENTER_CONFIGS][N_STAGE4_SLICE_MOVES];
 USHORT move_table_cornerSTAGE4[N_STAGE4_CORNER_CONFIGS][N_STAGE4_SLICE_MOVES];
-UINT stage4_edge88200_to_edge_sym[N_STAGE4_EDGE_CONFIGS];
-UINT stage4_edge_sym_to_edge88200[N_SYM_STAGE4*N_STAGE4_EDGE_SYMCONFIGS];
 USHORT stage4_edge_hB[40320];
 USHORT stage4_edge_hgB[40320];
 USHORT stage4_edge_hgA[40320][36];
@@ -1557,8 +1555,6 @@ UINT cube_list_new_count = 0;
 
 UBYTE bm4of8[70];
 UBYTE bm4of8_to_70[256];
-
-UBYTE wi4of8_bm_to_idx[256];
 
 UINT ebm2eloc[4096*4096];
 UINT eloc2ebm[N_EDGE_COMBO8];
@@ -1818,65 +1814,25 @@ int main (int argc, char* argv[])
 	strcpy (&datafiles_path[0], &default_datafile_path[0]);
 
 	int start_dist = 0;
-	bool do_random = false;
+	bool do_random = true;
 	int random_count = 100;
 	static char cmd_cubestring[300];
 	bool do_cmd_cube = false;
-	if (argc > 1) {
-		start_dist = atoi (argv[1]);
-		if (start_dist < 0 || start_dist >= 479001600) {
-			printf ("bad command line arg\n");
-			exit (1);
-		}
-	}
 	bool resume = false;
-	if (argc > 1) {
-		start_dist = atoi (argv[1]);
-		if (start_dist < 0 || start_dist > 31) {
-			printf ("bad command line arg\n");
-			exit (1);
-		}
-		if (argc > 2) {
-			resume = true;
-		}
-	}
 	int metric = 0;
 	int i2;
 	for (i2 = 1; i2 < argc; ++i2) {
-		if (strncmp (argv[i2], "random", 6) == 0) {
-			if (strncmp (argv[i2], "random=", 7) == 0) {
-				int x = atoi (&argv[i2][7]);
-				if (x > 0) {
-					random_count = x;
-				}
-			}
-			if (random_count > 0) {
-				do_random = true;
-			}
-		} else {
-			if (strncmp (argv[i2], "path=", 5) == 0) {
-				if (strlen (argv[i2]) > 250) {
-					printf ("Path too long, ignored.\n");
-				} else {
-					strcpy (&datafiles_path[0], &argv[i2][5]);
-				}
-			} else {
-				if (strncmp (argv[i2], "-", 1) == 0) {
-					switch (argv[i2][1]) {
-					case 's': case 'S':
-						metric = 0;
-						break;
-					case 't': case 'T':
-						metric = 1;
-						break;
-					case 'b': case 'B':
-						metric = 2;
-						break;
-					}
-				} else {
-					strcpy (&cmd_cubestring[0], argv[i2]);
-					do_cmd_cube = true;
-				}
+		if (strncmp (argv[i2], "-", 1) == 0) {
+			switch (argv[i2][1]) {
+			case 's': case 'S':
+				metric = 0;
+				break;
+			case 't': case 'T':
+				metric = 1;
+				break;
+			case 'b': case 'B':
+				metric = 2;
+				break;
 			}
 		}
 	}
@@ -3704,12 +3660,6 @@ init_4of8 ()
 			}
 		}
 	}
-	count = 0;
-	for (i = 0; i < 256; ++i) {
-		if (bitcount[i & 0xF] == bitcount[(i >> 4) & 0xF]) {
-			wi4of8_bm_to_idx[i] = count++;
-		}
-	}
 }
 
 void
@@ -3739,7 +3689,7 @@ init_eloc ()
 	       }
 	      }
 	     }
-		}
+	    }
 	   }
 	  }
 	 }
@@ -4566,37 +4516,6 @@ init_stage4 ()
 		}
 	}
 	init_move_tablesSTAGE4 ();
-
-	for (u = 0; u < N_STAGE4_EDGE_CONFIGS; ++u) {
-		stage4_edge88200_to_edge_sym[u] = 99000;
-	}
-	UINT count = 0;
-	s4a.init ();
-	s4b.init ();
-	for (u = 0; u < N_STAGE4_EDGE_CONFIGS; ++u) {
-		if (stage4_edge88200_to_edge_sym[u] == 99000) {
-			stage4_edge88200_to_edge_sym[u] = N_SYM_STAGE4*count++;
-			stage4_edge_sym_to_edge88200[stage4_edge88200_to_edge_sym[u]] = u;
-			for (sym1 = 1; sym1 < N_SYM_STAGE4; ++sym1) {
-				s4a.m_edge = u;
-				reorient_cubeSTAGE4 (s4a, sym1, &s4b);
-				UINT u2 = s4b.m_edge;
-				if (stage4_edge88200_to_edge_sym[u2] == 99000) {
-
-					stage4_edge88200_to_edge_sym[u2] = stage4_edge88200_to_edge_sym[u] + sym1;
-				} else {
-					if (stage4_edge88200_to_edge_sym[u2]/N_SYM_STAGE4 != stage4_edge88200_to_edge_sym[u]/N_SYM_STAGE4) {
-						printf ("sym-coodinate generation inconsistency!\n");
-						exit (1);
-					}
-				}
-				if (u2 < u) {
-					printf ("sym-coordinate generation inconsistency: u2 < u\n");
-				}
-				stage4_edge_sym_to_edge88200[stage4_edge88200_to_edge_sym[u] + sym1] = u2;
-			}
-		}
-	}
 }
 
 void
