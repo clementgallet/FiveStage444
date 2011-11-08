@@ -274,8 +274,6 @@ Stab::to_string () const
 	return &s1[0];
 }
 
-Stab stab1;
-
 UINT byte_clr_masks[4] = { 0xFFFFFF00, 0xFFFF00FF, 0xFF00FFFF, 0x00FFFFFF };
 UINT pow3tab[5] = { 1, 3, 9, 27, 81 };
 
@@ -1435,8 +1433,6 @@ UINT reorient_s3cen[N_STAGE3_CENTER_CONFIGS][N_SYM_STAGE3];	//29MB
 USHORT reorient_s3edge[N_STAGE3_EDGE_CONFIGS][N_SYM_STAGE3];
 UINT move_table_cenSTAGE3[N_STAGE3_CENTER_CONFIGS][N_STAGE3_SLICE_MOVES];	//72MB
 USHORT move_table_edgeSTAGE3[N_STAGE3_EDGE_CONFIGS][N_STAGE3_SLICE_MOVES];
-USHORT stage3_edge_to_edgesym[N_STAGE3_EDGE_CONFIGS];
-USHORT stage3_edgesym_to_edge[2*N_STAGE3_EDGE_CONFIGS];
 #ifdef PRUNING_TABLES
 UBYTE prune_table_cen3[N_STAGE3_CENTER_CONFIGS/2];
 UBYTE prune_table_edg3[N_STAGE3_EDGE_CONFIGS*N_STAGE3_EDGE_PAR/2];
@@ -1455,9 +1451,7 @@ UINT stage4_edge_hash_table_idx[N_STAGE4_EDGE_HASH_TABLE];
 UINT stage4_edge_rep_table[N_STAGE4_EDGE_CONFIGS];
 USHORT move_table_AedgeSTAGE4[40320][N_STAGE4_SLICE_MOVES];
 USHORT move_table_BedgeSTAGE4[40320][N_STAGE4_SLICE_MOVES];
-UINT stage4_solved_edge_configs[N_STAGE4_RAW_EDGE_SOLVED_CONFIGS];
 int stage4repcount = 0;
-USHORT stage4_solved_corner_configs[96];
 #ifdef PRUNING_TABLES
 UBYTE prune_table_cencor4[N_STAGE4_CORNER_CONFIGS*N_STAGE4_CENTER_CONFIGS/2];
 UBYTE prune_table_edg4[N_STAGE4_EDGE_CONFIGS/2];
@@ -1475,9 +1469,6 @@ USHORT stage4_solved_centers_bm[STAGE4_NUM_SOLVED_CENTER_CONFIGS] = {
 	0x0F, 0xF0, 0x55, 0xAA, 0x5A, 0xA5, 0x69, 0x96, 0x66, 0x99, 0x3C, 0xC3
 };
 
-USHORT stage2_edge_to_edgesym[N_STAGE2_EDGE_CONFIGS];
-USHORT stage2_edgesym_to_edge[N_SYM_STAGE2*N_STAGE2_EDGE_SYMCONFIGS];
-USHORT reorient_cenFB[N_CENTER_COMBO4][N_SYM_STAGE2];
 #ifdef PRUNING_TABLES
 UBYTE prune_table_cen2[N_STAGE2_CENTER_CONFIGS/2];
 UBYTE prune_table_edg2[N_STAGE2_EDGE_CONFIGS/2];
@@ -1589,18 +1580,6 @@ FILE* stg3_file = NULL;
 FILE* stg4_file = NULL;
 FILE* stg5_file = NULL;
 
-int cube_sym_inv[N_CUBESYM];
-
-UINT sqs_edge_to_ep96x96x96[N_SQS_EDGE_ANTISYM_COUNT*N_ANTISYM];	//N_SQS_EDGE_SYMCOUNT*N_CUBESYM is somewhat smaller
-USHORT sqs_ep96x96x96_to_edge[N_SQS_EDGE_PERM];
-UBYTE sqs_ep96x96x96_to_sym[N_SQS_EDGE_PERM];
-
-Stab sqs_edge_stab[N_SYMCOUNT];
-USHORT sqs_edge_mult[N_SYMCOUNT];
-
-UBYTE sqs_sym_cp96_table[N_SQS_CORNER_PERM][N_ANTISYM];
-USHORT sqs_sym_cen_table[N_SQS_CENTER_PERM][N_ANTISYM];
-
 int display_count = 0;
 int display_limit = 100;
 
@@ -1704,13 +1683,9 @@ void lrfb_check ();
 void stage4_edge_table_init ();
 bool stage4_edge_table_lookup (UINT val, UINT* hash_loc);
 void add_to_stage4_edge_table (UINT val, UINT idx);
-void stage4_solved_edges ();
 void init_stage4 ();
 void init_move_tablesSTAGE4 ();
-void stage4_cor_check ();
 
-void init_edgemapSQS ();
-void init_invsym ();
 void rotate_sliceEDGE (int move_code, const CubeState& init_cube, CubeState* result_cube);
 void rotate_sliceCORNER (int move_code, const CubeState& init_cube, CubeState* result_cube);
 void convert_stage1_to_std_cube (const CubeStage1& init_cube, CubeState* result_cube);
@@ -1838,7 +1813,6 @@ int main (int argc, char* argv[])
 	}
 	printf ("Performing misc. initializations...\n");
 	init_4of8 ();
-	init_invsym ();
 
 	init_parity_table ();
 
@@ -1856,35 +1830,16 @@ int main (int argc, char* argv[])
 	init_stage3 ();
 
 	printf ("Performing stage 4 initializations...\n");
-	stage4_solved_edges ();
 	init_stage4_edge_tables ();
 	lrfb_check ();
 	init_stage4 ();
 
 	printf ("Performing stage 5 initializations...\n");
 	init_squares ();
-	init_edgemapSQS ();
-	CubeSqsCoord cube5, cube5a;
-	cube5.init ();
-	cube5a.init ();
-	for (i = 1; i < 4; ++i) {
-		cube5a = cube5;
-		cube5a.do_whole_cube_move (i);
-	}
 
 #ifdef PRUNING_TABLES
 	cpt_mgr.init_pruning_tables (metric);
 #endif
-
-	CubeStage1 solved, solved2;
-	solved.init ();
-	solved.m_distance = 0;
-	solved2 = solved;
-	solved2.do_whole_cube_move (2);
-	solved2.do_whole_cube_move (1);
-	solved2.do_whole_cube_move (2);
-	solved2.do_whole_cube_move (1);
-
 	do_random_cubes (metric, random_count);
 	return 0;
 }
@@ -2543,16 +2498,6 @@ init_squares ()
 			if (x2 == 0) {
 				printf ("Unexpected value for squares_cen_movemap[%d][%d]!\n", i, j);
 			}
-		}
-	}
-	for (i = 0; i < N_SQS_CORNER_PERM; ++i) {
-		for (sym = 0; sym < N_SYMX; ++sym) {
-			sqs_sym_cp96_table[i][sym] = sym_on_cp96 (i, sym);
-		}
-	}
-	for (i = 0; i < N_SQS_CENTER_PERM; ++i) {
-		for (sym = 0; sym < N_SYMX; ++sym) {
-			sqs_sym_cen_table[i][sym] = sym_on_cen12x12x12 (i, sym);
 		}
 	}
 }
@@ -3968,60 +3913,6 @@ init_stage2 ()
 			move_table_edgeSTAGE2[u][mc] = s2.m_edge;
 		}
 	}
-	s1.init ();
-	s2.init ();
-
-	stab1.set_bit (0);
-
-	for (u = 0; u < N_STAGE2_EDGE_CONFIGS; ++u) {
-		stage2_edge_to_edgesym[u] = 65000;
-	}
-	UINT count = 0;
-	for (u = 0; u < N_STAGE2_EDGE_CONFIGS; ++u) {
-		if (stage2_edge_to_edgesym[u] == 65000) {
-			stage2_edge_to_edgesym[u] = N_SYM_STAGE2*count++;
-			stage2_edgesym_to_edge[stage2_edge_to_edgesym[u]] = u;
-			for (sym = 1; sym < N_SYM_STAGE2; ++sym) {
-				s1.m_edge = u;
-				reorient_cubeSTAGE2_slow (s1, sym, &s2);
-				UINT u2 = s2.m_edge;
-				if (stage2_edge_to_edgesym[u2] == 65000) {
-					stage2_edge_to_edgesym[u2] = stage2_edge_to_edgesym[u] + sym;
-				} else {
-					if (stage2_edge_to_edgesym[u2]/N_SYM_STAGE2 != stage2_edge_to_edgesym[u]/N_SYM_STAGE2) {
-						printf ("sym-coodinate generation inconsistency!\n");
-						exit (1);
-					}
-				}
-				if (u2 < u) {
-					printf ("sym-coordinate generation inconsistency: u2 < u\n");
-				}
-				stage2_edgesym_to_edge[stage2_edge_to_edgesym[u] + sym] = u2;
-			}
-		}
-	}
-	cs2a.init();
-	cs2b.init ();
-	for (u = 0; u < N_CENTER_COMBO4; ++u) {
-		UINT bm = cloc_to_bm[u];
-		j = 0;
-		for (i = 0; i < 8 && j < 4; ++i) {
-			if ((bm & (1 << i)) == 0) {
-				t[j++] = i;
-			}
-		}
-		UINT c4 = 24*24*24*t[0] + 24*24*t[1] + 24*t[2] + t[3];
-		cs2a.m_centerFB = get_centerFB (u, c4_to_cloc[c4]);
-		for (sym = 0; sym < N_SYM_STAGE2; ++sym) {
-			reorient_cubeSTAGE2_slow (cs2a, sym, &cs2b);
-			get_clocFB (cs2b.m_centerFB, &cloc_f, &cloc_b);
-			if ((sym & 0x2) == 0) {
-				reorient_cenFB [u][sym] = cloc_f;
-			} else {
-				reorient_cenFB [u][sym] = cloc_b;
-			}
-		}
-	}
 }
 
 void
@@ -4066,7 +3957,7 @@ init_stage3 ()
 	       }
 	      }
 	     }
-		}
+	    }
 	   }
 	  }
 	 }
@@ -4089,39 +3980,6 @@ init_stage3 ()
 		}
 	}
 	init_move_tablesSTAGE3 ();
-
-	s1.init ();
-	s2.init ();
-
-	stab1.set_bit (0);
-
-	for (u = 0; u < N_STAGE3_EDGE_CONFIGS; ++u) {
-		stage3_edge_to_edgesym[u] = 65000;
-	}
-	count = 0;
-	for (u = 0; u < N_STAGE3_EDGE_CONFIGS; ++u) {
-		if (stage3_edge_to_edgesym[u] == 65000) {
-			stage3_edge_to_edgesym[u] = N_SYM_STAGE3*count++;
-			stage3_edgesym_to_edge[stage3_edge_to_edgesym[u]] = u;
-			for (sym = 1; sym < N_SYM_STAGE3; ++sym) {
-				s1.m_edge = u;
-				reorient_cubeSTAGE3 (s1, sym, &s2);
-				UINT u2 = s2.m_edge;
-				if (stage3_edge_to_edgesym[u2] == 65000) {
-					stage3_edge_to_edgesym[u2] = stage3_edge_to_edgesym[u] + sym;
-				} else {
-					if (stage3_edge_to_edgesym[u2]/N_SYM_STAGE3 != stage3_edge_to_edgesym[u]/N_SYM_STAGE3) {
-						printf ("sym-coodinate generation inconsistency!\n");
-						exit (1);
-					}
-				}
-				if (u2 < u) {
-					printf ("sym-coordinate generation inconsistency: u2 < u\n");
-				}
-				stage3_edgesym_to_edge[stage3_edge_to_edgesym[u] + sym] = u2;
-			}
-		}
-	}
 }
 
 void
@@ -4413,44 +4271,6 @@ add_to_stage4_edge_table (UINT val, UINT idx)
 }
 
 void
-stage4_solved_edges ()
-{
-	int i;
-	UINT u1, u2, u3, u4;
-	Face t[16];
-	UINT count = 0;
-	CubeState cs1;
-	cs1.init ();
-	for (u1 = 0; u1 < 24; ++u1) {	//Alr
-		perm_n_unpack (4, u1, &t[0]);
-		UINT Alr6 = sqs_perm_to_rep[u1];
-		for (u2 = 0; u2 < 24; ++u2) {	//Afb
-			perm_n_unpack (4, u2, &t[12]);
-			UINT Afb6 = sqs_perm_to_rep[u2];
-			for (u3 = 0; u3 < 24; ++u3) {	//Blr
-				perm_n_unpack (4, u3, &t[4]);
-				UINT Blr6 = sqs_perm_to_rep[u3];
-				if (Blr6 != Alr6) {
-					continue;
-				}
-				for (u4 = 0; u4 < 24; ++u4) {	//Bfb
-					perm_n_unpack (4, u4, &t[8]);
-					UINT Bfb6 = sqs_perm_to_rep[u4];
-					if (Bfb6 != Afb6) {
-						continue;
-					}
-					for (i = 0; i < 16; ++i) {
-						cs1.m_edge[i] = t[i] + (4*(i/4));
-					}
-					UINT u = cube_state_to_lrfb (cs1);
-					stage4_solved_edge_configs[count++] = u;
-				}
-			}
-		}
-	}
-}
-
-void
 init_stage4 ()
 {
 	int i;
@@ -4461,37 +4281,7 @@ init_stage4 ()
 	Face t[8];
 	Face t2[8];
 	Face t3[8];
-	for (u = 0; u < 40320; ++u) {
-		perm_to_420[u] = 999;
-	}
-	for (u = 0; u < 70; ++u) {
-		UINT bm = bm4of8[u];
-		for (v = 0; v < 6; ++v) {
-			perm_n_unpack (8, v, &t[0]);
-			for (w = 0; w < 96; ++w) {
-				for (i = 0; i < 8; ++i) {
-					t2[i] = map96[w][t[i]];
-				}
-				int f = 0;
-				int b = 4;
-				for (i = 0; i < 8; ++i) {
-					if ((bm & (1 << i)) == 0) {
-						t3[i] = t2[b++];
-					} else {
-						t3[i] = t2[f++];
-					}
-				}
-				u2 = perm_n_pack (8, &t3[0]);
-				perm_to_420[u2] = 6*u + v;
-			}
-		}
-	}
-	for (u = 0; u < 40320; ++u) {
-		if (perm_to_420[u] >= 420) {
-			printf ("perm to 420 error %u\n", u);
-		}
-	}
-	stage4_cor_check ();
+
 	for (u = 0; u < N_STAGE4_CORNER_CONFIGS; ++u) {
 		s4a.m_corner = u;
 		for (sym1 = 0; sym1 < 16; ++sym1) {
@@ -4564,160 +4354,6 @@ init_move_tablesSTAGE4 ()
 			cs1.do_move (stage4_slice_moves[mc]);
 			convert_std_cube_to_stage4 (cs1, &s4a);
 			move_table_cenSTAGE4[u][mc] = s4a.m_centerUD;
-		}
-	}
-}
-
-void
-stage4_cor_check ()
-{
-	UINT u1, u2;
-	int i;
-	Face t1[8];
-	CubeState cs1, cs2;
-	cs1.init ();
-	cs2.init ();
-
-	int solved_count = 0;
-	for (u1 = 0; u1 < 24; ++u1) {
-		for (u2 = 0; u2 < 24; ++u2) {
-			if (sqs_perm_to_rep[u1] != sqs_perm_to_rep[u2]) {
-				continue;
-			}
-			perm_n_unpack (4, u1, &t1[0]);
-			perm_n_unpack (4, u2, &t1[4]);
-			for (i = 4; i < 8; ++i) {
-				t1[i] += 4;
-			}
-			stage4_solved_corner_configs[solved_count++] = perm_n_pack (8, &t1[0]);
-		}
-	}
-}
-
-void
-init_edgemapSQS ()
-{
-	UINT u, sym;
-	CubeSqsCoord cube1, cube2;
-	CubeSymSqsCoord cube3;
-	cube1.init ();
-	cube3.init ();
-	stab1.set_bit (0);
-
-	for (u = 0; u < N_SQS_EDGE_PERM; ++u) {
-		sqs_ep96x96x96_to_edge[u] = 65000;
-		sqs_ep96x96x96_to_sym[u] = 99;
-	}
-	UINT count = 0;
-	for (u = 0; u < N_SQS_EDGE_PERM; ++u) {
-		if (sqs_ep96x96x96_to_edge[u] == 65000) {
-			sqs_ep96x96x96_to_edge[u] = count++;
-			sqs_ep96x96x96_to_sym[u] = 0;
-			sqs_edge_to_ep96x96x96[N_SYMX*sqs_ep96x96x96_to_edge[u]] = u;
-			for (sym = 1; sym < N_SYMX; ++sym) {
-				cube1.m_ep96x96x96 = u;
-				reorient_cubeSQS (cube1, sym, &cube2);
-				UINT u2 = cube2.m_ep96x96x96;
-				if (sqs_ep96x96x96_to_edge[u2] == 65000) {
-					sqs_ep96x96x96_to_edge[u2] = sqs_ep96x96x96_to_edge[u];
-					sqs_ep96x96x96_to_sym[u2] = sym;
-				} else {
-					if (sqs_ep96x96x96_to_edge[u2] != sqs_ep96x96x96_to_edge[u]) {
-						printf ("sym-coodinate generation inconsistency!\n");
-						exit (1);
-					}
-				}
-				if (u2 < u) {
-					printf ("sym-coordinate generation inconsistency: u2 < u\n");
-				}
-				sqs_edge_to_ep96x96x96[N_SYMX*sqs_ep96x96x96_to_edge[u] + sym] = u2;
-			}
-		}
-	}
-	for (u = 0; u < N_SYMCOUNT; ++u) {
-		UINT sym;
-		Stab sym_bm;
-		sym_bm.set_bit (0);
-		int sym_count = 1;
-
-		UINT ep1 = sqs_edge_to_ep96x96x96[N_SYMX*u];
-		cube1.m_ep96x96x96 = ep1;
-		for (sym = 1; sym < N_SYMX; ++sym) {
-			UINT ep2;
-			reorient_cubeSQS (cube1, sym, &cube2);
-			ep2 = cube2.m_ep96x96x96;
-			if (ep2 < ep1) {
-				printf ("edgemap gen error!\n");
-				return; // false;
-			}
-			if (ep2 == ep1) {
-				sym_bm.set_bit (sym);
-				++sym_count;
-			}
-		}
-		sqs_edge_stab[u] = sym_bm;
-		sqs_edge_mult[u] = N_SYMX / sym_count;
-	}
-}
-
-void
-init_invsym ()
-{
-	Face sym_array[N_CUBESYM][6];
-	Face temp_array[6];
-	int i, k, pack;
-	Face t;
-
-	perm_n_init(6, &sym_array[0][0]);
-	perm_n_init(6, &sym_array[1][0]);
-
-	t = sym_array[1][FaceL];
-	sym_array[1][FaceL] = sym_array[1][FaceR];
-	sym_array[1][FaceR] = t;
-
-	perm_n_init(6, &sym_array[2][0]);
-	four_cycle (&sym_array[2][0], FaceF, FaceL, FaceB, FaceR);
-
-	perm_n_compose (6, &sym_array[2][0], &sym_array[1][0], &sym_array[3][0]);
-
-	for (i = 4; i < 8; i += 2) {
-		perm_n_compose (6, &sym_array[i-2][0], &sym_array[2][0], &sym_array[i][0]);
-		perm_n_compose (6, &sym_array[i][0], &sym_array[1][0], &sym_array[i+1][0]);
-	}
-
-	perm_n_init(6, &sym_array[8][0]);
-
-	t = sym_array[8][FaceU];
-	sym_array[8][FaceU] = sym_array[8][FaceD];
-	sym_array[8][FaceD] = t;
-	t = sym_array[8][FaceR];
-	sym_array[8][FaceR] = sym_array[8][FaceL];
-	sym_array[8][FaceL] = t;
-
-	for (i = 9; i < 16; ++i) {
-		perm_n_compose (6, &sym_array[8][0], &sym_array[i - 8][0], &sym_array[i][0]);
-	}
-
-	perm_n_init (6, &sym_array[16][0]);
-
-	three_cycle (&sym_array[16][0], FaceU, FaceL, FaceF);
-	three_cycle (&sym_array[16][0], FaceD, FaceR, FaceB);
-
-	for (i = 17; i < 48; ++i) {
-		perm_n_compose (6, &sym_array[16][0], &sym_array[i-16][0], &sym_array[i][0]);
-	}
-
-	for (i = 0; i < N_CUBESYM; ++i) {
-		for (k = 0; k < N_CUBESYM; ++k) {
-			perm_n_compose (6, &sym_array[i][0], &sym_array[k][0], &temp_array[0]);
-			pack = perm_n_pack (6, &temp_array[0]);
-			if (pack == 0) {
-				cube_sym_inv[i] = k;
-				break;
-			}
-		}
-		if (k == N_CUBESYM) {
-			printf ("init_invsym : inverse not found\n");
 		}
 	}
 }
