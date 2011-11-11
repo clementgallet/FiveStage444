@@ -7,7 +7,6 @@ CubeStage2::init ()
 {
 	m_edge = 0;
 	m_centerFB = N_STAGE2_CENTER_CONFIGS - 70;
-	m_distance = 255;
 }
 
 bool

@@ -8,7 +8,6 @@
 struct CubeStage2 {
 	UINT m_centerFB;
 	USHORT m_edge;	//edge coordinate
-	UBYTE m_distance;
 	void init ();
 	bool is_solved () const;
 	void do_move_slow (int move_code);

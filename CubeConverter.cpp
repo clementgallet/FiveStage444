@@ -283,7 +283,6 @@ convert_std_cube_to_squares (const CubeState& init_cube, CubeSqsCoord* result_cu
 void
 pack_cubeSQS (const CubeState& cube1, CubeSqsCoord* result_cube)
 {
-	result_cube->m_distance = cube1.m_distance;
 	UINT ep1 = perm_n_pack (4, &cube1.m_edge[0]);
 	UINT ep2 = perm_n_pack (4, &cube1.m_edge[8]);
 	UINT ep3 = perm_n_pack (4, &cube1.m_edge[16]);

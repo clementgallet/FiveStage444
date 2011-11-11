@@ -7,7 +7,6 @@ CubeSqsCoord::init ()
 	m_cen12x12x12 = 0;
 	m_cp96 = 0;
 	m_ep96x96x96 = 0;
-	m_distance = 255;
 }
 
 void

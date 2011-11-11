@@ -1,6 +1,7 @@
 // FiveStage444.exe.cpp : Defines the entry point for the console application.
 //
 
+#include "FiveStage444.h"
 #include "Constants.h"
 #include "CubePruningTable.h"
 #include "CubePruningTableMgr.h"

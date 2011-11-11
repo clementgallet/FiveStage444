@@ -9,7 +9,6 @@ struct CubeSqsCoord {
 	UINT m_ep96x96x96;
 	USHORT m_cen12x12x12;
 	UBYTE m_cp96;
-	UBYTE m_distance;
 	void init ();
 	void do_move (int sqs_move_code);
 	void do_whole_cube_move (int sqs_whole_cube_move);

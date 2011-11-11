@@ -14,7 +14,6 @@ CubeState::init ()
 	for (i = 0; i < 24; ++i) {
 		m_cen[i] = i/4;
 	}
-	m_distance = 255;
 }
 
 void

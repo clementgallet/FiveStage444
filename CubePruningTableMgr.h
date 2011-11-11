@@ -31,4 +31,7 @@ UINT do_move_EDGCEN_STAGE4_STM (UINT idx, int move_code);
 UINT do_move_CENCOR_STAGE5 (UINT idx, int sqs_move_code);
 UINT do_move_EDGCOR_STAGE5 (UINT idx, int sqs_move_code);
 
+const char* metric_names [3] = { "stm", "ttm", "btm" };
+const char* metric_long_names[3] = { "slice", "twist", "block" };
+
 #endif

@@ -8,7 +8,6 @@ CubeStage3::init ()
 	m_edge = 494;
 	m_centerLR = 900830;
 	m_edge_odd = false;	
-	m_distance = 255;
 }
 
 void

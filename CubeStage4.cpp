@@ -8,7 +8,6 @@ CubeStage4::init ()
 	m_edge = 0;	//?
 	m_corner = 0;	//?
 	m_centerUD = 0;	//?
-	m_distance = 255;
 }
 
 void

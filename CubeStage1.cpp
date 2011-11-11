@@ -6,7 +6,6 @@ CubeStage1::init ()
 {
 	m_co = 0;
 	m_edge_ud_combo8 = N_EDGE_COMBO8 - 1;
-	m_distance = 255;
 }
 
 void

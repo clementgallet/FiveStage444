@@ -8,7 +8,6 @@
 struct CubeStage1 {
 	USHORT m_co;	//corner orientation
 	UINT m_edge_ud_combo8;
-	UBYTE m_distance;
 	void init ();
 	void do_move (int move_code);
 	void do_whole_cube_move (int whole_cube_move);
