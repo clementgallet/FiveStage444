@@ -1,9 +1,6 @@
 TODO:
 
-- Remove unused code
+- Debug java code.
 
-- Separate in different files
+- Get the code to work.
 
-- Move more functions to classes
-
-- Port to java :(( We will have to deal with some C-specific commands like unsigned integers, operations on pointers, etc.
