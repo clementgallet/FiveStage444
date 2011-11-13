@@ -1,5 +1,9 @@
 package fivestage444;
 
+import static fivestage444.Constants.*;
+
+import java.util.Random;
+
 public class FiveStage444 {
 
 // EDGE CONVENTION:
@@ -102,9 +106,9 @@ public class FiveStage444 {
 //             -------------
 
 
-	public static char default_datafile_path[] = "";
+	public static String default_datafile_path = "";
 
-	public static int dbltwists[27][2] = {
+	public static int dbltwists[][] = {
 	{ Uf, Us }, { Uf3, Us3 }, { Uf2, Us2 },
 	{ Df, Ds }, { Df3, Ds3 }, { Df2, Ds2 },
 	{ Lf, Ls }, { Lf3, Ls3 }, { Lf2, Ls2 },
@@ -116,7 +120,7 @@ public class FiveStage444 {
 	{ Fs, Bs3 }, { Fs3, Bs }, { Fs2, Bs2 }
 	};
 
-	public static String move_strings[63] = {
+	public static String move_strings[] = {
 	"U", "U'", "U2", "u", "u'", "u2",
 	"D", "D'", "D2", "d", "d'", "d2",
 	"L", "L'", "L2", "l", "l'", "l2",
@@ -131,55 +135,55 @@ public class FiveStage444 {
 	"(fb')", "(f'b)", "(fb')2"
 	};
 
-	public static int sq_moves[N_SQMOVES] = { Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2 };
+	public static int sq_moves[] = { Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2 };
 
-	public static int sq_twist_map1[N_SQ_TWIST_MOVES] = {
+	public static int sq_twist_map1[] = {
 	Uf2, Ufs2, Dfs2, Df2,
 	Lf2, Lfs2, Rfs2, Rf2,
 	Ff2, Ffs2, Bfs2, Bf2
 	};
 
-	public static int sq_block_map[N_SQ_BLOCK_MOVES] = {
+	public static int sq_block_map[] = {
 	Uf2, Us2, Ufs2, Dfs2, Ds2, Df2,
 	Lf2, Ls2, Lfs2, Rfs2, Rs2, Rf2,
 	Ff2, Fs2, Ffs2, Bfs2, Bs2, Bf2,
 	Us2Ds2, Ls2Rs2, Fs2Bs2
 	};
 
-	public static int n_moves_metric_stg5[3] = { N_SQMOVES, N_SQ_TWIST_MOVES, N_SQ_BLOCK_MOVES};
+	public static int n_moves_metric_stg5[] = { N_SQMOVES, N_SQ_TWIST_MOVES, N_SQ_BLOCK_MOVES};
 
-	public static int stage1_twist_list[N_STAGE1_TWIST_MOVES] = {
+	public static int stage1_twist_list[] = {
 	Uf, Uf3, Uf2, Df, Df3, Df2, Ufs, Ufs3, Ufs2, Dfs, Dfs3, Dfs2,
 	Lf, Lf3, Lf2, Rf, Rf3, Rf2, Lfs, Lfs3, Lfs2, Rfs, Rfs3, Rfs2,
 	Ff, Ff3, Ff2, Bf, Bf3, Bf2, Ffs, Ffs3, Ffs2, Bfs, Bfs3, Bfs2
 	};
 
-	public static int stage1_block_list[N_STAGE1_BLOCK_MOVES] = {
+	public static int stage1_block_list[] = {
 	Uf, Uf3, Uf2, Us, Us3, Us2, Df, Df3, Df2, Ds, Ds3, Ds2,
 	Ufs, Ufs3, Ufs2, Dfs, Dfs3, Dfs2, UsDs3, Us3Ds, Us2Ds2,
 	Lf, Lf3, Lf2, Ls, Ls3, Ls2, Rf, Rf3, Rf2, Rs, Rs3, Rs2,
 	Lfs, Lfs3, Lfs2, Rfs, Rfs3, Rfs2, LsRs3, Ls3Rs, Ls2Rs2,
 	Ff, Ff3, Ff2, Fs, Fs3, Fs2, Bf, Bf3, Bf2, Bs, Bs3, Bs2,
 	Ffs, Ffs3, Ffs2, Bfs, Bfs3, Bfs2, FsBs3, Fs3Bs, Fs2Bs2
-	public static };
+	};
 
-	public static int n_moves_metric_stg1[3] = { N_BASIC_MOVES, N_STAGE1_TWIST_MOVES, N_STAGE1_BLOCK_MOVES};
+	public static int n_moves_metric_stg1[] = { N_BASIC_MOVES, N_STAGE1_TWIST_MOVES, N_STAGE1_BLOCK_MOVES};
 
-	public static int stage2_twist_map1[N_STAGE2_TWIST_MOVES + N_STAGE2_2TWIST_MOVES] = {
+	public static int stage2_twist_map1[] = {
 	Uf, Uf3, Uf2, Df, Df3, Df2, Ufs, Ufs3, Ufs2, Dfs, Dfs3, Dfs2,
 	Lf2, Rf2, Lfs2, Rfs2, Ff2, Bf2, Ffs2, Bfs2,
 	Ffs, Ffs3, Bfs, Bfs3, Ffs, Ffs3, Bfs, Bfs3,
 	Lfs, Lfs3, Rfs, Rfs3, Lfs, Lfs3, Rfs, Rfs3
 	};
 
-	public static int stage2_twist_map2[N_STAGE2_TWIST_MOVES + N_STAGE2_2TWIST_MOVES] = {
+	public static int stage2_twist_map2[] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, -1, -1, -1, -1, -1,
 	Ff3, Ff, Bf3, Bf, Ff, Ff3, Bf, Bf3,
 	Lf3, Lf, Rf3, Rf, Lf, Lf3, Rf, Rf3
 	};
 
-	public static int stage2_block_map[N_STAGE2_BLOCK_MOVES] = {
+	public static int stage2_block_map[] = {
 	Uf, Uf3, Uf2, Us, Us3, Us2, Df, Df3, Df2, Ds, Ds3, Ds2,
 	Ufs, Ufs3, Ufs2, Dfs, Dfs3, Dfs2, UsDs3, Us3Ds, Us2Ds2,
 	Lf2, Ls, Ls3, Ls2, Rf2, Rs, Rs3, Rs2,
@@ -188,9 +192,9 @@ public class FiveStage444 {
 	Ffs2, Bfs2, FsBs3, Fs3Bs, Fs2Bs2
 	};
 
-	public static int n_moves_metric_stg2[3] = { N_STAGE2_SLICE_MOVES, N_STAGE2_TWIST_MOVES, N_STAGE2_BLOCK_MOVES};
+	public static int n_moves_metric_stg2[] = { N_STAGE2_SLICE_MOVES, N_STAGE2_TWIST_MOVES, N_STAGE2_BLOCK_MOVES};
 
-	public static int stage3_block_map[N_STAGE3_BLOCK_MOVES] = {
+	public static int stage3_block_map[] = {
 	Uf, Uf3, Uf2, Us2, Df, Df3, Df2, Ds2,
 	Ufs2, Dfs2, Us2Ds2,
 	Lf2, Ls2, Rf2, Rs2, Lfs2, Rfs2, Ls2Rs2,
@@ -198,23 +202,23 @@ public class FiveStage444 {
 	Ffs2, Bfs2, FsBs3, Fs3Bs, Fs2Bs2
 	};
 
-	public static int n_moves_metric_stg3[3] = { N_STAGE3_SLICE_MOVES, N_STAGE3_TWIST_MOVES, N_STAGE3_BLOCK_MOVES};
+	public static int n_moves_metric_stg3[] = { N_STAGE3_SLICE_MOVES, N_STAGE3_TWIST_MOVES, N_STAGE3_BLOCK_MOVES};
 
-	int stage4_twist_map1[N_STAGE4_TWIST_MOVES] = {
+	public static int stage4_twist_map1[] = {
 	Uf, Uf3, Uf2, Df, Df3, Df2, Ufs2, Dfs2,
 	Lf2, Rf2, Lfs2, Rfs2, Ff2, Bf2, Ffs2, Bfs2
 	};
 
-	public static int stage4_block_map[N_STAGE4_BLOCK_MOVES] = {
+	public static int stage4_block_map[] = {
 	Uf, Uf3, Uf2, Us2, Df, Df3, Df2, Ds2,
 	Ufs2, Dfs2, Us2Ds2,
 	Lf2, Ls2, Rf2, Rs2, Lfs2, Rfs2, Ls2Rs2,
 	Ff2, Fs2, Bf2, Bs2,	Ffs2, Bfs2, Fs2Bs2
 	};
 
-	public static int n_moves_metric_stg4[3] = { N_STAGE4_SLICE_MOVES, N_STAGE4_TWIST_MOVES, N_STAGE4_BLOCK_MOVES };
+	public static int n_moves_metric_stg4[] = { N_STAGE4_SLICE_MOVES, N_STAGE4_TWIST_MOVES, N_STAGE4_BLOCK_MOVES };
 
-	public static int xlate_r6[63][6] = {
+	public static int xlate_r6[][] = {
 	{ 0, 24, 12,  0, 24, 12}, { 1, 25, 13,  1, 25, 13}, { 2, 26, 14,  2, 26, 14},
 	{ 3, 27, 15,  3, 27, 15}, { 4, 28, 16,  4, 28, 16}, { 5, 29, 17,  5, 29, 17},
 	{ 6, 30, 18,  6, 30, 18}, { 7, 31, 19,  7, 31, 19}, { 8, 32, 20,  8, 32, 20},
@@ -268,42 +272,42 @@ public class FiveStage444 {
 	public static int STG2_TW_MS_b = 11;
 	public static int STG2_TW_MS_B = 12;
 
-	public static int stage2_slice_moves_to_try [13] = {
+	public static int stage2_slice_moves_to_try [] = {
 	0xFFFFFFF,
 	0xFFFFFF8, 0xFFFFFC0, 0xFFFF1C0, 0xFFFF000,
 	0xFFFEFFF, 0xFFF0FFF, 0xFF10FFF, 0xFF00FFF,
 	0xFEFFFFF, 0xF0FFFFF, 0x10FFFFF, 0x00FFFFF
-};
+	};
 
-	public static int stage2_stm_next_ms[13][N_STAGE2_SLICE_MOVES] = {
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
+	public static int stage2_stm_next_ms[][] = {
+	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
+	{	STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
 	{	STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
 	{	STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_L,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
 	{	STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_L,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_R,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_B,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X },
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X }
+	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
+	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
+	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_R,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
+	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
+	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
+	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
+	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_B,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X },
+	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X }
 };
 
-	public static int stage2_2twist_types[N_STAGE2_2TWIST_MOVES] = {
+	public static int stage2_2twist_types[] = {
 	22, 22, 23, 23, 22, 22, 23, 23,
 	20, 20, 21, 21, 20, 20, 21, 21
 };
 
-	public static int stage2_twist_moves_to_try [13] = {
+	public static int stage2_twist_moves_to_try [] = {
 	0xFFFFFF,
 	0xFFFE3F, 0xFFFE38, 0xFFF038, 0xFFF000,
 	0xEFBFFF, 0xEFAFFF, 0xCF2FFF, 0xCF0FFF,
 	0xBBFFFF, 0xBAFFFF, 0x32FFFF, 0x30FFFF
 };
 
-	public static int stage2_twist_next_ms[13][24] = {
+	public static int stage2_twist_next_ms[][] = {
 	{	STG2_TW_MS_U,STG2_TW_MS_U,STG2_TW_MS_U,STG2_TW_MS_D,STG2_TW_MS_D,STG2_TW_MS_D,STG2_TW_MS_u,STG2_TW_MS_u,STG2_TW_MS_u,STG2_TW_MS_d,STG2_TW_MS_d,STG2_TW_MS_d,STG2_TW_MS_L,STG2_TW_MS_R,STG2_TW_MS_l,STG2_TW_MS_r,STG2_TW_MS_F,STG2_TW_MS_B,STG2_TW_MS_f,STG2_TW_MS_b,STG2_TW_MS_L,STG2_TW_MS_R,STG2_TW_MS_F,STG2_TW_MS_B },
 
 	{	STG2_TW_MS_U,STG2_TW_MS_U,STG2_TW_MS_U,STG2_TW_MS_D,STG2_TW_MS_D,STG2_TW_MS_D,STG2_TW_MS_X,STG2_TW_MS_X,STG2_TW_MS_X,STG2_TW_MS_d,STG2_TW_MS_d,STG2_TW_MS_d,STG2_TW_MS_L,STG2_TW_MS_R,STG2_TW_MS_l,STG2_TW_MS_r,STG2_TW_MS_F,STG2_TW_MS_B,STG2_TW_MS_f,STG2_TW_MS_b,STG2_TW_MS_L,STG2_TW_MS_R,STG2_TW_MS_F,STG2_TW_MS_B },
@@ -322,33 +326,33 @@ public class FiveStage444 {
 	{	STG2_TW_MS_U,STG2_TW_MS_U,STG2_TW_MS_U,STG2_TW_MS_D,STG2_TW_MS_D,STG2_TW_MS_D,STG2_TW_MS_u,STG2_TW_MS_u,STG2_TW_MS_u,STG2_TW_MS_d,STG2_TW_MS_d,STG2_TW_MS_d,STG2_TW_MS_L,STG2_TW_MS_R,STG2_TW_MS_l,STG2_TW_MS_r,STG2_TW_MS_X,STG2_TW_MS_X,STG2_TW_MS_X,STG2_TW_MS_X,STG2_TW_MS_L,STG2_TW_MS_R,STG2_TW_MS_X,STG2_TW_MS_X }
 };
 
-	public static int S2BMTT_X = 0;		//moves not used for IDA* search
-	public static int S2BMTT_UGEN = 1;	//U-axis general moves
-	public static int S2BMTT_u = 2;
-	public static int S2BMTT_u3 = 3;
-	public static int S2BMTT_u2 = 4;
-	public static int S2BMTT_D = 5;
-	public static int S2BMTT_D3 = 6;
-	public static int S2BMTT_D2 = 7;
-	public static int S2BMTT_d = 8;
-	public static int S2BMTT_d3 = 9;
-	public static int S2BMTT_d2 = 10;
-	public static int S2BMTT_u2d2 = 11;
-	public static int S2BMTT_ud3 = 12;	//and u3d
-	public static int S2BMTT_LGEN = 13;	//L-Axis general moves
-	public static int S2BMTT_l = 14;	//and l'
-	public static int S2BMTT_r = 15;
-	public static int S2BMTT_r3 = 16;
-	public static int S2BMTT_r2 = 17;
-	public static int S2BMTT_lr3 = 18;	//and l'r
-	public static int S2BMTT_FGEN = 19;	//F-Axis general moves
-	public static int S2BMTT_f = 20;	//and f'
-	public static int S2BMTT_b = 21;
-	public static int S2BMTT_b3 = 22;
-	public static int S2BMTT_b2 = 23;
-	public static int S2BMTT_fb3 = 24;	//and f'b
+	public static byte S2BMTT_X = 0;		//moves not used for IDA* search
+	public static byte S2BMTT_UGEN = 1;	//U-axis general moves
+	public static byte S2BMTT_u = 2;
+	public static byte S2BMTT_u3 = 3;
+	public static byte S2BMTT_u2 = 4;
+	public static byte S2BMTT_D = 5;
+	public static byte S2BMTT_D3 = 6;
+	public static byte S2BMTT_D2 = 7;
+	public static byte S2BMTT_d = 8;
+	public static byte S2BMTT_d3 = 9;
+	public static byte S2BMTT_d2 = 10;
+	public static byte S2BMTT_u2d2 = 11;
+	public static byte S2BMTT_ud3 = 12;	//and u3d
+	public static byte S2BMTT_LGEN = 13;	//L-Axis general moves
+	public static byte S2BMTT_l = 14;	//and l'
+	public static byte S2BMTT_r = 15;
+	public static byte S2BMTT_r3 = 16;
+	public static byte S2BMTT_r2 = 17;
+	public static byte S2BMTT_lr3 = 18;	//and l'r
+	public static byte S2BMTT_FGEN = 19;	//F-Axis general moves
+	public static byte S2BMTT_f = 20;	//and f'
+	public static byte S2BMTT_b = 21;
+	public static byte S2BMTT_b3 = 22;
+	public static byte S2BMTT_b2 = 23;
+	public static byte S2BMTT_fb3 = 24;	//and f'b
 
-	public static byte stage2_btm_mtt_idx[N_STAGE2_BLOCK_MOVES] = {
+	public static byte stage2_btm_mtt_idx[] = {
 	S2BMTT_UGEN, S2BMTT_UGEN, S2BMTT_UGEN,		//U, U', U2
 	S2BMTT_u, S2BMTT_u3, S2BMTT_u2,				//u, u', u2
 	S2BMTT_D, S2BMTT_D3, S2BMTT_D2,				//D, D', D2
@@ -370,7 +374,7 @@ public class FiveStage444 {
 	S2BMTT_fb3, S2BMTT_fb3, S2BMTT_FGEN			//(fb'), (f'b), (fb')2
 };
 
-	public static int stage2_block_moves_to_try [29] = {
+	public static int stage2_block_moves_to_try [] = {
 	(0xFFF << S2BMTT_UGEN) | (0x3F << S2BMTT_LGEN) | (0x3F << S2BMTT_FGEN),
 	((1 << S2BMTT_u3) | (1 << S2BMTT_u2) | (1 << S2BMTT_D) | (1 << S2BMTT_D2) | (1 << S2BMTT_d) | (1 << S2BMTT_d3) | (1 << S2BMTT_d2)) | (0x3F << S2BMTT_LGEN) | (0x3F << S2BMTT_FGEN),
 	((1 << S2BMTT_u) | (1 << S2BMTT_u2) | (1 << S2BMTT_D3) | (1 << S2BMTT_D2) | (1 << S2BMTT_d) | (1 << S2BMTT_d3) | (1 << S2BMTT_d2)) | (0x3F << S2BMTT_LGEN) | (0x3F << S2BMTT_FGEN),
@@ -395,14 +399,14 @@ public class FiveStage444 {
 	(0xFFF << S2BMTT_UGEN) | (0x3F << S2BMTT_FGEN),
 	((1 << S2BMTT_f) | ((1 << S2BMTT_b) | (1 << S2BMTT_b3)) | (1 << S2BMTT_b2) | ((1 << S2BMTT_fb3))) | (0xFFF << S2BMTT_UGEN) | (0x3F << S2BMTT_LGEN),
 	((1 << S2BMTT_f) | ((1 << S2BMTT_b) | (1 << S2BMTT_b3))) | (0xFFF << S2BMTT_UGEN) | (0x3F << S2BMTT_LGEN),
-	S2BMTT_MK_f | (0xFFF << S2BMTT_UGEN) | (0x3F << S2BMTT_LGEN),
+	((1 << S2BMTT_b) | (1 << S2BMTT_b2)) | (0xFFF << S2BMTT_UGEN) | (0x3F << S2BMTT_LGEN),
 	((1 << S2BMTT_b3) | (1 << S2BMTT_b2)) | (0xFFF << S2BMTT_UGEN) | (0x3F << S2BMTT_LGEN),
 	((1 << S2BMTT_b) | (1 << S2BMTT_b3)) | (0xFFF << S2BMTT_UGEN) | (0x3F << S2BMTT_LGEN),
 	(1 << S2BMTT_fb3) | (0xFFF << S2BMTT_UGEN) | (0x3F << S2BMTT_LGEN),
 	(0xFFF << S2BMTT_UGEN) | (0x3F << S2BMTT_LGEN)
 };
 
-	public static int stage2_btm_next_ms[29][47] = {
+	public static int stage2_btm_next_ms[][] = {
 	{ 1,2,3,4,5,6,7,8,9,14,14,14,10,10,11,0,0,0,14,14,14, 15,17,18,19,16,21,21,21,20,0,21,21,21, 22,24,25,26,23,28,28,28,27,0,28,28,28 },
 	{ 14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,0,0,0,14,14,14, 15,17,18,19,16,21,21,21,20,0,21,21,21, 22,24,25,26,23,28,28,28,27,0,28,28,28 },
 	{ 14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,0,0,0,14,14,14, 15,17,18,19,16,21,21,21,20,0,21,21,21, 22,24,25,26,23,28,28,28,27,0,28,28,28 },
@@ -436,14 +440,14 @@ public class FiveStage444 {
 
 	/*** Stage 5 ***/
 
-	public static int sqs_slice_moves_to_try [13] = {
+	public static int sqs_slice_moves_to_try [] = {
 	0xFFE, 0xFFC, 0xFF8, 0xFF0,
 	0xFEF, 0xFCF, 0xF8F, 0xF0F,
 	0xEFF, 0xCFF, 0x8FF, 0x0FF,
 	0xFFF
 };
 
-	public static int sqs_stm_next_ms[N_SQMOVES] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
+	public static int sqs_stm_next_ms[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
 
 	public static int SQS_TW_MS_U = 0;
 	public static int SQS_TW_MS_D = 1;
@@ -471,13 +475,13 @@ public class FiveStage444 {
 
 	public static int SQS_TW_MS_X = 23;
 
-	public static int sqs_twist_moves_to_try[24] = {
+	public static int sqs_twist_moves_to_try[] = {
 	0xBBA, 0xBB4, 0xBB0, 0xBB0, 0xBB0, 0xBB4, 0xBB0, 0xBB0,
 	0xBAB, 0xB4B, 0xB0B, 0xB0B, 0xB0B, 0xB4B, 0xB0B, 0xB0B,
 	0xABB, 0x4BB, 0x0BB, 0x0BB, 0x0BB, 0x4BB, 0x0BB, 0xBBB
 	};
 
-	public static int sqs_twist_next_ms[24][12] = {
+	public static int sqs_twist_next_ms[][] = {
 	{ SQS_TW_MS_X,SQS_TW_MS_u,SQS_TW_MS_X,SQS_TW_MS_UD, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
 	{ SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_d,SQS_TW_MS_X, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
 	{ SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
@@ -515,11 +519,11 @@ public class FiveStage444 {
 	public static int SQS_BL_MS_XF = 5;
 	public static int SQS_BL_MS_X = 6;
 
-	public static int sqs_block_moves_to_try[7] = {
+	public static int sqs_block_moves_to_try[] = {
 	0x1B7DD0, 0x1B7DC0, 0x177437, 0x177037, 0x0D0DF7, 0x0C0DF7, 0x1F7DF7
 };
 
-	public static int sqs_block_next_ms[7][21] = {
+	public static int sqs_block_next_ms[][] = {
 	{ SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_XU,SQS_BL_MS_X, SQS_BL_MS_L,SQS_BL_MS_XL,SQS_BL_MS_XL,SQS_BL_MS_X,SQS_BL_MS_XL,SQS_BL_MS_XL, SQS_BL_MS_F,SQS_BL_MS_XF,SQS_BL_MS_XF,SQS_BL_MS_X,SQS_BL_MS_XF,SQS_BL_MS_XF, SQS_BL_MS_X, SQS_BL_MS_XL, SQS_BL_MS_XF },
 	{ SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X, SQS_BL_MS_L,SQS_BL_MS_XL,SQS_BL_MS_XL,SQS_BL_MS_X,SQS_BL_MS_XL,SQS_BL_MS_XL, SQS_BL_MS_F,SQS_BL_MS_XF,SQS_BL_MS_XF,SQS_BL_MS_X,SQS_BL_MS_XF,SQS_BL_MS_XF, SQS_BL_MS_X, SQS_BL_MS_XL, SQS_BL_MS_XF },
 	{ SQS_BL_MS_U,SQS_BL_MS_XU,SQS_BL_MS_XU,SQS_BL_MS_X,SQS_BL_MS_XU,SQS_BL_MS_XU, SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_XL,SQS_BL_MS_X, SQS_BL_MS_F,SQS_BL_MS_XF,SQS_BL_MS_XF,SQS_BL_MS_X,SQS_BL_MS_XF,SQS_BL_MS_XF, SQS_BL_MS_XU, SQS_BL_MS_X, SQS_BL_MS_XF },
@@ -533,15 +537,15 @@ public class FiveStage444 {
 
 	public static void main(String[] args){
 
-
 		//C++: strcpy (&datafiles_path[0], &default_datafile_path[0]);
 
 		int random_count = 100;
 		int metric = 0;
 
-		// Parse command-line arguments
+		// Parse command-line arguments. Will do it later...
+		/*
 		int i2;
-		for (i2 = 1; i2 < args.length(); ++i2) {
+		for (i2 = 1; i2 < args.length; ++i2) {
 			switch (args[i2]) {
 				case "-s": case "-S":
 					metric = 0;
@@ -554,6 +558,7 @@ public class FiveStage444 {
 					break;
 			}
 		}
+		*/
 
 		System.out.println ("Performing misc. initializations...");
 		Tables.init_4of8 ();
@@ -586,15 +591,15 @@ public class FiveStage444 {
 		do_random_cubes (metric, random_count);
 	}
 
-	public void do_random_cubes (int metric, int count){
+	public static void do_random_cubes (int metric, int count){
 	int i, i1;
 	Random r = new Random();
-	static int random_list[160];	//must be >= scramble_len
-	CubeState solveme;
-	CubeState solved;
-	static int scramble_len = 100;
+	int[] random_list = new int[160];	//must be >= scramble_len
+	CubeState solveme = new CubeState();
+	CubeState solved = new CubeState();
+	int scramble_len = 100;
 	int success_count = 0;
-	static int solveme_moves[100];
+	int[] solveme_moves = new int[100];
 
 	solved.init ();
 
@@ -604,15 +609,15 @@ public class FiveStage444 {
 		for (j = 0; j < scramble_len; ++j) {
 			random_list[j] = r.nextInt(36);
 		}
-		scrambleCUBE (solveme, scramble_len, random_list);
+		scrambleCUBE (solveme, scramble_len, random_list, 0);
 		System.out.println ("scramble: ");
-		print_move_list (scramble_len, random_list);
+		print_move_list (scramble_len, random_list, 0);
 		int solveme_count = solveit4x4x4IDA (solveme, solveme_moves, metric);
-		print_move_list (solveme_count, solveme_moves);
+		print_move_list (solveme_count, solveme_moves, 0);
 	}
 }
 
-	public int solveitIDA_STAGE1 (CubeStage1 init_cube, int[] move_list, int index, int metric){
+	public static int solveitIDA_STAGE1 (CubeStage1 init_cube, int[] move_list, int index, int metric){
 		int g1;
 		for (g1 = 0; g1 <= 30; ++g1) {
 			if (treesearchSTAGE1 (init_cube, g1, 0, g1, metric, move_list, index)) {
@@ -622,8 +627,8 @@ public class FiveStage444 {
 		return 999;
 	}
 
-	public boolean treesearchSTAGE1 (CubeStage1 cube1, int depth, int moves_done, int goal, int metric, int[] move_list, int index){
-	CubeStage1 cube2;
+	public static boolean treesearchSTAGE1 (CubeStage1 cube1, int depth, int moves_done, int goal, int metric, int[] move_list, int index){
+	CubeStage1 cube2 = new CubeStage1();
 	int mov_idx, mc, j;
 	if (depth == 0) {
 		if (! cube1.is_solved ()) {
@@ -666,7 +671,7 @@ public class FiveStage444 {
 	return false;
 }
 
-	public int solveitIDA_STAGE2 (CubeStage2 init_cube, int[] move_list, int index, int metric){
+	public static int solveitIDA_STAGE2 (CubeStage2 init_cube, int[] move_list, int index, int metric){
 		int g1;
 		for (g1 = 0; g1 <= 30; ++g1) {
 			if (treesearchSTAGE2 (init_cube, g1, 0, 0, g1, metric, move_list, index)) {
@@ -676,8 +681,8 @@ public class FiveStage444 {
 		return 999;
 	}
 
-	public boolean treesearchSTAGE2 (CubeStage2 cube1, int depth, int moves_done, int move_state, int goal, int metric, int[] move_list, int index){
-	CubeStage2 cube2;
+	public static boolean treesearchSTAGE2 (CubeStage2 cube1, int depth, int moves_done, int move_state, int goal, int metric, int[] move_list, int index){
+	CubeStage2 cube2 = new CubeStage2();
 	int mov_idx, mc, j;
 	int next_ms = 0;
 	if (depth == 0) {
@@ -713,7 +718,7 @@ public class FiveStage444 {
 			}
 		}
 		for (mov_idx = 0; mov_idx < n_moves_metric_stg2[metric]; ++mov_idx) {
-			bool did_move = false;
+			boolean did_move = false;
 			switch (metric) {
 			case 0:
 				if ((stage2_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
@@ -770,7 +775,7 @@ public class FiveStage444 {
 	return false;
 }
 
-	public int solveitIDA_STAGE3 (CubeStage3 init_cube, int[] move_list, int index, int metric){
+	public static int solveitIDA_STAGE3 (CubeStage3 init_cube, int[] move_list, int index, int metric){
 	int g1;
 	for (g1 = 0; g1 <= 30; ++g1) {
 		if (treesearchSTAGE3 (init_cube, g1, 0, g1, metric, move_list, index)) {
@@ -780,8 +785,8 @@ public class FiveStage444 {
 	return 999;
 }
 
-	public boolean treesearchSTAGE3 (CubeStage3 cube1, int depth, int moves_done, int goal, int metric, int[] move_list, int index){
-	CubeStage3 cube2;
+	public static boolean treesearchSTAGE3 (CubeStage3 cube1, int depth, int moves_done, int goal, int metric, int[] move_list, int index){
+	CubeStage3 cube2 = new CubeStage3();
 	int mov_idx, mc, j;
 	if (depth == 0) {
 		if (! cube1.is_solved ()) {
@@ -859,7 +864,7 @@ public class FiveStage444 {
 	return false;
 }
 
-	public int solveitIDA_STAGE4 (CubeStage4 init_cube, int[] move_list, int index, int metric){
+	public static int solveitIDA_STAGE4 (CubeStage4 init_cube, int[] move_list, int index, int metric){
 		int g1;
 		for (g1 = 0; g1 <= 30; ++g1) {
 			if (treesearchSTAGE4 (init_cube, g1, 0, g1, metric, move_list, index)) {
@@ -869,8 +874,8 @@ public class FiveStage444 {
 		return 999;
 	}
 
-	public boolean treesearchSTAGE4 (CubeStage4 cube1, int depth, int moves_done, int goal, int metric, int[] move_list, int index){
-	CubeStage4 cube2;
+	public static boolean treesearchSTAGE4 (CubeStage4 cube1, int depth, int moves_done, int goal, int metric, int[] move_list, int index){
+	CubeStage4 cube2 = new CubeStage4();
 	int mov_idx, mc, j;
 	if (depth == 0) {
 		if (! cube1.is_solved ()) {
@@ -926,8 +931,8 @@ public class FiveStage444 {
 	return false;
 }
 
-	public int solveitIDA_SQS (CubeSqsCoord init_cube, int[] move_list, int index, int metric){
-		static int init_move_state[3] = { 12, 23, 6 };
+	public static int solveitIDA_SQS (CubeSqsCoord init_cube, int[] move_list, int index, int metric){
+		int init_move_state[] = { 12, 23, 6 };
 		int g1;
 		for (g1 = 0; g1 <= 30; ++g1) {
 			if (treesearchSQS (init_cube, g1, 0, init_move_state[metric], g1, metric, move_list, index)) {
@@ -937,8 +942,8 @@ public class FiveStage444 {
 		return 999;
 	}
 
-	public boolean treesearchSQS (CubeSqsCoord cube1, int depth, int moves_done, UINT move_state, int goal, int metric, int[] move_list, int index){
-	CubeSqsCoord cube2;
+	public static boolean treesearchSQS (CubeSqsCoord cube1, int depth, int moves_done, int move_state, int goal, int metric, int[] move_list, int index){
+	CubeSqsCoord cube2 = new CubeSqsCoord();
 	int mov_idx, mc, j;
 	int next_ms = 0;
 	if (depth == 0) {
@@ -953,7 +958,7 @@ public class FiveStage444 {
 	}
 	if (dist <= depth) {
 		for (mov_idx = 0; mov_idx < n_moves_metric_stg5[metric]; ++mov_idx) {
-			bool did_move = false;
+			boolean did_move = false;
 			cube2.m_cen12x12x12 = cube1.m_cen12x12x12;
 			cube2.m_cp96 = cube1.m_cp96;
 			cube2.m_ep96x96x96 = cube1.m_ep96x96x96;
@@ -1007,14 +1012,14 @@ public class FiveStage444 {
 	return false;
 }
 
-	public int solveit4x4x4IDA (CubeState cube, int[] move_list, int metric){
+	public static int solveit4x4x4IDA (CubeState cube, int[] move_list, int metric){
 
 	int i;
-	CubeStage1 s1;
-	CubeStage2 s2;
-	CubeStage3 s3;
-	CubeStage4 s4;
-	CubeSqsCoord s5;
+	CubeStage1 s1 = new CubeStage1();
+	CubeStage2 s2 = new CubeStage2();
+	CubeStage3 s3 = new CubeStage3();
+	CubeStage4 s4 = new CubeStage4();
+	CubeSqsCoord s5 = new CubeSqsCoord();
 	s1.init ();
 	s2.init ();
 	s3.init ();
@@ -1071,7 +1076,7 @@ public class FiveStage444 {
 		break;
 	default:
 		System.out.println ("Invalid cube rotation state.\n");
-		exit (1);
+		//exit (1);
 	}
 
 	cube.convert_to_stage2 (s2);
@@ -1137,7 +1142,7 @@ public class FiveStage444 {
 			move_list[i] = stage4_slice_moves[move_list[i]];
 		}
 	}
-	scrambleCUBE (cube4, count4, move_list, count);
+	scrambleCUBE (cube, count4, move_list, count);
 	for (i = count; i < count + count4; ++i) {
 		move_list[i] = xlate_r6[move_list[i]][r6];
 	}
@@ -1167,7 +1172,7 @@ public class FiveStage444 {
 	return count;
 }
 
-	public void scrambleCUBE (CubeState pcube, int move_count, int[] move_arr, int index){
+	public static void scrambleCUBE (CubeState pcube, int move_count, int[] move_arr, int index){
 		int i;
 		for (i = 0; i < move_count; ++i) {
 			int mc = move_arr[i+index];
@@ -1180,10 +1185,10 @@ public class FiveStage444 {
 		}
 	}
 
-	public void print_move_list (int count, int[] move_list, int index){
+	public static void print_move_list (int count, int[] move_list, int index){
 		int j;
 		if (count >= 0) {
-			printf ("[" + count + "] ");
+			System.out.print ("[" + count + "] ");
 			for (j = 0; j < count; ++j) {
 				System.out.print (" " + move_strings[move_list[j+index]]);
 			}

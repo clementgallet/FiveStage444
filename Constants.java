@@ -2,7 +2,7 @@ package fivestage444;
 
 public class Constants{
 
-	public static char datafiles_path[256];
+	public static String datafiles_path = "";
 
 	public static int N_CORNER_ORIENT = 2187;
 
@@ -120,14 +120,14 @@ public class Constants{
 
 	public static int N_FACE_MOVES = 18;
 
-	public static int basic_to_face[N_BASIC_MOVES] = {
+	public static int basic_to_face[] = {
 	 0,  1,  2, -1, -1, -1,  3,  4,  5, -1, -1, -1,
 	 6,  7,  8, -1, -1, -1,  9, 10, 11, -1, -1, -1,
 	12, 13, 14, -1, -1, -1, 15, 16, 17, -1, -1, -1
 	};
 
 	public static int N_SQ_TWIST_MOVES = 12;
-	public static int sq_twist_moves[N_SQ_TWIST_MOVES][2] = {
+	public static int sq_twist_moves[][] = {
 	{ Uf2/3,    -1 },
 	{ Uf2/3, Us2/3 },
 	{ Df2/3, Ds2/3 },
@@ -143,7 +143,7 @@ public class Constants{
 	};
 
 	public static int N_SQ_BLOCK_MOVES = 21;
-	public static int sq_block_moves[N_SQ_BLOCK_MOVES][3] = {
+	public static int sq_block_moves[][] = {
 	{ Uf2/3,    -1, -1 },
 	{ Us2/3,    -1, -1 },
 	{ Uf2/3, Us2/3, -1 },
@@ -169,7 +169,7 @@ public class Constants{
 
 	public static int N_STAGE1_TWIST_MOVES_ALL = 54;
 	public static int N_STAGE1_TWIST_MOVES = 36;
-	public static int stage1_twist_moves[N_STAGE1_TWIST_MOVES_ALL][4] = {
+	public static int stage1_twist_moves[][] = {
 	{ Uf,   -1, -1, -1 },
 	{ Uf3,  -1, -1, -1 },
 	{ Uf2,  -1, -1, -1 },
@@ -233,7 +233,7 @@ public class Constants{
 
 	public static int N_STAGE1_BLOCK_MOVES = 63;
 	public static int N_STAGE1_BLOCK_MOVES_ALL = 81;
-	public static int stage1_block_moves[N_STAGE1_BLOCK_MOVES_ALL][4] = {
+	public static int stage1_block_moves[][] = {
 	{ Uf,   -1, -1, -1 },
 	{ Uf3,  -1, -1, -1 },
 	{ Uf2,  -1, -1, -1 },
@@ -324,15 +324,44 @@ public class Constants{
 	};
 
 	public static int N_STAGE2_SLICE_MOVES = 28;
-	public static int stage2_slice_moves[N_STAGE2_SLICE_MOVES] = {
+	public static int stage2_slice_moves[] = {
 	Uf, Uf3, Uf2, Us, Us3, Us2,
 	Df, Df3, Df2, Ds, Ds3, Ds2,
 	Lf2, Ls, Ls3, Ls2, Rf2, Rs, Rs3, Rs2,
 	Ff2, Fs, Fs3, Fs2, Bf2, Bs, Bs3, Bs2
 	};
 
-	public static int N_STAGE2_TWIST_MOVES = 20;	//30???
-	public static int stage2_twist_moves[30 /* *0 + N_STAGE2_TWIST_MOVES */ ][4] = {
+	public static int stg2_Uf = 0; //TODO: Use enum type.
+	public static int stg2_Uf3 = 1;
+	public static int stg2_Uf2 = 2;
+	public static int stg2_Us = 3;
+	public static int stg2_Us3 = 4;
+	public static int stg2_Us2 = 5;
+	public static int stg2_Df = 6;
+	public static int stg2_Df3 = 7;
+	public static int stg2_Df2 = 8;
+	public static int stg2_Ds = 9;
+	public static int stg2_Ds3 = 10;
+	public static int stg2_Ds2 = 11;
+	public static int stg2_Lf2 = 12;
+	public static int stg2_Ls = 13;
+	public static int stg2_Ls3 = 14;
+	public static int stg2_Ls2 = 15;
+	public static int stg2_Rf2 = 16;
+	public static int stg2_Rs = 17;
+	public static int stg2_Rs3 = 18;
+	public static int stg2_Rs2 = 19;
+	public static int stg2_Ff2 = 20;
+	public static int stg2_Fs = 21;
+	public static int stg2_Fs3 = 22;
+	public static int stg2_Fs2 = 23;
+	public static int stg2_Bf2 = 24;
+	public static int stg2_Bs = 25;
+	public static int stg2_Bs3 = 26;
+	public static int stg2_Bs2 = 27;
+
+	public static int N_STAGE2_TWIST_MOVES = 20;
+	public static int stage2_twist_moves[][] = {
 	{ stg2_Uf,        -1,       -1, -1 },
 	{ stg2_Uf3,       -1,       -1, -1 },
 	{ stg2_Uf2,       -1,       -1, -1 },
@@ -372,7 +401,7 @@ public class Constants{
 
 //Also allow 2-twist moves such as (Ff) F which is the same as F2 f.
 	public static int N_STAGE2_2TWIST_MOVES = 16;	// number of slice moves that can not be done by two allowed twist moves
-	public static int stage2_2twist_moves[N_STAGE2_2TWIST_MOVES][3] = {
+	public static int stage2_2twist_moves[][] = {
 	{ stg2_Fs, -1, -1 },
 	{ stg2_Fs3, -1, -1 },
 	{ stg2_Bs, -1, -1 },
@@ -394,7 +423,7 @@ public class Constants{
 
 
 	public static int N_STAGE2_BLOCK_MOVES = 47;	//formerly 41
-	public static int stage2_block_moves[N_STAGE2_BLOCK_MOVES][4] = {
+	public static int stage2_block_moves[][] = {
 	{ stg2_Uf,        -1, -1, -1 },
 	{ stg2_Uf3,       -1, -1, -1 },
 	{ stg2_Uf2,       -1, -1, -1 },
@@ -449,16 +478,36 @@ public class Constants{
 
 
 	public static int N_STAGE3_SLICE_MOVES = 20;
-	public static int stage3_slice_moves[N_STAGE3_SLICE_MOVES] = {
+	public static int stage3_slice_moves[] = {
 	Uf, Uf3, Uf2, Us2,
 	Df, Df3, Df2, Ds2,
 	Lf2, Ls2, Rf2, Rs2,
 	Ff2, Fs, Fs3, Fs2, Bf2, Bs, Bs3, Bs2
 	};
 
+	public static int stg3_Uf = 0; // TODO: Use enum type
+	public static int stg3_Uf3 = 1;
+	public static int stg3_Uf2 = 2;
+	public static int stg3_Us2 = 3;
+	public static int stg3_Df = 4;
+	public static int stg3_Df3 = 5;
+	public static int stg3_Df2 = 6;
+	public static int stg3_Ds2 = 7;
+	public static int stg3_Lf2 = 8;
+	public static int stg3_Ls2 = 9;
+	public static int stg3_Rf2 = 10;
+	public static int stg3_Rs2 = 11;
+	public static int stg3_Ff2 = 12;
+	public static int stg3_Fs = 13;
+	public static int stg3_Fs3 = 14;
+	public static int stg3_Fs2 = 15;
+	public static int stg3_Bf2 = 16;
+	public static int stg3_Bs = 17;
+	public static int stg3_Bs3 = 18;
+	public static int stg3_Bs2 = 19;
 
 	public static int N_STAGE3_TWIST_MOVES = 16;
-	public static int stage3_twist_moves[N_STAGE3_TWIST_MOVES][4] = {
+	public static int stage3_twist_moves[][] = {
 	{ stg3_Uf,        -1,       -1, -1 },
 	{ stg3_Uf3,       -1,       -1, -1 },
 	{ stg3_Uf2,       -1,       -1, -1 },
@@ -481,7 +530,7 @@ public class Constants{
 	};
 
 	public static int N_STAGE3_2TWIST_MOVES = 8;	// number of slice or slice+half-turn-face moves that can not be done by two allowed twist moves
-	public static int stage3_2twist_moves[N_STAGE3_2TWIST_MOVES][2] = {
+	public static int stage3_2twist_moves[][] = {
 	{ stg3_Fs, -1 },
 	{ stg3_Fs3, -1 },
 	{ stg3_Bs, -1 },
@@ -492,20 +541,20 @@ public class Constants{
 	{ stg3_Bf2, stg3_Bs3 },
 	};
 
-	public static int stage3_twist_map1[N_STAGE3_TWIST_MOVES + N_STAGE3_2TWIST_MOVES] = {
+	public static int stage3_twist_map1[] = {
 	Uf, Uf3, Uf2, Df, Df3, Df2, Ufs2, Dfs2,
 	Lf2, Rf2, Lfs2, Rfs2, Ff2, Bf2, Ffs2, Bfs2,
 	Ffs, Ffs3, Bfs, Bfs3, Ffs, Ffs3, Bfs, Bfs3
 	};
 
-	public static int stage3_twist_map2[N_STAGE3_TWIST_MOVES + N_STAGE3_2TWIST_MOVES] = {
+	public static int stage3_twist_map2[] = {
 	-1, -1, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, -1, -1, -1, -1, -1,
 	Ff3, Ff, Bf3, Bf, Ff, Ff3, Bf, Bf3
 	};
 
 	public static int N_STAGE3_BLOCK_MOVES = 31;
-	public static int stage3_block_moves[N_STAGE3_BLOCK_MOVES][4] = {
+	public static int stage3_block_moves[][] = {
 	{ stg3_Uf,        -1, -1, -1 },
 	{ stg3_Uf3,       -1, -1, -1 },
 	{ stg3_Uf2,       -1, -1, -1 },
@@ -543,15 +592,32 @@ public class Constants{
 	};
 
 	public static int N_STAGE4_SLICE_MOVES = 16;
-	public static int stage4_slice_moves[N_STAGE4_SLICE_MOVES] = {
+	public static int stage4_slice_moves[] = {
 	Uf, Uf3, Uf2, Us2,
 	Df, Df3, Df2, Ds2,
 	Lf2, Ls2, Rf2, Rs2,
 	Ff2, Fs2, Bf2, Bs2
 	};
 
+	public static int stg4_Uf = 0;
+	public static int stg4_Uf3 = 1;
+	public static int stg4_Uf2 = 2;
+	public static int stg4_Us2 = 3;
+	public static int stg4_Df = 4;
+	public static int stg4_Df3 = 5;
+	public static int stg4_Df2 = 6;
+	public static int stg4_Ds2 = 7;
+	public static int stg4_Lf2 = 8;
+	public static int stg4_Ls2 = 9;
+	public static int stg4_Rf2 = 10;
+	public static int stg4_Rs2 = 11;
+	public static int stg4_Ff2 = 12;
+	public static int stg4_Fs2 = 13;
+	public static int stg4_Bf2 = 14;
+	public static int stg4_Bs2 = 15;
+
 	public static int N_STAGE4_TWIST_MOVES = 16;
-	public static int stage4_twist_moves[N_STAGE3_TWIST_MOVES][4] = {
+	public static int stage4_twist_moves[][] = {
 	{ stg4_Uf,        -1,       -1, -1 },
 	{ stg4_Uf3,       -1,       -1, -1 },
 	{ stg4_Uf2,       -1,       -1, -1 },
@@ -574,7 +640,7 @@ public class Constants{
 	};
 
 	public static int N_STAGE4_BLOCK_MOVES = 25;
-	public static int stage4_block_moves[N_STAGE4_BLOCK_MOVES][4] = {
+	public static int stage4_block_moves[][] = {
 	{ stg4_Uf,        -1, -1, -1 },
 	{ stg4_Uf3,       -1, -1, -1 },
 	{ stg4_Uf2,       -1, -1, -1 },
@@ -615,7 +681,7 @@ public class Constants{
 		return (p[x2] >> 4) & 0xF;
 	}
 
-	public static int perm_n_pack (int n, public static byte[] array_in, int offset)
+	public static int perm_n_pack (int n, byte[] array_in, int offset)
 	{
 		int idx;
 		int i, j;
@@ -639,7 +705,7 @@ public class Constants{
 		int i, j;
 
 		for (i = n - 1; i >= 0; --i) {
-			array_out[i+offset] = idx % (n - i);
+			array_out[i+offset] = (byte)(idx % (n - i));
 			idx /= (n - i);
 
 			for (j = i + 1; j < n; ++j) {
@@ -651,14 +717,18 @@ public class Constants{
 	}
 
 	public static int STAGE3_NUM_SOLVED_CENTER_CONFIGS = 12;
-	public static int stage3_solved_centers[STAGE3_NUM_SOLVED_CENTER_CONFIGS] = {
+	public static int stage3_solved_centers[] = {
 	900830, 900844,	900850, 900853, 900857, 900858,
 	900871, 900872, 900876,	900879, 900885, 900899
 	};
 
 	public static int STAGE4_NUM_SOLVED_CENTER_CONFIGS = 12;
-	public static short stage4_solved_centers_bm[STAGE4_NUM_SOLVED_CENTER_CONFIGS] = {
+	public static short stage4_solved_centers_bm[] = {
 	0x0F, 0xF0, 0x55, 0xAA, 0x5A, 0xA5, 0x69, 0x96, 0x66, 0x99, 0x3C, 0xC3
 	};
+
+	public interface DoMove{
+		public int do_move(int idx, int move_code); 
+	}
 
 }

@@ -4,7 +4,7 @@ public class CubePruningTable {
 
 	private	int m_num_positions;
 	private	byte[] m_ptable;
-	private DoMove m_do_move_func;
+	private Constants.DoMove m_do_move_func;
 	private int m_num_moves;
 	private int[] m_move_list;
 	private int m_num_moves2;
@@ -13,7 +13,7 @@ public class CubePruningTable {
 	private int[] m_psolved;
 	private int m_count;
 
-	CubePruningTable (int num_positions, byte[] ptable, DoMove move_func){
+	CubePruningTable (int num_positions, byte[] ptable, Constants.DoMove move_func){
 		m_num_positions = num_positions;
 		m_ptable = ptable;
 		m_do_move_func = move_func;
@@ -66,7 +66,7 @@ public class CubePruningTable {
 			}
 			break;
 		default:
-			printf ("CubePruningTable::init_move_list call ignored\n");
+			System.out.println ("CubePruningTable::init_move_list call ignored");
 		}
 	}
 
@@ -97,7 +97,7 @@ public class CubePruningTable {
 			}
 			break;
 		default:
-			printf ("CubePruningTable::init_move_list2 call ignored\n");
+			System.out.println ("CubePruningTable::init_move_list2 call ignored\n");
 		}
 	}
 
@@ -111,7 +111,7 @@ public class CubePruningTable {
 		int n = m_num_positions/2 + (m_num_positions & 0x1);
 		m_count = 0;
 		for (i = 0; i < n; ++i) {
-			m_ptable[i] = 0xFF;
+			m_ptable[i] = (byte)0xFF;
 		}
 	}
 
@@ -128,7 +128,7 @@ public class CubePruningTable {
 		for (dist = 1; dist <= max_dist && new_count > 0; ++dist) {
 			int old_count = m_count;
 			for (idx = 0; idx < m_num_positions; ++idx) {
-				int dx = get_dist_4bit (idx, m_ptable);
+				int dx = Constants.get_dist_4bit (idx, m_ptable);
 				if (m_num_moves2 > 0 && dist >= 2 && dx == dist - 2) {
 					generate2 (idx, dist);
 				}

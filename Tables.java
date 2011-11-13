@@ -3,8 +3,8 @@ package fivestage444;
 public class Tables {
 
 	/*** init_4of8 ***/
-	public static byte bm4of8_to_70[256];
-	public static short bm4of8[70]; // (256). Was 'byte', now 'short' :(
+	public static byte[] bm4of8_to_70 = new byte[256];
+	public static short[] bm4of8 = new short[70]; // (256). Was 'byte', now 'short' :(
 
 	public static void init_4of8 (){
 		int a1, a2, a3, a4;
@@ -17,8 +17,8 @@ public class Tables {
 			for (a2 = a1+1; a2 < 8-2; ++a2) {
 				for (a3 = a2+1; a3 < 8-1; ++a3) {
 					for (a4 = a3+1; a4 < 8; ++a4) {
-						bm4of8[count] = (1 << a1) | (1 << a2) | (1 << a3) | (1 << a4);
-						bm4of8_to_70[bm4of8[count]] = count;
+						bm4of8[count] = (short)((1 << a1) | (1 << a2) | (1 << a3) | (1 << a4));
+						bm4of8_to_70[bm4of8[count]] = (byte)count;
 						++count;
 					}
 				}
@@ -27,13 +27,13 @@ public class Tables {
 	}
 
 	/*** init_parity_table ***/
-	public static boolean parity_perm8_table[40320];
+	public static boolean[] parity_perm8_table = new boolean[40320];
 
 	public static int get_parity8 (int x){
 		int i, j;
 		int parity = 0;
-		Face t[8];
-		perm_n_unpack (8, x, t, 0);
+		byte[] t = new byte[8];
+		Constants.perm_n_unpack (8, x, t, 0);
 		for (i = 0; i < 7; ++i) {
 			if (t[i] == i) {
 				continue;
@@ -59,21 +59,22 @@ public class Tables {
 	}
 
 	/*** init_eloc ***/
-	public static int ebm2eloc[4096*4096];
-	public static int eloc2ebm[N_EDGE_COMBO8];
-	public static Face map96[96][8];
-	public static int bm12_4of8_to_high_idx[4096][70];
-	public static int bm12_4of8_to_low_idx[4096][70];
-	public static short bitcount8[256]; // (256). Was 'byte', now 'short' :(
-	public static short gen_MofN8[256][256]; // (256?). Was 'byte', now 'short' :(
+	public static int[] ebm2eloc = new int[4096*4096];
+	public static int[] eloc2ebm = new int[Constants.N_EDGE_COMBO8];
+	public static byte[][] map96 = new byte[96][8];
+	public static int[][] bm12_4of8_to_high_idx = new int[4096][70];
+	public static int[][] bm12_4of8_to_low_idx = new int[4096][70];
+	public static short[] bitcount8 = new short[256]; // (256). Was 'byte', now 'short' :(
+	public static short[][] gen_MofN8 = new short[256][256]; // (256?). Was 'byte', now 'short' :(
+
+	private static int POW2_24 = 4096*4096;
 
 	public static void init_eloc ()	{
-		static int POW2_24 = 4096*4096;
 		int a1, a2, a3, a4, a5, a6, a7, a8;
 		int i;
 		short u;
-		Face t[8];
-		Face f;
+		byte[] t = new byte[8];
+		byte f;
 		int count = 0;
 		for (a1 = 0; a1 < POW2_24; ++a1) {
 			ebm2eloc[a1] = 999999;
@@ -98,9 +99,9 @@ public class Tables {
 		 }
 		}
 		for (a1 = 0; a1 < 24; ++a1) {
-			perm_n_unpack (4, a1, t, 0);
+			Constants.perm_n_unpack (4, a1, t, 0);
 			for (i = 0; i < 4; ++i) {
-				t[i+4] = t[i] + 4;
+				t[i+4] = (byte)(t[i] + 4);
 			}
 			for (i = 0; i < 8; ++i) {
 				map96[4*a1][i] = t[i];
@@ -132,7 +133,7 @@ public class Tables {
 				for (i = 0; u12 != 0; ++i) {
 					if ((u12 & 0x1) != 0) {
 						if ((bbbb & 0x1) == 0x1) {
-							t[j1++] = i;
+							t[j1++] = (byte)i;
 						}
 						bbbb >>= 1;
 					}
@@ -151,7 +152,7 @@ public class Tables {
 				for (i = 24 - 1; u12 != 0; --i) {
 					if ((u12 & 0x800) != 0) {
 						if ((bbbb & 0x80) != 0) {
-							t[j1++] = i;
+							t[j1++] = (byte)i;
 						}
 						bbbb <<= 1;
 					}
@@ -184,7 +185,7 @@ public class Tables {
 					}
 					u0 >>= 1;
 				}
-				gen_MofN8[u][u1] = u3;
+				gen_MofN8[u][u1] = (short)u3;
 			}
 		}
 	}
@@ -197,12 +198,18 @@ public class Tables {
 		return (short)(x8 % 255);
 	}
 
-
+	public static int swapbits (int x, int b){
+		int x2 = x & b;
+		if (x2 == 0 || x2 == b) {
+			return x;
+		}
+		return x ^ b;
+	}
 
 
 	/*** init_cloc ***/
-	public static int c4_to_cloc[24*24*24*24];
-	public static int cloc_to_bm[Constants.N_CENTER_COMBO4];
+	public static int[] c4_to_cloc = new int[24*24*24*24];
+	public static int[] cloc_to_bm = new int[Constants.N_CENTER_COMBO4];
 
 	public static void init_cloc (){
 		int a1, a2, a3, a4; //, a5, a6, a7, a8;
@@ -250,14 +257,14 @@ public class Tables {
 
 
 	/*** init_perm_to_420 ***/
-	public static short perm_to_420[40320]; // (420)
+	public static short[] perm_to_420 = new short[40320]; // (420)
 
 	public static void init_perm_to_420 (){
 		int i;
 		int u, v, w, u2;
-		Face t[8];
-		Face t2[8];
-		Face t3[8];
+		byte[] t = new byte[8];
+		byte[] t2 = new byte[8];
+		byte[] t3 = new byte[8];
 
 		for (u = 0; u < 40320; ++u) {
 			perm_to_420[u] = 999;
@@ -265,7 +272,7 @@ public class Tables {
 		for (u = 0; u < 70; ++u) {
 			int bm = bm4of8[u];
 			for (v = 0; v < 6; ++v) {
-				perm_n_unpack (8, v, t, 0);
+				Constants.perm_n_unpack (8, v, t, 0);
 					for (w = 0; w < 96; ++w) {
 					for (i = 0; i < 8; ++i) {
 						t2[i] = map96[w][t[i]];
@@ -279,8 +286,8 @@ public class Tables {
 							t3[i] = t2[f++];
 						}
 					}
-					u2 = perm_n_pack (8, t3, 0);
-					perm_to_420[u2] = 6*u + v;
+					u2 = Constants.perm_n_pack (8, t3, 0);
+					perm_to_420[u2] = (short)(6*u + v);
 				}
 			}
 		}
@@ -288,14 +295,17 @@ public class Tables {
 
 
 	/*** init_stage1 ***/
-	public static int move_table_edgeSTAGE1[N_EDGE_COMBO8][N_BASIC_MOVES];	// > 100MB !
-	public static int move_table_co[N_CORNER_ORIENT][N_FACE_MOVES];
+	public static int[][] move_table_edgeSTAGE1 = new int[Constants.N_EDGE_COMBO8][Constants.N_BASIC_MOVES]; // (735471) 735471*36 > 100MB !
+	public static short[][] move_table_co = new short[Constants.N_CORNER_ORIENT][Constants.N_FACE_MOVES]; // (2187) 2187*18
 
 	public static void init_move_tablesSTAGE1 (){
-		int i, mc, lrfb, ud;
+		int i, mc;
+		byte lrfb, ud;
 		int u;
-		CubeState cube1, cube2;
-		CubeStage1 s1, s2;
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		CubeStage1 s1 = new CubeStage1();
+		CubeStage1 s2 = new CubeStage1();
 		s1.init ();
 		s2.init ();
 		cube1.init ();
@@ -326,14 +336,14 @@ public class Tables {
 		}
 		cube1.init ();
 		for (u = 0; u < Constants.N_CORNER_ORIENT; ++u) {
-			s1.m_co = u;
+			s1.m_co = (short)u;
 			s1.convert_to_std_cube (cube1);
 			for (mc = 0; mc < Constants.N_BASIC_MOVES; ++mc) {
 				int fmc = Constants.basic_to_face[mc];
 				if (fmc >= 0) {
 					if (fmc >= Constants.N_FACE_MOVES) { // TODO: Remove this.
-						printf ("do_move: face move code error\n");
-						exit (1);
+						System.out.println ("do_move: face move code error");
+						//exit (1);
 					}
 					for (i = 0; i < 8; ++i )
 						cube2.m_cor[i] = cube1.m_cor[i]; // TODO: Could be optimised...
@@ -348,16 +358,18 @@ public class Tables {
 
 
 	/*** init_stage2 ***/
-	public static short move_table_cenSTAGE2[Constants.N_CENTER_COMBO4][Constants.N_STAGE2_SLICE_MOVES]; // 10626*28
-	public static short move_table_edgeSTAGE2[420][Constants.N_STAGE2_SLICE_MOVES]; // 420*28
+	public static short[][] move_table_cenSTAGE2 = new short[Constants.N_CENTER_COMBO4][Constants.N_STAGE2_SLICE_MOVES]; // 10626*28
+	public static short[][] move_table_edgeSTAGE2 = new short[420][Constants.N_STAGE2_SLICE_MOVES]; // 420*28
 
 	public static void init_stage2 (){
 		int i, j;
 		int u;
-		Face t[8];
+		byte[] t = new byte[8];
 		int mc, udlrf;
-		CubeState cube1, cube2;
-		CubeStage2 s1, s2;
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		CubeStage2 s1 = new CubeStage2();
+		CubeStage2 s2 = new CubeStage2();
 		s1.init ();
 		s2.init ();
 		cube1.init ();
@@ -367,7 +379,7 @@ public class Tables {
 			udlrf = 0;
 			for (i = 0; i < 24; ++i) {
 				if ((cbm & (1 << i)) == 0) {
-					cube1.m_cen[i] = udlrf++/4;
+					cube1.m_cen[i] = (byte)(udlrf++/4);
 				} else {
 					cube1.m_cen[i] = 5;
 				}
@@ -375,20 +387,20 @@ public class Tables {
 			for (mc = 0; mc < Constants.N_STAGE2_SLICE_MOVES; ++mc) {
 				for (i = 0; i < 24; ++i )
 					cube2.m_cen[i] = cube1.m_cen[i]; // TODO: Could be optimised...
-				cube2.do_move (stage2_slice_moves[mc]);
+				cube2.do_move (Constants.stage2_slice_moves[mc]);
 				j = 0;
 				for (i = 0; i < 24; ++i) {
 					if (cube2.m_cen[i] == 5) {
-						t[j++] = i;
+						t[j++] = (byte)i;
 					}
 				}
 				int idx = 24*24*24*t[0] + 24*24*t[1] + 24*t[2] + t[3];
-				move_table_cenSTAGE2[u][mc] = c4_to_cloc[idx];
+				move_table_cenSTAGE2[u][mc] = (short)c4_to_cloc[idx];
 			}
 		}
 		for (u = 0; u < 420; ++u) {
 			s1.m_centerFB = 0; // TODO: Useful ?
-			s1.m_edge = u;
+			s1.m_edge = (short)u;
 			for (mc = 0; mc < Constants.N_STAGE2_SLICE_MOVES; ++mc) {
 				s2.m_edge = s1.m_edge;
 				s2.do_move_slow (mc);
@@ -414,11 +426,12 @@ public class Tables {
 	}
 
 	/*** init_stage3 ***/
-	public static int e16bm2eloc[256*256];
-	public static int eloc2e16bm[Constants.N_COMBO_16_8];
+	public static int[] e16bm2eloc = new int[256*256];
+	public static int[] eloc2e16bm = new int[Constants.N_COMBO_16_8];
+
+	private static int POW2_16 = 256*256;
 
 	public static void init_stage3 (){
-		static int POW2_16 = 256*256;
 		int a1, a2, a3, a4, a5, a6, a7, a8;
 
 		int count = 0;
@@ -447,13 +460,13 @@ public class Tables {
 		init_move_tablesSTAGE3 ();
 	}
 
-	public static int move_table_cenSTAGE3[Constants.N_STAGE3_CENTER_CONFIGS][Constants.N_STAGE3_SLICE_MOVES]; // 900900*20 = 72MB
-	public static short move_table_edgeSTAGE3[Constants.N_STAGE3_EDGE_CONFIGS][Constants.N_STAGE3_SLICE_MOVES]; // (12870) 12870*20
+	public static int[][] move_table_cenSTAGE3 = new int[Constants.N_STAGE3_CENTER_CONFIGS][Constants.N_STAGE3_SLICE_MOVES]; // 900900*20 = 72MB
+	public static short[][] move_table_edgeSTAGE3 = new short[Constants.N_STAGE3_EDGE_CONFIGS][Constants.N_STAGE3_SLICE_MOVES]; // (12870) 12870*20
 
 	public static void init_move_tablesSTAGE3 (){
 		int mc;
 		int u;
-		CubeStage3 s3;
+		CubeStage3 s3 = new CubeStage3();
 		s3.init ();
 		for (u = 0; u < Constants.N_STAGE3_CENTER_CONFIGS; ++u) {
 			s3.m_edge = 0;
@@ -466,7 +479,7 @@ public class Tables {
 		for (u = 0; u < Constants.N_STAGE3_EDGE_CONFIGS; ++u) {
 			s3.m_centerLR = 0;
 			for (mc = 0; mc < Constants.N_STAGE3_SLICE_MOVES; ++mc) {
-				s3.m_edge = u;
+				s3.m_edge = (short)u;
 				s3.do_move_slow (mc);
 				move_table_edgeSTAGE3[u][mc] = s3.m_edge;
 			}
@@ -476,18 +489,18 @@ public class Tables {
 
 
 	/*** init_stage4 ***/
-	public static int move_table_cenSTAGE4[N_STAGE4_CENTER_CONFIGS][N_STAGE4_SLICE_MOVES]; // (70) 70*16. TODO: Why int ??
-	public static short move_table_cornerSTAGE4[N_STAGE4_CORNER_CONFIGS][N_STAGE4_SLICE_MOVES]; // (420) 420*16.
-	public static int stage4_edge_hB[40320]; // (40320 ?). Change from short to int then :(
-	public static int stage4_edge_hgB[40320]; // (40320 ?). Change from short to int then :(
-	public static int stage4_edge_hgA[40320][36]; // (40320 ?). Change from short to int then :(
-	public static int stage4_edge_hash_table_val[N_STAGE4_EDGE_HASH_TABLE]; // (200383)
-	public static int stage4_edge_hash_table_idx[N_STAGE4_EDGE_HASH_TABLE]; // (200383)
-	public static int stage4_edge_rep_table[N_STAGE4_EDGE_CONFIGS]; // (88200)
-	public static int move_table_AedgeSTAGE4[40320][N_STAGE4_SLICE_MOVES]; // (40320) 40320*16. Change from short to int then :(
-	public static int move_table_BedgeSTAGE4[40320][N_STAGE4_SLICE_MOVES]; // (40320) 40320*16. Change from short to int then :(
+	public static byte[][] move_table_cenSTAGE4 = new byte[Constants.N_STAGE4_CENTER_CONFIGS][Constants.N_STAGE4_SLICE_MOVES]; // (70) 70*16. TODO: Why int ??
+	public static short[][] move_table_cornerSTAGE4 = new short[Constants.N_STAGE4_CORNER_CONFIGS][Constants.N_STAGE4_SLICE_MOVES]; // (420) 420*16.
+	public static int[] stage4_edge_hB = new int[40320]; // (40320 ?). Change from short to int then :(
+	public static int[] stage4_edge_hgB = new int[40320]; // (40320 ?). Change from short to int then :(
+	public static int[][] stage4_edge_hgA = new int[40320][36]; // (40320 ?). Change from short to int then :(
+	public static int[] stage4_edge_hash_table_val = new int[Constants.N_STAGE4_EDGE_HASH_TABLE]; // (200383)
+	public static int[] stage4_edge_hash_table_idx = new int[Constants.N_STAGE4_EDGE_HASH_TABLE]; // (200383)
+	public static int[] stage4_edge_rep_table = new int[Constants.N_STAGE4_EDGE_CONFIGS]; // (88200)
+	public static int[][] move_table_AedgeSTAGE4 = new int[40320][Constants.N_STAGE4_SLICE_MOVES]; // (40320) 40320*16. Change from short to int then :(
+	public static int[][] move_table_BedgeSTAGE4 = new int[40320][Constants.N_STAGE4_SLICE_MOVES]; // (40320) 40320*16. Change from short to int then :(
 
-	public static void array8_to_set_a (Face[] t, CubeState result_cube){
+	public static void array8_to_set_a (byte[] t, CubeState result_cube){
 		int i;
 		int j = 0;
 		for (i = 0; i < 8; ++i) {
@@ -496,7 +509,7 @@ public class Tables {
 			} else {
 				j = i;
 			}
-			Face t1 = t[i];
+			byte t1 = t[i];
 			if (t1 >= 4) {
 				t1 += 8;
 			}
@@ -504,20 +517,20 @@ public class Tables {
 		}
 	}
 
-	public static void array8_to_set_b (Face[] t, CubeState result_cube){
+	public static void array8_to_set_b (byte[] t, CubeState result_cube){
 		int i;
 		for (i = 0; i < 8; ++i) {
-			result_cube.m_edge[4 + i] = t[i] + 4;
+			result_cube.m_edge[4 + i] = (byte)(t[i] + 4);
 		}
 	}
 
 
 	public static void lrfb_to_cube_state (int u, CubeState result_cube){
-		Face t[8];
+		byte[] t = new byte[8];
 		result_cube.init ();
-		perm_n_unpack (8, u % 40320, t, 0);
+		Constants.perm_n_unpack (8, u % 40320, t, 0);
 		array8_to_set_a (t, result_cube);
-		perm_n_unpack (8, u / 40320, t, 0);
+		Constants.perm_n_unpack (8, u / 40320, t, 0);
 		array8_to_set_b (t, result_cube);
 	}
 
@@ -536,7 +549,9 @@ public class Tables {
 	public static void init_stage4_edge_tables (){
 		int i;
 		int u, h1, h2;
-		CubeState cs1, cs2, cs3;
+		CubeState cs1 = new CubeState();
+		CubeState cs2 = new CubeState();
+		CubeState cs3 = new CubeState();
 		cs1.init ();
 		cs2.init ();
 		for (u = 0; u < 40320; ++u) {
@@ -548,8 +563,8 @@ public class Tables {
 			for (h1 = 0; h1 < 576; ++h1) {
 				Blr = h1 / 24;
 				Bfb = h1 % 24;
-				perm_n_unpack (4, Blr, cs1.m_edge, 4);
-				perm_n_unpack (4, Bfb, cs1.m_edge, 8);
+				Constants.perm_n_unpack (4, Blr, cs1.m_edge, 4);
+				Constants.perm_n_unpack (4, Bfb, cs1.m_edge, 8);
 				for (i = 4; i < 8; ++i) {
 					cs1.m_edge[i] += 4;
 				}
@@ -557,7 +572,7 @@ public class Tables {
 					cs1.m_edge[i] += 8;
 				}
 				cs3.compose_edge (cs1, cs2);
-				int u3 = cube_state_to_lrfb (cs3);
+				int u3 = cs3.cube_state_to_lrfb ();
 				int u3h = u3/40320;
 				if (u3h < reph) {
 					reph = u3h;
@@ -576,8 +591,8 @@ public class Tables {
 				int replr = h1 / 6;
 				int repfb = h1 % 6;
 				for (h2 = 0; h2 < 16; ++h2) {
-					perm_n_unpack (4, sqs_rep_to_perm[replr][h2/4], cs1.m_edge, 0);
-					perm_n_unpack (4, sqs_rep_to_perm[repfb][h2%4], cs1.m_edge, 12);
+					Constants.perm_n_unpack (4, sqs_rep_to_perm[replr][h2/4], cs1.m_edge, 0);
+					Constants.perm_n_unpack (4, sqs_rep_to_perm[repfb][h2%4], cs1.m_edge, 12);
 					for (i = 12; i < 16; ++i) {
 						cs1.m_edge[i] += 12;
 					}
@@ -595,13 +610,14 @@ public class Tables {
 
 	public static void lrfb_check (){ // Is a function called '*check' necessary ? Maybe...
 		int u1;
-		CubeState cs1, cs2;
+		CubeState cs1 = new CubeState();
+		CubeState cs2 = new CubeState();
 		cs1.init ();
 		cs2.init ();
 
 		stage4_edge_table_init ();
 		int repcount = 0;
-		static int n = 40320*40320;
+		int n = 40320*40320;
 		for (u1 = 0; u1 < n; ++u1) {
 			if (u1 % 1000 == 0) {
 				if (repcount == 44100 && u1 < 200000000) {
@@ -636,22 +652,22 @@ public class Tables {
 		int i = hash + 1;
 		while (stage4_edge_hash_table_val[i] < 40320*40320) {
 			if (stage4_edge_hash_table_val[i] == val) {
-				return hash_loc;
+				return i;
 			}
 			i += hash;
 			i %= Constants.N_STAGE4_EDGE_HASH_TABLE;
 			if (i == 0) {	//relies on table being a prime number in size
-				return 42;	//not found, table full, return 42
+				return 0;	//not found, table full, return 0
 			}
 		}
-		return hash_loc;	//new position, it was not found in the table
+		return i;	//new position, it was not found in the table
 	}
 
 	public static void add_to_stage4_edge_table (int val, int idx){
-		int hash_idx = stage4_edge_table_lookup (val)
+		int hash_idx = stage4_edge_table_lookup (val);
 		if (hash_idx == 0) { // TODO: Remove this.
-			printf ("Stage4 edge hash table full!\n");
-			exit (0);
+			System.out.println ("Stage4 edge hash table full!");
+			//exit (0);
 		}
 		stage4_edge_hash_table_val[hash_idx] = val;
 		stage4_edge_hash_table_idx[hash_idx] = idx;
@@ -661,10 +677,11 @@ public class Tables {
 	public static void init_move_tablesSTAGE4 (){
 		int mc;
 		int u;
-		CubeStage4 s4, s4a;
+		CubeStage4 s4 = new CubeStage4();
+		CubeStage4 s4a = new CubeStage4();
 		s4.init ();
 		s4a.init ();
-		CubeState cs1;
+		CubeState cs1 = new CubeState();
 		cs1.init ();
 		for (u = 0; u < 40320; ++u) {
 			for (mc = 0; mc < Constants.N_STAGE4_SLICE_MOVES; ++mc) {
@@ -686,7 +703,7 @@ public class Tables {
 		s4.m_centerUD = 0;
 		for (u = 0; u < Constants.N_STAGE4_CORNER_CONFIGS; ++u) {
 			for (mc = 0; mc < Constants.N_STAGE4_SLICE_MOVES; ++mc) {
-				s4.m_corner = u;
+				s4.m_corner = (short)u;
 				s4.convert_to_std_cube (cs1);
 				cs1.do_move (Constants.stage4_slice_moves[mc]);
 				cs1.convert_to_stage4 (s4a);
@@ -697,7 +714,7 @@ public class Tables {
 		s4.m_corner = 0;
 		for (u = 0; u < Constants.N_STAGE4_CENTER_CONFIGS; ++u) {
 			for (mc = 0; mc < Constants.N_STAGE4_SLICE_MOVES; ++mc) {
-				s4.m_centerUD = u;
+				s4.m_centerUD = (byte)u;
 				s4.convert_to_std_cube (cs1);
 				cs1.do_move (Constants.stage4_slice_moves[mc]);
 				cs1.convert_to_stage4 (s4a);
@@ -707,15 +724,15 @@ public class Tables {
 	}
 
 	/*** init_stage5 ***/
-	public static int squares_2nd_perm[24][4];
+	public static int[][] squares_2nd_perm = new int[24][4];
 
-	public static byte squares_movemap[96][6]; // (96 ?)
-	public static byte squares_cen_revmap[256]; // (12)
-	public static byte squares_cen_movemap[12][6]; // (12)
+	public static byte[][] squares_movemap = new byte[96][6]; // (96 ?)
+	public static byte[] squares_cen_revmap = new byte[256]; // (12)
+	public static byte[][] squares_cen_movemap = new byte[12][6]; // (12)
 
 	//map a "squares" move code to one of six "canonical" move codes,
 	//or -1 for moves that don't affect the corresponding pieces.
-	public static int squares_map[7][Constants.N_SQMOVES] = {
+	public static int squares_map[][] = {
 		{  0, -1,  1, -1, -1,  2, -1,  3,  4, -1,  5, -1 },		//LR edges
 		{  4, -1,  5, -1,  0, -1,  1, -1, -1,  2, -1,  3 },		//FB edges
 		{ -1,  2, -1,  3,  4, -1,  5, -1,  0, -1,  1, -1 },		//UD edges
@@ -725,16 +742,16 @@ public class Tables {
 		{ -1,  2, -1,  3, -1,  4, -1,  5,  0, -1,  1, -1 }		//FB centers
 	};
 
-	public static byte squares_cen_map[12] = { 0x0F, 0x33, 0x3C, 0x55, 0x5A, 0x66, 0x99, 0xA5, 0xAA, 0xC3, 0xCC, 0xF0 };
+	public static byte squares_cen_map[] = { 0x0F, 0x33, 0x3C, 0x55, 0x5A, 0x66, (byte)0x99, (byte)0xA5, (byte)0xAA, (byte)0xC3, (byte)0xCC, (byte)0xF0 };
 
-	public static int sqs_perm_to_rep[24] = {
+	public static int sqs_perm_to_rep[] = {
 		0, 1, 2, 3, 4, 5,
 		1, 0, 4, 5, 2, 3,
 		3, 2, 5, 4, 0, 1,
 		5, 4, 3, 2, 1, 0
 	};
 
-	public static int sqs_rep_to_perm[6][4] = {
+	public static int sqs_rep_to_perm[][] = {
 		{  0,  7, 16, 23 },
 		{  1,  6, 17, 22 },
 		{  2, 10, 13, 21 },
@@ -743,18 +760,20 @@ public class Tables {
 		{  5,  9, 14, 18 }
 	};
 
+	private static int mov_lst[] = { Constants.Uf2, Constants.Df2, Constants.Ls2, Constants.Rs2, Constants.Ff2, Constants.Bf2 };
+	private static byte cen_swapbits_map[] = {
+		(byte)0x90, 0x60, //Uf2
+		0x09, 0x06, //Df2
+		(byte)0x82, 0x28, //Ls2
+		0x41, 0x14, //Rs2
+		(byte)0x84, 0x48, //Fs2
+		0x21, 0x12  //Bs2
+	};
+
 	public static void init_squares (){
-		static int mov_lst[6] = { Uf2, Df2, Ls2, Rs2, Ff2, Bf2 };
-		static byte cen_swapbits_map[6*2] = {
-			0x90, 0x60, //Uf2
-			0x09, 0x06, //Df2
-			0x82, 0x28, //Ls2
-			0x41, 0x14, //Rs2
-			0x84, 0x48, //Fs2
-			0x21, 0x12  //Bs2
-		};
 		int i, j, k;
-		CubeState cube1, cube2;
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
 		for (i = 0; i < 24; ++i) {
 			switch (sqs_perm_to_rep[i]) {
 			case 0:
@@ -800,8 +819,8 @@ public class Tables {
 			cube1.init ();
 			int first_perm = i / 4;
 			int second_perm = squares_2nd_perm[first_perm][i % 4];
-			perm_n_unpack (4, first_perm, cube1.m_edge, 0);
-			perm_n_unpack (4, second_perm, cube1.m_edge, 4);
+			Constants.perm_n_unpack (4, first_perm, cube1.m_edge, 0);
+			Constants.perm_n_unpack (4, second_perm, cube1.m_edge, 4);
 			for (j = 4; j < 8; ++j) {
 				cube1.m_edge[j] += 4;
 			}
@@ -809,15 +828,15 @@ public class Tables {
 				for (k = 0; k < 24; ++k )
 					cube2.m_edge[k] = cube1.m_edge[k]; // TODO: Could be optimised...
 				cube2.rotate_sliceEDGE (mov_lst[j]);
-				int x1 = perm_n_pack (4, cube2.m_edge, 0);
+				int x1 = Constants.perm_n_pack (4, cube2.m_edge, 0);
 				int x2 = cube2.m_edge[4] - 4;
 				if (x2 >= 4) { // TODO: Remove this.
 					System.out.println ("unexpected cube state\n");
 					squares_movemap[i][j] = 0;
 					continue;
 				}
-				squares_movemap[i][j] = 4*x1 + x2;
-				x2 = perm_n_pack (4, cube2.m_edge, 4);
+				squares_movemap[i][j] = (byte)(4*x1 + x2);
+				x2 = Constants.perm_n_pack (4, cube2.m_edge, 4);
 				if (sqs_perm_to_rep[x1] != sqs_perm_to_rep[x2]) { // TODO: Remove this.
 					System.out.println ("perm1,perm2 inconsistency! "+i+" "+j+"\n");
 				}
@@ -827,7 +846,7 @@ public class Tables {
 			squares_cen_revmap[i] = 0;
 		}
 		for (i = 0; i < 12; ++i) {
-			squares_cen_revmap[squares_cen_map[i]] = i;
+			squares_cen_revmap[squares_cen_map[i]] = (byte)i;
 		}
 		for (i = 0; i < 12; ++i) {
 			int x = squares_cen_map[i];

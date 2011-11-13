@@ -3,11 +3,11 @@ package fivestage444;
 //CubeState structure: a cubie-level representation of the cube.
 public class CubeState {
 
-	Face m_edge[24];	//what's at each edge position
-	Face m_cor[8];		//what's at each corner position (3*cubie + orientation)
-	Face m_cen[24];		//what's at each center position
+	public byte[] m_edge = new byte[24]; //what's at each edge position
+	public byte[] m_cor = new byte[8]; //what's at each corner position (3*cubie + orientation)
+	public byte[] m_cen = new byte[24]; //what's at each center position
 
-	static int rotateCOR_ft[6*6] = {
+	private static int rotateCOR_ft[] = {
 		 0,  3,  2,  1,  0,  3,	//U face
 		 4,  5,  6,  7,  4,  5,	//D face
 	     3,  0,  4,  7,  3,  0,	//L face
@@ -15,21 +15,21 @@ public class CubeState {
 	     0,  1,  5,  4,  0,  1,	//F face
 	     2,  3,  7,  6,  2,  3	//B face
 	};
-	static int rotateCOR_ori[4] = { 1, 2, 1, 2 };
-	static int rotateCOR_fidx[18] = {  0,  2,  0,  6,  8,  6, 12, 14, 12, 18, 20, 18, 24, 26, 24, 30, 32, 30 };
-	static int rotateCOR_tidx[18] = {  1,  1,  2,  7,  7,  8, 13, 13, 14, 19, 19, 20, 25, 25, 26, 31, 31, 32 };
+	private static int rotateCOR_ori[] = { 1, 2, 1, 2 };
+	private static int rotateCOR_fidx[] = {  0,  2,  0,  6,  8,  6, 12, 14, 12, 18, 20, 18, 24, 26, 24, 30, 32, 30 };
+	private static int rotateCOR_tidx[] = {  1,  1,  2,  7,  7,  8, 13, 13, 14, 19, 19, 20, 25, 25, 26, 31, 31, 32 };
 
-	static int rotateEDGE_fidx[18*3] = {
+	private static int rotateEDGE_fidx[] = {
 		 0,  1,  0,  6,  7,  6, 12, 13, 12, 18, 19, 18, 24, 25, 24, 30, 31, 30,
 		36, 37, 36, 42, 43, 42, 48, 49, 48, 54, 55, 54, 60, 61, 60, 66, 67, 66,
 		72, 73, 72, 78, 79, 78, 84, 85, 84, 90, 91, 90, 96, 97, 96,102,103,102
 	};
-	static int rotateEDGE_tidx[18*3] = {
+	private static int rotateEDGE_tidx[] = {
 		 1,  0,  2,  7,  6,  8, 13, 12, 14, 19, 18, 20, 25, 24, 26, 31, 30, 32,
    		37, 36, 38, 43, 42, 44, 49, 48, 50, 55, 54, 56, 61, 60, 62, 67, 66, 68,
 		73, 72, 74, 79, 78, 80, 85, 84, 86, 91, 90, 92, 97, 96, 98,103,102,104
 	};
-	static int rotateEDGE_ft[18*6] = {
+	private static int rotateEDGE_ft[] = {
 		 0, 12,  1, 14,  0, 12, //up face, set 1
 	     4,  8,  5, 10,  4,  8, //up face, set 2
 		16, 22, 19, 21, 16, 22, //up slice
@@ -55,7 +55,7 @@ public class CubeState {
 		 9, 15, 10, 12,  9, 15  //back slice
 	};
 
-	static int rotateCEN_ft[18*6] = {
+	private static int rotateCEN_ft[] = {
 		 0,  3,  1,  2,  0,  3, //up face
 	    16, 10, 21, 14, 16, 10, //up slice, set1
 		19,  8, 22, 12, 19,  8, //up slice, set2
@@ -83,7 +83,7 @@ public class CubeState {
 
 
 	public void init (){
-		int i;
+		byte i;
 		for (i = 0; i < 24; ++i) {
 			m_edge[i] = i;
 		}
@@ -91,7 +91,7 @@ public class CubeState {
 			m_cor[i] = i;
 		}
 		for (i = 0; i < 24; ++i) {
-			m_cen[i] = i/4;
+			m_cen[i] = (byte)(i/4);
 		}
 	}
 
@@ -120,7 +120,7 @@ public class CubeState {
 	public boolean edgeUD_parity_odd (){
 		int i, j;
 		int parity = 0;
-		Face t[16];
+		byte[] t = new byte[16];
 
 		for (i = 0; i < 16; ++i) {
 			t[i] = m_edge[i];
@@ -150,17 +150,17 @@ public class CubeState {
 		int mc = 3*mc6 + move_code % 3;
 		int fidx = rotateCOR_fidx[mc];
 		int tidx = rotateCOR_tidx[mc];
-		Face old_m_cor[8]; // FIXME.
+		byte[] old_m_cor = new byte[8]; // TODO: Use a array copy
 		for (i = 0; i < 8; ++i) { // Add. May be faster ?
 			old_m_cor[i] = m_cor[i];
 		}
 		if (mc % 3 != 2) {	//avoid doing "if" inside loop, for speed
 			for (i = 0; i < 4; ++i) {
-				Face tmpface = old_m_cor[rotateCOR_ft[fidx + i]];
+				byte tmpface = old_m_cor[rotateCOR_ft[fidx + i]];
 				if (mc >= 6) {	//L,R,F,B face turns
-					Face new_ori = (tmpface >> 3) + rotateCOR_ori[i];
+					byte new_ori = (byte)((tmpface >> 3) + rotateCOR_ori[i]);
 					new_ori %= 3;
-					tmpface = (tmpface & 0x7) + (new_ori << 3);
+					tmpface = (byte)((tmpface & 0x7) + (new_ori << 3));
 				}
 				m_cor[rotateCOR_ft[tidx + i]] = tmpface;
 			}
@@ -172,11 +172,11 @@ public class CubeState {
 	}
 
 	public void rotate_sliceEDGE (int move_code){
-		Face old_m_edge[24]; // FIXME.
+		byte[] old_m_edge = new byte[24]; // FIXME.
+		int i;
 		for (i = 0; i < 24; ++i) { // Add. May be faster ?
 			old_m_edge[i] = m_edge[i];
 		}
-		int i;
 		int mc3 = move_code/3;
 		int movdir = move_code % 3;
 		int mcx = 3*(mc3/2);
@@ -198,11 +198,11 @@ public class CubeState {
 	}
 
 	public void rotate_sliceCENTER (int move_code){
-		Face old_m_cen[24]; // FIXME.
+		byte[] old_m_cen = new byte[24]; // FIXME.
+		int i;
 		for (i = 0; i < 24; ++i) { // Add. May be faster ?
 			old_m_cen[i] = m_cen[i];
 		}
-		int i;
 		int mc3 = move_code/3;
 		int movdir = move_code % 3;
 		int mcx = 3*(mc3/2) + (mc3 & 0x1);
@@ -233,7 +233,7 @@ public class CubeState {
 		for (i = 0; i < 7; ++i) {	//don't want 8th edge orientation
 			orientc = 3*orientc + (m_cor[i] >> 3);
 		}
-		result_cube.m_co = orientc;
+		result_cube.m_co = (short)orientc;
 	}
 
 	public void convert_to_stage2 (CubeStage2 result_cube){
@@ -251,19 +251,19 @@ public class CubeState {
 			}
 		}
 		result_cube.m_centerFB = 70*Tables.ebm2eloc[cenbm] + Tables.bm4of8_to_70[cenbm4of8];
-		int u = perm_n_pack (8, m_edge, 16);
+		int u = Constants.perm_n_pack (8, m_edge, 16);
 		result_cube.m_edge = Tables.perm_to_420[u];
 	}
 
-	public void convert_to_stage3 (const CubeState& init_cube, CubeStage3* result_cube){
+	public void convert_to_stage3 (CubeStage3 result_cube){
 		int i;
 		int cenbm = 0;
 		int cenbm4of8 = 0;
 		int j = 0;
 		for (i = 0; i < 16; ++i) {
 			if (m_cen[i] >= 4) { // TODO: Remove this.
-				printf ("error: cube state not a stage3 position\n");
-				exit (1);
+				System.out.println ("error: cube state not a stage3 position");
+				//exit (1);
 			}
 			if (m_cen[i] >= 2) {
 				cenbm |= (1 << i);
@@ -277,23 +277,24 @@ public class CubeState {
 		int edge_bm = 0;
 		for (i = 0; i < 16; ++i) {
 			if (m_edge[i] >= 16) { // TODO: Remove this.
-				printf ("error: cube state not a stage3 position\n");
-				exit (1);
+				System.out.println ("error: cube state not a stage3 position");
+				//exit (1);
 			}
 			if (m_edge[i] < 4 || m_edge[i] >= 12) {
 				edge_bm |= (1 << i);
 			}
 		}
-		result_cube.m_edge = Tables.e16bm2eloc[edge_bm];
+		result_cube.m_edge = (byte)Tables.e16bm2eloc[edge_bm];
 	}
+
+	private static byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
 
 	public void convert_to_stage4 (CubeStage4 result_cube){
 		int i;
-		Face t6[8];
+		byte[] t6 = new byte[8];
 		//Note: for corners, use of perm_to_420 array requires "squares" style mapping.
 		//But the do_move function for std_cube assumes "standard" mapping.
 		//Therefore the m_cor array must be converted accordingly using this conversion array.
-		static Face std_to_sqs[8] = { 0, 4, 1, 5, 6, 2, 7, 3 };
 		int edge = cube_state_to_lrfb ();
 		int edgerep = Tables.lrfb_get_edge_rep (edge);
 		int hash_idx = Tables.stage4_edge_table_lookup (edgerep);
@@ -301,13 +302,13 @@ public class CubeState {
 		for (i = 0; i < 8; ++i) {
 			t6[std_to_sqs[i]] = std_to_sqs[m_cor[i]];
 		}
-		int u = perm_n_pack (8, t6, 0);
+		int u = Constants.perm_n_pack (8, t6, 0);
 		result_cube.m_corner = Tables.perm_to_420[u];
 		int cenbm4of8 = 0;
 		for (i = 0; i < 8; ++i) {
 			if (m_cen[i] >= 2) { // TODO: Remove this.
-				printf ("error: cube state not a stage4 position\n");
-				exit (1);
+				System.out.println ("error: cube state not a stage4 position");
+				//exit (1);
 			}
 			if (m_cen[i] == 0) {
 				cenbm4of8 |= (1 << i);
@@ -317,15 +318,15 @@ public class CubeState {
 	}
 
 	public int cube_state_to_lrfb (){
-		Face t[8];
+		byte[] t = new byte[8];
 		set_a_to_array8 (t);
-		int u1 = perm_n_pack (8, t, 0);
+		int u1 = Constants.perm_n_pack (8, t, 0);
 		set_b_to_array8 (t);
-		int u2 = perm_n_pack (8, t, 0);
+		int u2 = Constants.perm_n_pack (8, t, 0);
 		return 40320*u2 + u1;
 	}
 
-	public void set_a_to_array8 (Face[] t){
+	public void set_a_to_array8 (byte[] t){
 		int i;
 		int j = 0;
 		for (i = 0; i < 8; ++i) {
@@ -334,41 +335,42 @@ public class CubeState {
 			} else {
 				j = i;
 			}
-			Face t1 = m_edge[j];
+			byte t1 = m_edge[j];
 			if (t1 >= 4) {
 				if (t1 >= 12) {
 					t1 -= 8;
 				} else { // TODO: Remove this.
-					printf ("error: set_a_to_packed8\n");
-					exit (1);
+					System.out.println ("error: set_a_to_packed8");
+					//exit (1);
 				}
 			}
 			t[i] = t1;
 		}
 	}
 
-	public void set_b_to_array8 (Face[] t){
+	public void set_b_to_array8 (byte[] t){
 		int i;
 		for (i = 0; i < 8; ++i) {
-			t[i] = m_edge[4 + i] - 4;
+			t[i] = (byte)(m_edge[4 + i] - 4);
 		}
 	}
 
-	public void convert_std_cube_to_squares (CubeSqsCoord result_cube){
+	private static byte std_to_sqs_cor[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
+	private static byte std_to_sqs_cen[] = {
+		0,  3,  1,  2,  5,  6,  4,  7,
+		8, 11,  9, 10, 13, 14, 12, 15,
+		16, 19, 17, 18, 21, 22, 20, 23
+	};
+
+	public void convert_to_squares (CubeSqsCoord result_cube){
 		int i;
 		//We must convert between "squares"-style cubie numbering and the "standard"-style
 		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
-		static Face std_to_sqs_cor[8] = { 0, 4, 1, 5, 6, 2, 7, 3 };
-		static Face std_to_sqs_cen[24] = {
-			0,  3,  1,  2,  5,  6,  4,  7,
-			8, 11,  9, 10, 13, 14, 12, 15,
-		   16, 19, 17, 18, 21, 22, 20, 23
-		};
-		Face old_m_cor[8]; // FIXME.
+		byte[] old_m_cor = new byte[8]; // FIXME.
 		for (i = 0; i < 8; ++i) { // Add. May be faster ?
 			old_m_cor[i] = m_cor[i];
 		}
-		Face old_m_cen[24]; // FIXME.
+		byte[] old_m_cen = new byte[24]; // FIXME.
 		for (i = 0; i < 24; ++i) { // Add. May be faster ?
 			old_m_cen[i] = m_cen[i];
 		}
@@ -376,7 +378,7 @@ public class CubeState {
 			m_cor[std_to_sqs_cor[i]] = std_to_sqs_cor[old_m_cor[i]];
 		}
 		for (i = 0; i < 24; ++i) {
-			m_cen[std_to_sqs_cen[i]] = std_to_sqs_cen[4*old_m_cen[i]]/4;
+			m_cen[std_to_sqs_cen[i]] = (byte)(std_to_sqs_cen[4*old_m_cen[i]]/4);
 		}
 		pack_cubeSQS (result_cube);
 	}
@@ -387,11 +389,11 @@ public class CubeState {
 		int ep3 = Constants.perm_n_pack (4, m_edge, 16);
 		result_cube.m_ep96x96x96 = 96*96*(4*ep3 + (m_edge[20] - 20)) + 96*(4*ep2 + (m_edge[12] - 12)) +
 			4*ep1 + (m_edge[4] - 4);
-		result_cube.m_cp96 = 4*Constants.perm_n_pack (4, m_cor, 0) + (m_cor[4] - 4);
+		result_cube.m_cp96 = (byte)(4*Constants.perm_n_pack (4, m_cor, 0) + (m_cor[4] - 4));
 		result_cube.m_cen12x12x12 = squares_pack_centers ();
 	}
 
-	public int squares_pack_centers (){
+	public short squares_pack_centers (){
 		int i;
 		int x = 0;
 		int b = 0x800000;
@@ -401,10 +403,10 @@ public class CubeState {
 			}
 			b >>= 1;
 		}
-		int cen1 = Tables.squares_cen_revmap[(x >> 16) & 0xFF];
-		int cen2 = Tables.squares_cen_revmap[(x >> 8) & 0xFF];
-		int cen3 = Tables.squares_cen_revmap[x & 0xFF];
-		return cen1 + 12*cen2 + 12*12*cen3;
+		short cen1 = (short)Tables.squares_cen_revmap[(x >> 16) & 0xFF];
+		short cen2 = (short)Tables.squares_cen_revmap[(x >> 8) & 0xFF];
+		short cen3 = (short)Tables.squares_cen_revmap[x & 0xFF];
+		return (short)(cen1 + 12*cen2 + 12*12*cen3);
 	}
 }
 

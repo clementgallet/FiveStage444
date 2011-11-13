@@ -5,8 +5,8 @@ public class CubeStage1 {
 	public short m_co; // corner orientation (2187)
 	public int m_edge_ud_combo8; // (735471)
 
-	public static byte prune_table_cor1[(Constants.N_CORNER_ORIENT+1)/2];
-	public static byte prune_table_edg1[(Constants.N_EDGE_COMBO8+1)/2];
+	public static byte[] prune_table_cor1 = new byte[(Constants.N_CORNER_ORIENT+1)/2];
+	public static byte[] prune_table_edg1 = new byte[(Constants.N_EDGE_COMBO8+1)/2];
 
 	public void init (){
 		m_co = 0;
@@ -23,22 +23,22 @@ public class CubeStage1 {
 	public void do_whole_cube_move (int whole_cube_move){
 		switch (whole_cube_move) {
 			case 1:
-				do_move (Uf);
-				do_move (Us);
-				do_move (Df3);
-				do_move (Ds3);
+				do_move (Constants.Uf);
+				do_move (Constants.Us);
+				do_move (Constants.Df3);
+				do_move (Constants.Ds3);
 			break;
 			case 2:
-				do_move (Ff);
-				do_move (Fs);
-				do_move (Bf3);
-				do_move (Bs3);
+				do_move (Constants.Ff);
+				do_move (Constants.Fs);
+				do_move (Constants.Bf3);
+				do_move (Constants.Bs3);
 				break;
 			case 3:
-				do_move (Lf);
-				do_move (Ls);
-				do_move (Rf3);
-				do_move (Rs3);
+				do_move (Constants.Lf);
+				do_move (Constants.Ls);
+				do_move (Constants.Rf3);
+				do_move (Constants.Rs3);
 				break;
 			default: //case 0
 				break;
@@ -59,25 +59,25 @@ public class CubeStage1 {
 	{
 		int i;
 		int ebm = Tables.eloc2ebm[m_edge_ud_combo8];
-		int lrfb = 0;
-		int ud = 16;
+		byte lrfb = 0;
+		byte ud = 16;
 		for (i = 0; i < 24; ++i) {
 			if ((ebm & (1 << i)) == 0) {
 				result_cube.m_edge[i] = lrfb++;
 			} else {
 				result_cube.m_edge[i] = ud++;
 			}
-			result_cube.m_cen[i] = i/4;
+			result_cube.m_cen[i] = (byte)(i/4);
 		}
 		int orientc = m_co;
 		int orientcmod3 = 0;
 		for (i = 6; i >= 0; --i) {	//don't want 8th edge orientation
-			Face fo = orientc % 3;
-			result_cube.m_cor[i] = i + (fo << 3);
+			byte fo = (byte)(orientc % 3);
+			result_cube.m_cor[i] = (byte)(i + (fo << 3));
 			orientcmod3 += fo;
 			orientc /= 3;
 		}
-		result_cube.m_cor[7] = 7 + (((24 - orientcmod3) % 3) << 3);
+		result_cube.m_cor[7] = (byte)(7 + (((24 - orientcmod3) % 3) << 3));
 	}
 
 	public int prune_funcCOR_STAGE1 (){

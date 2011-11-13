@@ -5,7 +5,7 @@ public class CubeStage2 {
 	public int m_centerFB; // (51482970)
 	public short m_edge; //edge coordinate (420)
 
-	public static byte prune_table_edgcen2[Constants.N_CENTER_COMBO4*Constants.N_STAGE2_EDGE_CONFIGS/2];
+	public static byte[] prune_table_edgcen2 = new byte[Constants.N_CENTER_COMBO4*Constants.N_STAGE2_EDGE_CONFIGS/2];
 
 	public void init (){
 		m_edge = 0;
@@ -36,7 +36,7 @@ public class CubeStage2 {
 
 	public void do_move_slow (int move_code)
 	{
-		CubeState cube1;
+		CubeState cube1 = new CubeState();
 		convert_to_std_cube(cube1);
 		cube1.do_move (Constants.stage2_slice_moves[move_code]);
 		cube1.convert_to_stage2 (this);
@@ -44,8 +44,8 @@ public class CubeStage2 {
 
 	public void do_move (int move_code){
 		int i;
-		Face t1[4];
-		Face t2[4];
+		byte[] t1 = new byte[4];
+		byte[] t2 = new byte[4];
 		int cenbm = Tables.eloc2ebm[m_centerFB / 70];
 		int cenbm4of8 = Tables.bm4of8[m_centerFB % 70];
 		int j1 = 0;
@@ -53,9 +53,9 @@ public class CubeStage2 {
 		for (i = 0; cenbm != 0; ++i) {
 			if ((cenbm & 0x1) != 0) {
 				if ((cenbm4of8 & 0x1) == 0) {
-					t2[j2++] = i;
+					t2[j2++] = (byte)i;
 				} else {
-					t1[j1++] = i;
+					t1[j1++] = (byte)i;
 				}
 				cenbm4of8 >>= 1;
 			}
@@ -115,14 +115,14 @@ public class CubeStage2 {
 
 	public void convert_to_std_cube (CubeState result_cube){
 		int i;
-		Face t6[4];
+		byte[] t6 = new byte[4];
 		int cenbm = Tables.eloc2ebm[m_centerFB/70];
 		int cenbm4of8 = Tables.bm4of8[m_centerFB % 70];
 		int udlr = 0;
 		int pos4of8 = 0;
 		for (i = 0; i < 24; ++i) {
 			if ((cenbm & (1 << i)) == 0) {
-				result_cube.m_cen[i] = udlr++/4;
+				result_cube.m_cen[i] = (byte)(udlr++/4);
 			} else {
 				if ((cenbm4of8 & (1 << pos4of8++)) == 0)
 					result_cube.m_cen[i] = 5;
@@ -131,18 +131,18 @@ public class CubeStage2 {
 			}
 		}
 		for (i = 0; i < 8; ++i)
-			result_cube.m_cor[i] = i;
+			result_cube.m_cor[i] = (byte)i;
 
-		int edgeFbm = bm4of8[init_cube.m_edge / 6];
+		int edgeFbm = Tables.bm4of8[m_edge / 6];
 		Constants.perm_n_unpack (4, m_edge % 6, t6, 0);
 		for (i = 0; i < 16; ++i)
-			result_cube.m_edge[i] = i;
+			result_cube.m_edge[i] = (byte)i;
 
-		int f = 16;
+		byte f = 16;
 		int b = 0;
 		for (i = 0; i < 8; ++i) {
 			if ((edgeFbm & (1 << i)) == 0) {
-				result_cube.m_edge[16 + i] = 20 + t6[b++];
+				result_cube.m_edge[16 + i] = (byte)(20 + t6[b++]);
 			} else {
 				result_cube.m_edge[16 + i] = f++;
 			}
@@ -150,10 +150,10 @@ public class CubeStage2 {
 	}
 
 	public int prune_funcEDGCEN_STAGE2 (){
-		int clocf = Tables.stage2_cen_to_cloc4sf (cube2.m_centerFB);
-		int clocb = Tables.stage2_cen_to_cloc4sb (cube2.m_centerFB);
-		int d1 = Tables.get_dist_4bit (Constants.N_STAGE2_EDGE_CONFIGS*clocf + m_edge, prune_table_edgcen2);
-		int d2 = Tables.get_dist_4bit (Constants.N_STAGE2_EDGE_CONFIGS*clocb + m_edge, prune_table_edgcen2);
+		int clocf = Tables.stage2_cen_to_cloc4sf (m_centerFB);
+		int clocb = Tables.stage2_cen_to_cloc4sb (m_centerFB);
+		int d1 = Constants.get_dist_4bit (Constants.N_STAGE2_EDGE_CONFIGS*clocf + m_edge, prune_table_edgcen2);
+		int d2 = Constants.get_dist_4bit (Constants.N_STAGE2_EDGE_CONFIGS*clocb + m_edge, prune_table_edgcen2);
 		if (d2 >= d1) {
 			return d2;
 		}

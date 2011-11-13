@@ -2,7 +2,7 @@ package fivestage444;
 
 public class CubeStage3 {
 
-	public static boolean stage3_move_parity[Constants.N_STAGE3_SLICE_MOVES] = {
+	public static boolean stage3_move_parity[] = {
 		false, false, false, false,
 		false, false, false, false,
 		false, false, false, false,
@@ -14,8 +14,8 @@ public class CubeStage3 {
 	public short m_edge; //edge coordinate (12870)
 	public boolean m_edge_odd; //odd parity of edges
 
-	public static byte prune_table_cen3[Constants.N_STAGE3_CENTER_CONFIGS/2];
-	public static byte prune_table_edg3[Constants.N_STAGE3_EDGE_CONFIGS*Constants.N_STAGE3_EDGE_PAR/2];
+	public static byte[] prune_table_cen3 = new byte[Constants.N_STAGE3_CENTER_CONFIGS/2];
+	public static byte[] prune_table_edg3 = new byte[Constants.N_STAGE3_EDGE_CONFIGS*Constants.N_STAGE3_EDGE_PAR/2];
 
 
 	public void init (){
@@ -29,7 +29,7 @@ public class CubeStage3 {
 		if (stage3_move_parity[move_code]) {
 			par = ! par;
 		}
-		CubeState cube1;
+		CubeState cube1 = new CubeState();
 		convert_to_std_cube(cube1);
 		cube1.do_move (Constants.stage3_slice_moves[move_code]);
 		cube1.convert_to_stage3 (this);
@@ -68,7 +68,7 @@ public class CubeStage3 {
 		int pos4of8 = 0;
 		for (i = 0; i < 16; ++i) {
 			if ((cenbm & (1 << i)) == 0) {
-				result_cube.m_cen[i] = ud++/4;
+				result_cube.m_cen[i] = (byte)(ud++/4);
 			} else {
 				if ((cenbm4of8 & (1 << pos4of8++)) == 0) {
 					result_cube.m_cen[i] = 3;
@@ -78,15 +78,15 @@ public class CubeStage3 {
 			}
 		}
 		for (i = 16; i < 24; ++i) {
-			result_cube.m_cen[i] = i/4;
+			result_cube.m_cen[i] = (byte)(i/4);
 		}
 		for (i = 0; i < 8; ++i) {
-			result_cube.m_cor[i] = i;
+			result_cube.m_cor[i] = (byte)i;
 		}
 		int edge_bm = Tables.eloc2e16bm[m_edge];
 
-		int e0 = 0;
-		int e1 = 4;
+		byte e0 = 0;
+		byte e1 = 4;
 		for (i = 0; i < 16; ++i) {
 			if ((edge_bm & (1 << i)) != 0) {
 				result_cube.m_edge[i] = e0++;
@@ -98,7 +98,7 @@ public class CubeStage3 {
 			}
 		}
 		for (i = 16; i < 24; ++i) {
-			result_cube.m_edge[i] = i;
+			result_cube.m_edge[i] = (byte)i;
 		}
 	}
 
