@@ -742,7 +742,7 @@ public class Tables {
 		{ -1,  2, -1,  3, -1,  4, -1,  5,  0, -1,  1, -1 }		//FB centers
 	};
 
-	public static byte squares_cen_map[] = { 0x0F, 0x33, 0x3C, 0x55, 0x5A, 0x66, (byte)0x99, (byte)0xA5, (byte)0xAA, (byte)0xC3, (byte)0xCC, (byte)0xF0 };
+	public static short squares_cen_map[] = { 0x0F, 0x33, 0x3C, 0x55, 0x5A, 0x66, 0x99, 0xA5, 0xAA, 0xC3, 0xCC, 0xF0 };
 
 	public static int sqs_perm_to_rep[] = {
 		0, 1, 2, 3, 4, 5,
@@ -761,12 +761,12 @@ public class Tables {
 	};
 
 	private static int mov_lst[] = { Constants.Uf2, Constants.Df2, Constants.Ls2, Constants.Rs2, Constants.Ff2, Constants.Bf2 };
-	private static byte cen_swapbits_map[] = {
-		(byte)0x90, 0x60, //Uf2
+	private static short cen_swapbits_map[] = {
+		0x90, 0x60, //Uf2
 		0x09, 0x06, //Df2
-		(byte)0x82, 0x28, //Ls2
+		0x82, 0x28, //Ls2
 		0x41, 0x14, //Rs2
-		(byte)0x84, 0x48, //Fs2
+		0x84, 0x48, //Fs2
 		0x21, 0x12  //Bs2
 	};
 

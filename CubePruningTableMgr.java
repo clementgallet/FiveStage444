@@ -87,7 +87,7 @@ public class CubePruningTableMgr {
 		CubeState cs1 = new CubeState();
 
 		/*** Stage 1 ***/
-		System.out.println ("Creating pruning tables for "+metric_long_names[metric]+" turns.\nStage1...\n");
+		System.out.println ("Creating pruning tables for "+metric_long_names[metric]+" turns.\nStage1...");
 		stage1_solved.init ();
 		solved_table[0] = stage1_solved.m_co;
 		stage1_solved2 = stage1_solved;
@@ -360,7 +360,7 @@ public class CubePruningTableMgr {
 		}
 
 		/*** Stage 5 ***/
-		System.out.println ("Stage5...\n");
+		System.out.println ("Stage5...");
 		CubeSqsCoord sqs_solved = new CubeSqsCoord();
 		CubeSqsCoord sqs_solved2 = new CubeSqsCoord();
 		sqs_solved.init ();

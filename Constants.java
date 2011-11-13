@@ -2,7 +2,7 @@ package fivestage444;
 
 public class Constants{
 
-	public static String datafiles_path = "";
+	public static String datafiles_path = "/home/clement/Cube/programs/fivestage444/";
 
 	public static int N_CORNER_ORIENT = 2187;
 

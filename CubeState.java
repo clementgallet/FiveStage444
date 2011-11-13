@@ -284,7 +284,7 @@ public class CubeState {
 				edge_bm |= (1 << i);
 			}
 		}
-		result_cube.m_edge = (byte)Tables.e16bm2eloc[edge_bm];
+		result_cube.m_edge = (short)Tables.e16bm2eloc[edge_bm];
 	}
 
 	private static byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
