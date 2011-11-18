@@ -9,7 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 //Class to create and clean up all pruning tables
-public class CubePruningTableMgr {
+public final class CubePruningTableMgr {
 
 	private static String metric_names [] = { "stm", "ttm", "btm" };
 	private static String metric_long_names[] = { "slice", "twist", "block" };

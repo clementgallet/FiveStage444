@@ -1,6 +1,6 @@
 package fivestage444;
 
-public class DoMoveE3STM implements Constants.DoMove{
+public final class DoMoveE3STM implements Constants.DoMove{
 	public int do_move(int idx, int move_code){
 		CubeStage3 cube1 = new CubeStage3();
 		cube1.m_centerLR = 0;

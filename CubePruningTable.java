@@ -1,6 +1,6 @@
 package fivestage444;
 
-public class CubePruningTable {
+public final class CubePruningTable {
 
 	private	int m_num_positions;
 	private	byte[] m_ptable;

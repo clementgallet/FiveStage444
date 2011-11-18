@@ -1,6 +1,6 @@
 package fivestage444;
 
-public class CubeStage3 {
+public final class CubeStage3 {
 
 	public static boolean stage3_move_parity[] = {
 		false, false, false, false,

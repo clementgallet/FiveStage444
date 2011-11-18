@@ -1,6 +1,6 @@
 package fivestage444;
 
-public class CubeStage2 {
+public final class CubeStage2 {
 
 	public int m_centerFB; // (51482970)
 	public short m_edge; //edge coordinate (420)

@@ -1,6 +1,6 @@
 package fivestage444;
 
-public class DoMoveEC5 implements Constants.DoMove{
+public final class DoMoveEC5 implements Constants.DoMove{
 	public int do_move(int idx, int move_code){
 		int ep96x96x96 = idx/Constants.N_SQS_CORNER_PERM;
 		int cp = idx % Constants.N_SQS_CORNER_PERM;

@@ -1,6 +1,6 @@
 package fivestage444;
 
-public class CubeStage1 {
+public final class CubeStage1 {
 
 	public short m_co; // corner orientation (2187)
 	public int m_edge_ud_combo8; // (735471)

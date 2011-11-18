@@ -1,6 +1,6 @@
 package fivestage444;
 
-public class CubeStage4 {
+public final class CubeStage4 {
 
 	public byte m_centerUD; //center coordinate (70)
 	public short m_corner; //corner coordinate	(420)
@@ -18,16 +18,9 @@ public class CubeStage4 {
 	}
 
 	public void do_move (int move_code){
-
 		m_centerUD = Tables.move_table_cenSTAGE4[m_centerUD][move_code];
 		m_corner = Tables.move_table_cornerSTAGE4[m_corner][move_code];
-		int edge_lrfb = Tables.stage4_edge_rep_table[m_edge];
-		int lrfbA = edge_lrfb % 40320;
-		int lrfbB = edge_lrfb / 40320;
-		int result_lrfb = 40320*Tables.move_table_BedgeSTAGE4[lrfbB][move_code] + Tables.move_table_AedgeSTAGE4[lrfbA][move_code];
-		int result_edgerep = Tables.lrfb_get_edge_rep (result_lrfb);
-		int hash_idx = Tables.stage4_edge_table_lookup (result_edgerep);
-		m_edge = Tables.stage4_edge_hash_table_idx[hash_idx];
+		m_edge = Tables.move_table_edgeSTAGE4[m_edge][move_code];
 	}
 
 	public boolean is_solved (){

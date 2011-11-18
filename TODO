@@ -1,5 +1,26 @@
 TODO:
 
-- Get the code to work.
 - Move to a more javaish code.
 - Optimise the program.
+-- Improve lookup table for stage 4.
+
+- Optimise the algorithm.
+- Make a multi-threaded code.
+
+BENCHMARK:
+
+Stage1 has taken 56032 ms.
+Stage2 has taken 20351 ms.
+Stage3 has taken 5736 ms.
+Stage4 has taken 13122 ms.
+Stage5 has taken 46594 ms.
+
+Using Java VisualVM:
+fivestage444.FiveStage444.treesearchSTAGE1()		56787 ms
+fivestage444.FiveStage444.treesearchSQS()		26396 ms
+fivestage444.CubeSqsCoord.do_move()			22903 ms
+fivestage444.FiveStage444.treesearchSTAGE4()		13525 ms
+fivestage444.FiveStage444.treesearchSTAGE2()		11811 ms
+fivestage444.CubeStage2.prune_funcEDGCEN_STAGE2()	6296 ms
+fivestage444.FiveStage444.treesearchSTAGE3()		6281 ms
+fivestage444.CubeStage2.do_move()			2794 ms

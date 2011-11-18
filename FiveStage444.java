@@ -4,7 +4,7 @@ import static fivestage444.Constants.*;
 
 import java.util.Random;
 
-public class FiveStage444 {
+public final class FiveStage444 {
 
 // EDGE CONVENTION:
 
@@ -593,7 +593,8 @@ public class FiveStage444 {
 
 	public static void do_random_cubes (int metric, int count){
 	int i, i1;
-	Random r = new Random();
+	//Random r = new Random();
+	Random r = new Random(42);
 	int[] random_list = new int[160];	//must be >= scramble_len
 	CubeState solveme = new CubeState();
 	CubeState solved = new CubeState();
@@ -615,6 +616,11 @@ public class FiveStage444 {
 		int solveme_count = solveit4x4x4IDA (solveme, solveme_moves, metric);
 		print_move_list (solveme_count, solveme_moves, 0);
 	}
+	System.out.println( "Stage1 has taken " + tStage1 + " ms." );
+	System.out.println( "Stage2 has taken " + tStage2 + " ms." );
+	System.out.println( "Stage3 has taken " + tStage3 + " ms." );
+	System.out.println( "Stage4 has taken " + tStage4 + " ms." );
+	System.out.println( "Stage5 has taken " + tStage5 + " ms." );
 }
 
 	public static int solveitIDA_STAGE1 (CubeStage1 init_cube, int[] move_list, int index, int metric){
@@ -1012,6 +1018,9 @@ public class FiveStage444 {
 	return false;
 }
 
+	public static long tStage1, tStage2, tStage3, tStage4, tStage5 = 0;
+	public static Timer t = new Timer();
+
 	public static int solveit4x4x4IDA (CubeState cube, int[] move_list, int metric){
 
 	int i;
@@ -1025,8 +1034,12 @@ public class FiveStage444 {
 	s3.init ();
 	s4.init ();
 	s5.init ();
+
+	/*** Stage1 ***/
 	cube.convert_to_stage1 (s1);
+	t.reset();
 	int count1 = solveitIDA_STAGE1 (s1, move_list, 0, metric);
+	tStage1 += t.elapsed();
 	if (count1 < 0 || count1 > 90) {
 		System.out.println ("Solve failure!\n");
 		return -1;
@@ -1079,8 +1092,11 @@ public class FiveStage444 {
 		//exit (1);
 	}
 
+	/*** Stage 2 ***/
 	cube.convert_to_stage2 (s2);
+	t.reset();
 	int count2 = solveitIDA_STAGE2 (s2, move_list, count, metric);
+	tStage2 += t.elapsed();
 	if (count2 < 0 || count2 > 90) {
 		System.out.println ("Solve failure!\n");
 		return -1;
@@ -1110,9 +1126,13 @@ public class FiveStage444 {
 		cube.do_move (Df3);
 		r6 += 3;
 	}
+
+	/*** Stage 3 ***/
 	cube.convert_to_stage3 (s3);
 	s3.m_edge_odd = cube.edgeUD_parity_odd ();
+	t.reset();
 	int count3 = solveitIDA_STAGE3 (s3, move_list, count, metric);
+	tStage3 += t.elapsed();
 	if (count3 < 0 || count3 > 90) {
 		System.out.println ("Solve failure!");
 		return -1;
@@ -1131,8 +1151,11 @@ public class FiveStage444 {
 
 	count += count3;
 
+	/*** Stage 4 ***/
 	cube.convert_to_stage4 (s4);
+	t.reset();
 	int count4 = solveitIDA_STAGE4 (s4, move_list, count, metric);
+	tStage4 += t.elapsed();
 	if (count4 < 0 || count4 > 90) {
 		System.out.println ("Solve failure!");
 		return -1;
@@ -1151,8 +1174,11 @@ public class FiveStage444 {
 
 	count += count4;
 
+	/*** Stage 5 ***/
 	cube.convert_to_squares (s5);
+	t.reset();
 	int count5 = solveitIDA_SQS (s5, move_list, count, metric);
+	tStage5 += t.elapsed();
 	if (count5 < 0 || count5 > 90) {
 		System.out.println ("Solve failure!");
 		return -1;

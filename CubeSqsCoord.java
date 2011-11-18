@@ -1,6 +1,6 @@
 package fivestage444;
 
-public class CubeSqsCoord {
+public final class CubeSqsCoord {
 
 	public int m_ep96x96x96; // (884736)
 	public short m_cen12x12x12; // (1728)
