@@ -534,14 +534,8 @@ public final class Tables {
 	}
 
 	public static final int lrfb_get_edge_rep (int u){
-		int rep = stage4_edge_hB[u/40320];	//65000*40320;
 		int reph = stage4_edge_hgB[u/40320];	//65000;
-		int Blr, Bfb;
-		Blr = rep / 24;
-		Bfb = rep % 24;
-		int repBlr = sqs_perm_to_rep[Blr];
-		int repBfb = sqs_perm_to_rep[Bfb];
-		int repl = stage4_edge_hgA[u % 40320][6*repBlr + repBfb];
+		int repl = stage4_edge_hgA[u % 40320][stage4_edge_hB[u/40320]];
 		return 40320*reph + repl;
 	}
 
@@ -578,8 +572,10 @@ public final class Tables {
 					rep = h1;
 				}
 			}
-			stage4_edge_hB[u] = rep;
 			stage4_edge_hgB[u] = reph;
+			int repBlr = sqs_perm_to_rep[rep/24];
+			int repBfb = sqs_perm_to_rep[rep%24];
+			stage4_edge_hB[u] = 6*repBlr + repBfb;
 		}
 		cs1.init ();
 		for (u = 0; u < 40320; ++u) {
@@ -631,7 +627,7 @@ public final class Tables {
 			if (parity_perm8_table[uH] != parity_perm8_table[uL]) {
 				continue;
 			}
-			int myrep = lrfb_get_edge_rep (u1);
+			int myrep = lrfb_get_edge_rep (u1); // TODO: Split into uH and uL.
 			if (myrep == u1) {
 				add_to_stage4_edge_table (myrep, repcount++);
 			}
