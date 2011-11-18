@@ -554,25 +554,25 @@ public final class Tables {
 		cs1.init ();
 		cs2.init ();
 		for (u = 0; u < 40320; ++u) {
-			// cs2.init (); // Unnecessary, lrfb inits it.
 			lrfb_to_cube_state (40320*u, cs2);
 			int rep = 999;
 			int reph = 65000;
 			int Blr, Bfb;
 			for (h1 = 0; h1 < 576; ++h1) {
-				Blr = h1 / 24;
 				Bfb = h1 % 24;
-				Constants.perm_n_unpack (4, Blr, cs1.m_edge, 4);
 				Constants.perm_n_unpack (4, Bfb, cs1.m_edge, 8);
-				for (i = 4; i < 8; ++i) {
-					cs1.m_edge[i] += 4;
-				}
 				for (i = 8; i < 12; ++i) {
 					cs1.m_edge[i] += 8;
 				}
+				if( Bfb == 0 ){ // update only once every 24 iterations
+					Blr = h1 / 24;
+					Constants.perm_n_unpack (4, Blr, cs1.m_edge, 4);
+					for (i = 4; i < 8; ++i) {
+						cs1.m_edge[i] += 4;
+					}
+				}
 				cs3.compose_edge (cs1, cs2);
-				int u3 = cs3.cube_state_to_lrfb ();
-				int u3h = u3/40320;
+				int u3h = cs3.cube_state_to_lrfb_h ();
 				if (u3h < reph) {
 					reph = u3h;
 					rep = h1;
@@ -583,21 +583,21 @@ public final class Tables {
 		}
 		cs1.init ();
 		for (u = 0; u < 40320; ++u) {
-			// cs2.init (); // Unnecessary, lrfb inits it.
 			lrfb_to_cube_state (u, cs2);
 			for (h1 = 0; h1 < 36; ++h1) {
 				int repl = 65000;
 				int replr = h1 / 6;
 				int repfb = h1 % 6;
 				for (h2 = 0; h2 < 16; ++h2) {
-					Constants.perm_n_unpack (4, sqs_rep_to_perm[replr][h2/4], cs1.m_edge, 0);
-					Constants.perm_n_unpack (4, sqs_rep_to_perm[repfb][h2%4], cs1.m_edge, 12);
-					for (i = 12; i < 16; ++i) {
-						cs1.m_edge[i] += 12;
+					Constants.perm_n_unpack (4, sqs_rep_to_perm[replr][h2%4], cs1.m_edge, 0);
+					if(( h2 % 4 ) == 0){ // Update once every 4 iterations
+						Constants.perm_n_unpack (4, sqs_rep_to_perm[repfb][h2/4], cs1.m_edge, 12);
+						for (i = 12; i < 16; ++i) {
+							cs1.m_edge[i] += 12;
+						}
 					}
 					cs3.compose_edge (cs1, cs2);
-					int u3 = cs3.cube_state_to_lrfb();
-					int u3l = u3 % 40320;
+					int u3l = cs3.cube_state_to_lrfb_l();
 					if (u3l < repl) {
 						repl = u3l;
 					}

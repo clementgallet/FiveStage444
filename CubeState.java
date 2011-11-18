@@ -317,13 +317,20 @@ public final class CubeState {
 		result_cube.m_centerUD = Tables.bm4of8_to_70[cenbm4of8];
 	}
 
-	public int cube_state_to_lrfb (){
+	public int cube_state_to_lrfb_l (){
 		byte[] t = new byte[8];
 		set_a_to_array8 (t);
-		int u1 = Constants.perm_n_pack (8, t, 0);
+		return Constants.perm_n_pack (8, t, 0);
+	}
+
+	public int cube_state_to_lrfb_h (){
+		byte[] t = new byte[8];
 		set_b_to_array8 (t);
-		int u2 = Constants.perm_n_pack (8, t, 0);
-		return 40320*u2 + u1;
+		return Constants.perm_n_pack (8, t, 0);
+	}
+
+	public int cube_state_to_lrfb (){
+		return 40320*cube_state_to_lrfb_h() + cube_state_to_lrfb_l();
 	}
 
 	public void set_a_to_array8 (byte[] t){
@@ -336,14 +343,8 @@ public final class CubeState {
 				j = i;
 			}
 			byte t1 = m_edge[j];
-			if (t1 >= 4) {
-				if (t1 >= 12) {
-					t1 -= 8;
-				} else { // TODO: Remove this.
-					System.out.println ("error: set_a_to_packed8");
-					//exit (1);
-				}
-			}
+			if (t1 >= 12)
+				t1 -= 8;
 			t[i] = t1;
 		}
 	}

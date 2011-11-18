@@ -24,3 +24,12 @@ fivestage444.FiveStage444.treesearchSTAGE2()		11811 ms
 fivestage444.CubeStage2.prune_funcEDGCEN_STAGE2()	6296 ms
 fivestage444.FiveStage444.treesearchSTAGE3()		6281 ms
 fivestage444.CubeStage2.do_move()			2794 ms
+
+For initialisation:
+fivestage444.Tables.lrfb_get_edge_rep(int)				7604 ms		123735440
+fivestage444.CubeState.convert_to_stage3(fivestage444.CubeStage3)	3134 ms		18275400
+fivestage444.Constants.perm_n_pack(int, byte[], int)			2572 ms		49307472
+fivestage444.Constants.perm_n_unpack(int, int, byte[], int)		1624 ms		57652752
+fivestage444.CubeStage3.convert_to_std_cube(fivestage444.CubeState)	1492 ms		18275400
+fivestage444.CubeState.rotate_sliceEDGE(int)				684 ms		24546266
+fivestage444.CubeState.rotate_sliceCENTER(int)				599 ms		24545690
