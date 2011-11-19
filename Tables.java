@@ -347,9 +347,8 @@ public final class Tables {
 				}
 			}
 			for (mc = 0; mc < Constants.N_BASIC_MOVES; ++mc) {
-				for (i = 0; i < 24; ++i )
-					cube2.m_edge[i] = cube1.m_edge[i]; // TODO: Could be optimised...
-				cube2.do_move (mc);
+				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
+				cube2.rotate_sliceEDGE (mc);
 				ebm = 0;
 				for (i = 0; i < 24; ++i) {
 					if (cube2.m_edge[i] >= 16) {
@@ -380,8 +379,7 @@ public final class Tables {
 			for (mc = 0; mc < Constants.N_BASIC_MOVES; ++mc) {
 				int fmc = Constants.basic_to_face[mc];
 				if (fmc >= 0) {
-					for (i = 0; i < 8; ++i )
-						cube2.m_cor[i] = cube1.m_cor[i]; // TODO: Could be optimised...
+					System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
 					cube2.rotate_sliceCORNER (mc);
 					cube2.convert_to_stage1 (s2);
 					move_table_co[u][fmc] = s2.m_co;
@@ -417,9 +415,8 @@ public final class Tables {
 				}
 			}
 			for (mc = 0; mc < Constants.N_STAGE2_SLICE_MOVES; ++mc) {
-				for (i = 0; i < 24; ++i )
-					cube2.m_cen[i] = cube1.m_cen[i]; // TODO: Could be optimised...
-				cube2.do_move (Constants.stage2_slice_moves[mc]);
+				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
+				cube2.rotate_sliceCENTER (Constants.stage2_slice_moves[mc]);
 				j = 0;
 				for (i = 0; i < 24; ++i) {
 					if (cube2.m_cen[i] == 5) {
@@ -687,7 +684,7 @@ public final class Tables {
 			if (parity_perm8_table[uH] != parity_perm8_table[uL]) {
 				continue;
 			}
-			int myrep = lrfb_get_edge_rep (u1); // TODO: Split into uH and uL.
+			int myrep = lrfb_get_edge_rep (u1);
 			if (myrep == u1) {
 				add_to_stage4_edge_table (myrep, repcount++);
 			}
@@ -720,10 +717,6 @@ public final class Tables {
 
 	private static void add_to_stage4_edge_table (int val, int idx){
 		int hash_idx = stage4_edge_table_lookup (val);
-		if (hash_idx == 0) { // TODO: Remove this.
-			System.out.println ("Stage4 edge hash table full!");
-			//exit (0);
-		}
 		stage4_edge_hash_table_val[hash_idx] = val;
 		stage4_edge_hash_table_idx[hash_idx] = idx;
 		stage4_edge_rep_table[idx] = val;
@@ -744,7 +737,7 @@ public final class Tables {
 			for (mc = 0; mc < Constants.N_STAGE4_SLICE_MOVES; ++mc) {
 				s4.m_edge = u;
 				s4.convert_to_std_cube (cs1);
-				cs1.do_move (Constants.stage4_slice_moves[mc]);
+				cs1.rotate_sliceEDGE (Constants.stage4_slice_moves[mc]);
 				int u2 = cs1.cube_state_to_lrfb ();
 				int edgerep = lrfb_get_edge_rep (u2);
 				int hash_idx = stage4_edge_table_lookup (edgerep);
@@ -768,7 +761,7 @@ public final class Tables {
 			for (mc = 0; mc < Constants.N_STAGE4_SLICE_MOVES; ++mc) {
 				s4.m_corner = (short)u;
 				s4.convert_to_std_cube (cs1);
-				cs1.do_move (Constants.stage4_slice_moves[mc]);
+				cs1.rotate_sliceCORNER (Constants.stage4_slice_moves[mc]);
 				cs1.convert_to_stage4 (s4a);
 				move_table_cornerSTAGE4[u][mc] = s4a.m_corner;
 			}
@@ -790,7 +783,7 @@ public final class Tables {
 			for (mc = 0; mc < Constants.N_STAGE4_SLICE_MOVES; ++mc) {
 				s4.m_centerUD = (byte)u;
 				s4.convert_to_std_cube (cs1);
-				cs1.do_move (Constants.stage4_slice_moves[mc]);
+				cs1.rotate_sliceCENTER (Constants.stage4_slice_moves[mc]);
 				cs1.convert_to_stage4 (s4a);
 				move_table_cenSTAGE4[u][mc] = s4a.m_centerUD;
 			}
@@ -893,8 +886,7 @@ public final class Tables {
 				cube1.m_edge[j] += 4;
 			}
 			for (j = 0; j < 6; ++j) {
-				for (k = 0; k < 8; ++k ) // We only deal with the first 8 edges (I hope)
-					cube2.m_edge[k] = cube1.m_edge[k]; // TODO: Could be optimised...
+				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 8);
 				cube2.rotate_sliceEDGE (mov_lst[j]);
 				int x1 = Constants.perm_n_pack (4, cube2.m_edge, 0);
 				int x2 = cube2.m_edge[4] - 4;

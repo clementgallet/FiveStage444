@@ -150,10 +150,8 @@ public final class CubeState {
 		int mc = 3*mc6 + move_code % 3;
 		int fidx = rotateCOR_fidx[mc];
 		int tidx = rotateCOR_tidx[mc];
-		byte[] old_m_cor = new byte[8]; // TODO: Use a array copy
-		for (i = 0; i < 8; ++i) { // Add. May be faster ?
-			old_m_cor[i] = m_cor[i];
-		}
+		byte[] old_m_cor = new byte[8];
+		System.arraycopy(m_cor, 0, old_m_cor, 0, 8);
 		if (mc % 3 != 2) {	//avoid doing "if" inside loop, for speed
 			for (i = 0; i < 4; ++i) {
 				byte tmpface = old_m_cor[rotateCOR_ft[fidx + i]];
@@ -172,11 +170,9 @@ public final class CubeState {
 	}
 
 	public void rotate_sliceEDGE (int move_code){
-		byte[] old_m_edge = new byte[24]; // FIXME.
+		byte[] old_m_edge = new byte[24];
 		int i;
-		for (i = 0; i < 24; ++i) { // Add. May be faster ?
-			old_m_edge[i] = m_edge[i];
-		}
+		System.arraycopy(m_edge, 0, old_m_edge, 0, 24);
 		int mc3 = move_code/3;
 		int movdir = move_code % 3;
 		int mcx = 3*(mc3/2);
@@ -198,11 +194,9 @@ public final class CubeState {
 	}
 
 	public void rotate_sliceCENTER (int move_code){
-		byte[] old_m_cen = new byte[24]; // FIXME.
+		byte[] old_m_cen = new byte[24];
 		int i;
-		for (i = 0; i < 24; ++i) { // Add. May be faster ?
-			old_m_cen[i] = m_cen[i];
-		}
+		System.arraycopy(m_cen, 0, old_m_cen, 0, 24);
 		int mc3 = move_code/3;
 		int movdir = move_code % 3;
 		int mcx = 3*(mc3/2) + (mc3 & 0x1);
