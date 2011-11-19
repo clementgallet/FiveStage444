@@ -597,7 +597,7 @@ public final class Tables {
 				for (i = 8; i < 12; ++i) {
 					cs1.m_edge[i] += 8;
 				}
-				if( Bfb == 0 ){ // update only once every 24 iterations
+				if( Bfb == 0 ){ // only need to update only once every 24 iterations
 					Blr = h1 / 24;
 					Constants.perm_n_unpack (4, Blr, cs1.m_edge, 4);
 					for (i = 4; i < 8; ++i) {
@@ -636,7 +636,7 @@ public final class Tables {
 				int repfb = h1 % 6;
 				for (h2 = 0; h2 < 16; ++h2) {
 					Constants.perm_n_unpack (4, sqs_rep_to_perm[replr][h2%4], cs1.m_edge, 0);
-					if(( h2 % 4 ) == 0){ // Update once every 4 iterations
+					if(( h2 % 4 ) == 0){ // Only need to update once every 4 iterations
 						Constants.perm_n_unpack (4, sqs_rep_to_perm[repfb][h2/4], cs1.m_edge, 12);
 						for (i = 12; i < 16; ++i) {
 							cs1.m_edge[i] += 12;
@@ -883,7 +883,6 @@ public final class Tables {
 		CubeState cube2 = new CubeState();
 		cube2.init ();
 		for (i = 0; i < 96; ++i) {
-			cube1.init ();
 			if(( i % 4 ) == 0 ){ // Only need to update once every 4 iterations.
 				first_perm = i / 4;
 				Constants.perm_n_unpack (4, first_perm, cube1.m_edge, 0);
