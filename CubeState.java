@@ -261,10 +261,6 @@ public final class CubeState {
 		int cenbm4of8 = 0;
 		int j = 0;
 		for (i = 0; i < 16; ++i) {
-			if (m_cen[i] >= 4) { // TODO: Remove this.
-				System.out.println ("error: cube state not a stage3 position");
-				//exit (1);
-			}
 			if (m_cen[i] >= 2) {
 				cenbm |= (1 << i);
 				if (m_cen[i] == 2) {
@@ -276,10 +272,6 @@ public final class CubeState {
 		result_cube.m_centerLR = 70*Tables.e16bm2eloc[cenbm] + Tables.bm4of8_to_70[cenbm4of8];
 		int edge_bm = 0;
 		for (i = 0; i < 16; ++i) {
-			if (m_edge[i] >= 16) { // TODO: Remove this.
-				System.out.println ("error: cube state not a stage3 position");
-				//exit (1);
-			}
 			if (m_edge[i] < 4 || m_edge[i] >= 12) {
 				edge_bm |= (1 << i);
 			}
