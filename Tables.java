@@ -3,52 +3,98 @@ package fivestage444;
 public final class Tables {
 
 	public static final void init_all (){
-		System.out.println("Initialising init_4of8");
+		Timer t = new Timer();
+		System.out.print("Initialising init_4of8... ");
 		init_4of8 ();
-		System.out.println("Initialising parity_table");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising parity_table... ");
 		init_parity_table ();
-		System.out.println("Initialising eloc_ebm");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising eloc_ebm... ");
 		init_eloc_ebm ();
-		System.out.println("Initialising map96");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising map96... ");
 		init_map96 ();
-		System.out.println("Initialising bm12_4of8_to_idx");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising bm12_4of8_to_idx... ");
 		init_bm12_4of8_to_idx ();
-		System.out.println("Initialising cloc");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising cloc... ");
 		init_cloc ();
-		System.out.println("Initialising perm_to_420");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising perm_to_420... ");
 		init_perm_to_420 ();
-		System.out.println("Initialising move_table_edgeSTAGE1");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising move_table_edgeSTAGE1... ");
 		init_move_table_edgeSTAGE1 ();
-		System.out.println("Initialising move_table_coSTAGE1");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising move_table_coSTAGE1... ");
 		init_move_table_coSTAGE1 ();
-		System.out.println("Initialising move_table_centerSTAGE2");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising move_table_centerSTAGE2... ");
 		init_move_table_centerSTAGE2 ();
-		System.out.println("Initialising move_table_edgeSTAGE2");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising move_table_edgeSTAGE2... ");
 		init_move_table_edgeSTAGE2 ();
-		System.out.println("Initialising e16bm_eloc");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising e16bm_eloc... ");
 		init_e16bm_eloc ();
-		System.out.println("Initialising move_table_cenSTAGE3");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising move_table_cenSTAGE3... ");
 		init_move_table_cenSTAGE3 ();
-		System.out.println("Initialising move_table_edgeSTAGE3");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising move_table_edgeSTAGE3... ");
 		init_move_table_edgeSTAGE3 ();
-		System.out.println("Initialising stage4_edge_B_tables");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising stage4_edge_B_tables... ");
 		init_stage4_edge_B_tables ();
-		System.out.println("Initialising stage4_edge_A_table");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising stage4_edge_A_table... ");
 		init_stage4_edge_A_table ();
-		System.out.println("Initialising lrfb_check");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising lrfb_check... ");
 		lrfb_check ();
-		System.out.println("Initialising move_table_edgeSTAGE4");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising move_table_edgeSTAGE4... ");
 		init_move_table_edgeSTAGE4 ();
-		System.out.println("Initialising move_table_cornerSTAGE4");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising move_table_cornerSTAGE4... ");
 		init_move_table_cornerSTAGE4 ();
-		System.out.println("Initialising move_table_cenSTAGE4");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising move_table_cenSTAGE4... ");
 		init_move_table_cenSTAGE4 ();
-		System.out.println("Initialising squares_2nd_perm");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising squares_2nd_perm... ");
 		init_squares_2nd_perm ();
-		System.out.println("Initialising squares_movemap");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising squares_movemap... ");
 		init_squares_movemap ();
-		System.out.println("Initialising squares_cen_maps");
+		System.out.println(t.elapsed() + " ms.");
+		t.reset();
+		System.out.print("Initialising squares_cen_maps... ");
 		init_squares_cen_maps ();
+		System.out.println(t.elapsed() + " ms.");
 	}
 
 	/*** init_4of8 ***/
@@ -500,12 +546,15 @@ public final class Tables {
 		int mc;
 		int u;
 		CubeStage3 s3 = new CubeStage3();
+		CubeState cube1 = new CubeState();
 		s3.init ();
+		cube1.init ();
 		for (u = 0; u < Constants.N_STAGE3_CENTER_CONFIGS; ++u) {
-			s3.m_edge = 0;
 			for (mc = 0; mc < Constants.N_STAGE3_SLICE_MOVES; ++mc) {
 				s3.m_centerLR = u;
-				s3.do_move_slow (mc);
+				s3.convert_to_std_cube(cube1);
+				cube1.rotate_sliceCENTER(Constants.stage3_slice_moves[mc]);
+				cube1.convert_to_stage3 (s3);
 				move_table_cenSTAGE3[u][mc] = s3.m_centerLR;
 			}
 		}
@@ -576,42 +625,48 @@ public final class Tables {
 	private static final int[] stage4_edge_hgB = new int[40320]; // (40320 ?). Change from short to int then :(
 
 	public static final void init_stage4_edge_B_tables (){
-		int i;
-		int u, h1, h2;
+		byte i;
+		int u;
 		CubeState cs1 = new CubeState();
 		CubeState cs2 = new CubeState();
 		CubeState cs3 = new CubeState();
 		cs1.init ();
 		cs2.init ();
+		for (i = 0; i < 16; ++i ){
+			cs2.m_edge[i] = i;
+		}
 		for (u = 0; u < 40320; ++u) {
-			lrfb_to_cube_state (40320*u, cs2);
+			// lrfb_to_cube_state (40320*u, cs2); // Replaced by a nextPerm
 			int rep = 999;
 			int reph = 65000;
 			int Blr, Bfb;
-			for (h1 = 0; h1 < 576; ++h1) {
-				Bfb = h1 % 24;
-				Constants.perm_n_unpack (4, Bfb, cs1.m_edge, 8);
+
+			for (i = 4; i < 8; ++i) {
+				cs1.m_edge[i] = i;
+			}
+
+			for (Blr = 0; Blr < 24; ++Blr) {
+
 				for (i = 8; i < 12; ++i) {
-					cs1.m_edge[i] += 8;
+					cs1.m_edge[i] = i;
 				}
-				if( Bfb == 0 ){ // only need to update only once every 24 iterations
-					Blr = h1 / 24;
-					Constants.perm_n_unpack (4, Blr, cs1.m_edge, 4);
-					for (i = 4; i < 8; ++i) {
-						cs1.m_edge[i] += 4;
+
+				for (Bfb = 0; Bfb < 24; ++Bfb) {
+					cs3.compose_edge (cs1, cs2);
+					int u3h = cs3.cube_state_to_lrfb_h ();
+					if (u3h < reph) {
+						reph = u3h;
+						rep = 24 * Blr + Bfb;
 					}
+					Constants.nextPerm( cs1.m_edge, 4, 8 );
 				}
-				cs3.compose_edge (cs1, cs2);
-				int u3h = cs3.cube_state_to_lrfb_h ();
-				if (u3h < reph) {
-					reph = u3h;
-					rep = h1;
-				}
+				Constants.nextPerm( cs1.m_edge, 4, 4 );
 			}
 			stage4_edge_hgB[u] = reph;
 			int repBlr = sqs_perm_to_rep[rep/24];
 			int repBfb = sqs_perm_to_rep[rep%24];
 			stage4_edge_hB[u] = 6*repBlr + repBfb;
+			Constants.nextPerm( cs2.m_edge, 8, 4 );
 		}
 	}
 

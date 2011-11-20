@@ -716,6 +716,31 @@ public final class Constants{
 		}
 	}
 
+	public static final void nextPerm (byte[] array, int length, int offset){
+		int j = length - 2;
+		while (j >= 0 && ( array[j+offset] >= array[j+1+offset] ))
+			--j;
+			
+		if (j < 0) return; // Already next perm.
+		
+		int m = length - 1;
+		while (array[j+offset] >= array[m+offset])
+			m--;
+		byte temp = array[j+offset];
+		array[j+offset] = array[m+offset];
+		array[m+offset] = temp;
+		
+		int k = j + 1;
+		m = length - 1;
+		while (k < m) {
+			temp = array[k+offset];
+			array[k+offset] = array[m+offset];
+			array[m+offset] = temp;
+			k++;
+			m--;
+		}
+	}
+
 	public static final int STAGE3_NUM_SOLVED_CENTER_CONFIGS = 12;
 	public static final int stage3_solved_centers[] = {
 	900830, 900844,	900850, 900853, 900857, 900858,
