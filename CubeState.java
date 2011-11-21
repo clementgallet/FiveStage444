@@ -249,7 +249,7 @@ public final class CubeState {
 		result_cube.m_edge = Tables.perm_to_420[u];
 	}
 
-	public void convert_to_stage3 (CubeStage3 result_cube){
+	public void convert_centers_to_stage3 (CubeStage3 result_cube){
 		int i;
 		int cenbm = 0;
 		int cenbm4of8 = 0;
@@ -264,6 +264,10 @@ public final class CubeState {
 			}
 		}
 		result_cube.m_centerLR = 70*Tables.e16bm2eloc[cenbm] + Tables.bm4of8_to_70[cenbm4of8];
+	}
+
+	public void convert_edges_to_stage3 (CubeStage3 result_cube){
+		int i;
 		int edge_bm = 0;
 		for (i = 0; i < 16; ++i) {
 			if (m_edge[i] < 4 || m_edge[i] >= 12) {
@@ -271,6 +275,11 @@ public final class CubeState {
 			}
 		}
 		result_cube.m_edge = (short)Tables.e16bm2eloc[edge_bm];
+	}
+
+	public void convert_to_stage3 (CubeStage3 result_cube){
+		convert_centers_to_stage3 (result_cube);
+		convert_edges_to_stage3 (result_cube);
 	}
 
 	private static byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };

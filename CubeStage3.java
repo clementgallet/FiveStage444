@@ -60,7 +60,7 @@ public final class CubeStage3 {
 		return false;
 	}
 
-	public void convert_to_std_cube (CubeState result_cube){
+	public void convert_centers_to_std_cube (CubeState result_cube){
 		int i;
 		int cenbm = Tables.eloc2e16bm[m_centerLR/70];
 		int cenbm4of8 = Tables.bm4of8[m_centerLR % 70];
@@ -80,11 +80,11 @@ public final class CubeStage3 {
 		for (i = 16; i < 24; ++i) {
 			result_cube.m_cen[i] = (byte)(i/4);
 		}
-		for (i = 0; i < 8; ++i) {
-			result_cube.m_cor[i] = (byte)i;
-		}
-		int edge_bm = Tables.eloc2e16bm[m_edge];
+	}
 
+	public void convert_edges_to_std_cube (CubeState result_cube){
+		int i;
+		int edge_bm = Tables.eloc2e16bm[m_edge];
 		byte e0 = 0;
 		byte e1 = 4;
 		for (i = 0; i < 16; ++i) {
@@ -100,6 +100,15 @@ public final class CubeStage3 {
 		for (i = 16; i < 24; ++i) {
 			result_cube.m_edge[i] = (byte)i;
 		}
+	}
+
+	public void convert_to_std_cube (CubeState result_cube){
+		int i;
+		for (i = 0; i < 8; ++i) {
+			result_cube.m_cor[i] = (byte)i;
+		}
+		convert_centers_to_std_cube( result_cube );
+		convert_edges_to_std_cube( result_cube );
 	}
 
 	public int prune_funcCEN_STAGE3 (){

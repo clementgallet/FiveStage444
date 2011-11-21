@@ -664,9 +664,9 @@ public final class Tables {
 		for (u = 0; u < Constants.N_STAGE3_CENTER_CONFIGS; ++u) {
 			for (mc = 0; mc < Constants.N_STAGE3_SLICE_MOVES; ++mc) {
 				s3.m_centerLR = u;
-				s3.convert_to_std_cube(cube1); // TODO: Convert only centers.
+				s3.convert_centers_to_std_cube(cube1);
 				cube1.rotate_sliceCENTER(Constants.stage3_slice_moves[mc]);
-				cube1.convert_to_stage3 (s3); // TODO: Idem.
+				cube1.convert_centers_to_stage3 (s3);
 				move_table_cenSTAGE3[u][mc] = s3.m_centerLR;
 			}
 		}
