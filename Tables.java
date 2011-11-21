@@ -1,107 +1,76 @@
 package fivestage444;
 
+import java.lang.Thread;
+
 public final class Tables {
 
-	public static final void init_all (){
-		Timer t = new Timer();
-		System.out.print("Initialising init_4of8... ");
-		init_4of8 ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising parity_table... ");
-		init_parity_table ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising eloc_ebm... ");
-		init_eloc_ebm ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising map96... ");
-		init_map96 ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising bm12_4of8_to_idx... ");
-		init_bm12_4of8_to_idx ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising cloc... ");
-		init_cloc ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising perm_to_420... ");
-		init_perm_to_420 ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising move_table_edgeSTAGE1... ");
-		init_move_table_edgeSTAGE1 ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising move_table_coSTAGE1... ");
-		init_move_table_coSTAGE1 ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising move_table_centerSTAGE2... ");
-		init_move_table_centerSTAGE2 ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising move_table_edgeSTAGE2... ");
-		init_move_table_edgeSTAGE2 ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising e16bm_eloc... ");
-		init_e16bm_eloc ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising move_table_cenSTAGE3... ");
-		init_move_table_cenSTAGE3 ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising move_table_edgeSTAGE3... ");
-		init_move_table_edgeSTAGE3 ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising stage4_edge_B_tables... ");
-		init_stage4_edge_B_tables ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising stage4_edge_A_table... ");
-		init_stage4_edge_A_table ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising lrfb_check... ");
-		lrfb_check ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising move_table_edgeSTAGE4... ");
-		init_move_table_edgeSTAGE4 ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising move_table_cornerSTAGE4... ");
-		init_move_table_cornerSTAGE4 ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising move_table_cenSTAGE4... ");
-		init_move_table_cenSTAGE4 ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising squares_2nd_perm... ");
-		init_squares_2nd_perm ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising squares_movemap... ");
-		init_squares_movemap ();
-		System.out.println(t.elapsed() + " ms.");
-		t.reset();
-		System.out.print("Initialising squares_cen_maps... ");
-		init_squares_cen_maps ();
-		System.out.println(t.elapsed() + " ms.");
+	public final void init_all (){
+		threadInit4Of8.start();
+		threadInitParityTable.start();
+		threadInitEbmEloc.start();
+		threadInitMap96.start();
+		threadInitBm12.start();
+		threadInitCloc.start();
+		threadInitPerm420.start();
+		threadInitEdgeStage1.start();
+		threadInitCornerStage1.start();
+		threadInitCenterStage2.start();
+		threadInitEdgeStage2.start();
+		threadInitE16Bm.start();
+		threadInitCenterStage3.start();
+		threadInitEdgeStage3.start();
+		threadInitEdgeBStage4.start();
+		threadInitEdgeAStage4.start();
+		threadInitEdgeRepStage4.start();
+		threadInitEdgeStage4.start();
+		threadInitCornerStage4.start();
+		threadInitCenterStage4.start();
+		threadInitSquares2nd.start();
+		threadInitSquaresMovemap.start();
+		threadInitSquaresCenterMap.start();
+
+		waitAllThreads();
+	}
+
+	public final void waitAllThreads (){
+		try{
+		threadInit4Of8.join();
+		threadInitParityTable.join();
+		threadInitEbmEloc.join();
+		threadInitMap96.join();
+		threadInitBm12.join();
+		threadInitCloc.join();
+		threadInitPerm420.join();
+		threadInitEdgeStage1.join();
+		threadInitCornerStage1.join();
+		threadInitCenterStage2.join();
+		threadInitEdgeStage2.join();
+		threadInitE16Bm.join();
+		threadInitCenterStage3.join();
+		threadInitEdgeStage3.join();
+		threadInitEdgeBStage4.join();
+		threadInitEdgeAStage4.join();
+		threadInitEdgeRepStage4.join();
+		threadInitEdgeStage4.join();
+		threadInitCornerStage4.join();
+		threadInitCenterStage4.join();
+		threadInitSquares2nd.join();
+		threadInitSquaresMovemap.join();
+		threadInitSquaresCenterMap.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
 	}
 
 	/*** init_4of8 ***/
 	public static final byte[] bm4of8_to_70 = new byte[256];
 	public static final short[] bm4of8 = new short[70]; // (256). Was 'byte', now 'short' :(
 
-	public static final void init_4of8 (){
+	private class Init4Of8 extends Thread {
+
+	public void run (){
+		System.out.println( "Starting init4of8..." );
 		int a1, a2, a3, a4;
 		int i;
 		int count = 0;
@@ -119,7 +88,12 @@ public final class Tables {
 				}
 			}
 		}
+		System.out.println( "Finishing init4of8..." );
 	}
+
+	}
+
+	private Init4Of8 threadInit4Of8 = new Init4Of8();
 
 	/*** init_parity_table ***/
 	private static final boolean[] parity_perm8_table = new boolean[40320];
@@ -145,13 +119,20 @@ public final class Tables {
 		return parity;
 	}
 
-	public static final void init_parity_table (){
+	private class InitParityTable extends Thread {
+
+	public void run (){
+		System.out.println( "Starting parity table..." );
 		int x;
 
 		for (x = 0; x < 40320; ++x) {
 			parity_perm8_table[x] = (get_parity8 (x) != 0);
 		}
+		System.out.println( "Finishing parity table..." );
 	}
+	}
+
+	private InitParityTable threadInitParityTable = new InitParityTable();
 
 	/*** init_eloc ***/
 	public static final int[] ebm2eloc = new int[4096*4096];
@@ -159,7 +140,10 @@ public final class Tables {
 
 	private static int POW2_24 = 4096*4096;
 
-	public static final void init_eloc_ebm (){
+	private class InitEbmEloc extends Thread {
+
+	public void run (){
+		System.out.println( "Starting ebm eloc..." );
 		int a1, a2, a3, a4, a5, a6, a7, a8;
 		int count = 0;
 		for (a1 = 0; a1 < POW2_24; ++a1) {
@@ -184,16 +168,24 @@ public final class Tables {
 		  }
 		 }
 		}
+		System.out.println( "Finishing ebm eloc..." );
+	}
 	}
 
+	private InitEbmEloc threadInitEbmEloc = new InitEbmEloc();
+
+	/*** init map96 ***/
 	private static final byte[][] map96 = new byte[96][8];
 
-	public static final void init_map96 (){
+	private class InitMap96 extends Thread {
+
+	public void run (){
+		System.out.println( "Starting map 96..." );
 		int a1, i;
 		byte[] t = new byte[8];
 		byte f;
 		for (a1 = 0; a1 < 24; ++a1) {
-			Constants.perm_n_unpack (4, a1, t, 0);
+			Constants.perm_n_unpack (4, a1, t, 0); // TODO: Use nextPerm.
 			for (i = 0; i < 4; ++i) {
 				t[i+4] = (byte)(t[i] + 4);
 			}
@@ -216,12 +208,29 @@ public final class Tables {
 				map96[4*a1 + 3][i] = t[i];
 			}
 		}
+		System.out.println( "Finishing map 96..." );
+	}
 	}
 
+	private InitMap96 threadInitMap96 = new InitMap96();
+
+	/*** init bm12 ***/
 	private static final int[][] bm12_4of8_to_high_idx = new int[4096][70];
 	private static final int[][] bm12_4of8_to_low_idx = new int[4096][70];
 
-	public static final void init_bm12_4of8_to_idx (){
+	private class InitBm12 extends Thread {
+
+	public void run (){
+
+		try{
+			threadInit4Of8.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting bm 12..." );
+
 		int a1, a2;
 		int i;
 		short u;
@@ -272,7 +281,11 @@ public final class Tables {
 				bm12_4of8_to_high_idx[u][u1] = a1;
 			}
 		}
+		System.out.println( "Finishing bm 12..." );
 	}
+	}
+
+	private InitBm12 threadInitBm12 = new InitBm12();
 
 	public static final int swapbits (int x, int b){
 		int x2 = x & b;
@@ -287,7 +300,10 @@ public final class Tables {
 	public static final int[] c4_to_cloc = new int[24*24*24*24];
 	public static final int[] cloc_to_bm = new int[Constants.N_CENTER_COMBO4];
 
-	public static final void init_cloc (){
+	private class InitCloc extends Thread {
+
+	public void run (){
+		System.out.println( "Starting cloc..." );
 		int a1, a2, a3, a4; //, a5, a6, a7, a8;
 		int count = 0;
 
@@ -329,13 +345,28 @@ public final class Tables {
 		  }
 		 }
 		}
+		System.out.println( "Finishing cloc..." );
+	}
 	}
 
+	private InitCloc threadInitCloc = new InitCloc();
 
 	/*** init_perm_to_420 ***/
 	public static final short[] perm_to_420 = new short[40320]; // (420)
 
-	public static final void init_perm_to_420 (){
+	private class InitPerm420 extends Thread {
+
+	public void run (){
+
+		try{
+		threadInit4Of8.join();
+		threadInitMap96.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting perm 420..." );
 		int i;
 		int u, v, w, u2;
 		byte[] t = new byte[8];
@@ -367,13 +398,27 @@ public final class Tables {
 				}
 			}
 		}
+		System.out.println( "Finshing perm 420..." );
+	}
 	}
 
+	private InitPerm420 threadInitPerm420 = new InitPerm420();
 
-	/*** init_stage1 ***/
+	/*** init stage 1 edges ***/
 	public static final int[][] move_table_edgeSTAGE1 = new int[Constants.N_EDGE_COMBO8][Constants.N_BASIC_MOVES]; // (735471) 735471*36 > 100MB !
 
-	public static final void init_move_table_edgeSTAGE1 (){
+	private class InitEdgeStage1 extends Thread {
+
+	public void run (){
+
+		try{
+		threadInitEbmEloc.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting edge stage 1..." );
 		int i, mc;
 		byte lrfb, ud;
 		int u;
@@ -404,11 +449,27 @@ public final class Tables {
 				move_table_edgeSTAGE1[u][mc] = ebm2eloc[ebm];
 			}
 		}
+		System.out.println( "Finishing edge stage 1..." );
+	}
 	}
 
+	private InitEdgeStage1 threadInitEdgeStage1 = new InitEdgeStage1();
+
+	/*** init stage 1 corners ***/
 	public static final short[][] move_table_co = new short[Constants.N_CORNER_ORIENT][Constants.N_FACE_MOVES]; // (2187) 2187*18
 
-	public static final void init_move_table_coSTAGE1 (){
+	private class InitCornerStage1 extends Thread {
+
+	public void run (){
+
+		try{
+		threadInitEbmEloc.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting corner stage 1..." );
 		int i, mc;
 		int u;
 		CubeState cube1 = new CubeState();
@@ -432,22 +493,33 @@ public final class Tables {
 				}
 			}
 		}
+		System.out.println( "Finishing corner stage 1..." );
+	}
 	}
 
-	/*** init_stage2 ***/
+	private InitCornerStage1 threadInitCornerStage1 = new InitCornerStage1();
+
+	/*** init stage 2 centers ***/
 	public static final short[][] move_table_cenSTAGE2 = new short[Constants.N_CENTER_COMBO4][Constants.N_STAGE2_SLICE_MOVES]; // 10626*28
 
-	public static final void init_move_table_centerSTAGE2 (){
+	private class InitCenterStage2 extends Thread {
+
+	public void run (){
+
+		try{
+		threadInitCloc.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting center stage 2..." );
 		int i, j;
 		int u;
 		byte[] t = new byte[8];
 		int mc, udlrf;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		CubeStage2 s1 = new CubeStage2();
-		CubeStage2 s2 = new CubeStage2();
-		s1.init ();
-		s2.init ();
 		cube1.init ();
 		cube2.init ();
 		for (u = 0; u < Constants.N_CENTER_COMBO4; ++u) {
@@ -473,11 +545,28 @@ public final class Tables {
 				move_table_cenSTAGE2[u][mc] = (short)c4_to_cloc[idx];
 			}
 		}
+		System.out.println( "Finishing center stage 2..." );
+	}
 	}
 
+	private InitCenterStage2 threadInitCenterStage2 = new InitCenterStage2();
+
+	/*** init stage 2 edges ***/
 	public static final short[][] move_table_edgeSTAGE2 = new short[Constants.N_STAGE2_EDGE_CONFIGS][Constants.N_STAGE2_SLICE_MOVES]; // 420*28
 
-	public static final void init_move_table_edgeSTAGE2 (){
+	private class InitEdgeStage2 extends Thread {
+
+	public void run (){
+
+		try{
+		threadInitEbmEloc.join();
+		threadInit4Of8.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting edge stage 2..." );
 		short u;
 		int mc;
 		CubeStage2 s1 = new CubeStage2();
@@ -488,7 +577,11 @@ public final class Tables {
 				move_table_edgeSTAGE2[u][mc] = s1.m_edge;
 			}
 		}
+		System.out.println( "Finishing edge stage 2..." );
 	}
+	}
+
+	private InitEdgeStage2 threadInitEdgeStage2 = new InitEdgeStage2();
 
 	public static final int stage2_cen_to_cloc4sf (int cen){
 		int cenbm = eloc2ebm[cen / 70];
@@ -512,7 +605,10 @@ public final class Tables {
 
 	private static int POW2_16 = 256*256;
 
-	public static final void init_e16bm_eloc (){
+	private class InitE16Bm extends Thread {
+
+	public void run (){
+		System.out.println( "Starting e16bm..." );
 		int a1, a2, a3, a4, a5, a6, a7, a8;
 
 		int count = 0;
@@ -538,11 +634,27 @@ public final class Tables {
 		  }
 		 }
 		}
+		System.out.println( "Finishing e16bm..." );
 	}
+	}
+
+	private InitE16Bm threadInitE16Bm = new InitE16Bm();
 
 	public static final int[][] move_table_cenSTAGE3 = new int[Constants.N_STAGE3_CENTER_CONFIGS][Constants.N_STAGE3_SLICE_MOVES]; // 900900*20 = 72MB
 
-	public static final void init_move_table_cenSTAGE3 (){
+	private class InitCenterStage3 extends Thread {
+
+	public void run (){
+
+		try{
+		threadInitE16Bm.join();
+		threadInit4Of8.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting center stage 3..." );
 		int mc;
 		int u;
 		CubeStage3 s3 = new CubeStage3();
@@ -552,17 +664,33 @@ public final class Tables {
 		for (u = 0; u < Constants.N_STAGE3_CENTER_CONFIGS; ++u) {
 			for (mc = 0; mc < Constants.N_STAGE3_SLICE_MOVES; ++mc) {
 				s3.m_centerLR = u;
-				s3.convert_to_std_cube(cube1);
+				s3.convert_to_std_cube(cube1); // TODO: Convert only centers.
 				cube1.rotate_sliceCENTER(Constants.stage3_slice_moves[mc]);
-				cube1.convert_to_stage3 (s3);
+				cube1.convert_to_stage3 (s3); // TODO: Idem.
 				move_table_cenSTAGE3[u][mc] = s3.m_centerLR;
 			}
 		}
+		System.out.println( "Finishing center stage 3..." );
 	}
+	}
+
+	private InitCenterStage3 threadInitCenterStage3 = new InitCenterStage3();
 
 	public static final short[][] move_table_edgeSTAGE3 = new short[Constants.N_STAGE3_EDGE_CONFIGS][Constants.N_STAGE3_SLICE_MOVES]; // (12870) 12870*20
 
-	public static final void init_move_table_edgeSTAGE3 (){
+	private class InitEdgeStage3 extends Thread {
+
+	public void run (){
+
+		try{
+		threadInitE16Bm.join();
+		threadInit4Of8.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting edge stage 3..." );
 		int mc;
 		int u;
 		CubeStage3 s3 = new CubeStage3();
@@ -575,7 +703,11 @@ public final class Tables {
 				move_table_edgeSTAGE3[u][mc] = s3.m_edge;
 			}
 		}
+		System.out.println( "Finishing edge stage 3..." );
 	}
+	}
+
+	private InitEdgeStage3 threadInitEdgeStage3 = new InitEdgeStage3();
 
 	/*** init_stage4 ***/
 	private static final int sqs_rep_to_perm[][] = {
@@ -624,7 +756,10 @@ public final class Tables {
 	private static final int[] stage4_edge_hB = new int[40320]; // (40320 ?). Change from short to int then :(
 	private static final int[] stage4_edge_hgB = new int[40320]; // (40320 ?). Change from short to int then :(
 
-	public static final void init_stage4_edge_B_tables (){
+	private class InitEdgeBStage4 extends Thread {
+
+	public void run (){
+		System.out.println( "Starting edge B stage 4..." );
 		byte i;
 		int u;
 		CubeState cs1 = new CubeState();
@@ -668,11 +803,18 @@ public final class Tables {
 			stage4_edge_hB[u] = 6*repBlr + repBfb;
 			Constants.nextPerm( cs2.m_edge, 8, 4 );
 		}
+		System.out.println( "Finishing edge B stage 4..." );
 	}
+	}
+
+	private InitEdgeBStage4 threadInitEdgeBStage4 = new InitEdgeBStage4();
 
 	private static final int[][] stage4_edge_hgA = new int[40320][36]; // (40320 ?). Change from short to int then :(
 
-	public static final void init_stage4_edge_A_table (){
+	private class InitEdgeAStage4 extends Thread {
+
+	public void run (){
+		System.out.println( "Starting edge A stage 4..." );
 		int i;
 		int u, h1, h2;
 		CubeState cs1 = new CubeState();
@@ -703,7 +845,11 @@ public final class Tables {
 				stage4_edge_hgA[u][h1] = repl;
 			}
 		}
+		System.out.println( "Finishing edge A stage 4..." );
 	}
+	}
+
+	private InitEdgeAStage4 threadInitEdgeAStage4 = new InitEdgeAStage4();
 
 	private static int[] stage4_edge_hash_table_val = new int[Constants.N_STAGE4_EDGE_HASH_TABLE]; // (200383)
 	public static int[] stage4_edge_hash_table_idx = new int[Constants.N_STAGE4_EDGE_HASH_TABLE]; // (200383)
@@ -713,37 +859,6 @@ public final class Tables {
 		int reph = stage4_edge_hgB[u/40320];
 		int repl = stage4_edge_hgA[u % 40320][stage4_edge_hB[u/40320]];
 		return 40320*reph + repl;
-	}
-
-	public static final void lrfb_check (){
-		int u1;
-		CubeState cs1 = new CubeState();
-		CubeState cs2 = new CubeState();
-		cs1.init ();
-		cs2.init ();
-
-		stage4_edge_table_init ();
-		int repcount = 0;
-		int n = 40320*40320;
-		for (u1 = 0; u1 < n; ++u1) {
-			if ((u1 << 22 ) == 0) { // Throughly u1 % 1000 == 0
-				if (repcount == 44100 && u1 < 105262000) { // Obtained though execution
-					u1 = 40320*20160;
-				}
-				if (repcount == 88200) {
-					break;
-				}
-			}
-			int uH = u1 / 40320;
-			int uL = u1 % 40320;
-			if (parity_perm8_table[uH] != parity_perm8_table[uL]) {
-				continue;
-			}
-			int myrep = lrfb_get_edge_rep (u1);
-			if (myrep == u1) {
-				add_to_stage4_edge_table (myrep, repcount++);
-			}
-		}
 	}
 
 	public static void stage4_edge_table_init (){
@@ -777,9 +892,66 @@ public final class Tables {
 		stage4_edge_rep_table[idx] = val;
 	}
 
+	private class InitEdgeRepStage4 extends Thread {
+	public void run (){
+
+		try{
+		threadInitEdgeBStage4.join();
+		threadInitEdgeAStage4.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting edge rep stage 4..." );
+		int u1;
+		CubeState cs1 = new CubeState();
+		CubeState cs2 = new CubeState();
+		cs1.init ();
+		cs2.init ();
+
+		stage4_edge_table_init ();
+		int repcount = 0;
+		int n = 40320*40320;
+		for (u1 = 0; u1 < n; ++u1) {
+			if ((u1 << 22 ) == 0) { // Throughly u1 % 1000 == 0
+				if (repcount == 44100 && u1 < 105262000) { // Obtained though execution
+					u1 = 40320*20160;
+				}
+				if (repcount == 88200) {
+					break;
+				}
+			}
+			int uH = u1 / 40320;
+			int uL = u1 % 40320;
+			if (parity_perm8_table[uH] != parity_perm8_table[uL]) {
+				continue;
+			}
+			int myrep = lrfb_get_edge_rep (u1);
+			if (myrep == u1) {
+				add_to_stage4_edge_table (myrep, repcount++);
+			}
+		}
+		System.out.println( "Finishing edge rep stage 4..." );
+	}
+	}
+
+	private InitEdgeRepStage4 threadInitEdgeRepStage4 = new InitEdgeRepStage4();
+
 	public static final int[][] move_table_edgeSTAGE4 = new int[Constants.N_STAGE4_EDGE_CONFIGS][Constants.N_STAGE4_SLICE_MOVES]; // (88200) 88200*16.
 
-	public static final void init_move_table_edgeSTAGE4 (){
+	private class InitEdgeStage4 extends Thread {
+	public void run (){
+
+		try{
+		threadInit4Of8.join();
+		threadInitEdgeRepStage4.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting edge stage 4..." );
 		int mc;
 		int u;
 		CubeStage4 s4 = new CubeStage4();
@@ -799,11 +971,27 @@ public final class Tables {
 				move_table_edgeSTAGE4[u][mc] = stage4_edge_hash_table_idx[hash_idx];
 			}
 		}
+		System.out.println( "Finishing edge stage 4..." );
 	}
+	}
+
+	private InitEdgeStage4 threadInitEdgeStage4 = new InitEdgeStage4();
 
 	public static final short[][] move_table_cornerSTAGE4 = new short[Constants.N_STAGE4_CORNER_CONFIGS][Constants.N_STAGE4_SLICE_MOVES]; // (420) 420*16.
 
-	public static final void init_move_table_cornerSTAGE4 (){
+	private class InitCornerStage4 extends Thread {
+	public void run (){
+
+		try{
+		threadInit4Of8.join();
+		threadInitPerm420.join();
+		threadInitEdgeRepStage4.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting corner stage 4..." );
 		int mc;
 		int u;
 		CubeStage4 s4 = new CubeStage4();
@@ -821,11 +1009,27 @@ public final class Tables {
 				move_table_cornerSTAGE4[u][mc] = s4a.m_corner;
 			}
 		}
+		System.out.println( "Finishing corner stage 4..." );
 	}
+	}
+
+	private InitCornerStage4 threadInitCornerStage4 = new InitCornerStage4();
 
 	public static final byte[][] move_table_cenSTAGE4 = new byte[Constants.N_STAGE4_CENTER_CONFIGS][Constants.N_STAGE4_SLICE_MOVES]; // (70) 70*16.
 
-	public static final void init_move_table_cenSTAGE4 (){
+	private class InitCenterStage4 extends Thread {
+	public void run (){
+
+		try{
+		threadInit4Of8.join();
+		threadInitPerm420.join();
+		threadInitEdgeRepStage4.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting center stage 4..." );
 		int mc;
 		int u;
 		CubeStage4 s4 = new CubeStage4();
@@ -843,7 +1047,11 @@ public final class Tables {
 				move_table_cenSTAGE4[u][mc] = s4a.m_centerUD;
 			}
 		}
+		System.out.println( "Finishing center stage 4..." );
 	}
+	}
+
+	private InitCenterStage4 threadInitCenterStage4 = new InitCenterStage4();
 
 	/*** init_stage5 ***/
 	//map a "squares" move code to one of six "canonical" move codes,
@@ -879,7 +1087,9 @@ public final class Tables {
 
 	private static final int[][] squares_2nd_perm = new int[24][4];
 
-	public static final void init_squares_2nd_perm (){
+	private class InitSquares2nd extends Thread {
+	public void run (){
+		System.out.println( "Starting squares 2nd perm..." );
 		int i;
 		for (i = 0; i < 24; ++i) {
 			switch (sqs_perm_to_rep[i]) {
@@ -921,11 +1131,25 @@ public final class Tables {
 				break;
 			}
 		}
+		System.out.println( "Finishing squares 2nd perm..." );
 	}
+	}
+
+	private InitSquares2nd threadInitSquares2nd = new InitSquares2nd();
 
 	private static final byte[][] squares_movemap = new byte[96][6]; // (96 ?)
 
-	public static final void init_squares_movemap (){
+	private class InitSquaresMovemap extends Thread {
+	public void run (){
+
+		try{
+		threadInitSquares2nd.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting squares movemap..." );
 		int i, j, k, first_perm = 0, second_perm;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
@@ -948,12 +1172,26 @@ public final class Tables {
 				squares_movemap[i][j] = (byte)(4*x1 + x2);
 			}
 		}
+		System.out.println( "Finishing squares movemap..." );
 	}
+	}
+
+	private InitSquaresMovemap threadInitSquaresMovemap = new InitSquaresMovemap();
 
 	public static final byte[] squares_cen_revmap = new byte[256]; // (12)
 	private static final byte[][] squares_cen_movemap = new byte[12][6]; // (12)
 
-	public static final void init_squares_cen_maps (){
+	private class InitSquaresCenterMap extends Thread {
+	public void run (){
+
+		try{
+		threadInitSquaresMovemap.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting squares center map..." );
 		int i, j;
 		for (i = 0; i < 256; ++i) {
 			squares_cen_revmap[i] = 0;
@@ -969,7 +1207,11 @@ public final class Tables {
 				squares_cen_movemap[i][j] = squares_cen_revmap[x2];
 			}
 		}
+		System.out.println( "Finishing squares center map..." );
 	}
+	}
+
+	private InitSquaresCenterMap threadInitSquaresCenterMap = new InitSquaresCenterMap();
 
 	public static final int squares_move (int pos96, int move_code6){
 		if (move_code6 < 0) {

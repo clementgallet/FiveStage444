@@ -560,7 +560,7 @@ public final class FiveStage444 {
 		}
 		*/
 
-		Tables.init_all ();
+		new Tables().init_all ();
 
 		CubePruningTableMgr.init_pruning_tables (metric);
 
