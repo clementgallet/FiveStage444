@@ -1,0 +1,106 @@
+package fivestage444;
+
+import static fivestage444.Constants.*;
+
+public final class Stage1Solver extends Thread{
+
+	private static int stage1_twist_list[] = {
+	Uf, Uf3, Uf2, Df, Df3, Df2, Ufs, Ufs3, Ufs2, Dfs, Dfs3, Dfs2,
+	Lf, Lf3, Lf2, Rf, Rf3, Rf2, Lfs, Lfs3, Lfs2, Rfs, Rfs3, Rfs2,
+	Ff, Ff3, Ff2, Bf, Bf3, Bf2, Ffs, Ffs3, Ffs2, Bfs, Bfs3, Bfs2
+	};
+
+	private static int stage1_block_list[] = {
+	Uf, Uf3, Uf2, Us, Us3, Us2, Df, Df3, Df2, Ds, Ds3, Ds2,
+	Ufs, Ufs3, Ufs2, Dfs, Dfs3, Dfs2, UsDs3, Us3Ds, Us2Ds2,
+	Lf, Lf3, Lf2, Ls, Ls3, Ls2, Rf, Rf3, Rf2, Rs, Rs3, Rs2,
+	Lfs, Lfs3, Lfs2, Rfs, Rfs3, Rfs2, LsRs3, Ls3Rs, Ls2Rs2,
+	Ff, Ff3, Ff2, Fs, Fs3, Fs2, Bf, Bf3, Bf2, Bs, Bs3, Bs2,
+	Ffs, Ffs3, Ffs2, Bfs, Bfs3, Bfs2, FsBs3, Fs3Bs, Fs2Bs2
+	};
+
+	private static int n_moves_metric_stg1[] = { N_BASIC_MOVES, N_STAGE1_TWIST_MOVES, N_STAGE1_BLOCK_MOVES};
+
+	private CubeStage1 cube;
+	public int[] move_list = new int[30];
+	private int metric;
+	public int goal;
+
+	Stage1Solver( CubeStage1 cube, int metric ){
+		this.cube = cube;
+		this.metric = metric;
+	}
+
+	public void run (){
+		for (int i = 0; i < 30; ++i) move_list[i] = 0;
+		for (goal = 0; goal <= 30; ++goal) {
+			if (treeSearch (cube, goal, 0)) {
+				formatMoves();
+				return;
+			}
+		}
+	}
+
+	private boolean treeSearch (CubeStage1 cube1, int depth, int moves_done){
+		CubeStage1 cube2 = new CubeStage1();
+		int mov_idx, mc, j;
+		if (depth == 0) {
+			if (! cube1.is_solved ()) {
+				return false;
+			}
+			return true;
+		}
+		int dist = cube1.prune_funcCOR_STAGE1();
+		if (dist <= depth) {
+			dist = cube1.prune_funcEDGE_STAGE1();
+		}
+		if (dist <= depth) {
+			for (mov_idx = 0; mov_idx < n_moves_metric_stg1[metric]; ++mov_idx) {
+				cube2.m_co = cube1.m_co;
+				cube2.m_edge_ud_combo8 = cube1.m_edge_ud_combo8;
+				switch (metric) {
+				case 0:
+					cube2.do_move (mov_idx);
+					break;
+				case 1:
+					for (j = 0; stage1_twist_moves[mov_idx][j] >= 0; ++j) {
+						mc = stage1_twist_moves[mov_idx][j];		//!!! metric dependency
+						cube2.do_move (mc);		//!!! metric dependency
+					}
+					break;
+				case 2:
+					for (j = 0; stage1_block_moves[mov_idx][j] >= 0; ++j) {
+						mc = stage1_block_moves[mov_idx][j];		//!!! metric dependency
+						cube2.do_move (mc);		//!!! metric dependency
+					}
+					break;
+				}
+				move_list[moves_done] = mov_idx;
+				if (treeSearch (cube2, depth - 1, moves_done + 1))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private void formatMoves(){
+		int i;
+		switch (metric) {
+		case 0:
+			break;
+		case 1:
+			for (i = 0; i < goal; ++i) {
+				move_list[i] = stage1_twist_list[move_list[i]];
+			}
+			break;
+		case 2:
+			for (i = 0; i < goal; ++i) {
+				move_list[i] = stage1_block_list[move_list[i]];
+			}
+			break;
+		}
+	}
+
+}
