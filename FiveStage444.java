@@ -135,47 +135,6 @@ public final class FiveStage444 {
 	"(fb')", "(f'b)", "(fb')2"
 	};
 
-	private static int sq_moves[] = { Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2 };
-
-	private static int sq_twist_map1[] = {
-	Uf2, Ufs2, Dfs2, Df2,
-	Lf2, Lfs2, Rfs2, Rf2,
-	Ff2, Ffs2, Bfs2, Bf2
-	};
-
-	private static int sq_block_map[] = {
-	Uf2, Us2, Ufs2, Dfs2, Ds2, Df2,
-	Lf2, Ls2, Lfs2, Rfs2, Rs2, Rf2,
-	Ff2, Fs2, Ffs2, Bfs2, Bs2, Bf2,
-	Us2Ds2, Ls2Rs2, Fs2Bs2
-	};
-
-	private static int n_moves_metric_stg5[] = { N_SQMOVES, N_SQ_TWIST_MOVES, N_SQ_BLOCK_MOVES};
-
-	private static int stage3_block_map[] = {
-	Uf, Uf3, Uf2, Us2, Df, Df3, Df2, Ds2,
-	Ufs2, Dfs2, Us2Ds2,
-	Lf2, Ls2, Rf2, Rs2, Lfs2, Rfs2, Ls2Rs2,
-	Ff2, Fs, Fs3, Fs2, Bf2, Bs, Bs3, Bs2,
-	Ffs2, Bfs2, FsBs3, Fs3Bs, Fs2Bs2
-	};
-
-	private static int n_moves_metric_stg3[] = { N_STAGE3_SLICE_MOVES, N_STAGE3_TWIST_MOVES, N_STAGE3_BLOCK_MOVES};
-
-	private static int stage4_twist_map1[] = {
-	Uf, Uf3, Uf2, Df, Df3, Df2, Ufs2, Dfs2,
-	Lf2, Rf2, Lfs2, Rfs2, Ff2, Bf2, Ffs2, Bfs2
-	};
-
-	private static int stage4_block_map[] = {
-	Uf, Uf3, Uf2, Us2, Df, Df3, Df2, Ds2,
-	Ufs2, Dfs2, Us2Ds2,
-	Lf2, Ls2, Rf2, Rs2, Lfs2, Rfs2, Ls2Rs2,
-	Ff2, Fs2, Bf2, Bs2,	Ffs2, Bfs2, Fs2Bs2
-	};
-
-	private static int n_moves_metric_stg4[] = { N_STAGE4_SLICE_MOVES, N_STAGE4_TWIST_MOVES, N_STAGE4_BLOCK_MOVES };
-
 	private static int xlate_r6[][] = {
 	{ 0, 24, 12,  0, 24, 12}, { 1, 25, 13,  1, 25, 13}, { 2, 26, 14,  2, 26, 14},
 	{ 3, 27, 15,  3, 27, 15}, { 4, 28, 16,  4, 28, 16}, { 5, 29, 17,  5, 29, 17},
@@ -200,135 +159,13 @@ public final class FiveStage444 {
 	{60, 57, 54, 58, 55, 61}, {61, 58, 55, 57, 54, 60}, {62, 59, 56, 59, 56, 62}
 	};
 
-	/*** For stage 2 ***/
-
-
-	/*** Stage 5 ***/
-
-	private static int sqs_slice_moves_to_try [] = {
-	0xFFE, 0xFFC, 0xFF8, 0xFF0,
-	0xFEF, 0xFCF, 0xF8F, 0xF0F,
-	0xEFF, 0xCFF, 0x8FF, 0x0FF,
-	0xFFF
-};
-
-	private static int sqs_stm_next_ms[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
-
-	private static int SQS_TW_MS_U = 0;
-	private static int SQS_TW_MS_D = 1;
-	private static int SQS_TW_MS_Uu = 2;
-	private static int SQS_TW_MS_u = 3;
-	private static int SQS_TW_MS_d = 4;
-	private static int SQS_TW_MS_UD = 5;
-	private static int SQS_TW_MS_Ud = 6;
-
-	private static int SQS_TW_MS_L = 8;
-	private static int SQS_TW_MS_R = 9;
-	private static int SQS_TW_MS_Ll = 10;
-	private static int SQS_TW_MS_l = 11;
-	private static int SQS_TW_MS_r = 12;
-	private static int SQS_TW_MS_LR = 13;
-	private static int SQS_TW_MS_Lr = 14;
-
-	private static int SQS_TW_MS_F = 16;
-	private static int SQS_TW_MS_B = 17;
-	private static int SQS_TW_MS_Ff = 18;
-	private static int SQS_TW_MS_f = 19;
-	private static int SQS_TW_MS_b = 20;
-	private static int SQS_TW_MS_FB = 21;
-	private static int SQS_TW_MS_Fb = 22;
-
-	private static int SQS_TW_MS_X = 23;
-
-	private static int sqs_twist_moves_to_try[] = {
-	0xBBA, 0xBB4, 0xBB0, 0xBB0, 0xBB0, 0xBB4, 0xBB0, 0xBB0,
-	0xBAB, 0xB4B, 0xB0B, 0xB0B, 0xB0B, 0xB4B, 0xB0B, 0xB0B,
-	0xABB, 0x4BB, 0x0BB, 0x0BB, 0x0BB, 0x4BB, 0x0BB, 0xBBB
-	};
-
-	private static int sqs_twist_next_ms[][] = {
-	{ SQS_TW_MS_X,SQS_TW_MS_u,SQS_TW_MS_X,SQS_TW_MS_UD, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
-	{ SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_d,SQS_TW_MS_X, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
-	{ SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
-	{ SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
-	{ SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
-	{ SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_Ud,SQS_TW_MS_X, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
-	{ SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
-	{ SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X, SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X, SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X },
-
-	{ SQS_TW_MS_U,SQS_TW_MS_Uu,SQS_TW_MS_X,SQS_TW_MS_D, SQS_TW_MS_X,SQS_TW_MS_l,SQS_TW_MS_X,SQS_TW_MS_LR, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
-	{ SQS_TW_MS_U,SQS_TW_MS_Uu,SQS_TW_MS_X,SQS_TW_MS_D, SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_r,SQS_TW_MS_X, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
-	{ SQS_TW_MS_U,SQS_TW_MS_Uu,SQS_TW_MS_X,SQS_TW_MS_D, SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
-	{ SQS_TW_MS_U,SQS_TW_MS_Uu,SQS_TW_MS_X,SQS_TW_MS_D, SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
-	{ SQS_TW_MS_U,SQS_TW_MS_Uu,SQS_TW_MS_X,SQS_TW_MS_D, SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
-	{ SQS_TW_MS_U,SQS_TW_MS_Uu,SQS_TW_MS_X,SQS_TW_MS_D, SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_Lr,SQS_TW_MS_X, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
-	{ SQS_TW_MS_U,SQS_TW_MS_Uu,SQS_TW_MS_X,SQS_TW_MS_D, SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
-	{ SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X, SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X, SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X },
-
-	{ SQS_TW_MS_U,SQS_TW_MS_Uu,SQS_TW_MS_X,SQS_TW_MS_D, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_X,SQS_TW_MS_f,SQS_TW_MS_X,SQS_TW_MS_FB },
-	{ SQS_TW_MS_U,SQS_TW_MS_Uu,SQS_TW_MS_X,SQS_TW_MS_D, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_b,SQS_TW_MS_X },
-	{ SQS_TW_MS_U,SQS_TW_MS_Uu,SQS_TW_MS_X,SQS_TW_MS_D, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X },
-	{ SQS_TW_MS_U,SQS_TW_MS_Uu,SQS_TW_MS_X,SQS_TW_MS_D, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X },
-	{ SQS_TW_MS_U,SQS_TW_MS_Uu,SQS_TW_MS_X,SQS_TW_MS_D, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_X },
-	{ SQS_TW_MS_U,SQS_TW_MS_Uu,SQS_TW_MS_X,SQS_TW_MS_D, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_X,SQS_TW_MS_X,SQS_TW_MS_Fb,SQS_TW_MS_X },
-	{ SQS_TW_MS_U,SQS_TW_MS_Uu,SQS_TW_MS_X,SQS_TW_MS_D, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B },
-
-	{ SQS_TW_MS_U,SQS_TW_MS_Uu,SQS_TW_MS_X,SQS_TW_MS_D, SQS_TW_MS_L,SQS_TW_MS_Ll,SQS_TW_MS_X,SQS_TW_MS_R, SQS_TW_MS_F,SQS_TW_MS_Ff,SQS_TW_MS_X,SQS_TW_MS_B }
-};
-
-	private static int SQS_BL_MS_U = 0;
-	private static int SQS_BL_MS_XU = 1;
-	private static int SQS_BL_MS_L = 2;
-	private static int SQS_BL_MS_XL = 3;
-	private static int SQS_BL_MS_F = 4;
-	private static int SQS_BL_MS_XF = 5;
-	private static int SQS_BL_MS_X = 6;
-
-	private static int sqs_block_moves_to_try[] = {
-	0x1B7DD0, 0x1B7DC0, 0x177437, 0x177037, 0x0D0DF7, 0x0C0DF7, 0x1F7DF7
-};
-
-	private static int sqs_block_next_ms[][] = {
-	{ SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_XU,SQS_BL_MS_X, SQS_BL_MS_L,SQS_BL_MS_XL,SQS_BL_MS_XL,SQS_BL_MS_X,SQS_BL_MS_XL,SQS_BL_MS_XL, SQS_BL_MS_F,SQS_BL_MS_XF,SQS_BL_MS_XF,SQS_BL_MS_X,SQS_BL_MS_XF,SQS_BL_MS_XF, SQS_BL_MS_X, SQS_BL_MS_XL, SQS_BL_MS_XF },
-	{ SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X, SQS_BL_MS_L,SQS_BL_MS_XL,SQS_BL_MS_XL,SQS_BL_MS_X,SQS_BL_MS_XL,SQS_BL_MS_XL, SQS_BL_MS_F,SQS_BL_MS_XF,SQS_BL_MS_XF,SQS_BL_MS_X,SQS_BL_MS_XF,SQS_BL_MS_XF, SQS_BL_MS_X, SQS_BL_MS_XL, SQS_BL_MS_XF },
-	{ SQS_BL_MS_U,SQS_BL_MS_XU,SQS_BL_MS_XU,SQS_BL_MS_X,SQS_BL_MS_XU,SQS_BL_MS_XU, SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_XL,SQS_BL_MS_X, SQS_BL_MS_F,SQS_BL_MS_XF,SQS_BL_MS_XF,SQS_BL_MS_X,SQS_BL_MS_XF,SQS_BL_MS_XF, SQS_BL_MS_XU, SQS_BL_MS_X, SQS_BL_MS_XF },
-	{ SQS_BL_MS_U,SQS_BL_MS_XU,SQS_BL_MS_XU,SQS_BL_MS_X,SQS_BL_MS_XU,SQS_BL_MS_XU, SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X, SQS_BL_MS_F,SQS_BL_MS_XF,SQS_BL_MS_XF,SQS_BL_MS_X,SQS_BL_MS_XF,SQS_BL_MS_XF, SQS_BL_MS_XU, SQS_BL_MS_X, SQS_BL_MS_XF },
-	{ SQS_BL_MS_U,SQS_BL_MS_XU,SQS_BL_MS_XU,SQS_BL_MS_X,SQS_BL_MS_XU,SQS_BL_MS_XU, SQS_BL_MS_L,SQS_BL_MS_XL,SQS_BL_MS_XL,SQS_BL_MS_X,SQS_BL_MS_XL,SQS_BL_MS_XL, SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_XF,SQS_BL_MS_X, SQS_BL_MS_XU, SQS_BL_MS_XL, SQS_BL_MS_X },
-	{ SQS_BL_MS_U,SQS_BL_MS_XU,SQS_BL_MS_XU,SQS_BL_MS_X,SQS_BL_MS_XU,SQS_BL_MS_XU, SQS_BL_MS_L,SQS_BL_MS_XL,SQS_BL_MS_XL,SQS_BL_MS_X,SQS_BL_MS_XL,SQS_BL_MS_XL, SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X,SQS_BL_MS_X, SQS_BL_MS_XU, SQS_BL_MS_XL, SQS_BL_MS_X },
-	{ SQS_BL_MS_U,SQS_BL_MS_XU,SQS_BL_MS_XU,SQS_BL_MS_X,SQS_BL_MS_XU,SQS_BL_MS_XU, SQS_BL_MS_L,SQS_BL_MS_XL,SQS_BL_MS_XL,SQS_BL_MS_X,SQS_BL_MS_XL,SQS_BL_MS_XL, SQS_BL_MS_F,SQS_BL_MS_XF,SQS_BL_MS_XF,SQS_BL_MS_X,SQS_BL_MS_XF,SQS_BL_MS_XF, SQS_BL_MS_XU, SQS_BL_MS_XL, SQS_BL_MS_XF }
-};
-
-
-
 	public static void main(String[] args){
-
-		//C++: strcpy (&datafiles_path[0], &default_datafile_path[0]);
 
 		int random_count = 100;
 		int metric = 0;
 
-		// Parse command-line arguments. Will do it later...
-		/*
-		int i2;
-		for (i2 = 1; i2 < args.length; ++i2) {
-			switch (args[i2]) {
-				case "-s": case "-S":
-					metric = 0;
-					break;
-				case "-t": case "-T":
-					metric = 1;
-					break;
-				case "-b": case "-B":
-					metric = 2;
-					break;
-			}
-		}
-		*/
-
 		new Tables().init_all ();
-
 		CubePruningTableMgr.init_pruning_tables (metric);
-
 		do_random_cubes (metric, random_count);
 	}
 
@@ -361,243 +198,6 @@ public final class FiveStage444 {
 	System.out.println( "Stage3 has taken " + tStage3 + " ms." );
 	System.out.println( "Stage4 has taken " + tStage4 + " ms." );
 	System.out.println( "Stage5 has taken " + tStage5 + " ms." );
-}
-
-	public static int solveitIDA_STAGE3 (CubeStage3 init_cube, int[] move_list, int index, int metric){
-	int g1;
-	for (g1 = 0; g1 <= 30; ++g1) {
-		if (treesearchSTAGE3 (init_cube, g1, 0, g1, metric, move_list, index)) {
-			return g1;
-		}
-	}
-	return 999;
-}
-
-	public static boolean treesearchSTAGE3 (CubeStage3 cube1, int depth, int moves_done, int goal, int metric, int[] move_list, int index){
-	CubeStage3 cube2 = new CubeStage3();
-	int mov_idx, mc, j;
-	if (depth == 0) {
-		if (! cube1.is_solved ()) {
-			return false;
-		}
-		return true;
-	}
-	int dist = 0;
-	if ((0x3 & 0x1) != 0) {
-		dist = cube1.prune_funcCEN_STAGE3 ();
-	}
-	if ((0x3 & 0x2) != 0 && dist <= depth) {
-		dist = cube1.prune_funcEDGE_STAGE3 ();
-	}
-	if (dist <= depth) {
-		if (metric == 1 && depth >= 2) {
-			for (mov_idx = 0; mov_idx < Constants.N_STAGE3_2TWIST_MOVES; ++mov_idx) {
-				cube2.m_centerLR = cube1.m_centerLR; // TODO: Add a method copy.
-				cube2.m_edge = cube1.m_edge;
-				cube2.m_edge_odd = cube1.m_edge_odd;
-
-				mc = stage3_2twist_moves[mov_idx][0];		//!!! metric dependency
-				cube2.do_move (mc);
-				mc = stage3_2twist_moves[mov_idx][1];
-				if (mc >= 0) {
-					cube2.do_move (mc);
-				}
-				move_list[moves_done + index] = stage3_twist_map1[Constants.N_STAGE3_TWIST_MOVES + mov_idx];
-				move_list[moves_done + 1 + index] = stage3_twist_map2[Constants.N_STAGE3_TWIST_MOVES + mov_idx];
-				if (treesearchSTAGE3 (cube2, depth - 2, moves_done + 2, goal, metric, move_list, index))
-				{
-					return true;
-				}
-			}
-		}
-		for (mov_idx = 0; mov_idx < n_moves_metric_stg3[metric]; ++mov_idx) {
-			cube2.m_centerLR = cube1.m_centerLR; // TODO: Add a method copy.
-			cube2.m_edge = cube1.m_edge;
-			cube2.m_edge_odd = cube1.m_edge_odd;
-			switch (metric) {
-			case 0:
-				cube2.do_move (mov_idx);
-				break;
-			case 1:
-				//old TODO: This not finished.
-				for (j = 0; stage3_twist_moves[mov_idx][j] >= 0; ++j) {
-					mc = stage3_twist_moves[mov_idx][j];		//!!! metric dependency
-					cube2.do_move (mc);		//!!! metric dependency
-				}
-				break;
-			case 2:
-				//old TODO: This not finished.
-				for (j = 0; stage3_block_moves[mov_idx][j] >= 0; ++j) {
-					mc = stage3_block_moves[mov_idx][j];		//!!! metric dependency
-					cube2.do_move (mc);		//!!! metric dependency
-				}
-				break;
-			}
-			mc = mov_idx;
-			switch (metric) {
-			case 1:
-				mc = stage3_twist_map1[mov_idx];
-				break;
-			case 2:
-				mc = stage3_block_map[mov_idx];
-				break;
-			}
-			move_list[moves_done + index] = mc;
-			if (treesearchSTAGE3 (cube2, depth - 1, moves_done + 1, goal, metric, move_list, index)) // TODO: Create a new object for every call ? Maybe no.
-			{
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-	public static int solveitIDA_STAGE4 (CubeStage4 init_cube, int[] move_list, int index, int metric){
-		int g1;
-		for (g1 = 0; g1 <= 30; ++g1) {
-			if (treesearchSTAGE4 (init_cube, g1, 0, g1, metric, move_list, index)) {
-				return g1;
-			}
-		}
-		return 999;
-	}
-
-	public static boolean treesearchSTAGE4 (CubeStage4 cube1, int depth, int moves_done, int goal, int metric, int[] move_list, int index){
-	CubeStage4 cube2 = new CubeStage4();
-	int mov_idx, mc, j;
-	if (depth == 0) {
-		if (! cube1.is_solved ()) {
-			return false;
-		}
-		return true;
-	}
-	int dist = 0;
-	if ((0x3 & 0x1) != 0) {
-		dist = cube1.prune_funcCENCOR_STAGE4 ();
-	}
-	if (dist <= depth && (0x3 & 0x2) != 0) {
-		dist = cube1.prune_funcEDGCEN_STAGE4 ();
-	}
-	if (dist <= depth) {
-		for (mov_idx = 0; mov_idx < n_moves_metric_stg4[metric]; ++mov_idx) {
-			cube2.m_edge = cube1.m_edge;
-			cube2.m_corner = cube1.m_corner;
-			cube2.m_centerUD = cube1.m_centerUD;
-			switch (metric) {
-			case 0:
-				cube2.do_move (mov_idx);
-				break;
-			case 1:
-				for (j = 0; stage4_twist_moves[mov_idx][j] >= 0; ++j) {
-					mc = stage4_twist_moves[mov_idx][j];		//!!! metric dependency
-					cube2.do_move (mc);		//!!! metric dependency
-				}
-				break;
-			case 2:
-				for (j = 0; stage4_block_moves[mov_idx][j] >= 0; ++j) {
-					mc = stage4_block_moves[mov_idx][j];		//!!! metric dependency
-					cube2.do_move (mc);		//!!! metric dependency
-				}
-				break;
-			}
-			mc = mov_idx;
-			switch (metric) {
-			case 1:
-				mc = stage4_twist_map1[mov_idx];
-				break;
-			case 2:
-				mc = stage4_block_map[mov_idx];
-				break;
-			}
-			move_list[moves_done + index] = mc;
-			if (treesearchSTAGE4 (cube2, depth - 1, moves_done + 1, goal, metric, move_list, index))
-			{
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-	public static int solveitIDA_SQS (CubeSqsCoord init_cube, int[] move_list, int index, int metric){
-		int init_move_state[] = { 12, 23, 6 };
-		int g1;
-		for (g1 = 0; g1 <= 30; ++g1) {
-			if (treesearchSQS (init_cube, g1, 0, init_move_state[metric], g1, metric, move_list, index)) {
-				return g1;
-			}
-		}
-		return 999;
-	}
-
-	public static boolean treesearchSQS (CubeSqsCoord cube1, int depth, int moves_done, int move_state, int goal, int metric, int[] move_list, int index){
-	CubeSqsCoord cube2 = new CubeSqsCoord();
-	int mov_idx, mc, j;
-	int next_ms = 0;
-	if (depth == 0) {
-		if (! cube1.is_solved ()) {
-			return false;
-		}
-		return true;
-	}
-	int dist = cube1.prune_funcEDGCOR_STAGE5 ();
-	if (dist <= depth) {
-		dist = cube1.prune_funcCENCOR_STAGE5 ();
-	}
-	if (dist <= depth) {
-		for (mov_idx = 0; mov_idx < n_moves_metric_stg5[metric]; ++mov_idx) {
-			boolean did_move = false;
-			cube2.m_cen12x12x12 = cube1.m_cen12x12x12;
-			cube2.m_cp96 = cube1.m_cp96;
-			cube2.m_ep96x96x96 = cube1.m_ep96x96x96;
-			switch (metric) {
-			case 0:
-				if ((sqs_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
-					cube2.do_move (mov_idx);
-					next_ms = sqs_stm_next_ms[mov_idx];
-					did_move = true;
-				}
-				break;
-			case 1:
-				if ((sqs_twist_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
-					for (j = 0; j < 2 && sq_twist_moves[mov_idx][j] >= 0; ++j) {
-						mc = sq_twist_moves[mov_idx][j];		//!!! metric dependency
-						cube2.do_move (mc);		//!!! metric dependency
-					}
-					next_ms = sqs_twist_next_ms[move_state][mov_idx];
-					did_move = true;
-				}
-				break;
-			case 2:
-				if ((sqs_block_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
-					for (j = 0; sq_block_moves[mov_idx][j] >= 0; ++j) {
-						mc = sq_block_moves[mov_idx][j];
-						cube2.do_move (mc);
-					}
-					next_ms = sqs_block_next_ms[move_state][mov_idx];
-					did_move = true;
-				}
-				break;
-			}
-			if (did_move) {
-				mc = mov_idx;
-				switch (metric) {
-				case 1:
-					mc = sq_twist_map1[mov_idx];
-					break;
-				case 2:
-					mc = sq_block_map[mov_idx];
-					break;
-				}
-				move_list[moves_done + index] = mc;
-				if (treesearchSQS (cube2, depth - 1, moves_done + 1, next_ms, goal, metric, move_list, index))
-				{
-					return true;
-				}
-			}
-		}
-	}
-	return false;
 }
 
 	public static long tStage1, tStage2, tStage3, tStage4, tStage5 = 0;
@@ -685,7 +285,7 @@ public final class FiveStage444 {
 	}
 	int count2 = stage2Solver.goal;
 	for (i=0;i<count2;i++)
-		move_list[i+count1] = stage2Solver.move_list[i];
+		move_list[i+count] = stage2Solver.move_list[i];
 	tStage2 += t.elapsed();
 	if (count2 < 0 || count2 > 90) {
 		System.out.println ("Solve failure!\n");
@@ -716,16 +316,22 @@ public final class FiveStage444 {
 	cube.convert_to_stage3 (s3);
 	s3.m_edge_odd = cube.edgeUD_parity_odd ();
 	t.reset();
-	int count3 = solveitIDA_STAGE3 (s3, move_list, count, metric);
+	Stage3Solver stage3Solver = new Stage3Solver(s3, metric);
+	stage3Solver.run();
+	while (stage3Solver.isAlive()){
+		try{
+			Thread.currentThread().sleep(100);
+		}
+		catch( java.lang.InterruptedException ie){
+		}
+	}
+	int count3 = stage3Solver.goal;
+	for (i=0;i<count3;i++)
+		move_list[i+count] = stage3Solver.move_list[i];
 	tStage3 += t.elapsed();
 	if (count3 < 0 || count3 > 90) {
 		System.out.println ("Solve failure!");
 		return -1;
-	}
-	if (metric == 0) {
-		for (i = count; i < count + count3; ++i) {
-			move_list[i] = stage3_slice_moves[move_list[i]];
-		}
 	}
 	scrambleCUBE (cube, count3, move_list, count);
 	for (i = count; i < count + count3; ++i) {
@@ -739,16 +345,22 @@ public final class FiveStage444 {
 	/*** Stage 4 ***/
 	cube.convert_to_stage4 (s4);
 	t.reset();
-	int count4 = solveitIDA_STAGE4 (s4, move_list, count, metric);
+	Stage4Solver stage4Solver = new Stage4Solver(s4, metric);
+	stage4Solver.run();
+	while (stage4Solver.isAlive()){
+		try{
+			Thread.currentThread().sleep(100);
+		}
+		catch( java.lang.InterruptedException ie){
+		}
+	}
+	int count4 = stage4Solver.goal;
+	for (i=0;i<count4;i++)
+		move_list[i+count] = stage4Solver.move_list[i];
 	tStage4 += t.elapsed();
 	if (count4 < 0 || count4 > 90) {
 		System.out.println ("Solve failure!");
 		return -1;
-	}
-	if (metric == 0) {
-		for (i = count; i < count + count4; ++i) {
-			move_list[i] = stage4_slice_moves[move_list[i]];
-		}
 	}
 	scrambleCUBE (cube, count4, move_list, count);
 	for (i = count; i < count + count4; ++i) {
@@ -762,16 +374,22 @@ public final class FiveStage444 {
 	/*** Stage 5 ***/
 	cube.convert_to_squares (s5);
 	t.reset();
-	int count5 = solveitIDA_SQS (s5, move_list, count, metric);
+	Stage5Solver stage5Solver = new Stage5Solver(s5, metric);
+	stage5Solver.run();
+	while (stage5Solver.isAlive()){
+		try{
+			Thread.currentThread().sleep(100);
+		}
+		catch( java.lang.InterruptedException ie){
+		}
+	}
+	int count5 = stage5Solver.goal;
+	for (i=0;i<count5;i++)
+		move_list[i+count] = stage5Solver.move_list[i];
 	tStage5 += t.elapsed();
 	if (count5 < 0 || count5 > 90) {
 		System.out.println ("Solve failure!");
 		return -1;
-	}
-	if (metric == 0) {
-		for (i = count; i < count + count5; ++i) {
-			move_list[i] = sq_moves[move_list[i]];
-		}
 	}
 	for (i = count; i < count + count5; ++i) {
 		move_list[i] = xlate_r6[move_list[i]][r6];
