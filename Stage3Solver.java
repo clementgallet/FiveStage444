@@ -1,8 +1,20 @@
 package fivestage444;
 
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.io.PipedOutputStream;
+import java.io.PipedInputStream;
+
 import static fivestage444.Constants.*;
 
-public final class Stage3Solver extends Thread{
+public final class Stage3Solver extends StageSolver{
+
+	public static final int stage_slice_list[] = {
+	Uf, Uf3, Uf2, Us2,
+	Df, Df3, Df2, Ds2,
+	Lf2, Ls2, Rf2, Rs2,
+	Ff2, Fs, Fs3, Fs2, Bf2, Bs, Bs3, Bs2
+	};
 
 	private static int stage3_block_map[] = {
 	Uf, Uf3, Uf2, Us2, Df, Df3, Df2, Ds2,
@@ -15,21 +27,25 @@ public final class Stage3Solver extends Thread{
 	private static int n_moves_metric_stg3[] = { N_STAGE3_SLICE_MOVES, N_STAGE3_TWIST_MOVES, N_STAGE3_BLOCK_MOVES};
 
 	private CubeStage3 cube;
-	public int[] move_list = new int[30];
-	private int metric;
-	public int goal;
 
-	Stage3Solver( CubeStage3 cube, int metric ){
-		this.cube = cube;
-		this.metric = metric;
+	Stage3Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException {
+		this.pipeIn = new ObjectInputStream(pipeIn);
+		this.pipeOut = new ObjectOutputStream(pipeOut);
+	}
+
+	void importState(){
+		ss.cube.convert_to_stage3 (cube);
+		cube.m_edge_odd = ss.cube.edgeUD_parity_odd ();
 	}
 
 	public void run (){
+
+		pullState();
+
 		for (int i = 0; i < 30; ++i) move_list[i] = 0;
 		for (goal = 0; goal <= 30; ++goal) {
 			if (treeSearch (cube, goal, 0)) {
-				formatMoves();
-				return;
+				break;
 			}
 		}
 	}
@@ -41,6 +57,7 @@ public final class Stage3Solver extends Thread{
 		if (! cube1.is_solved ()) {
 			return false;
 		}
+		pushState();
 		return true;
 	}
 	int dist = cube1.prune_funcCEN_STAGE3 ();
@@ -110,12 +127,12 @@ public final class Stage3Solver extends Thread{
 	return false;
 }
 
-	private void formatMoves(){
+	int rotateCube(CubeState cube){
 		int i;
-		if (metric == 0) {
-			for (i = 0; i < goal; ++i) {
-				move_list[i] = stage3_slice_moves[move_list[i]];
-			}
+		for (i = 0; i < goal; ++i) {
+			move_list[i] = xlate_r6[move_list[i]][ss.rotate];
 		}
+		return ss.rotate;
 	}
+
 }

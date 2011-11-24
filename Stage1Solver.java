@@ -1,16 +1,21 @@
 package fivestage444;
 
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.io.PipedOutputStream;
+import java.io.PipedInputStream;
+
 import static fivestage444.Constants.*;
 
-public final class Stage1Solver extends Thread{
+public final class Stage1Solver extends StageSolver{
 
-	private static int stage1_twist_list[] = {
+	private static int stage_twist_list[] = {
 	Uf, Uf3, Uf2, Df, Df3, Df2, Ufs, Ufs3, Ufs2, Dfs, Dfs3, Dfs2,
 	Lf, Lf3, Lf2, Rf, Rf3, Rf2, Lfs, Lfs3, Lfs2, Rfs, Rfs3, Rfs2,
 	Ff, Ff3, Ff2, Bf, Bf3, Bf2, Ffs, Ffs3, Ffs2, Bfs, Bfs3, Bfs2
 	};
 
-	private static int stage1_block_list[] = {
+	private static int stage_block_list[] = {
 	Uf, Uf3, Uf2, Us, Us3, Us2, Df, Df3, Df2, Ds, Ds3, Ds2,
 	Ufs, Ufs3, Ufs2, Dfs, Dfs3, Dfs2, UsDs3, Us3Ds, Us2Ds2,
 	Lf, Lf3, Lf2, Ls, Ls3, Ls2, Rf, Rf3, Rf2, Rs, Rs3, Rs2,
@@ -22,21 +27,24 @@ public final class Stage1Solver extends Thread{
 	private static int n_moves_metric_stg1[] = { N_BASIC_MOVES, N_STAGE1_TWIST_MOVES, N_STAGE1_BLOCK_MOVES};
 
 	private CubeStage1 cube;
-	public int[] move_list = new int[30];
-	private int metric;
-	public int goal;
 
-	Stage1Solver( CubeStage1 cube, int metric ){
-		this.cube = cube;
-		this.metric = metric;
+	Stage1Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException {
+		this.pipeIn = new ObjectInputStream(pipeIn);
+		this.pipeOut = new ObjectOutputStream(pipeOut);
+	}
+
+	void importState(){
+		ss.cube.convert_to_stage1 (cube);
 	}
 
 	public void run (){
+
+		pullState();
+
 		for (int i = 0; i < 30; ++i) move_list[i] = 0;
 		for (goal = 0; goal <= 30; ++goal) {
 			if (treeSearch (cube, goal, 0)) {
-				formatMoves();
-				return;
+				break;
 			}
 		}
 	}
@@ -48,6 +56,7 @@ public final class Stage1Solver extends Thread{
 			if (! cube1.is_solved ()) {
 				return false;
 			}
+			pushState();
 			return true;
 		}
 		int dist = cube1.prune_funcCOR_STAGE1();
@@ -85,22 +94,35 @@ public final class Stage1Solver extends Thread{
 		return false;
 	}
 
-	private void formatMoves(){
-		int i;
-		switch (metric) {
+	int rotateCube(CubeState cube){
+
+		int r3 = cube.m_cor[0] >> 3;
+		switch (r3) {
 		case 0:
-			break;
+			break;	//no whole cube rotation
 		case 1:
-			for (i = 0; i < goal; ++i) {
-				move_list[i] = stage1_twist_list[move_list[i]];
-			}
+			cube.do_move (Lf3);
+			cube.do_move (Ls3);
+			cube.do_move (Rs);
+			cube.do_move (Rf);
+			cube.do_move (Uf3);
+			cube.do_move (Us3);
+			cube.do_move (Ds);
+			cube.do_move (Df);
 			break;
 		case 2:
-			for (i = 0; i < goal; ++i) {
-				move_list[i] = stage1_block_list[move_list[i]];
-			}
+			cube.do_move (Ff);
+			cube.do_move (Fs);
+			cube.do_move (Bs3);
+			cube.do_move (Bf3);
+			cube.do_move (Uf);
+			cube.do_move (Us);
+			cube.do_move (Ds3);
+			cube.do_move (Df3);
 			break;
+		default:
+			System.out.println ("Invalid cube rotation state.");
 		}
+		return r3;
 	}
-
 }

@@ -1,11 +1,10 @@
 TODO:
 
-- Move to a more javaish code.
+- Move to a more javaish code: yeah ! I'm using an abstract class !
 - Optimise the program.
--- Improve lookup table for stage 4.
-
 - Optimise the algorithm.
 - Make a multi-threaded code.
+- Better handle exceptions.
 
 BENCHMARK:
 

@@ -1,8 +1,20 @@
 package fivestage444;
 
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.io.PipedOutputStream;
+import java.io.PipedInputStream;
+
 import static fivestage444.Constants.*;
 
-public final class Stage2Solver extends Thread{
+public final class Stage2Solver extends StageSolver{
+
+	public static final int stage_slice_list[] = {
+	Uf, Uf3, Uf2, Us, Us3, Us2,
+	Df, Df3, Df2, Ds, Ds3, Ds2,
+	Lf2, Ls, Ls3, Ls2, Rf2, Rs, Rs3, Rs2,
+	Ff2, Fs, Fs3, Fs2, Bf2, Bs, Bs3, Bs2
+	};
 
 	private static int stage2_twist_map1[] = {
 	Uf, Uf3, Uf2, Df, Df3, Df2, Ufs, Ufs3, Ufs2, Dfs, Dfs3, Dfs2,
@@ -224,21 +236,24 @@ public final class Stage2Solver extends Thread{
 };
 
 	private CubeStage2 cube;
-	public int[] move_list = new int[30];
-	private int metric;
-	public int goal;
 
-	Stage2Solver( CubeStage2 cube, int metric ){
-		this.cube = cube;
-		this.metric = metric;
+	Stage2Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException {
+		this.pipeIn = new ObjectInputStream(pipeIn);
+		this.pipeOut = new ObjectOutputStream(pipeOut);
+	}
+
+	void importState(){
+		ss.cube.convert_to_stage2 (cube);
 	}
 
 	public void run (){
+
+		pullState();
+
 		for (int i = 0; i < 30; ++i) move_list[i] = 0;
 		for (goal = 0; goal <= 30; ++goal) {
 			if (treeSearch (cube, goal, 0, 0)) {
-				formatMoves();
-				return;
+				break;
 			}
 		}
 	}
@@ -251,6 +266,7 @@ public final class Stage2Solver extends Thread{
 		if (! cube1.is_solved ()) {
 			return false;
 		}
+		pushState();
 		return true;
 	}
 	int dist = cube1.prune_funcEDGCEN_STAGE2 ();
@@ -334,12 +350,20 @@ public final class Stage2Solver extends Thread{
 	return false;
 }
 
-	private void formatMoves(){
+	int rotateCube(CubeState cube){
 		int i;
-		if (metric == 0) {
-			for (i = 0; i < goal; ++i) {
-				move_list[i] = stage2_slice_moves[move_list[i]];
-			}
+		for (i = 0; i < goal; ++i) {
+			move_list[i] = xlate_r6[move_list[i]][ss.rotate];
 		}
+		int r6 = ss.rotate;
+		if (cube.m_cen[16] < 4) {
+			cube.do_move (Uf);
+			cube.do_move (Us);
+			cube.do_move (Ds3);
+			cube.do_move (Df3);
+			r6 += 3;
+		}
+		return r6;
 	}
+
 }

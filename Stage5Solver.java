@@ -1,10 +1,15 @@
 package fivestage444;
 
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.io.PipedOutputStream;
+import java.io.PipedInputStream;
+
 import static fivestage444.Constants.*;
 
-public final class Stage5Solver extends Thread{
+public final class Stage5Solver extends StageSolver{
 
-	private static int sq_moves[] = { Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2 };
+	private static int stage_slice_list[] = { Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2 };
 
 	private static int sq_twist_map1[] = {
 	Uf2, Ufs2, Dfs2, Df2,
@@ -115,22 +120,25 @@ public final class Stage5Solver extends Thread{
 };
 
 	private CubeSqsCoord cube;
-	public int[] move_list = new int[30];
-	private int metric;
-	public int goal;
 
-	Stage5Solver( CubeSqsCoord cube, int metric ){
-		this.cube = cube;
-		this.metric = metric;
+	public Stage5Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException {
+		this.pipeIn = new ObjectInputStream(pipeIn);
+		this.pipeOut = new ObjectOutputStream(pipeOut);
+	}
+
+	void importState(){
+		ss.cube.convert_to_squares (cube);
 	}
 
 	public void run (){
+
+		pullState();
+
 		for (int i = 0; i < 30; ++i) move_list[i] = 0;
 		int init_move_state[] = { 12, 23, 6 };
 		for (goal = 0; goal <= 30; ++goal) {
 			if (treeSearch (cube, goal, 0, init_move_state[metric])) {
-				formatMoves();
-				return;
+				break;
 			}
 		}
 	}
@@ -143,6 +151,7 @@ public final class Stage5Solver extends Thread{
 		if (! cube1.is_solved ()) {
 			return false;
 		}
+		pushState();
 		return true;
 	}
 	int dist = cube1.prune_funcEDGCOR_STAGE5 ();
@@ -205,13 +214,12 @@ public final class Stage5Solver extends Thread{
 	return false;
 }
 
-	private void formatMoves(){
+	int rotateCube(CubeState cube){
 		int i;
-		if (metric == 0) {
-			for (i = 0; i < goal; ++i) {
-				move_list[i] = sq_moves[move_list[i]];
-			}
+		for (i = 0; i < goal; ++i) {
+			move_list[i] = xlate_r6[move_list[i]][ss.rotate];
 		}
+		return ss.rotate;
 	}
 }
 

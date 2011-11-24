@@ -1,5 +1,7 @@
 package fivestage444;
 
+import static fivestage444.Constants.*;
+
 //CubeState structure: a cubie-level representation of the cube.
 public final class CubeState {
 
@@ -99,6 +101,12 @@ public final class CubeState {
 		rotate_sliceEDGE (move_code);
 		rotate_sliceCORNER (move_code);
 		rotate_sliceCENTER (move_code);
+	}
+
+	public void copyTo (CubeState cube){
+		System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
+		System.arraycopy(m_cor, 0, cube.m_cor, 0, 8);
+		System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
 	}
 
 	public void compose_edge (CubeState cs1, CubeState cs2){
@@ -404,5 +412,31 @@ public final class CubeState {
 		short cen3 = (short)Tables.squares_cen_revmap[x & 0xFF];
 		return (short)(cen1 + 12*cen2 + 12*12*cen3);
 	}
+
+	private static int dbltwists[][] = {
+	{ Uf, Us }, { Uf3, Us3 }, { Uf2, Us2 },
+	{ Df, Ds }, { Df3, Ds3 }, { Df2, Ds2 },
+	{ Lf, Ls }, { Lf3, Ls3 }, { Lf2, Ls2 },
+	{ Rf, Rs }, { Rf3, Rs3 }, { Rf2, Rs2 },
+	{ Ff, Fs }, { Ff3, Fs3 }, { Ff2, Fs2 },
+	{ Bf, Bs }, { Bf3, Bs3 }, { Bf2, Bs2 },
+	{ Us, Ds3 }, { Us3, Ds }, { Us2, Ds2 },
+	{ Ls, Rs3 }, { Ls3, Rs }, { Ls2, Rs2 },
+	{ Fs, Bs3 }, { Fs3, Bs }, { Fs2, Bs2 }
+	};
+
+	public void scramble (int move_count, int[] move_arr){
+		int i;
+		for (i = 0; i < move_count; ++i) {
+			int mc = move_arr[i];
+			if (mc >= Ufs) {
+				do_move (dbltwists[mc - Ufs][0]);
+				do_move (dbltwists[mc - Ufs][1]);
+			} else {
+				do_move (mc);
+			}
+		}
+	}
+
 }
 
