@@ -123,6 +123,13 @@ public final class FiveStage444 {
 			initPipes();
 		} catch(java.io.IOException e) { e.printStackTrace(); }
 
+		/* Get solutions */
+		new Thread(new Runnable() {
+			public void run() {
+				getSolutions();
+			}
+		}).start();
+
 		do_random_cubes (metric, random_count);
 	}
 
@@ -145,6 +152,16 @@ public final class FiveStage444 {
 		print_move_list (scramble_len, random_list);
 		solveit4x4x4IDA (solveme, metric);
 	}
+
+	/* Tells the threads that there are no more scrambles */
+	stopThreads();
+
+	try{
+		pipeStage01out.close();
+		pipeStage50in.close();
+	}
+	catch (java.io.IOException ioe) { ioe.getMessage(); }
+
 }
 
 	public static PipedOutputStream pipeStage01out = null;
@@ -191,56 +208,61 @@ public final class FiveStage444 {
 		stage4Solver = new Stage4Solver(pipeStage34in, pipeStage45out);
 		stage5Solver = new Stage5Solver(pipeStage45in, pipeStage50out);
 
+		stage1Solver.start();
+		stage2Solver.start();
+		stage3Solver.start();
+		stage4Solver.start();
+		stage5Solver.start();
 	}
 
 	public static void solveit4x4x4IDA (CubeState cube, int metric) {
 
-	int[] move_list = new int[1];
-	move_list[0] = 0;
-	ObjectOutputStream myPipeOut = null;
-	try{
-		System.out.println("Try sending...");
-		myPipeOut = new ObjectOutputStream (pipeStage01out);
-		System.out.println("Has build the object output stream...");
-		SolverState ss = new SolverState(cube, metric, move_list, 0, 0);
-		System.out.println("Has build the object...");
-		myPipeOut.writeObject(ss);
-		System.out.println("Has sent the object.");
-		myPipeOut.close();
-	}
-	catch (java.io.IOException ioe) { ioe.getMessage(); System.out.println("e1 blah");}
-
-	System.out.println("Sent the first state");
-
-	stage1Solver.start();
-	stage2Solver.start();
-	stage3Solver.start();
-	stage4Solver.start();
-	stage5Solver.start();
-
-	System.out.println("Start the threads");
-
-	ObjectInputStream myPipeIn = null;
-
-	SolverState solution = null;
-	while (solution == null) {
+		int[] move_list = new int[1];
+		move_list[0] = 0;
+		ObjectOutputStream myPipeOut = null;
 		try{
-			Thread.currentThread().sleep(100);
-			myPipeIn = new ObjectInputStream(pipeStage50in);
-			solution = (SolverState) myPipeIn.readObject();
+			myPipeOut = new ObjectOutputStream (pipeStage01out);
+			myPipeOut.writeObject(new SolverState(cube, metric, move_list, 0, 0));
 		}
-		catch(java.io.IOException e) {
-			e.printStackTrace();
-		}
-		catch(java.lang.ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		catch(java.lang.InterruptedException e) {
-			e.printStackTrace();
-		}
+		catch (java.io.IOException ioe) { ioe.getMessage(); }
 	}
 
-	print_move_list (solution.move_count, solution.move_list);
-}
+	public static void getSolutions () {
 
+		ObjectInputStream myPipeIn = null;
+		SolverState solution;
+		do {
+			solution = null;
+			while (solution == null) {
+				try{
+					Thread.currentThread().sleep(100);
+					myPipeIn = new ObjectInputStream(pipeStage50in);
+					solution = (SolverState) myPipeIn.readObject();
+				}
+				catch(java.io.IOException e) {
+					e.printStackTrace();
+				}
+				catch(java.lang.ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+				catch(java.lang.InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			print_move_list (solution.move_count, solution.move_list);
+
+		} while ( solution.metric != -1 );
+	}
+
+	public static void stopThreads () {
+		int[] move_list = new int[1];
+		move_list[0] = 0;
+		CubeState cc = new CubeState();
+		ObjectOutputStream myPipeOut = null;
+		try{
+			myPipeOut = new ObjectOutputStream (pipeStage01out);
+			myPipeOut.writeObject(new SolverState(null, -1, move_list, 0, 0)); // metric = -1 -> stop
+		}
+		catch (java.io.IOException ioe) { ioe.getMessage(); }
+	}
 }

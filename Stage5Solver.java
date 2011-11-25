@@ -7,8 +7,6 @@ import static fivestage444.Constants.*;
 
 public final class Stage5Solver extends StageSolver{
 
-	private static int stage_slice_list[] = { Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2 };
-
 	private static int sq_twist_map1[] = {
 	Uf2, Ufs2, Dfs2, Df2,
 	Lf2, Lfs2, Rfs2, Rf2,
@@ -120,8 +118,8 @@ public final class Stage5Solver extends StageSolver{
 	private CubeSqsCoord cube = new CubeSqsCoord();
 
 	Stage5Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException{
-		this.pipeIn = pipeIn;
-		this.pipeOut = pipeOut;
+		super( pipeIn, pipeOut );
+		stage_slice_list = new int[] { Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2 };
 	}
 
 	void importState(){
@@ -129,16 +127,18 @@ public final class Stage5Solver extends StageSolver{
 	}
 
 	public void run (){
-
-		pullState();
-
-		for (int i = 0; i < 30; ++i) move_list[i] = 0;
 		int init_move_state[] = { 12, 23, 6 };
-		for (goal = 0; goal <= 30; ++goal) {
-			if (treeSearch (cube, goal, 0, init_move_state[metric])) {
-				break;
+
+		while(pullState()) {
+			for (goal = 0; goal <= 30; ++goal) {
+				if (treeSearch (cube, goal, 0, init_move_state[metric])) {
+					break;
+				}
 			}
 		}
+
+		pushStopSignal();
+		closePipes();
 	}
 
 	public boolean treeSearch (CubeSqsCoord cube1, int depth, int moves_done, int move_state){

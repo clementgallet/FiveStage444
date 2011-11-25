@@ -27,8 +27,22 @@ public final class Stage1Solver extends StageSolver{
 	private CubeStage1 cube = new CubeStage1();
 
 	Stage1Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException{
-		this.pipeIn = pipeIn;
-		this.pipeOut = pipeOut;
+		super( pipeIn, pipeOut );
+
+		stage_twist_list = new int[] {
+		Uf, Uf3, Uf2, Df, Df3, Df2, Ufs, Ufs3, Ufs2, Dfs, Dfs3, Dfs2,
+		Lf, Lf3, Lf2, Rf, Rf3, Rf2, Lfs, Lfs3, Lfs2, Rfs, Rfs3, Rfs2,
+		Ff, Ff3, Ff2, Bf, Bf3, Bf2, Ffs, Ffs3, Ffs2, Bfs, Bfs3, Bfs2
+		};
+
+		stage_block_list = new int[] {
+		Uf, Uf3, Uf2, Us, Us3, Us2, Df, Df3, Df2, Ds, Ds3, Ds2,
+		Ufs, Ufs3, Ufs2, Dfs, Dfs3, Dfs2, UsDs3, Us3Ds, Us2Ds2,
+		Lf, Lf3, Lf2, Ls, Ls3, Ls2, Rf, Rf3, Rf2, Rs, Rs3, Rs2,
+		Lfs, Lfs3, Lfs2, Rfs, Rfs3, Rfs2, LsRs3, Ls3Rs, Ls2Rs2,
+		Ff, Ff3, Ff2, Fs, Fs3, Fs2, Bf, Bf3, Bf2, Bs, Bs3, Bs2,
+		Ffs, Ffs3, Ffs2, Bfs, Bfs3, Bfs2, FsBs3, Fs3Bs, Fs2Bs2
+		};
 	}
 
 	void importState(){
@@ -36,15 +50,16 @@ public final class Stage1Solver extends StageSolver{
 	}
 
 	public void run (){
-
-		pullState();
-
-		for (int i = 0; i < 30; ++i) move_list[i] = 0;
-		for (goal = 0; goal <= 30; ++goal) {
-			if (treeSearch (cube, goal, 0)) {
-				break;
+		while (pullState()) {
+			for (goal = 0; goal <= 30; ++goal) {
+				if (treeSearch (cube, goal, 0)) {
+					break;
+				}
 			}
 		}
+
+		pushStopSignal();
+		closePipes();
 	}
 
 	private boolean treeSearch (CubeStage1 cube1, int depth, int moves_done){

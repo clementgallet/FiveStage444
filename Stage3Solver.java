@@ -7,13 +7,6 @@ import static fivestage444.Constants.*;
 
 public final class Stage3Solver extends StageSolver{
 
-	public static int stage_slice_list[] = {
-	Uf, Uf3, Uf2, Us2,
-	Df, Df3, Df2, Ds2,
-	Lf2, Ls2, Rf2, Rs2,
-	Ff2, Fs, Fs3, Fs2, Bf2, Bs, Bs3, Bs2
-	};
-
 	private static int stage3_block_map[] = {
 	Uf, Uf3, Uf2, Us2, Df, Df3, Df2, Ds2,
 	Ufs2, Dfs2, Us2Ds2,
@@ -27,27 +20,32 @@ public final class Stage3Solver extends StageSolver{
 	private CubeStage3 cube = new CubeStage3();
 
 	Stage3Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException{
-		this.pipeIn = pipeIn;
-		this.pipeOut = pipeOut;
+		super( pipeIn, pipeOut );
+
+		stage_slice_list = new int[] {
+		Uf, Uf3, Uf2, Us2,
+		Df, Df3, Df2, Ds2,
+		Lf2, Ls2, Rf2, Rs2,
+		Ff2, Fs, Fs3, Fs2, Bf2, Bs, Bs3, Bs2
+		};
 	}
 
 	void importState(){
-		for (int i=0;i<24;++i) System.out.print(ss.cube.m_edge[i] + ",");
 		ss.cube.convert_to_stage3 (cube);
-		System.out.println(cube.m_edge);
 		cube.m_edge_odd = ss.cube.edgeUD_parity_odd ();
 	}
 
 	public void run (){
-
-		pullState();
-
-		for (int i = 0; i < 30; ++i) move_list[i] = 0;
-		for (goal = 0; goal <= 30; ++goal) {
-			if (treeSearch (cube, goal, 0)) {
-				break;
+		while (pullState()) {
+			for (goal = 0; goal <= 30; ++goal) {
+				if (treeSearch (cube, goal, 0)) {
+					break;
+				}
 			}
 		}
+
+		pushStopSignal();
+		closePipes();
 	}
 
 	public boolean treeSearch (CubeStage3 cube1, int depth, int moves_done){
