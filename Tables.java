@@ -464,6 +464,8 @@ public final class Tables {
 
 		try{
 		threadInitEbmEloc.join();
+		threadInit4Of8.join();
+		threadInitPerm420.join();
 		}
 		catch(InterruptedException ie){
 			ie.printStackTrace();
@@ -561,6 +563,7 @@ public final class Tables {
 		try{
 		threadInitEbmEloc.join();
 		threadInit4Of8.join();
+		threadInitPerm420.join();
 		}
 		catch(InterruptedException ie){
 			ie.printStackTrace();

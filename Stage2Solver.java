@@ -1,7 +1,5 @@
 package fivestage444;
 
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
 import java.io.PipedOutputStream;
 import java.io.PipedInputStream;
 
@@ -235,11 +233,11 @@ public final class Stage2Solver extends StageSolver{
 	{ 1,2,3,4,5,6,7,8,9,14,14,14,10,10,11,0,0,0,14,14,14, 15,17,18,19,16,21,21,21,20,0,21,21,21, 28,28,28,28,28,28,28,28,28,0,28,28,28 }
 };
 
-	private CubeStage2 cube;
+	private CubeStage2 cube = new CubeStage2();
 
-	Stage2Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException {
-		this.pipeIn = new ObjectInputStream(pipeIn);
-		this.pipeOut = new ObjectOutputStream(pipeOut);
+	Stage2Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException{
+		this.pipeIn = pipeIn;
+		this.pipeOut = pipeOut;
 	}
 
 	void importState(){

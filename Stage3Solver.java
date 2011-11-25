@@ -1,7 +1,5 @@
 package fivestage444;
 
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
 import java.io.PipedOutputStream;
 import java.io.PipedInputStream;
 
@@ -26,11 +24,11 @@ public final class Stage3Solver extends StageSolver{
 
 	private static int n_moves_metric_stg3[] = { N_STAGE3_SLICE_MOVES, N_STAGE3_TWIST_MOVES, N_STAGE3_BLOCK_MOVES};
 
-	private CubeStage3 cube;
+	private CubeStage3 cube = new CubeStage3();
 
-	Stage3Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException {
-		this.pipeIn = new ObjectInputStream(pipeIn);
-		this.pipeOut = new ObjectOutputStream(pipeOut);
+	Stage3Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException{
+		this.pipeIn = pipeIn;
+		this.pipeOut = pipeOut;
 	}
 
 	void importState(){

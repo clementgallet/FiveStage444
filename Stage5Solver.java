@@ -1,7 +1,5 @@
 package fivestage444;
 
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
 import java.io.PipedOutputStream;
 import java.io.PipedInputStream;
 
@@ -119,11 +117,11 @@ public final class Stage5Solver extends StageSolver{
 	{ SQS_BL_MS_U,SQS_BL_MS_XU,SQS_BL_MS_XU,SQS_BL_MS_X,SQS_BL_MS_XU,SQS_BL_MS_XU, SQS_BL_MS_L,SQS_BL_MS_XL,SQS_BL_MS_XL,SQS_BL_MS_X,SQS_BL_MS_XL,SQS_BL_MS_XL, SQS_BL_MS_F,SQS_BL_MS_XF,SQS_BL_MS_XF,SQS_BL_MS_X,SQS_BL_MS_XF,SQS_BL_MS_XF, SQS_BL_MS_XU, SQS_BL_MS_XL, SQS_BL_MS_XF }
 };
 
-	private CubeSqsCoord cube;
+	private CubeSqsCoord cube = new CubeSqsCoord();
 
-	public Stage5Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException {
-		this.pipeIn = new ObjectInputStream(pipeIn);
-		this.pipeOut = new ObjectOutputStream(pipeOut);
+	Stage5Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException{
+		this.pipeIn = pipeIn;
+		this.pipeOut = pipeOut;
 	}
 
 	void importState(){

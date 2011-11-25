@@ -3,7 +3,7 @@ package fivestage444;
 import static fivestage444.Constants.*;
 
 //CubeState structure: a cubie-level representation of the cube.
-public final class CubeState {
+public final class CubeState implements java.io.Serializable{
 
 	public byte[] m_edge = new byte[24]; //what's at each edge position
 	public byte[] m_cor = new byte[8]; //what's at each corner position (3*cubie + orientation)

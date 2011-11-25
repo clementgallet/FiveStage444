@@ -119,21 +119,21 @@ public final class FiveStage444 {
 
 		new Tables().init_all ();
 		CubePruningTableMgr.init_pruning_tables (metric);
+		try{
+			initPipes();
+		} catch(java.io.IOException e) { e.printStackTrace(); }
+
 		do_random_cubes (metric, random_count);
 	}
 
-	public static void do_random_cubes (int metric, int count){
+	public static void do_random_cubes (int metric, int count) {
 	int i, i1;
 	//Random r = new Random();
 	Random r = new Random(42);
 	int[] random_list = new int[160];	//must be >= scramble_len
 	CubeState solveme = new CubeState();
-	CubeState solved = new CubeState();
 	int scramble_len = 100;
-	int success_count = 0;
-	int[] solveme_moves = new int[100];
 
-	solved.init ();
 	for (i = 1; i <= count; ++i) {
 		int j;
 		solveme.init ();
@@ -143,76 +143,104 @@ public final class FiveStage444 {
 		solveme.scramble(scramble_len, random_list);
 		System.out.println ("scramble: ");
 		print_move_list (scramble_len, random_list);
-		int solveme_count = solveit4x4x4IDA (solveme, solveme_moves, metric);
-		print_move_list (solveme_count, solveme_moves);
+		solveit4x4x4IDA (solveme, metric);
 	}
-	System.out.println( "Stage1 has taken " + tStage1 + " ms." );
-	System.out.println( "Stage2 has taken " + tStage2 + " ms." );
-	System.out.println( "Stage3 has taken " + tStage3 + " ms." );
-	System.out.println( "Stage4 has taken " + tStage4 + " ms." );
-	System.out.println( "Stage5 has taken " + tStage5 + " ms." );
 }
 
-	public static long tStage1, tStage2, tStage3, tStage4, tStage5 = 0;
-	public static Timer t = new Timer();
+	public static PipedOutputStream pipeStage01out = null;
+	public static PipedInputStream pipeStage01in = null;
+	public static PipedOutputStream pipeStage12out = null;
+	public static PipedInputStream pipeStage12in = null;
+	public static PipedOutputStream pipeStage23out = null;
+	public static PipedInputStream pipeStage23in = null;
+	public static PipedOutputStream pipeStage34out = null;
+	public static PipedInputStream pipeStage34in = null;
+	public static PipedOutputStream pipeStage45out = null;
+	public static PipedInputStream pipeStage45in = null;
+	public static PipedOutputStream pipeStage50out = null;
+	public static PipedInputStream pipeStage50in = null;
 
-	public static int solveit4x4x4IDA (CubeState cube, int[] move_list, int metric){
+	public static Stage1Solver stage1Solver;
+	public static Stage2Solver stage2Solver;
+	public static Stage3Solver stage3Solver;
+	public static Stage4Solver stage4Solver;
+	public static Stage5Solver stage5Solver;
 
-	int i;
+	public static void initPipes () throws java.io.IOException {
 
+		System.out.println("Init pipes");
 
+		pipeStage01out = new PipedOutputStream ();
+		pipeStage01in = new PipedInputStream (pipeStage01out);
+		pipeStage12out = new PipedOutputStream ();
+		pipeStage12in = new PipedInputStream (pipeStage12out);
+		pipeStage23out = new PipedOutputStream ();
+		pipeStage23in = new PipedInputStream (pipeStage23out);
+		pipeStage34out = new PipedOutputStream ();
+		pipeStage34in = new PipedInputStream (pipeStage34out);
+		pipeStage45out = new PipedOutputStream ();
+		pipeStage45in = new PipedInputStream (pipeStage45out);
+		pipeStage50out = new PipedOutputStream ();
+		pipeStage50in = new PipedInputStream (pipeStage50out);
+
+		System.out.println("Share pipes");
+
+		stage1Solver = new Stage1Solver(pipeStage01in, pipeStage12out);
+		stage2Solver = new Stage2Solver(pipeStage12in, pipeStage23out);
+		stage3Solver = new Stage3Solver(pipeStage23in, pipeStage34out);
+		stage4Solver = new Stage4Solver(pipeStage34in, pipeStage45out);
+		stage5Solver = new Stage5Solver(pipeStage45in, pipeStage50out);
+
+	}
+
+	public static void solveit4x4x4IDA (CubeState cube, int metric) {
+
+	int[] move_list = new int[1];
+	move_list[0] = 0;
+	ObjectOutputStream myPipeOut = null;
 	try{
-	PipedOutputStream pipeStage01out = new PipedOutputStream ();
-	PipedInputStream pipeStage01in = new PipedInputStream (pipeStage01out);
-	PipedOutputStream pipeStage12out = new PipedOutputStream ();
-	PipedInputStream pipeStage12in = new PipedInputStream (pipeStage12out);
-	PipedOutputStream pipeStage23out = new PipedOutputStream ();
-	PipedInputStream pipeStage23in = new PipedInputStream (pipeStage23out);
-	PipedOutputStream pipeStage34out = new PipedOutputStream ();
-	PipedInputStream pipeStage34in = new PipedInputStream (pipeStage34out);
-	PipedOutputStream pipeStage45out = new PipedOutputStream ();
-	PipedInputStream pipeStage45in = new PipedInputStream (pipeStage45out);
-	PipedOutputStream pipeStage50out = new PipedOutputStream ();
-	PipedInputStream pipeStage50in = new PipedInputStream (pipeStage50out);
+		System.out.println("Try sending...");
+		myPipeOut = new ObjectOutputStream (pipeStage01out);
+		System.out.println("Has build the object output stream...");
+		SolverState ss = new SolverState(cube, metric, move_list, 0, 0);
+		System.out.println("Has build the object...");
+		myPipeOut.writeObject(ss);
+		System.out.println("Has sent the object.");
+		myPipeOut.close();
+	}
+	catch (java.io.IOException ioe) { ioe.getMessage(); System.out.println("e1 blah");}
 
-	Stage1Solver stage1Solver = new Stage1Solver(pipeStage01in, pipeStage12out);
-	Stage2Solver stage2Solver = new Stage2Solver(pipeStage12in, pipeStage23out);
-	Stage3Solver stage3Solver = new Stage3Solver(pipeStage23in, pipeStage34out);
-	Stage4Solver stage4Solver = new Stage4Solver(pipeStage34in, pipeStage45out);
-	Stage5Solver stage5Solver = new Stage5Solver(pipeStage45in, pipeStage50out);
+	System.out.println("Sent the first state");
 
-	stage1Solver.run();
-	stage2Solver.run();
-	stage3Solver.run();
-	stage4Solver.run();
-	stage5Solver.run();
+	stage1Solver.start();
+	stage2Solver.start();
+	stage3Solver.start();
+	stage4Solver.start();
+	stage5Solver.start();
 
-	ObjectOutputStream myPipeOut = new ObjectOutputStream(pipeStage01out);
-	
-	myPipeOut.writeObject(new SolverState(cube, metric, move_list, 0, 0));
+	System.out.println("Start the threads");
 
-	ObjectInputStream myPipeIn = new ObjectInputStream(pipeStage50in);
+	ObjectInputStream myPipeIn = null;
 
 	SolverState solution = null;
 	while (solution == null) {
 		try{
-			solution = (SolverState) myPipeIn.readObject();
 			Thread.currentThread().sleep(100);
+			myPipeIn = new ObjectInputStream(pipeStage50in);
+			solution = (SolverState) myPipeIn.readObject();
 		}
-		catch(java.lang.ClassNotFoundException e) {}
-		catch(java.lang.InterruptedException e) {}
-
-
+		catch(java.io.IOException e) {
+			e.printStackTrace();
+		}
+		catch(java.lang.ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		catch(java.lang.InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	print_move_list (solution.move_count, solution.move_list);
-
-	return solution.move_count;
-	}
-	catch(java.io.IOException ioe)
-	{
-	}
-	return -1;
 }
 
 }

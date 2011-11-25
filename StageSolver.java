@@ -17,47 +17,61 @@ abstract class StageSolver extends Thread{
 	protected int[] move_list = new int[30];
 	protected int metric;
 	protected int goal;
-	protected ObjectOutputStream pipeOut;
-	protected ObjectInputStream pipeIn;
+	protected PipedOutputStream pipeOut;
+	protected PipedInputStream pipeIn;
 
 	protected void pushState(){
+		System.out.println("Try to push a state");
 		formatMoves();
 
 		CubeState cs = new CubeState();
+		cs.init();
 		ss.cube.copyTo( cs );
 		cs.scramble( goal, move_list );
 
 		int r = rotateCube(cs);
 
 		int[] move_list_all = new int[100];
+		for (int i=0; i<100; i++ ) move_list_all[i] = 0;
 		System.arraycopy(ss.move_list, 0, move_list_all, 0, ss.move_count);
 		System.arraycopy(move_list, 0, move_list_all, ss.move_count, goal);
 		print_move_list( goal, move_list );
+		ObjectOutputStream stateOut = null;
 		try{
-			pipeOut.writeObject(new SolverState(cs, ss.metric, move_list_all, ss.move_count + goal, r));
+			stateOut = new ObjectOutputStream (pipeOut);
+			stateOut.writeObject(new SolverState(cs, ss.metric, move_list_all, ss.move_count + goal, r));
 		}
 		catch (java.io.IOException ioe) {}
+		finally {
+			try {
+				stateOut.close();
+			} catch (Exception e) {}
+		}
+		System.out.println("Did it !");
 	}
 
 	protected void pullState(){
 
+		System.out.println("Try to pull a state");
 		ss = null;
 		while (ss == null) {
 			try{
-				ss = (SolverState) pipeIn.readObject();
-				sleep(10);
+				sleep(100);
+				ObjectInputStream stateIn = new ObjectInputStream( pipeIn );
+				ss = (SolverState) stateIn.readObject();
 			}
-			catch (java.io.IOException ioe) {}
-			catch (java.lang.ClassNotFoundException e) {}
-			catch (java.lang.InterruptedException e) {}
+			catch (java.io.IOException ioe) { ioe.printStackTrace(); }
+			catch (java.lang.ClassNotFoundException e) { e.printStackTrace(); }
+			catch (java.lang.InterruptedException e) { e.printStackTrace(); }
 		}
 
+		System.out.println("Get one !");
+		
 		metric = ss.metric;
 		importState();
 	}
 
 	abstract void importState();
-
 
 	protected void formatMoves(){
 		int i;
