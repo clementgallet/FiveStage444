@@ -7,7 +7,7 @@ import static fivestage444.Constants.*;
 
 public final class Stage3Solver extends StageSolver{
 
-	public static final int stage_slice_list[] = {
+	public static int stage_slice_list[] = {
 	Uf, Uf3, Uf2, Us2,
 	Df, Df3, Df2, Ds2,
 	Lf2, Ls2, Rf2, Rs2,
@@ -32,7 +32,9 @@ public final class Stage3Solver extends StageSolver{
 	}
 
 	void importState(){
+		for (int i=0;i<24;++i) System.out.print(ss.cube.m_edge[i] + ",");
 		ss.cube.convert_to_stage3 (cube);
+		System.out.println(cube.m_edge);
 		cube.m_edge_odd = ss.cube.edgeUD_parity_odd ();
 	}
 

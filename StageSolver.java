@@ -29,6 +29,8 @@ abstract class StageSolver extends Thread{
 		ss.cube.copyTo( cs );
 		cs.scramble( goal, move_list );
 
+		for (int i=0;i<24;++i) System.out.print(cs.m_edge[i] + ",");
+
 		int r = rotateCube(cs);
 
 		int[] move_list_all = new int[100];
@@ -40,13 +42,9 @@ abstract class StageSolver extends Thread{
 		try{
 			stateOut = new ObjectOutputStream (pipeOut);
 			stateOut.writeObject(new SolverState(cs, ss.metric, move_list_all, ss.move_count + goal, r));
+			stateOut.close();
 		}
 		catch (java.io.IOException ioe) {}
-		finally {
-			try {
-				stateOut.close();
-			} catch (Exception e) {}
-		}
 		System.out.println("Did it !");
 	}
 
@@ -59,6 +57,7 @@ abstract class StageSolver extends Thread{
 				sleep(100);
 				ObjectInputStream stateIn = new ObjectInputStream( pipeIn );
 				ss = (SolverState) stateIn.readObject();
+				stateIn.close();
 			}
 			catch (java.io.IOException ioe) { ioe.printStackTrace(); }
 			catch (java.lang.ClassNotFoundException e) { e.printStackTrace(); }

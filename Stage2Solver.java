@@ -7,7 +7,7 @@ import static fivestage444.Constants.*;
 
 public final class Stage2Solver extends StageSolver{
 
-	public static final int stage_slice_list[] = {
+	public static int stage_slice_list[] = {
 	Uf, Uf3, Uf2, Us, Us3, Us2,
 	Df, Df3, Df2, Ds, Ds3, Ds2,
 	Lf2, Ls, Ls3, Ls2, Rf2, Rs, Rs3, Rs2,
