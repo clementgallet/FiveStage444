@@ -245,10 +245,11 @@ public final class Stage2Solver extends StageSolver{
 
 	public void run (){
 		while (pullState()) {
+			foundSol = false;
 			for (goal = 0; goal <= 30; ++goal) {
-				if (treeSearch (cube, goal, 0, 0)) {
+				treeSearch (cube, goal, 0, 0);
+				if (foundSol)
 					break;
-				}
 			}
 		}
 
@@ -256,16 +257,16 @@ public final class Stage2Solver extends StageSolver{
 		closePipes();
 	}
 
-	public boolean treeSearch (CubeStage2 cube1, int depth, int moves_done, int move_state){
+	public void treeSearch (CubeStage2 cube1, int depth, int moves_done, int move_state){
 	CubeStage2 cube2 = new CubeStage2();
 	int mov_idx, mc, j;
 	int next_ms = 0;
 	if (depth == 0) {
 		if (! cube1.is_solved ()) {
-			return false;
+			return;
 		}
 		pushState();
-		return true;
+		return;
 	}
 	int dist = cube1.prune_funcEDGCEN_STAGE2 ();
 	if (dist <= depth) {
@@ -283,10 +284,7 @@ public final class Stage2Solver extends StageSolver{
 					next_ms = stage2_twist_next_ms[move_state][mtype];
 					move_list[moves_done] = stage2_twist_map1[Constants.N_STAGE2_TWIST_MOVES + mov_idx];
 					move_list[moves_done + 1] = stage2_twist_map2[Constants.N_STAGE2_TWIST_MOVES + mov_idx];
-					if (treeSearch (cube2, depth - 2, moves_done + 2, next_ms))
-					{
-						return true;
-					}
+					treeSearch (cube2, depth - 2, moves_done + 2, next_ms);
 				}
 			}
 		}
@@ -338,20 +336,16 @@ public final class Stage2Solver extends StageSolver{
 					break;
 				}
 				move_list[moves_done] = mc;
-				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms))
-				{
-					return true;
-				}
+				treeSearch (cube2, depth - 1, moves_done + 1, next_ms);
 			}
 		}
 	}
-	return false;
 }
 
-	int rotateCube(CubeState cube){
+	int rotateCube(CubeState cube, int[] sol_move_list){
 		int i;
 		for (i = 0; i < goal; ++i) {
-			move_list[i] = xlate_r6[move_list[i]][ss.rotate];
+			sol_move_list[i] = xlate_r6[sol_move_list[i]][ss.rotate];
 		}
 		int r6 = ss.rotate;
 		if (cube.m_cen[16] < 4) {

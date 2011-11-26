@@ -114,7 +114,7 @@ public final class FiveStage444 {
 
 	public static void main(String[] args){
 
-		int random_count = 100;
+		int random_count = 1;
 		int metric = 0;
 
 		new Tables().init_all ();
@@ -155,13 +155,13 @@ public final class FiveStage444 {
 
 	/* Tells the threads that there are no more scrambles */
 	stopThreads();
-
+	/*
 	try{
 		pipeStage01out.close();
 		pipeStage50in.close();
 	}
 	catch (java.io.IOException ioe) { ioe.getMessage(); }
-
+	*/
 }
 
 	public static PipedOutputStream pipeStage01out = null;
@@ -230,12 +230,12 @@ public final class FiveStage444 {
 	public static void getSolutions () {
 
 		ObjectInputStream myPipeIn = null;
-		SolverState solution;
-		do {
+		SolverState solution = new SolverState(null, 0, null, 0, 0);
+		while ( solution.metric != -1 ) {
 			solution = null;
 			while (solution == null) {
 				try{
-					Thread.currentThread().sleep(100);
+					Thread.currentThread().sleep(10);
 					myPipeIn = new ObjectInputStream(pipeStage50in);
 					solution = (SolverState) myPipeIn.readObject();
 				}
@@ -250,8 +250,7 @@ public final class FiveStage444 {
 				}
 			}
 			print_move_list (solution.move_count, solution.move_list);
-
-		} while ( solution.metric != -1 );
+		}
 	}
 
 	public static void stopThreads () {

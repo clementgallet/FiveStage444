@@ -116,6 +116,7 @@ public final class Stage5Solver extends StageSolver{
 };
 
 	private CubeSqsCoord cube = new CubeSqsCoord();
+	private int bestCount;
 
 	Stage5Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException{
 		super( pipeIn, pipeOut );
@@ -128,10 +129,12 @@ public final class Stage5Solver extends StageSolver{
 
 	public void run (){
 		int init_move_state[] = { 12, 23, 6 };
+		bestCount = 999;
 
 		while(pullState()) {
-			for (goal = 0; goal <= 30; ++goal) {
+			for (goal = 0; goal < bestCount - ss.move_count; ++goal) {
 				if (treeSearch (cube, goal, 0, init_move_state[metric])) {
+					bestCount = ss.move_count + goal;
 					break;
 				}
 			}
@@ -212,10 +215,10 @@ public final class Stage5Solver extends StageSolver{
 	return false;
 }
 
-	int rotateCube(CubeState cube){
+	int rotateCube(CubeState cube, int[] sol_move_list){
 		int i;
 		for (i = 0; i < goal; ++i) {
-			move_list[i] = xlate_r6[move_list[i]][ss.rotate];
+			sol_move_list[i] = xlate_r6[sol_move_list[i]][ss.rotate];
 		}
 		return ss.rotate;
 	}

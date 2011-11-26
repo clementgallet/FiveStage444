@@ -19,6 +19,7 @@ abstract class StageSolver extends Thread{
 	protected int goal;
 	protected PipedOutputStream pipeOut;
 	protected PipedInputStream pipeIn;
+	protected boolean foundSol;
 
 	StageSolver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException{
 		this.pipeIn = pipeIn;
@@ -31,19 +32,22 @@ abstract class StageSolver extends Thread{
 	}
 
 	protected void pushState(){
-		formatMoves();
+		foundSol = true;
+		int[] sol_move_list = new int[30];
+		System.arraycopy(move_list, 0, sol_move_list, 0, goal);
+		formatMoves(sol_move_list);
 
 		CubeState cs = new CubeState();
 		cs.init();
 		ss.cube.copyTo( cs );
-		cs.scramble( goal, move_list );
+		cs.scramble( goal, sol_move_list );
 
-		int r = rotateCube(cs);
+		int r = rotateCube(cs, sol_move_list);
 
 		int[] move_list_all = new int[100];
 		System.arraycopy(ss.move_list, 0, move_list_all, 0, ss.move_count);
-		System.arraycopy(move_list, 0, move_list_all, ss.move_count, goal);
-		print_move_list( goal, move_list );
+		System.arraycopy(sol_move_list, 0, move_list_all, ss.move_count, goal);
+		//print_move_list( goal, sol_move_list );
 		ObjectOutputStream stateOut = null;
 		try{
 			stateOut = new ObjectOutputStream (pipeOut);
@@ -76,13 +80,11 @@ abstract class StageSolver extends Thread{
 		ss = null;
 		while (ss == null) {
 			try{
-				sleep(100);
 				ObjectInputStream stateIn = new ObjectInputStream( pipeIn );
 				ss = (SolverState) stateIn.readObject();
 			}
 			catch (java.io.IOException ioe) { ioe.printStackTrace(); }
 			catch (java.lang.ClassNotFoundException e) { e.printStackTrace(); }
-			catch (java.lang.InterruptedException e) { e.printStackTrace(); }
 		}
 
 		metric = ss.metric;
@@ -93,26 +95,26 @@ abstract class StageSolver extends Thread{
 
 	abstract void importState();
 
-	protected void formatMoves(){
+	protected void formatMoves( int[] sol_move_list){
 		int i;
 		switch (metric) {
 		case 0:
 			for (i = 0; i < goal; ++i) {
-				move_list[i] = stage_slice_list[move_list[i]];
+				sol_move_list[i] = stage_slice_list[sol_move_list[i]];
 			}
 			break;
 		case 1:
 			for (i = 0; i < goal; ++i) {
-				move_list[i] = stage_twist_list[move_list[i]];
+				sol_move_list[i] = stage_twist_list[sol_move_list[i]];
 			}
 			break;
 		case 2:
 			for (i = 0; i < goal; ++i) {
-				move_list[i] = stage_block_list[move_list[i]];
+				sol_move_list[i] = stage_block_list[sol_move_list[i]];
 			}
 			break;
 		}
 	}
 
-	abstract int rotateCube(CubeState cs);
+	abstract int rotateCube(CubeState cs, int[] sol_move_list);
 }

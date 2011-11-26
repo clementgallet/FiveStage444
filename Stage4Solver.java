@@ -40,10 +40,11 @@ public final class Stage4Solver extends StageSolver{
 
 	public void run (){
 		while (pullState()) {
-			for (goal = 0; goal <= 30; ++goal) {
-				if (treeSearch (cube, goal, 0)) {
+			foundSol = false;
+			for (goal = 0; goal < 13; ++goal) {
+				treeSearch (cube, goal, 0);
+				if (foundSol)
 					break;
-				}
 			}
 		}
 
@@ -51,15 +52,15 @@ public final class Stage4Solver extends StageSolver{
 		closePipes();
 	}
 
-	public boolean treeSearch (CubeStage4 cube1, int depth, int moves_done){
+	public void treeSearch (CubeStage4 cube1, int depth, int moves_done){
 	CubeStage4 cube2 = new CubeStage4();
 	int mov_idx, mc, j;
 	if (depth == 0) {
 		if (! cube1.is_solved ()) {
-			return false;
+			return;
 		}
 		pushState();
-		return true;
+		return;
 	}
 	int dist = cube1.prune_funcCENCOR_STAGE4 ();
 	if (dist <= depth) {
@@ -97,19 +98,15 @@ public final class Stage4Solver extends StageSolver{
 				break;
 			}
 			move_list[moves_done] = mc;
-			if (treeSearch (cube2, depth - 1, moves_done + 1))
-			{
-				return true;
-			}
+			treeSearch (cube2, depth - 1, moves_done + 1);
 		}
 	}
-	return false;
 }
 
-	int rotateCube(CubeState cube){
+	int rotateCube(CubeState cube, int[] sol_move_list){
 		int i;
 		for (i = 0; i < goal; ++i) {
-			move_list[i] = xlate_r6[move_list[i]][ss.rotate];
+			sol_move_list[i] = xlate_r6[sol_move_list[i]][ss.rotate];
 		}
 		return ss.rotate;
 	}
