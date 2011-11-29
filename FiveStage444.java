@@ -217,12 +217,10 @@ public final class FiveStage444 {
 
 	public static void solveit4x4x4IDA (CubeState cube, int metric) {
 
-		int[] move_list = new int[1];
-		move_list[0] = 0;
 		ObjectOutputStream myPipeOut = null;
 		try{
 			myPipeOut = new ObjectOutputStream (pipeStage01out);
-			myPipeOut.writeObject(new SolverState(cube, metric, move_list, 0, 0));
+			myPipeOut.writeObject(new SolverState(cube, metric, null, 0, 0));
 		}
 		catch (java.io.IOException ioe) { ioe.getMessage(); }
 	}
@@ -235,7 +233,7 @@ public final class FiveStage444 {
 			solution = null;
 			while (solution == null) {
 				try{
-					Thread.currentThread().sleep(10);
+					Thread.currentThread().sleep(100);
 					myPipeIn = new ObjectInputStream(pipeStage50in);
 					solution = (SolverState) myPipeIn.readObject();
 				}

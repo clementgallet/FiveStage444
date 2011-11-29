@@ -153,7 +153,7 @@ public final class Stage5Solver extends StageSolver{
 			return false;
 		}
 		pushState();
-		return true;
+		return true; // true: take the first solution, false: take all solutions.
 	}
 	int dist = cube1.prune_funcEDGCOR_STAGE5 ();
 	if (dist <= depth) {
@@ -205,10 +205,7 @@ public final class Stage5Solver extends StageSolver{
 					break;
 				}
 				move_list[moves_done] = mc;
-				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms))
-				{
-					return true;
-				}
+				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms)) return true;
 			}
 		}
 	}

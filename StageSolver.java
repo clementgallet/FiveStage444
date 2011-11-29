@@ -48,12 +48,20 @@ abstract class StageSolver extends Thread{
 		System.arraycopy(ss.move_list, 0, move_list_all, 0, ss.move_count);
 		System.arraycopy(sol_move_list, 0, move_list_all, ss.move_count, goal);
 		//print_move_list( goal, sol_move_list );
+
+		SolverState nss = new SolverState(cs, ss.metric, move_list_all, ss.move_count + goal, r);
+		writeState( nss );
+	}
+
+	protected void writeState( SolverState nss ){
+
 		ObjectOutputStream stateOut = null;
 		try{
 			stateOut = new ObjectOutputStream (pipeOut);
-			stateOut.writeObject(new SolverState(cs, ss.metric, move_list_all, ss.move_count + goal, r));
+			stateOut.writeObject(nss);
 		}
 		catch (java.io.IOException ioe) {}
+
 	}
 
 	protected void pushStopSignal(){
@@ -82,6 +90,7 @@ abstract class StageSolver extends Thread{
 			try{
 				ObjectInputStream stateIn = new ObjectInputStream( pipeIn );
 				ss = (SolverState) stateIn.readObject();
+				if (ss == null) yield();
 			}
 			catch (java.io.IOException ioe) { ioe.printStackTrace(); }
 			catch (java.lang.ClassNotFoundException e) { e.printStackTrace(); }

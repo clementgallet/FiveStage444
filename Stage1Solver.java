@@ -63,15 +63,15 @@ public final class Stage1Solver extends StageSolver{
 		closePipes();
 	}
 
-	private void treeSearch (CubeStage1 cube1, int depth, int moves_done){
+	private boolean treeSearch (CubeStage1 cube1, int depth, int moves_done){
 		CubeStage1 cube2 = new CubeStage1();
 		int mov_idx, mc, j;
 		if (depth == 0) {
 			if (! cube1.is_solved ()) {
-				return;
+				return false;
 			}
 			pushState();
-			return;
+			return false; // true: take the first solution, false: take all solutions
 		}
 		int dist = cube1.prune_funcCOR_STAGE1();
 		if (dist <= depth) {
@@ -99,9 +99,10 @@ public final class Stage1Solver extends StageSolver{
 					break;
 				}
 				move_list[moves_done] = mov_idx;
-				treeSearch (cube2, depth - 1, moves_done + 1);
+				if (treeSearch (cube2, depth - 1, moves_done + 1)) return true;
 			}
 		}
+		return false;
 	}
 
 	int rotateCube(CubeState cube, int[] sol_move_list){
