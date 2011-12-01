@@ -258,6 +258,7 @@ public final class Stage2Solver extends StageSolver{
 	}
 
 	public boolean treeSearch (CubeStage2 cube1, int depth, int moves_done, int move_state){
+	Statistics.addNode(2, depth);
 	CubeStage2 cube2 = new CubeStage2();
 	int mov_idx, mc, j;
 	int next_ms = 0;
@@ -266,6 +267,7 @@ public final class Stage2Solver extends StageSolver{
 			return false;
 		}
 		pushState();
+		Statistics.addLeaf(2, goal);
 		return false; // true: take the first solution, false: take all solutions.
 	}
 	int dist = cube1.prune_funcEDGCEN_STAGE2 ();

@@ -47,7 +47,7 @@ abstract class StageSolver extends Thread{
 		int[] move_list_all = new int[100];
 		System.arraycopy(ss.move_list, 0, move_list_all, 0, ss.move_count);
 		System.arraycopy(sol_move_list, 0, move_list_all, ss.move_count, goal);
-		//print_move_list( goal, sol_move_list );
+		print_move_list( goal, sol_move_list );
 
 		SolverState nss = new SolverState(cs, ss.metric, move_list_all, ss.move_count + goal, r);
 		writeState( nss );

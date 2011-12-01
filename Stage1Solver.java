@@ -64,6 +64,7 @@ public final class Stage1Solver extends StageSolver{
 	}
 
 	private boolean treeSearch (CubeStage1 cube1, int depth, int moves_done){
+		Statistics.addNode(1, depth);
 		CubeStage1 cube2 = new CubeStage1();
 		int mov_idx, mc, j;
 		if (depth == 0) {
@@ -71,6 +72,7 @@ public final class Stage1Solver extends StageSolver{
 				return false;
 			}
 			pushState();
+			Statistics.addLeaf(1, goal);
 			return false; // true: take the first solution, false: take all solutions
 		}
 		int dist = cube1.prune_funcCOR_STAGE1();

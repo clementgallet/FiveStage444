@@ -145,6 +145,7 @@ public final class Stage5Solver extends StageSolver{
 	}
 
 	public boolean treeSearch (CubeSqsCoord cube1, int depth, int moves_done, int move_state){
+	Statistics.addNode(5, depth);
 	CubeSqsCoord cube2 = new CubeSqsCoord();
 	int mov_idx, mc, j;
 	int next_ms = 0;
@@ -153,6 +154,7 @@ public final class Stage5Solver extends StageSolver{
 			return false;
 		}
 		pushState();
+		Statistics.addLeaf(5, goal);
 		return true; // true: take the first solution, false: take all solutions.
 	}
 	int dist = cube1.prune_funcEDGCOR_STAGE5 ();

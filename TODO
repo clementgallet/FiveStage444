@@ -4,4 +4,5 @@ TODO:
 - Optimise the program.
 - Optimise the algorithm.
 - Better handle exceptions.
-- Use a logger
+- Use a logger.
+- Restrict more moves (moves that commute).

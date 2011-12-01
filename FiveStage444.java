@@ -111,6 +111,7 @@ public final class FiveStage444 {
 
 
 	private static String default_datafile_path = "";
+	public static Thread getS;
 
 	public static void main(String[] args){
 
@@ -124,13 +125,33 @@ public final class FiveStage444 {
 		} catch(java.io.IOException e) { e.printStackTrace(); }
 
 		/* Get solutions */
-		new Thread(new Runnable() {
+		getS = new Thread(new Runnable() {
 			public void run() {
 				getSolutions();
 			}
-		}).start();
+		});
 
 		do_random_cubes (metric, random_count);
+
+		/* Start getting the solutions */
+		getS.start();
+		/* Tells the threads that there are no more scrambles */
+		stopThreads();
+
+		/* Wait for the end of every thread */
+		try{
+			getS.join();
+		} catch (java.lang.InterruptedException ie) { ie.getMessage(); }
+
+		/* Print statistics */
+		Statistics.print();
+
+		/* Closing the last pipes */
+		try{
+			pipeStage01out.close();
+			pipeStage50in.close();
+		}
+		catch (java.io.IOException ioe) { ioe.getMessage(); }
 	}
 
 	public static void do_random_cubes (int metric, int count) {
@@ -153,15 +174,6 @@ public final class FiveStage444 {
 		solveit4x4x4IDA (solveme, metric);
 	}
 
-	/* Tells the threads that there are no more scrambles */
-	stopThreads();
-	/*
-	try{
-		pipeStage01out.close();
-		pipeStage50in.close();
-	}
-	catch (java.io.IOException ioe) { ioe.getMessage(); }
-	*/
 }
 
 	public static PipedOutputStream pipeStage01out = null;
