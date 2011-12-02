@@ -17,12 +17,21 @@ public final class Stage3Solver extends StageSolver{
 
 	private static int n_moves_metric_stg3[] = { N_STAGE3_SLICE_MOVES, N_STAGE3_TWIST_MOVES, N_STAGE3_BLOCK_MOVES};
 
+	private static int stage3_stm_next_ms[] = 	{ SL_MS_U,SL_MS_U,SL_MS_U,SL_MS_u,SL_MS_D,SL_MS_D,SL_MS_D,SL_MS_d,SL_MS_L,SL_MS_l,SL_MS_R,SL_MS_r,SL_MS_F,SL_MS_f,SL_MS_f,SL_MS_f,SL_MS_B,SL_MS_b,SL_MS_b,SL_MS_b };
+
+	private static int stage3_slice_moves_to_try [] = {
+	0xFFFFF,
+	0xFFFF8, 0xFFFF0, 0xFFF70, 0xFFF00,
+	0xFFEFF, 0xFFCFF, 0xFF4FF, 0xFF0FF,
+	0xFEFFF, 0xF0FFF, 0xE0FFF, 0x00FFF
+	};
+
 	private CubeStage3 cube = new CubeStage3();
 
 	Stage3Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException{
 		super( pipeIn, pipeOut );
 
-		stage_slice_list = new int[] {
+		stage_slice_list = new byte[] {
 		Uf, Uf3, Uf2, Us2,
 		Df, Df3, Df2, Ds2,
 		Lf2, Ls2, Rf2, Rs2,
@@ -39,7 +48,7 @@ public final class Stage3Solver extends StageSolver{
 		while (pullState()) {
 			foundSol = false;
 			for (goal = 0; goal <= 30; ++goal) {
-				treeSearch (cube, goal, 0);
+				treeSearch (cube, goal, 0, 0);
 				if (foundSol)
 					break;
 			}
@@ -49,17 +58,18 @@ public final class Stage3Solver extends StageSolver{
 		closePipes();
 	}
 
-	public boolean treeSearch (CubeStage3 cube1, int depth, int moves_done){
-	Statistics.addNode(3, depth);
+	public boolean treeSearch (CubeStage3 cube1, int depth, int moves_done, int move_state){
+	//Statistics.addNode(3, depth);
 	CubeStage3 cube2 = new CubeStage3();
 	int mov_idx, mc, j;
+	int next_ms = 0;
 	if (depth == 0) {
 		if (! cube1.is_solved ()) {
 			return false;
 		}
 		pushState();
 		Statistics.addLeaf(3, goal);
-		return false; // true: take the first solution, false: take all solutions
+		return true; // true: take the first solution, false: take all solutions
 	}
 	int dist = cube1.prune_funcCEN_STAGE3 ();
 	if (dist <= depth) {
@@ -78,18 +88,23 @@ public final class Stage3Solver extends StageSolver{
 				if (mc >= 0) {
 					cube2.do_move (mc);
 				}
-				move_list[moves_done] = stage3_twist_map1[Constants.N_STAGE3_TWIST_MOVES + mov_idx];
-				move_list[moves_done + 1] = stage3_twist_map2[Constants.N_STAGE3_TWIST_MOVES + mov_idx];
-				if (treeSearch (cube2, depth - 2, moves_done + 2)) return true;
+				move_list[moves_done] = (byte)stage3_twist_map1[Constants.N_STAGE3_TWIST_MOVES + mov_idx];
+				move_list[moves_done + 1] = (byte)stage3_twist_map2[Constants.N_STAGE3_TWIST_MOVES + mov_idx];
+				if (treeSearch (cube2, depth - 2, moves_done + 2, next_ms)) return true;
 			}
 		}
 		for (mov_idx = 0; mov_idx < n_moves_metric_stg3[metric]; ++mov_idx) {
+			boolean did_move = false;
 			cube2.m_centerLR = cube1.m_centerLR; // TODO: Add a method copy.
 			cube2.m_edge = cube1.m_edge;
 			cube2.m_edge_odd = cube1.m_edge_odd;
 			switch (metric) {
 			case 0:
-				cube2.do_move (mov_idx);
+				if ((stage3_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) { // TODO: make this for the other metrics.
+					cube2.do_move (mov_idx);
+					next_ms = stage3_stm_next_ms[mov_idx];
+					did_move = true;
+				}
 				break;
 			case 1:
 				//old TODO: This not finished.
@@ -97,6 +112,7 @@ public final class Stage3Solver extends StageSolver{
 					mc = stage3_twist_moves[mov_idx][j];		//!!! metric dependency
 					cube2.do_move (mc);		//!!! metric dependency
 				}
+				did_move = true;
 				break;
 			case 2:
 				//old TODO: This not finished.
@@ -104,25 +120,28 @@ public final class Stage3Solver extends StageSolver{
 					mc = stage3_block_moves[mov_idx][j];		//!!! metric dependency
 					cube2.do_move (mc);		//!!! metric dependency
 				}
+				did_move = true;
 				break;
 			}
-			mc = mov_idx;
-			switch (metric) {
-			case 1:
-				mc = stage3_twist_map1[mov_idx];
-				break;
-			case 2:
-				mc = stage3_block_map[mov_idx];
-				break;
+			if (did_move) {
+				mc = mov_idx;
+				switch (metric) {
+				case 1:
+					mc = stage3_twist_map1[mov_idx];
+					break;
+				case 2:
+					mc = stage3_block_map[mov_idx];
+					break;
+				}
+				move_list[moves_done] = (byte)mc;
+				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms)) return true;
 			}
-			move_list[moves_done] = mc;
-			if (treeSearch (cube2, depth - 1, moves_done + 1)) return true;
 		}
 	}
 	return false;
 }
 
-	int rotateCube(CubeState cube, int[] sol_move_list){
+	int rotateCube(CubeState cube, byte[] sol_move_list){
 		int i;
 		for (i = 0; i < goal; ++i) {
 			sol_move_list[i] = xlate_r6[sol_move_list[i]][ss.rotate];

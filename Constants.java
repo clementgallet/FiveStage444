@@ -120,6 +120,20 @@ public final class Constants{
 
 	public static final int N_FACE_MOVES = 18;
 
+	public static int SL_MS_X = 0;
+	public static int SL_MS_U = 1;
+	public static int SL_MS_u = 2;
+	public static int SL_MS_d = 3;
+	public static int SL_MS_D = 4;
+	public static int SL_MS_L = 5;
+	public static int SL_MS_l = 6;
+	public static int SL_MS_r = 7;
+	public static int SL_MS_R = 8;
+	public static int SL_MS_F = 9;
+	public static int SL_MS_f = 10;
+	public static int SL_MS_b = 11;
+	public static int SL_MS_B = 12;
+
 	public static final int basic_to_face[] = {
 	 0,  1,  2, -1, -1, -1,  3,  4,  5, -1, -1, -1,
 	 6,  7,  8, -1, -1, -1,  9, 10, 11, -1, -1, -1,
@@ -671,7 +685,7 @@ public final class Constants{
 
 	};
 
-	public static int xlate_r6[][] = {
+	public static byte xlate_r6[][] = {
 	{ 0, 24, 12,  0, 24, 12}, { 1, 25, 13,  1, 25, 13}, { 2, 26, 14,  2, 26, 14},
 	{ 3, 27, 15,  3, 27, 15}, { 4, 28, 16,  4, 28, 16}, { 5, 29, 17,  5, 29, 17},
 	{ 6, 30, 18,  6, 30, 18}, { 7, 31, 19,  7, 31, 19}, { 8, 32, 20,  8, 32, 20},
@@ -795,7 +809,7 @@ public final class Constants{
 	"(fb')", "(f'b)", "(fb')2"
 	};
 
-	public static void print_move_list (int count, int[] move_list){
+	public static void print_move_list (int count, byte[] move_list){
 		int j;
 		if (count >= 0) {
 			System.out.print ("[" + count + "] ");

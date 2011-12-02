@@ -120,7 +120,7 @@ public final class Stage5Solver extends StageSolver{
 
 	Stage5Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException{
 		super( pipeIn, pipeOut );
-		stage_slice_list = new int[] { Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2 };
+		stage_slice_list = new byte[] { Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2 };
 	}
 
 	void importState(){
@@ -134,7 +134,7 @@ public final class Stage5Solver extends StageSolver{
 		while(pullState()) {
 			for (goal = 0; goal < bestCount - ss.move_count; ++goal) {
 				if (treeSearch (cube, goal, 0, init_move_state[metric])) {
-					bestCount = ss.move_count + goal;
+					//bestCount = ss.move_count + goal;
 					break;
 				}
 			}
@@ -145,7 +145,7 @@ public final class Stage5Solver extends StageSolver{
 	}
 
 	public boolean treeSearch (CubeSqsCoord cube1, int depth, int moves_done, int move_state){
-	Statistics.addNode(5, depth);
+	//Statistics.addNode(5, depth);
 	CubeSqsCoord cube2 = new CubeSqsCoord();
 	int mov_idx, mc, j;
 	int next_ms = 0;
@@ -206,7 +206,7 @@ public final class Stage5Solver extends StageSolver{
 					mc = sq_block_map[mov_idx];
 					break;
 				}
-				move_list[moves_done] = mc;
+				move_list[moves_done] = (byte)mc;
 				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms)) return true;
 			}
 		}
@@ -214,7 +214,7 @@ public final class Stage5Solver extends StageSolver{
 	return false;
 }
 
-	int rotateCube(CubeState cube, int[] sol_move_list){
+	int rotateCube(CubeState cube, byte[] sol_move_list){
 		int i;
 		for (i = 0; i < goal; ++i) {
 			sol_move_list[i] = xlate_r6[sol_move_list[i]][ss.rotate];

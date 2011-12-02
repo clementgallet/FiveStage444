@@ -9,12 +9,12 @@ import static fivestage444.Constants.*;
 
 abstract class StageSolver extends Thread{
 
-	int[] stage_slice_list;
-	int[] stage_twist_list;
-	int[] stage_block_list;
+	byte[] stage_slice_list;
+	byte[] stage_twist_list;
+	byte[] stage_block_list;
 
 	protected SolverState ss;
-	protected int[] move_list = new int[30];
+	protected byte[] move_list = new byte[30];
 	protected int metric;
 	protected int goal;
 	protected PipedOutputStream pipeOut;
@@ -25,15 +25,15 @@ abstract class StageSolver extends Thread{
 		this.pipeIn = pipeIn;
 		this.pipeOut = pipeOut;
 
-		stage_slice_list = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63};
-		stage_twist_list = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63};
-		stage_block_list = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63};
+		stage_slice_list = new byte[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63};
+		stage_twist_list = new byte[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63};
+		stage_block_list = new byte[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63};
 
 	}
 
 	protected void pushState(){
 		foundSol = true;
-		int[] sol_move_list = new int[30];
+		byte[] sol_move_list = new byte[30];
 		System.arraycopy(move_list, 0, sol_move_list, 0, goal);
 		formatMoves(sol_move_list);
 
@@ -44,10 +44,11 @@ abstract class StageSolver extends Thread{
 
 		int r = rotateCube(cs, sol_move_list);
 
-		int[] move_list_all = new int[100];
-		System.arraycopy(ss.move_list, 0, move_list_all, 0, ss.move_count);
+		byte[] move_list_all = new byte[100];
+		if( ss.move_list != null )
+			System.arraycopy(ss.move_list, 0, move_list_all, 0, ss.move_count);
 		System.arraycopy(sol_move_list, 0, move_list_all, ss.move_count, goal);
-		print_move_list( goal, sol_move_list );
+		//print_move_list( goal, sol_move_list );
 
 		SolverState nss = new SolverState(cs, ss.metric, move_list_all, ss.move_count + goal, r);
 		writeState( nss );
@@ -65,12 +66,10 @@ abstract class StageSolver extends Thread{
 	}
 
 	protected void pushStopSignal(){
-		int[] move_list = new int[1];
-		move_list[0] = 0;
 		ObjectOutputStream stateOut = null;
 		try{
 			stateOut = new ObjectOutputStream (pipeOut);
-			stateOut.writeObject(new SolverState(null, -1, move_list, 0, 0)); // metric = -1 -> stop
+			stateOut.writeObject(new SolverState(null, -1, null, 0, 0)); // metric = -1 -> stop
 		}
 		catch (java.io.IOException ioe) { ioe.getMessage(); }
 	}
@@ -104,7 +103,7 @@ abstract class StageSolver extends Thread{
 
 	abstract void importState();
 
-	protected void formatMoves( int[] sol_move_list){
+	protected void formatMoves( byte[] sol_move_list){
 		int i;
 		switch (metric) {
 		case 0:
@@ -125,5 +124,5 @@ abstract class StageSolver extends Thread{
 		}
 	}
 
-	abstract int rotateCube(CubeState cs, int[] sol_move_list);
+	abstract int rotateCube(CubeState cs, byte[] sol_move_list);
 }

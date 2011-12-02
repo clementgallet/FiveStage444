@@ -32,19 +32,19 @@ public final class Stage2Solver extends StageSolver{
 
 	private static int n_moves_metric_stg2[] = { N_STAGE2_SLICE_MOVES, N_STAGE2_TWIST_MOVES, N_STAGE2_BLOCK_MOVES};
 
-	private static int STG2_SL_MS_X = 0;
-	private static int STG2_SL_MS_U = 1;
-	private static int STG2_SL_MS_u = 2;
-	private static int STG2_SL_MS_d = 3;
-	private static int STG2_SL_MS_D = 4;
-	private static int STG2_SL_MS_L = 5;
-	private static int STG2_SL_MS_l = 6;
-	private static int STG2_SL_MS_r = 7;
-	private static int STG2_SL_MS_R = 8;
-	private static int STG2_SL_MS_F = 9;
-	private static int STG2_SL_MS_f = 10;
-	private static int STG2_SL_MS_b = 11;
-	private static int STG2_SL_MS_B = 12;
+	private static int SL_MS_X = 0;
+	private static int SL_MS_U = 1;
+	private static int SL_MS_u = 2;
+	private static int SL_MS_d = 3;
+	private static int SL_MS_D = 4;
+	private static int SL_MS_L = 5;
+	private static int SL_MS_l = 6;
+	private static int SL_MS_r = 7;
+	private static int SL_MS_R = 8;
+	private static int SL_MS_F = 9;
+	private static int SL_MS_f = 10;
+	private static int SL_MS_b = 11;
+	private static int SL_MS_B = 12;
 
 	private static int STG2_TW_MS_X = 0;
 	private static int STG2_TW_MS_u = 1;
@@ -67,21 +67,7 @@ public final class Stage2Solver extends StageSolver{
 	0xFEFFFFF, 0xF0FFFFF, 0x10FFFFF, 0x00FFFFF
 	};
 
-	private static int stage2_stm_next_ms[][] = {
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_L,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_L,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_R,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_r,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_R,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_F,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_f,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_B,STG2_SL_MS_b,STG2_SL_MS_b,STG2_SL_MS_b },
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_B,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X },
-	{	STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_U,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_u,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_D,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_d,STG2_SL_MS_L,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_l,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X,STG2_SL_MS_X }
-};
+	private static int stage2_stm_next_ms[] = 	{ SL_MS_U,SL_MS_U,SL_MS_U,SL_MS_u,SL_MS_u,SL_MS_u,SL_MS_D,SL_MS_D,SL_MS_D,SL_MS_d,SL_MS_d,SL_MS_d,SL_MS_L,SL_MS_l,SL_MS_l,SL_MS_l,SL_MS_R,SL_MS_r,SL_MS_r,SL_MS_r,SL_MS_F,SL_MS_f,SL_MS_f,SL_MS_f,SL_MS_B,SL_MS_b,SL_MS_b,SL_MS_b };
 
 	private static int stage2_2twist_types[] = {
 	22, 22, 23, 23, 22, 22, 23, 23,
@@ -231,7 +217,7 @@ public final class Stage2Solver extends StageSolver{
 	Stage2Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException{
 		super( pipeIn, pipeOut );
 
-		stage_slice_list = new int[]{
+		stage_slice_list = new byte[]{
 		Uf, Uf3, Uf2, Us, Us3, Us2,
 		Df, Df3, Df2, Ds, Ds3, Ds2,
 		Lf2, Ls, Ls3, Ls2, Rf2, Rs, Rs3, Rs2,
@@ -258,7 +244,7 @@ public final class Stage2Solver extends StageSolver{
 	}
 
 	public boolean treeSearch (CubeStage2 cube1, int depth, int moves_done, int move_state){
-	Statistics.addNode(2, depth);
+	//Statistics.addNode(2, depth);
 	CubeStage2 cube2 = new CubeStage2();
 	int mov_idx, mc, j;
 	int next_ms = 0;
@@ -268,7 +254,7 @@ public final class Stage2Solver extends StageSolver{
 		}
 		pushState();
 		Statistics.addLeaf(2, goal);
-		return false; // true: take the first solution, false: take all solutions.
+		return true; // true: take the first solution, false: take all solutions.
 	}
 	int dist = cube1.prune_funcEDGCEN_STAGE2 ();
 	if (dist <= depth) {
@@ -284,8 +270,8 @@ public final class Stage2Solver extends StageSolver{
 						cube2.do_move (mc);		//!!! metric dependency
 					}
 					next_ms = stage2_twist_next_ms[move_state][mtype];
-					move_list[moves_done] = stage2_twist_map1[Constants.N_STAGE2_TWIST_MOVES + mov_idx];
-					move_list[moves_done + 1] = stage2_twist_map2[Constants.N_STAGE2_TWIST_MOVES + mov_idx];
+					move_list[moves_done] = (byte)stage2_twist_map1[Constants.N_STAGE2_TWIST_MOVES + mov_idx];
+					move_list[moves_done + 1] = (byte)stage2_twist_map2[Constants.N_STAGE2_TWIST_MOVES + mov_idx];
 					if (treeSearch (cube2, depth - 2, moves_done + 2, next_ms)) return true;
 				}
 			}
@@ -298,7 +284,7 @@ public final class Stage2Solver extends StageSolver{
 					cube2.m_edge = cube1.m_edge;
 					cube2.m_centerFB = cube1.m_centerFB;
 					cube2.do_move (mov_idx);
-					next_ms = stage2_stm_next_ms[move_state][mov_idx];
+					next_ms = stage2_stm_next_ms[mov_idx];
 					did_move = true;
 				}
 				break;
@@ -337,7 +323,7 @@ public final class Stage2Solver extends StageSolver{
 					mc = stage2_block_map[mov_idx];
 					break;
 				}
-				move_list[moves_done] = mc;
+				move_list[moves_done] = (byte)mc;
 				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms)) return true;
 			}
 		}
@@ -345,7 +331,7 @@ public final class Stage2Solver extends StageSolver{
 	return false;
 }
 
-	int rotateCube(CubeState cube, int[] sol_move_list){
+	int rotateCube(CubeState cube, byte[] sol_move_list){
 		int i;
 		for (i = 0; i < goal; ++i) {
 			sol_move_list[i] = xlate_r6[sol_move_list[i]][ss.rotate];

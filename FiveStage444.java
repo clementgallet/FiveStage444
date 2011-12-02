@@ -115,7 +115,7 @@ public final class FiveStage444 {
 
 	public static void main(String[] args){
 
-		int random_count = 1;
+		int random_count = 100;
 		int metric = 0;
 
 		new Tables().init_all ();
@@ -131,10 +131,11 @@ public final class FiveStage444 {
 			}
 		});
 
-		do_random_cubes (metric, random_count);
-
 		/* Start getting the solutions */
 		getS.start();
+
+		do_random_cubes (metric, random_count);
+
 		/* Tells the threads that there are no more scrambles */
 		stopThreads();
 
@@ -158,7 +159,7 @@ public final class FiveStage444 {
 	int i, i1;
 	//Random r = new Random();
 	Random r = new Random(42);
-	int[] random_list = new int[160];	//must be >= scramble_len
+	byte[] random_list = new byte[160];	//must be >= scramble_len
 	CubeState solveme = new CubeState();
 	int scramble_len = 100;
 
@@ -166,7 +167,7 @@ public final class FiveStage444 {
 		int j;
 		solveme.init ();
 		for (j = 0; j < scramble_len; ++j) {
-			random_list[j] = r.nextInt(36);
+			random_list[j] = (byte)r.nextInt(36);
 		}
 		solveme.scramble(scramble_len, random_list);
 		System.out.println ("scramble: ");
@@ -199,18 +200,20 @@ public final class FiveStage444 {
 
 		System.out.println("Init pipes");
 
+		int PIPE_SIZE = 4096;
+
 		pipeStage01out = new PipedOutputStream ();
-		pipeStage01in = new PipedInputStream (pipeStage01out);
+		pipeStage01in = new PipedInputStream (pipeStage01out, PIPE_SIZE);
 		pipeStage12out = new PipedOutputStream ();
-		pipeStage12in = new PipedInputStream (pipeStage12out);
+		pipeStage12in = new PipedInputStream (pipeStage12out, PIPE_SIZE);
 		pipeStage23out = new PipedOutputStream ();
-		pipeStage23in = new PipedInputStream (pipeStage23out);
+		pipeStage23in = new PipedInputStream (pipeStage23out, PIPE_SIZE);
 		pipeStage34out = new PipedOutputStream ();
-		pipeStage34in = new PipedInputStream (pipeStage34out);
+		pipeStage34in = new PipedInputStream (pipeStage34out, PIPE_SIZE);
 		pipeStage45out = new PipedOutputStream ();
-		pipeStage45in = new PipedInputStream (pipeStage45out);
+		pipeStage45in = new PipedInputStream (pipeStage45out, PIPE_SIZE);
 		pipeStage50out = new PipedOutputStream ();
-		pipeStage50in = new PipedInputStream (pipeStage50out);
+		pipeStage50in = new PipedInputStream (pipeStage50out, PIPE_SIZE);
 
 		System.out.println("Share pipes");
 
@@ -245,7 +248,7 @@ public final class FiveStage444 {
 			solution = null;
 			while (solution == null) {
 				try{
-					Thread.currentThread().sleep(100);
+					Thread.currentThread().sleep(10);
 					myPipeIn = new ObjectInputStream(pipeStage50in);
 					solution = (SolverState) myPipeIn.readObject();
 				}
@@ -264,13 +267,11 @@ public final class FiveStage444 {
 	}
 
 	public static void stopThreads () {
-		int[] move_list = new int[1];
-		move_list[0] = 0;
 		CubeState cc = new CubeState();
 		ObjectOutputStream myPipeOut = null;
 		try{
 			myPipeOut = new ObjectOutputStream (pipeStage01out);
-			myPipeOut.writeObject(new SolverState(null, -1, move_list, 0, 0)); // metric = -1 -> stop
+			myPipeOut.writeObject(new SolverState(null, -1, null, 0, 0)); // metric = -1 -> stop
 		}
 		catch (java.io.IOException ioe) { ioe.getMessage(); }
 	}

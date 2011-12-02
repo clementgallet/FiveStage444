@@ -425,10 +425,10 @@ public final class CubeState implements java.io.Serializable{
 	{ Fs, Bs3 }, { Fs3, Bs }, { Fs2, Bs2 }
 	};
 
-	public void scramble (int move_count, int[] move_arr){
+	public void scramble (int move_count, byte[] move_arr){
 		int i;
 		for (i = 0; i < move_count; ++i) {
-			int mc = move_arr[i];
+			byte mc = move_arr[i];
 			if (mc >= Ufs) {
 				do_move (dbltwists[mc - Ufs][0]);
 				do_move (dbltwists[mc - Ufs][1]);

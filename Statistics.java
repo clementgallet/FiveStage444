@@ -2,8 +2,8 @@ package fivestage444;
 
 public final class Statistics{
 
-	static int[][] nodeNumber = new int[6][30];
-	static int[][] leafNumber = new int[6][30];
+	static long[][] nodeNumber = new long[6][30];
+	static long[][] leafNumber = new long[6][30];
 
 	Statistics(){
 		int i, j;
@@ -43,7 +43,7 @@ public final class Statistics{
 
 		System.out.println("");
 		System.out.println( "Leaf number:" );
-		for (i=i; i<=5; i++){
+		for (i=1; i<=5; i++){
 			System.out.println("Stage "+i);
 			System.out.println("Depth\tNumber");
 
