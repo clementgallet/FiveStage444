@@ -66,41 +66,37 @@ public final class Stage1Solver extends StageSolver{
 			Statistics.addLeaf(1, goal);
 			return true; // true: take the first solution, false: take all solutions
 		}
-		int dist = cube1.prune_funcCOR_STAGE1();
-		if (dist <= depth) {
-			dist = cube1.prune_funcEDGE_STAGE1();
-		}
-		if (dist <= depth) {
-			for (mov_idx = 0; mov_idx < n_moves_metric_stg1[metric]; ++mov_idx) {
-				boolean did_move = false;
-				cube2.m_co = cube1.m_co;
-				cube2.m_edge_ud_combo8 = cube1.m_edge_ud_combo8;
-				switch (metric) {
-				case 0:
-					if ((stage1_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) { // TODO: make this for the other metrics.
-						cube2.do_move (mov_idx);
-						did_move = true;
-					}
-					break;
-				case 1:
-					for (j = 0; stage1_twist_moves[mov_idx][j] >= 0; ++j) {
-						mc = stage1_twist_moves[mov_idx][j];		//!!! metric dependency
-						cube2.do_move (mc);		//!!! metric dependency
-					}
+		for (mov_idx = 0; mov_idx < n_moves_metric_stg1[metric]; ++mov_idx) {
+			boolean did_move = false;
+			cube2.m_co = cube1.m_co;
+			cube2.m_edge_ud_combo8 = cube1.m_edge_ud_combo8;
+			switch (metric) {
+			case 0:
+				if ((stage1_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) { // TODO: make this for the other metrics.
+					cube2.do_move (mov_idx);
 					did_move = true;
-					break;
-				case 2:
-					for (j = 0; stage1_block_moves[mov_idx][j] >= 0; ++j) {
-						mc = stage1_block_moves[mov_idx][j];		//!!! metric dependency
-						cube2.do_move (mc);		//!!! metric dependency
-					}
-					did_move = true;
-					break;
 				}
-				if (did_move) {
-					move_list[moves_done] = (byte)mov_idx;
-					if (treeSearch (cube2, depth - 1, moves_done + 1, mov_idx)) return true;
+				break;
+			case 1:
+				for (j = 0; stage1_twist_moves[mov_idx][j] >= 0; ++j) {
+					mc = stage1_twist_moves[mov_idx][j];		//!!! metric dependency
+					cube2.do_move (mc);		//!!! metric dependency
 				}
+				did_move = true;
+				break;
+			case 2:
+				for (j = 0; stage1_block_moves[mov_idx][j] >= 0; ++j) {
+					mc = stage1_block_moves[mov_idx][j];		//!!! metric dependency
+					cube2.do_move (mc);		//!!! metric dependency
+				}
+				did_move = true;
+				break;
+			}
+			if (did_move) {
+				if (cube2.prune_funcCOR_STAGE1() > depth-1) continue;
+				if (cube2.prune_funcEDGE_STAGE1() > depth-1) continue;
+				move_list[moves_done] = (byte)mov_idx;
+				if (treeSearch (cube2, depth - 1, moves_done + 1, mov_idx)) return true;
 			}
 		}
 		return false;

@@ -244,20 +244,18 @@ public final class Stage2Solver extends StageSolver{
 	}
 
 	public boolean treeSearch (CubeStage2 cube1, int depth, int moves_done, int move_state){
-	//Statistics.addNode(2, depth);
-	CubeStage2 cube2 = new CubeStage2();
-	int mov_idx, mc, j;
-	int next_ms = 0;
-	if (depth == 0) {
-		if (! cube1.is_solved ()) {
-			return false;
+		//Statistics.addNode(2, depth);
+		CubeStage2 cube2 = new CubeStage2();
+		int mov_idx, mc, j;
+		int next_ms = 0;
+		if (depth == 0) {
+			if (! cube1.is_solved ()) {
+				return false;
+			}
+			pushState();
+			Statistics.addLeaf(2, goal);
+			return true; // true: take the first solution, false: take all solutions.
 		}
-		pushState();
-		Statistics.addLeaf(2, goal);
-		return true; // true: take the first solution, false: take all solutions.
-	}
-	int dist = cube1.prune_funcEDGCEN_STAGE2 ();
-	if (dist <= depth) {
 		if (metric == 1 && depth >= 2) { // TODO: maybe put this on bottom of the search tree...
 			for (mov_idx = 0; mov_idx < N_STAGE2_2TWIST_MOVES; ++mov_idx) {
 				int mtype = stage2_2twist_types[mov_idx];
@@ -314,6 +312,7 @@ public final class Stage2Solver extends StageSolver{
 				break;
 			}
 			if (did_move) {
+				if (cube2.prune_funcEDGCEN_STAGE2() > depth-1) continue;
 				mc = mov_idx;
 				switch (metric) {
 				case 1:
@@ -327,9 +326,8 @@ public final class Stage2Solver extends StageSolver{
 				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms)) return true;
 			}
 		}
+		return false;
 	}
-	return false;
-}
 
 	int rotateCube(CubeState cube, byte[] sol_move_list){
 		int i;
