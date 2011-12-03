@@ -145,7 +145,7 @@ public final class Stage5Solver extends StageSolver{
 	}
 
 	public boolean treeSearch (CubeSqsCoord cube1, int depth, int moves_done, int move_state){
-	Statistics.addNode(5, depth);
+	//Statistics.addNode(5, depth);
 	int mov_idx, mc, j;
 	int next_ms = 0;
 	if (depth == 0) {

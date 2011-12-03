@@ -9,14 +9,11 @@ public final class Stage1Solver extends StageSolver{
 
 	private static int n_moves_metric_stg1[] = { N_BASIC_MOVES, N_STAGE1_TWIST_MOVES, N_STAGE1_BLOCK_MOVES};
 
-	private static int stage1_stm_next_ms[] = 
-{ SL_MS_U,SL_MS_U,SL_MS_U,SL_MS_u,SL_MS_u,SL_MS_u,SL_MS_D,SL_MS_D,SL_MS_D,SL_MS_d,SL_MS_d,SL_MS_d,SL_MS_L,SL_MS_L,SL_MS_L,SL_MS_l,SL_MS_l,SL_MS_l,SL_MS_R,SL_MS_R,SL_MS_R,SL_MS_r,SL_MS_r,SL_MS_r,SL_MS_F,SL_MS_F,SL_MS_F,SL_MS_f,SL_MS_f,SL_MS_f,SL_MS_B,SL_MS_B,SL_MS_B,SL_MS_b,SL_MS_b,SL_MS_b };
-
 	private static long stage1_slice_moves_to_try [] = {
-	0xFFFFFFFFFL,
-	0xFFFFFFFF8L, 0xFFFFFFFC0L, 0xFFFFFF1C0L, 0xFFFFFF000L,
-	0xFFFFF8FFFL, 0xFFFFC0FFFL, 0xFFF1C0FFFL, 0xFFF000FFFL,
-	0xFF8FFFFFFL, 0xFC0FFFFFFL, 0x1C0FFFFFFL, 0x000FFFFFFL};
+	0xFFFFFFFF8L, 0xFFFFFFFF8L, 0xFFFFFFFF8L, 0xFFFFFFB40L, 0xFFFFFFD80L, 0xFFFFFF6C0L, 0xFFFFFFC00L, 0xFFFFFFA00L, 0xFFFFFF600L, 0xFFFFFF000L, 0xFFFFFF000L, 0xFFFFFF000L,
+	0xFFFFF8FFFL, 0xFFFFF8FFFL, 0xFFFFF8FFFL, 0xFFFB40FFFL, 0xFFFD80FFFL, 0xFFF6C0FFFL, 0xFFFC00FFFL, 0xFFFA00FFFL, 0xFFF600FFFL, 0xFFF000FFFL, 0xFFF000FFFL, 0xFFF000FFFL,
+	0xFF8FFFFFFL, 0xFF8FFFFFFL, 0xFF8FFFFFFL, 0xB40FFFFFFL, 0xD80FFFFFFL, 0x6C0FFFFFFL, 0xC00FFFFFFL, 0xA00FFFFFFL, 0x600FFFFFFL, 0x000FFFFFFL, 0x000FFFFFFL, 0x000FFFFFFL,
+	0xFFFFFFFFFL};
 
 	private CubeStage1 cube = new CubeStage1();
 
@@ -47,7 +44,7 @@ public final class Stage1Solver extends StageSolver{
 		while (pullState()) {
 			foundSol = false;
 			for (goal = 0; goal <= 30; ++goal) {
-				treeSearch (cube, goal, 0, 0);
+				treeSearch (cube, goal, 0, N_BASIC_MOVES);
 				if (foundSol)
 					break;
 			}
@@ -58,10 +55,9 @@ public final class Stage1Solver extends StageSolver{
 	}
 
 	private boolean treeSearch (CubeStage1 cube1, int depth, int moves_done, int move_state){
-		Statistics.addNode(1, depth);
+		//Statistics.addNode(1, depth);
 		CubeStage1 cube2 = new CubeStage1();
 		int mov_idx, mc, j;
-		int next_ms = 0;
 		if (depth == 0) {
 			if (! cube1.is_solved ()) {
 				return false;
@@ -83,7 +79,6 @@ public final class Stage1Solver extends StageSolver{
 				case 0:
 					if ((stage1_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) { // TODO: make this for the other metrics.
 						cube2.do_move (mov_idx);
-						next_ms = stage1_stm_next_ms[mov_idx];
 						did_move = true;
 					}
 					break;
@@ -104,7 +99,7 @@ public final class Stage1Solver extends StageSolver{
 				}
 				if (did_move) {
 					move_list[moves_done] = (byte)mov_idx;
-					if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms)) return true;
+					if (treeSearch (cube2, depth - 1, moves_done + 1, mov_idx)) return true;
 				}
 			}
 		}

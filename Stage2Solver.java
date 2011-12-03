@@ -244,7 +244,7 @@ public final class Stage2Solver extends StageSolver{
 	}
 
 	public boolean treeSearch (CubeStage2 cube1, int depth, int moves_done, int move_state){
-	Statistics.addNode(2, depth);
+	//Statistics.addNode(2, depth);
 	CubeStage2 cube2 = new CubeStage2();
 	int mov_idx, mc, j;
 	int next_ms = 0;
