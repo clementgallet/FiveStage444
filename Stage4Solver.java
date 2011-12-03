@@ -25,9 +25,9 @@ public final class Stage4Solver extends StageSolver{
 
 	private static int stage4_slice_moves_to_try [] = {
 	0xFFFF,
-	0xFFF8, 0xFFF0, 0xFF70, 0xFF00,
-	0xFEFF, 0xFCFF, 0xF4FF, 0xF0FF,
-	0xEFFF, 0xCFFF, 0x4FFF, 0x0FFF
+	0xFFF8, 0xFF30, 0xFF30, 0xFF00,
+	0xFEFF, 0xF0FF, 0xF0FF, 0xF0FF,
+	0xEFFF, 0x0FFF, 0x0FFF, 0x0FFF
 	};
 
 	private CubeStage4 cube = new CubeStage4();
@@ -62,7 +62,7 @@ public final class Stage4Solver extends StageSolver{
 	}
 
 	public boolean treeSearch (CubeStage4 cube1, int depth, int moves_done, int move_state){
-	//Statistics.addNode(4, depth);
+	Statistics.addNode(4, depth);
 	CubeStage4 cube2 = new CubeStage4();
 	int mov_idx, mc, j;
 	int next_ms = 0;

@@ -222,6 +222,7 @@ public final class FiveStage444 {
 		stage3Solver = new Stage3Solver(pipeStage23in, pipeStage34out);
 		stage4Solver = new Stage4Solver(pipeStage34in, pipeStage45out);
 		stage5Solver = new Stage5Solver(pipeStage45in, pipeStage50out);
+		stage5Solver.setPriority(Thread.NORM_PRIORITY+1);
 
 		stage1Solver.start();
 		stage2Solver.start();

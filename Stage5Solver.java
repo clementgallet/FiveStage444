@@ -23,9 +23,9 @@ public final class Stage5Solver extends StageSolver{
 	private static int n_moves_metric_stg5[] = { N_SQMOVES, N_SQ_TWIST_MOVES, N_SQ_BLOCK_MOVES};
 
 	private static int sqs_slice_moves_to_try [] = {
-	0xFFE, 0xFFC, 0xFF8, 0xFF0,
-	0xFEF, 0xFCF, 0xF8F, 0xF0F,
-	0xEFF, 0xCFF, 0x8FF, 0x0FF,
+	0xFFE, 0xFF0, 0xFF0, 0xFF0,
+	0xFEF, 0xF0F, 0xF0F, 0xF0F,
+	0xEFF, 0x0FF, 0x0FF, 0x0FF,
 	0xFFF
 };
 
@@ -145,8 +145,7 @@ public final class Stage5Solver extends StageSolver{
 	}
 
 	public boolean treeSearch (CubeSqsCoord cube1, int depth, int moves_done, int move_state){
-	//Statistics.addNode(5, depth);
-	CubeSqsCoord cube2 = new CubeSqsCoord();
+	Statistics.addNode(5, depth);
 	int mov_idx, mc, j;
 	int next_ms = 0;
 	if (depth == 0) {
@@ -162,6 +161,7 @@ public final class Stage5Solver extends StageSolver{
 		dist = cube1.prune_funcCENCOR_STAGE5 ();
 	}
 	if (dist <= depth) {
+		CubeSqsCoord cube2 = new CubeSqsCoord();
 		for (mov_idx = 0; mov_idx < n_moves_metric_stg5[metric]; ++mov_idx) {
 			boolean did_move = false;
 			cube2.m_cen12x12x12 = cube1.m_cen12x12x12;

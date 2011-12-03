@@ -58,7 +58,7 @@ public final class Stage1Solver extends StageSolver{
 	}
 
 	private boolean treeSearch (CubeStage1 cube1, int depth, int moves_done, int move_state){
-		//Statistics.addNode(1, depth);
+		Statistics.addNode(1, depth);
 		CubeStage1 cube2 = new CubeStage1();
 		int mov_idx, mc, j;
 		int next_ms = 0;

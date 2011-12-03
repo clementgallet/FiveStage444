@@ -12,8 +12,6 @@ public final class SolverState implements java.io.Serializable{
 		int i;
 		this.cube = cube;
 		this.metric = metric;
-		//for (i=0; i < move_count; ++i)
-		//	this.move_list[i] = (byte)move_list[i];
 		this.move_list = move_list;
 		this.move_count = move_count;
 		this.rotate = rotate;
