@@ -83,6 +83,8 @@ public final class Stage3Solver extends StageSolver{
 				if (mc >= 0) {
 					cube2.do_move (mc);
 				}
+				if (cube2.prune_funcCEN_STAGE3() > depth-1) continue;
+				if (cube2.prune_funcEDGE_STAGE3() > depth-1) continue;
 				move_list[moves_done] = (byte)stage3_twist_map1[Constants.N_STAGE3_TWIST_MOVES + mov_idx];
 				move_list[moves_done + 1] = (byte)stage3_twist_map2[Constants.N_STAGE3_TWIST_MOVES + mov_idx];
 				if (treeSearch (cube2, depth - 2, moves_done + 2, next_ms)) return true;

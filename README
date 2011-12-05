@@ -1,10 +1,101 @@
+============
+Introduction
+============
+
 The five stage solver for 4x4x4 is C++ program originally written by Bruce Norskog. Some information can be found on this page: http://cubezzz.dyndns.org/drupal/?q=node/view/62 and on other posts by Bruce on the same forum.
 This is an attempt to use it as a WCA scrambler program.
 
 Some conditions are required for this:
 - it must print sufficiently short scrambles. Actual WCA scrambles are 40 twist turns long, so it should be close to this.
 - it must generate solutions in a reasonable amount of time, less than a few seconds.
-- it must not use big stored tables, as the program should be able to be distributed. Well, the program could generate and store those table locally during the first execution, but it's not very nice.
+- it should not use big stored tables, as the program should be able to be distributed. Well, the program could generate and store those table locally during the first execution, but it's not very nice.
 - it must be written in java, to be incorporated in Jeremy's awesome noodle program.
 
 About first point, Bruce's program outputs solutions in 53 block turns on average and 66 twist turns (see old_doc.txt for metric definition), so the program should be improved to get shorter solutions. Current program only take the first best solution of every stage. An idea would be to try every solution for every stage...
+
+=========================
+Description of the stages
+=========================
+
+Stage 1
+Orient the corner cubies, and put the u- and d-layer edges into those two layers. (A d-layer edge may be in u layer, and a u-layer edge may be in the d layer.)
+All slice turns allowed:
+        U,U',U2,u,u',u2,D,D',D2,d,d',d2,
+        L,L',L2,l,l',l2,R,R',R2,r,r',r2,
+        F,F',F2,f,f',f2,B,B',B2,b,b',b2
+One-time whole cube rotations allowed:
+120-degree turns (either direction) about the UFL-DBR axis.
+
+Stage 2
+Put front and back centers onto the front and back faces into one of the twelve configurations that can be solved using only half-turn moves. Arrange u- and d-layer edges within the u- and d-layers so that they will be in one of the 96 configurations that can be solved using only half-turn moves.
+Slice turns allowed:
+        U,U',U2,u,u',u2,D,D',D2,d,d',d2,
+        L2,l2,R2,r2,
+        F2,f,f',f2,B2,b,b',b2
+One-time whole cube rotations allowed:
+90-degree turn about U-D axis.
+
+Stage 3
+Put centers for left and right faces into the left and right faces so that they are in one of the 12 configurations that can be solved using only half-turn moves. This leaves the centers for the U and D faces arbitrarily arranged in the U and D faces. Put top and and bottom layer edges into positions such that the U or D facelet is facing either up or down. Also, put these edges into an even permutation.
+Slice turns allowed:
+        U,U',U2,u2,D,D',D2,d2,
+        L2,l2,R2,r2,
+        F2,f,f',f2,B2,b,b',b2
+
+Stage 4
+Put corners into one of the 96 configurations that can be solved using only half-turn moves. Put U and D centers into one of the 12 configurations that can be solved using only half-turn moves. Put all U- and D-layer edges into a configuration that can be solved using only half-turn moves. This consists of 96 possible configurations for the l- and r-layer edges, and 96 for the f- and b-layer edges.
+Slice turns to use:
+        U,U',U2,u2,D,D',D2,d2,
+        L2,l2,R2,r2,
+        F2,f2,B2,b2
+
+Stage 5
+Put all cubies into their solved position.
+Slice turns allowed:
+        U2,u2,D2,d2,
+        L2,l2,R2,r2,
+        F2,f2,B2,b2
+One-time whole cube rotations allowed:
+180-degree turns about U-D, F-B, L-R axes.
+
+========
+Analysis
+========
+
+Stage       Positions          Unique
+-------------------------------------
+  1     1,608,475,077     100,545,012
+  2    21,622,847,400   2,703,114,810
+  3    23,189,166,000   2,898,889,420
+  4     2,593,080,000     162,371,132
+  5   146,767,085,568   3,080,465,032
+
+======
+Memory
+======
+
+Move tables          Positions        Moves        Size        Memory (byte)
+------------------------------------------------------------------------------
+stage 1 edges          735,471           36           4          105,907,824
+stage 1 corners          2,187           18           2               78,732
+stage 2 centers         10,626           28           2              595,056
+stage 2 edges              420           28           2               23,520
+stage 3 centers        900,900           20           4           72,072,000
+stage 3 edges           12,870           20           2              514,800
+stage 4 edges           88,200           16           4            5,644,800
+stage 4 corners            420           16           2               13,440
+stage 4 centers             70           16           1                1,120
+stage 5 edges/corners       96            6           1                  576
+stage 5 centers             12            6           1                   72
+
+Pruning tables              Positions        Memory (byte)
+----------------------------------------------------------
+stage 1 edges                 735,471              367,736
+stage 1 corners                 2,187                1,094
+stage 2 centers/edges       4,462,920            2,231,460
+stage 3 centers               900,900              450,450
+stage 3 edges                  25,740               12,870
+stage 4 corners/centers        29,400               14,700
+stage 4 edges/centers       6,174,000            3,087,000
+stage 5 centers/corners       165,888               82,944
+stage 5 edges/corners      84,934,656           42,467,328

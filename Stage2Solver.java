@@ -267,6 +267,7 @@ public final class Stage2Solver extends StageSolver{
 						mc = stage2_2twist_moves[mov_idx][j];		//!!! metric dependency
 						cube2.do_move (mc);		//!!! metric dependency
 					}
+					if (cube2.prune_funcEDGCEN_STAGE2() > depth-1) continue;
 					next_ms = stage2_twist_next_ms[move_state][mtype];
 					move_list[moves_done] = (byte)stage2_twist_map1[Constants.N_STAGE2_TWIST_MOVES + mov_idx];
 					move_list[moves_done + 1] = (byte)stage2_twist_map2[Constants.N_STAGE2_TWIST_MOVES + mov_idx];
