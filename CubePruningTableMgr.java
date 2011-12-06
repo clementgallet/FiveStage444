@@ -154,31 +154,27 @@ public final class CubePruningTableMgr {
 
 		/*** Stage 2 ***/
 		System.out.println("Stage2...");
-		int clocfx, clocbx;
+		int clocfx;
 		fname = new File( Constants.datafiles_path, "stage2_" + metric_names[metric] + "_edgcen_prune.rbk" );
 		if (! fname.exists() ) {
 			stage2_solved.init ();
 			clocfx = Tables.stage2_cen_to_cloc4sf (stage2_solved.m_centerFB);
-			clocbx = Tables.stage2_cen_to_cloc4sb (stage2_solved.m_centerFB);
 			solved_table[0] = Constants.N_STAGE2_EDGE_CONFIGS*clocfx + stage2_solved.m_edge;
 
 			stage2_solved2.m_centerFB = stage2_solved.m_centerFB;
 			stage2_solved2.m_edge = stage2_solved.m_edge;
 			stage2_solved2.do_whole_cube_move (1);
 			clocfx = Tables.stage2_cen_to_cloc4sf (stage2_solved2.m_centerFB);
-			clocbx = Tables.stage2_cen_to_cloc4sb (stage2_solved2.m_centerFB);
 			solved_table[1] = Constants.N_STAGE2_EDGE_CONFIGS*clocfx + stage2_solved2.m_edge;
 
 			cs1.init ();
 			cs1.invert_fbcen ();
 			cs1.convert_to_stage2 (stage2_solved2);
 			clocfx = Tables.stage2_cen_to_cloc4sf (stage2_solved2.m_centerFB);
-			clocbx = Tables.stage2_cen_to_cloc4sb (stage2_solved2.m_centerFB);
 			solved_table[2] = Constants.N_STAGE2_EDGE_CONFIGS*clocfx + stage2_solved2.m_edge;
 
 			stage2_solved2.do_whole_cube_move (1);
 			clocfx = Tables.stage2_cen_to_cloc4sf (stage2_solved2.m_centerFB);
-			clocbx = Tables.stage2_cen_to_cloc4sb (stage2_solved2.m_centerFB);
 			solved_table[3] = Constants.N_STAGE2_EDGE_CONFIGS*clocfx + stage2_solved2.m_edge;
 
 			for (i = 0; i < 5; ++i) {
@@ -189,23 +185,19 @@ public final class CubePruningTableMgr {
 				}
 				cs1.convert_to_stage2 (stage2_solved2);
 				clocfx = Tables.stage2_cen_to_cloc4sf (stage2_solved2.m_centerFB);
-				clocbx = Tables.stage2_cen_to_cloc4sb (stage2_solved2.m_centerFB);
 				solved_table[4*i + 4] = Constants.N_STAGE2_EDGE_CONFIGS*clocfx + stage2_solved2.m_edge;
 
 				stage2_solved2.do_whole_cube_move (1);
 				clocfx = Tables.stage2_cen_to_cloc4sf (stage2_solved2.m_centerFB);
-				clocbx = Tables.stage2_cen_to_cloc4sb (stage2_solved2.m_centerFB);
 				solved_table[4*i + 5] = Constants.N_STAGE2_EDGE_CONFIGS*clocfx + stage2_solved2.m_edge;
 
 				cs1.invert_fbcen ();
 				cs1.convert_to_stage2 (stage2_solved2);
 				clocfx = Tables.stage2_cen_to_cloc4sf (stage2_solved2.m_centerFB);
-				clocbx = Tables.stage2_cen_to_cloc4sb (stage2_solved2.m_centerFB);
 				solved_table[4*i + 6] = Constants.N_STAGE2_EDGE_CONFIGS*clocfx + stage2_solved2.m_edge;
 
 				stage2_solved2.do_whole_cube_move (1);
 				clocfx = Tables.stage2_cen_to_cloc4sf (stage2_solved2.m_centerFB);
-				clocbx = Tables.stage2_cen_to_cloc4sb (stage2_solved2.m_centerFB);
 				solved_table[4*i + 7] = Constants.N_STAGE2_EDGE_CONFIGS*clocfx + stage2_solved2.m_edge;
 			}
 
