@@ -1,8 +1,11 @@
 package fivestage444;
 
+/**
+ * Class containing all the constants used in the program, and some usefull functions.
+ */
 public final class Constants{
 
-	public static final String datafiles_path = "/home/clement/Cube/programs/fivestage444/";
+	public static final String datafiles_path = "./";
 
 	public static final int N_CORNER_ORIENT = 2187;
 
@@ -709,6 +712,12 @@ public final class Constants{
 	{60, 57, 54, 58, 55, 61}, {61, 58, 55, 57, 54, 60}, {62, 59, 56, 59, 56, 62}
 	};
 
+	/**
+	 * Extract an element from a table that stores two numbers per byte.
+	 * @param x	table index
+	 * @param p	table
+	 * @return	extracted value
+	 */
 	public static final int get_dist_4bit (int x, byte[] p)
 	{
 		int x2 = x >> 1;
@@ -719,6 +728,13 @@ public final class Constants{
 		return (p[x2] >> 4) & 0xF;
 	}
 
+	/**
+	 * Converts an array of integers from 0 to n-1 into a corresponding number from 0 to n!-1.
+	 * @param n		cardinal of the permutation
+	 * @param array_in	permutation
+	 * @param offset	index of the first element where the permutation starts in the table (can be >0)
+	 * @return		an integer representing the permutation
+	 */
 	public static final int perm_n_pack (int n, byte[] array_in, int offset)
 	{
 		int idx;
@@ -738,6 +754,13 @@ public final class Constants{
 		return idx;
 	}
 
+	/**
+	 * Converts an integer into a permutation represented as an array of integers from 0 to n-1.
+	 * @param n		cardinal of the permutation
+	 * @param idx		an integer representing the permutation
+	 * @param array_out	the permutation coded as an array of integers
+	 * @param offset	index of the first element where the permutation is written in the table (can be >0)
+	 */
 	public static final void perm_n_unpack (int n, int idx, byte[] array_out, int offset)
 	{
 		int i, j;
@@ -754,6 +777,12 @@ public final class Constants{
 		}
 	}
 
+	/**
+	 * Compute the next permutation of an array of integers.
+	 * @param array		array of integers representing the permutation
+	 * @param length	length of the array
+	 * @param offset	index of the first element where the permutation starts in the table (can be >0)
+	 */
 	public static final void nextPerm (byte[] array, int length, int offset){
 		int j = length - 2;
 		while (j >= 0 && ( array[j+offset] >= array[j+1+offset] ))
@@ -790,6 +819,10 @@ public final class Constants{
 	0x0F, 0xF0, 0x55, 0xAA, 0x5A, 0xA5, 0x69, 0x96, 0x66, 0x99, 0x3C, 0xC3
 	};
 
+	/**
+	 * Interface that will be used to fill pruning tables.
+	 * @see CubePruningTableMgr
+	 */
 	public interface DoMove{
 		public int do_move(int idx, int move_code); 
 	}
