@@ -111,9 +111,58 @@ public final class CubeState implements java.io.Serializable{
 
 	public void compose_edge (CubeState cs1, CubeState cs2){
 		int i;
-		// *this = cs1; // Is this necessary ? 
 		for (i = 0; i < 24; ++i)
 			m_edge[i] = cs1.m_edge[cs2.m_edge[i]];
+	}
+
+	public void conjugate (int symIdx){
+		int i;
+		CubState cs = new CubeState();
+		copyTo(cs);
+
+		// Transform centers into unique facelets.
+		int[] cenN = new int[6]
+		for (i = 0; i < 6; ++i) cenN[i] = 0;
+
+		for (i = 0; i < 24; ++i){
+			cs.m_cen[i] = cs.m_cen[i] * 4 + cenN[cs.m_cen[i]]++;
+		}
+
+		// Conjugate edges and centers.
+		for (i = 0; i < 24; ++i)
+			m_edge[i] = Symmetry.symEdges[symIdx][cs.m_edge[Symmetry.symEdges[Symmetry.invSymIdx[symIdx]][i]]];
+			m_cen[i] = Symmetry.symCenters[symIdx][cs.m_cen[Symmetry.symCenters[Symmetry.invSymIdx[symIdx]][i]]];
+		}
+
+		// Transform centers back.
+		for (i = 0; i < 24; ++i){
+			m_cen[i] /= 4;
+		}
+
+
+		// Conjugate corners (in two phases).
+		for (i = 0; i < 8; ++i)
+			temp_c_orient = cs.m_cor[Symmetry.symCornersPerm[Symmetry.invSymIdx[symIdx]][i]] / 8;
+			temp_c_orient += Symmetry.symCornersOrient[Symmetry.invSymIdx[symIdx]][i] % 3;
+			if (Symmetry.symCornersOrient[Symmetry.invSymIdx[symIdx]][i] >= 3)
+				temp_c_orient += 3;
+			m_cor[i] = 8*temp_c_orient + (cs.m_cor[Symmetry.symCornersPerm[Symmetry.invSymIdx[symIdx]][i]] % 8);
+		}
+
+		// Copy again to copy cube for the second phase.
+		for (i = 0; i < 8; ++i)
+			cs.m_cor[i] = m_cor[i];
+		}
+
+		// Second phase.
+		for (i = 0; i < 8; ++i)
+			temp_c_orient = Symmetry.symCornersOrient[symIdx][(cs.m_cor[i] % 8)] / 8;
+			if (temp_c_orient >= 3)
+				temp_c_orient = (3 + temp_c_orient - (cs.m_cor[i] / 8)) % 3;
+			else
+				temp_c_orient = (temp_c_orient + (cs.m_cor[i] / 8)) % 3;
+			m_cor[i] = 8*temp_c_orient + (Symmetry.symCornersPerm[symIdx][(cs.m_cor[i] % 8)] % 8);
+		}
 	}
 
 	public void invert_fbcen (){
