@@ -7,6 +7,9 @@ public final class Constants{
 
 	public static final String datafiles_path = "./";
 
+	public static final int N_SYM = 48;
+	public static final int N_SYM_STAGE1 = 16;
+
 	public static final int N_CORNER_ORIENT = 2187;
 
 	public static final int N_SQS_EDGE_PERM = 96*96*96;
@@ -14,6 +17,7 @@ public final class Constants{
 	public static final int N_SQS_CORNER_PERM = 96;
 
 	public static final int N_EDGE_COMBO8 = 735471;	// 24!/(16!*8!)
+	public static final int N_SYMEDGE_COMBO8 = 46371; // Don't know exactly how many...
 
 	public static final int N_STAGE2_EDGE_CONFIGS = 420;
 	public static final int N_STAGE2_CENTER_CONFIGS = 51482970;	// 24!/(16!*24*24)

@@ -4,6 +4,7 @@ public final class CubeStage1 {
 
 	public short m_co; // corner orientation (2187)
 	public int m_edge_ud_combo8; // (735471)
+	public int m_sym_edge_ud_combo8; // (46371)
 
 	public static byte[] prune_table_cor1 = new byte[(Constants.N_CORNER_ORIENT+1)/2];
 	public static byte[] prune_table_edg1 = new byte[(Constants.N_EDGE_COMBO8+1)/2];
@@ -11,6 +12,28 @@ public final class CubeStage1 {
 	public void init (){
 		m_co = 0;
 		m_edge_ud_combo8 = Constants.N_EDGE_COMBO8 - 1;
+		m_sym_edge_ud_combo8 = 741931;
+	}
+
+	public void computeSymEdge (){
+		CubeState cube = new CubeState();
+		int minEdge = 99999999;
+		int minSym = 0;
+		for (int sym=0; sym < Constants.N_SYM_STAGE1; sym++ ){
+			convert_to_std_cube (cube);
+			cube.conjugate(sym);
+			int ebm = 0;
+			for (int i = 0; i < 24; ++i) {
+				if (cube.m_edge[i] >= 16) {
+					ebm |= (1 << i);
+				}
+			}
+			if( Tables.ebm2eloc[ebm] < minEdge){
+				minEdge = Tables.ebm2eloc[ebm];
+				minSym = sym;
+			}
+		}
+		m_sym_edge_ud_combo8 = Symmetry.getRep(Tables.symEdgeToEdgeSTAGE1, minEdge)*Constants.N_SYM_STAGE1 + minSym;
 	}
 
 	public void do_move (int move_code){
@@ -18,6 +41,24 @@ public final class CubeStage1 {
 		int fmc = Constants.basic_to_face[move_code];
 		if (fmc >= 0)
 			m_co = Tables.move_table_co[m_co][fmc];
+
+		int sym = m_sym_edge_ud_combo8 % Constants.N_SYM_STAGE1;
+		int rep = m_sym_edge_ud_combo8 / Constants.N_SYM_STAGE1;
+
+		int moveConj = Symmetry.moveConjugate[move_code][sym];
+		int newEdge = Tables.move_table_symEdgeSTAGE1[rep][moveConj];
+
+		int newRep = newEdge / Constants.N_SYM_STAGE1;
+		int newSym = newEdge % Constants.N_SYM_STAGE1;
+
+		m_sym_edge_ud_combo8 = newRep * Constants.N_SYM_STAGE1 + Symmetry.symIdxMultiply[newSym][sym]; // TODO: Replace all /% by <<>>
+
+		/*
+		int bakSym = m_sym_edge_ud_combo8;
+		computeSymEdge ();
+		if( (bakSym) != (m_sym_edge_ud_combo8) )
+			System.out.println("Error sym edge1. symTable:"+bakSym+"-symComp:"+m_sym_edge_ud_combo8);
+		*/
 	}
 
 	public void do_whole_cube_move (int whole_cube_move){
@@ -45,12 +86,22 @@ public final class CubeStage1 {
 		}
 	}
 
-	public boolean is_solved (){
+	/*public boolean is_solved (){
 		if (m_co == 0 && m_edge_ud_combo8 == 735470)
 			return true;
 		if (m_co == 1373 && m_edge_ud_combo8 == 722601)
 			return true;
 		if (m_co == 1906 && m_edge_ud_combo8 == 0)
+			return true;
+		return false;
+	}*/
+	
+	public boolean is_solved (){
+		if (m_co == 0 && (m_sym_edge_ud_combo8 >> 16) == 46370)
+			return true;
+		if (m_co == 1373 && (m_sym_edge_ud_combo8 & 0xFFFFFF2) == 2)
+			return true;
+		if (m_co == 1906 && (m_sym_edge_ud_combo8 & 0xFFFFFF2) == 0)
 			return true;
 		return false;
 	}

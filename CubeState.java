@@ -117,19 +117,20 @@ public final class CubeState implements java.io.Serializable{
 
 	public void conjugate (int symIdx){
 		int i;
-		CubState cs = new CubeState();
+		byte temp_c_orient;
+		CubeState cs = new CubeState();
 		copyTo(cs);
 
 		// Transform centers into unique facelets.
-		int[] cenN = new int[6]
+		int[] cenN = new int[6];
 		for (i = 0; i < 6; ++i) cenN[i] = 0;
 
 		for (i = 0; i < 24; ++i){
-			cs.m_cen[i] = cs.m_cen[i] * 4 + cenN[cs.m_cen[i]]++;
+			cs.m_cen[i] = (byte)(cs.m_cen[i] * 4 + cenN[cs.m_cen[i]]++);
 		}
 
 		// Conjugate edges and centers.
-		for (i = 0; i < 24; ++i)
+		for (i = 0; i < 24; ++i){
 			m_edge[i] = Symmetry.symEdges[symIdx][cs.m_edge[Symmetry.symEdges[Symmetry.invSymIdx[symIdx]][i]]];
 			m_cen[i] = Symmetry.symCenters[symIdx][cs.m_cen[Symmetry.symCenters[Symmetry.invSymIdx[symIdx]][i]]];
 		}
@@ -141,27 +142,27 @@ public final class CubeState implements java.io.Serializable{
 
 
 		// Conjugate corners (in two phases).
-		for (i = 0; i < 8; ++i)
-			temp_c_orient = cs.m_cor[Symmetry.symCornersPerm[Symmetry.invSymIdx[symIdx]][i]] / 8;
+		for (i = 0; i < 8; ++i){
+			temp_c_orient = (byte) (cs.m_cor[Symmetry.symCornersPerm[Symmetry.invSymIdx[symIdx]][i]] / 8);
 			temp_c_orient += Symmetry.symCornersOrient[Symmetry.invSymIdx[symIdx]][i] % 3;
 			if (Symmetry.symCornersOrient[Symmetry.invSymIdx[symIdx]][i] >= 3)
 				temp_c_orient += 3;
-			m_cor[i] = 8*temp_c_orient + (cs.m_cor[Symmetry.symCornersPerm[Symmetry.invSymIdx[symIdx]][i]] % 8);
+			m_cor[i] = (byte) (8*temp_c_orient + (cs.m_cor[Symmetry.symCornersPerm[Symmetry.invSymIdx[symIdx]][i]] % 8));
 		}
 
 		// Copy again to copy cube for the second phase.
-		for (i = 0; i < 8; ++i)
+		for (i = 0; i < 8; ++i){
 			cs.m_cor[i] = m_cor[i];
 		}
 
 		// Second phase.
-		for (i = 0; i < 8; ++i)
-			temp_c_orient = Symmetry.symCornersOrient[symIdx][(cs.m_cor[i] % 8)] / 8;
+		for (i = 0; i < 8; ++i){
+			temp_c_orient = (byte) (Symmetry.symCornersOrient[symIdx][(cs.m_cor[i] % 8)]);
 			if (temp_c_orient >= 3)
-				temp_c_orient = (3 + temp_c_orient - (cs.m_cor[i] / 8)) % 3;
+				temp_c_orient = (byte)((3 + temp_c_orient - (cs.m_cor[i] / 8)) % 3);
 			else
-				temp_c_orient = (temp_c_orient + (cs.m_cor[i] / 8)) % 3;
-			m_cor[i] = 8*temp_c_orient + (Symmetry.symCornersPerm[symIdx][(cs.m_cor[i] % 8)] % 8);
+				temp_c_orient = (byte)((temp_c_orient + (cs.m_cor[i] / 8)) % 3);
+			m_cor[i] = (byte) (8*temp_c_orient + Symmetry.symCornersPerm[symIdx][(cs.m_cor[i] % 8)]);
 		}
 	}
 
@@ -485,6 +486,21 @@ public final class CubeState implements java.io.Serializable{
 				do_move (mc);
 			}
 		}
+	}
+
+	public void print (){
+		System.out.print("Edges: ");
+		for (int i=0; i<24; i++)
+			System.out.print(m_edge[i]+"-");
+		System.out.println("");
+		System.out.print("Corners: ");
+		for (int i=0; i<8; i++)
+			System.out.print(m_cor[i]+"-");
+		System.out.println("");
+		System.out.print("Centers: ");
+		for (int i=0; i<24; i++)
+			System.out.print(m_cen[i]+"-");
+		System.out.println("");
 	}
 
 }

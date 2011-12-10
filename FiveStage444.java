@@ -118,6 +118,11 @@ public final class FiveStage444 {
 		int random_count = 100;
 		int metric = 0;
 
+		Symmetry.initSymTables();
+		Symmetry.initInvSymIdx();
+		Symmetry.initSymIdxMultiply();
+		Symmetry.initMoveConjugate();
+
 		new Tables().init_all ();
 		CubePruningTableMgr.init_pruning_tables (metric);
 		try{

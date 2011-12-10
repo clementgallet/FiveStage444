@@ -13,6 +13,8 @@ public final class Tables {
 		threadInitCloc.start();
 		threadInitPerm420.start();
 		threadInitEdgeStage1.start();
+		threadInitSymEdgeToEdgeStage1.start();
+		threadInitSymEdgeStage1.start();
 		threadInitCornerStage1.start();
 		threadInitCenterStage2.start();
 		threadInitEdgeStage2.start();
@@ -42,6 +44,8 @@ public final class Tables {
 		threadInitCloc.join();
 		threadInitPerm420.join();
 		threadInitEdgeStage1.join();
+		threadInitSymEdgeToEdgeStage1.join();
+		threadInitSymEdgeStage1.join();
 		threadInitCornerStage1.join();
 		threadInitCenterStage2.join();
 		threadInitEdgeStage2.join();
@@ -454,6 +458,129 @@ public final class Tables {
 	}
 
 	private InitEdgeStage1 threadInitEdgeStage1 = new InitEdgeStage1();
+
+	/*** init stage 1 symEdgeToEdge ***/
+	public static final int[] symEdgeToEdgeSTAGE1 = new int[Constants.N_SYMEDGE_COMBO8];
+
+	private class InitSymEdgeToEdgeStage1 extends Thread {
+
+	public void run (){
+
+		try{
+		threadInitEbmEloc.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting symEdgeToEdge stage 1..." );
+		int i, sym;
+		byte lrfb, ud;
+		int u, repIdx = 0;
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		cube1.init ();
+		cube2.init ();
+
+		byte[] isRepTable = new byte[Constants.N_EDGE_COMBO8];
+		for (u = 0; u < Constants.N_EDGE_COMBO8; ++u) {
+			if( isRepTable[u] == -1 ) continue;
+			int ebm = eloc2ebm[u];
+			lrfb = 0;
+			ud = 16;
+			for (i = 0; i < 24; ++i) {
+				if ((ebm & (1 << i)) == 0) {
+					cube1.m_edge[i] = lrfb++;
+				} else {
+					cube1.m_edge[i] = ud++;
+				}
+			}
+
+			for (sym = 0; sym < Constants.N_SYM_STAGE1; ++sym) {
+				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
+				cube2.conjugate (sym);
+				ebm = 0;
+				for (i = 0; i < 24; ++i) {
+					if (cube2.m_edge[i] >= 16) {
+						ebm |= (1 << i);
+					}
+				}
+				isRepTable[ebm2eloc[ebm]] = -1; // not a rep.
+			}
+			symEdgeToEdgeSTAGE1[repIdx++] = u;
+		}
+		System.out.println( "Finishing symEdgeToEdge stage 1... generated "+repIdx+" reps." );
+	}
+	}
+
+	private InitSymEdgeToEdgeStage1 threadInitSymEdgeToEdgeStage1 = new InitSymEdgeToEdgeStage1();
+
+	/*** init stage 1 symEdges ***/
+	public static final int[][] move_table_symEdgeSTAGE1 = new int[Constants.N_SYMEDGE_COMBO8][Constants.N_BASIC_MOVES]; // (46371) 46371*36 = 6677424
+
+	private class InitSymEdgeStage1 extends Thread {
+
+	public void run (){
+
+		try{
+		threadInitEbmEloc.join();
+		threadInitSymEdgeToEdgeStage1.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting symEdge stage 1..." );
+		int i, mc;
+		byte lrfb, ud;
+		int u, edge;
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		CubeState cube3 = new CubeState();
+		cube1.init ();
+		cube2.init ();
+		cube3.init ();
+		for (u = 0; u < Constants.N_SYMEDGE_COMBO8; ++u) {
+			int ebm = eloc2ebm[symEdgeToEdgeSTAGE1[u]];
+			lrfb = 0;
+			ud = 16;
+			for (i = 0; i < 24; ++i) {
+				if ((ebm & (1 << i)) == 0) {
+					cube1.m_edge[i] = lrfb++;
+				} else {
+					cube1.m_edge[i] = ud++;
+				}
+			}
+
+			for (mc = 0; mc < Constants.N_BASIC_MOVES; ++mc) {
+				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
+				cube2.rotate_sliceEDGE (mc);
+				int minEdge = 99999999;
+				int minSym = 0;
+				for (int sym=0; sym < Constants.N_SYM_STAGE1; sym++ ){
+					System.arraycopy(cube2.m_edge, 0, cube3.m_edge, 0, 24);
+					cube3.conjugate(sym);
+					ebm = 0;
+					for (i = 0; i < 24; ++i) {
+						if (cube3.m_edge[i] >= 16) {
+							ebm |= (1 << i);
+						}
+					}
+					if( ebm2eloc[ebm] < minEdge){
+						minEdge = ebm2eloc[ebm];
+						minSym = sym;
+					}
+				}
+
+				move_table_symEdgeSTAGE1[u][mc] = Symmetry.getRep(symEdgeToEdgeSTAGE1, minEdge)*Constants.N_SYM_STAGE1 + minSym;
+			}
+		}
+		System.out.println( "Finishing symEdge stage 1..." );
+	}
+	}
+
+	private InitSymEdgeStage1 threadInitSymEdgeStage1 = new InitSymEdgeStage1();
+
 
 	/*** init stage 1 corners ***/
 	public static final short[][] move_table_co = new short[Constants.N_CORNER_ORIENT][Constants.N_FACE_MOVES]; // (2187) 2187*18

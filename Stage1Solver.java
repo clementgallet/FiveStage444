@@ -38,6 +38,7 @@ public final class Stage1Solver extends StageSolver{
 
 	void importState(){
 		ss.cube.convert_to_stage1 (cube);
+		cube.computeSymEdge();
 	}
 
 	public void run (){
@@ -70,6 +71,7 @@ public final class Stage1Solver extends StageSolver{
 			boolean did_move = false;
 			cube2.m_co = cube1.m_co;
 			cube2.m_edge_ud_combo8 = cube1.m_edge_ud_combo8;
+			cube2.m_sym_edge_ud_combo8 = cube1.m_sym_edge_ud_combo8;
 			switch (metric) {
 			case 0:
 				if ((stage1_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) { // TODO: make this for the other metrics.
