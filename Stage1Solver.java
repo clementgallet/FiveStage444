@@ -38,39 +38,34 @@ public final class Stage1Solver extends StageSolver{
 
 	void importState(){
 		ss.cube.convert_to_stage1 (cube);
-		cube.computeSymEdge();
 	}
 
 	public void run (){
 		while (pullState()) {
-			foundSol = false;
-			for (goal = 0; goal <= 30; ++goal) {
-				treeSearch (cube, goal, 0, N_BASIC_MOVES);
-				if (foundSol)
-					break;
-			}
+			treeSearch (cube, 0, N_BASIC_MOVES);
 		}
 
 		pushStopSignal();
 		closePipes();
 	}
 
-	private boolean treeSearch (CubeStage1 cube1, int depth, int moves_done, int move_state){
+	private boolean treeSearch (CubeStage1 cube1, int moves_done, int move_state){
 		//Statistics.addNode(1, depth);
 		CubeStage1 cube2 = new CubeStage1();
 		int mov_idx, mc, j;
-		if (depth == 0) {
-			if (! cube1.is_solved ()) {
-				return false;
+		int dist = CubePruningTableStage1.get_dist(cube1.pruningIdx());
+		if (dist == 3){
+			if (cube1.is_solved ()) {
+				goal = moves_done;
+				pushState();
+				Statistics.addLeaf(1, goal);
+				return true; // true: take the first solution, false: take all solutions
 			}
-			pushState();
-			Statistics.addLeaf(1, goal);
-			return true; // true: take the first solution, false: take all solutions
 		}
 		for (mov_idx = 0; mov_idx < n_moves_metric_stg1[metric]; ++mov_idx) {
 			boolean did_move = false;
 			cube2.m_co = cube1.m_co;
-			cube2.m_edge_ud_combo8 = cube1.m_edge_ud_combo8;
+			//cube2.m_edge_ud_combo8 = cube1.m_edge_ud_combo8;
 			cube2.m_sym_edge_ud_combo8 = cube1.m_sym_edge_ud_combo8;
 			switch (metric) {
 			case 0:
@@ -95,10 +90,9 @@ public final class Stage1Solver extends StageSolver{
 				break;
 			}
 			if (did_move) {
-				if (cube2.prune_funcCOR_STAGE1() > depth-1) continue;
-				if (cube2.prune_funcEDGE_STAGE1() > depth-1) continue;
+				if ((CubePruningTableStage1.get_dist(cube2.pruningIdx()) % 3) != (dist - 1)) continue;
 				move_list[moves_done] = (byte)mov_idx;
-				if (treeSearch (cube2, depth - 1, moves_done + 1, mov_idx)) return true;
+				if (treeSearch (cube2, moves_done + 1, mov_idx)) return true;
 			}
 		}
 		return false;

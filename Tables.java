@@ -12,10 +12,11 @@ public final class Tables {
 		threadInitBm12.start();
 		threadInitCloc.start();
 		threadInitPerm420.start();
-		threadInitEdgeStage1.start();
+		//threadInitEdgeStage1.start();
 		threadInitSymEdgeToEdgeStage1.start();
 		threadInitSymEdgeStage1.start();
 		threadInitCornerStage1.start();
+		threadInitCornerConjStage1.start();
 		threadInitCenterStage2.start();
 		threadInitEdgeStage2.start();
 		threadInitE16Bm.start();
@@ -43,10 +44,11 @@ public final class Tables {
 		threadInitBm12.join();
 		threadInitCloc.join();
 		threadInitPerm420.join();
-		threadInitEdgeStage1.join();
+		//threadInitEdgeStage1.join();
 		threadInitSymEdgeToEdgeStage1.join();
 		threadInitSymEdgeStage1.join();
 		threadInitCornerStage1.join();
+		threadInitCornerConjStage1.join();
 		threadInitCenterStage2.join();
 		threadInitEdgeStage2.join();
 		threadInitE16Bm.join();
@@ -627,6 +629,49 @@ public final class Tables {
 	}
 
 	private InitCornerStage1 threadInitCornerStage1 = new InitCornerStage1();
+
+	/*** init stage 1 corner conjugate ***/
+	public static final short[][] move_table_co_conj = new short[Constants.N_CORNER_ORIENT][Constants.N_SYM]; // (2187) 2187*48
+
+	private class InitCornerConjStage1 extends Thread {
+
+	public void run (){
+
+		try{
+		threadInitEbmEloc.join();
+		threadInit4Of8.join();
+		threadInitPerm420.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting corner conjugate stage 1..." );
+		int i, sym;
+		int u;
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		cube1.init ();
+		cube2.init ();
+		CubeStage1 s1 = new CubeStage1();
+		CubeStage1 s2 = new CubeStage1();
+		s1.init ();
+		s2.init ();
+		for (u = 0; u < Constants.N_CORNER_ORIENT; ++u) {
+			s1.m_co = (short)u;
+			s1.convert_to_std_cube (cube1);
+			for (sym = 0; sym < Constants.N_SYM; ++sym) {
+				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
+				cube2.conjugate (sym);
+				cube2.convert_to_stage1 (s2);
+				move_table_co_conj[u][sym] = s2.m_co;
+			}
+		}
+		System.out.println( "Finishing corner conjugate stage 1..." );
+	}
+	}
+
+	private InitCornerConjStage1 threadInitCornerConjStage1 = new InitCornerConjStage1();
 
 	/*** init stage 2 centers ***/
 	public static final short[][] move_table_cenSTAGE2 = new short[Constants.N_CENTER_COMBO4][Constants.N_STAGE2_SLICE_MOVES]; // 10626*28

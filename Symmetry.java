@@ -141,7 +141,7 @@ public final class Symmetry {
 		System.out.println( "Finishing initMoveConjugate..." );
 	}
 
-	static int getRep(int[] table, int number){
+	public static int getRep(int[] table, int number){
 		int a = 0;
 		int b = table.length;
 		int c = (a + b)/2;

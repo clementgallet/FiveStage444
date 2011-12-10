@@ -3,18 +3,18 @@ package fivestage444;
 public final class CubeStage1 {
 
 	public short m_co; // corner orientation (2187)
-	public int m_edge_ud_combo8; // (735471)
+	//public int m_edge_ud_combo8; // (735471)
 	public int m_sym_edge_ud_combo8; // (46371)
 
-	public static byte[] prune_table_cor1 = new byte[(Constants.N_CORNER_ORIENT+1)/2];
-	public static byte[] prune_table_edg1 = new byte[(Constants.N_EDGE_COMBO8+1)/2];
+	//public static byte[] prune_table_cor1 = new byte[(Constants.N_CORNER_ORIENT+1)/2];
+	//public static byte[] prune_table_edg1 = new byte[(Constants.N_EDGE_COMBO8+1)/2];
 
 	public void init (){
 		m_co = 0;
-		m_edge_ud_combo8 = Constants.N_EDGE_COMBO8 - 1;
+		//m_edge_ud_combo8 = Constants.N_EDGE_COMBO8 - 1;
 		m_sym_edge_ud_combo8 = 741931;
 	}
-
+	/*
 	public void computeSymEdge (){
 		CubeState cube = new CubeState();
 		int minEdge = 99999999;
@@ -35,9 +35,14 @@ public final class CubeStage1 {
 		}
 		m_sym_edge_ud_combo8 = Symmetry.getRep(Tables.symEdgeToEdgeSTAGE1, minEdge)*Constants.N_SYM_STAGE1 + minSym;
 	}
+	*/
+
+	public int pruningIdx (){
+		return Constants.N_CORNER_ORIENT * (m_sym_edge_ud_combo8 / 16 ) + Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 % 16];
+	}
 
 	public void do_move (int move_code){
-		m_edge_ud_combo8 = Tables.move_table_edgeSTAGE1[m_edge_ud_combo8][move_code];
+		//m_edge_ud_combo8 = Tables.move_table_edgeSTAGE1[m_edge_ud_combo8][move_code];
 		int fmc = Constants.basic_to_face[move_code];
 		if (fmc >= 0)
 			m_co = Tables.move_table_co[m_co][fmc];
@@ -109,6 +114,8 @@ public final class CubeStage1 {
 	public void convert_to_std_cube (CubeState result_cube)
 	{
 		int i;
+
+		/*
 		int ebm = Tables.eloc2ebm[m_edge_ud_combo8];
 		byte lrfb = 0;
 		byte ud = 16;
@@ -120,6 +127,23 @@ public final class CubeStage1 {
 			}
 			result_cube.m_cen[i] = (byte)(i/4);
 		}
+		*/
+
+		/*
+		int ebm = Tables.eloc2ebm[Tables.symEdgeToEdgeSTAGE1[m_sym_edge_ud_combo8/16]];
+		byte lrfb = 0;
+		byte ud = 16;
+		for (i = 0; i < 24; ++i) {
+			if ((ebm & (1 << i)) == 0) {
+				result_cube.m_edge[i] = lrfb++;
+			} else {
+				result_cube.m_edge[i] = ud++;
+			}
+			result_cube.m_cen[i] = (byte)(i/4);
+		}
+		result_cube.conjugate(m_sym_edge_ud_combo8%16);
+		*/
+
 		int orientc = m_co;
 		int orientcmod3 = 0;
 		for (i = 6; i >= 0; --i) {	//don't want 8th edge orientation
@@ -131,6 +155,7 @@ public final class CubeStage1 {
 		result_cube.m_cor[7] = (byte)(7 + (((24 - orientcmod3) % 3) << 3));
 	}
 
+	/*
 	public int prune_funcCOR_STAGE1 (){
 		return Constants.get_dist_4bit (m_co, prune_table_cor1);
 	}
@@ -138,6 +163,6 @@ public final class CubeStage1 {
 	public int prune_funcEDGE_STAGE1 (){
 		return Constants.get_dist_4bit (m_edge_ud_combo8, prune_table_edg1);
 	}
-
+	*/
 
 }

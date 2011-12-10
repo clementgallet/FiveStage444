@@ -125,6 +125,7 @@ public final class FiveStage444 {
 
 		new Tables().init_all ();
 		CubePruningTableMgr.init_pruning_tables (metric);
+		CubePruningTableStage1.analyse();
 		try{
 			initPipes();
 		} catch(java.io.IOException e) { e.printStackTrace(); }

@@ -71,15 +71,10 @@ public final class CubePruningTableMgr {
 
 	public static void init_pruning_tables (int metric){
 		int i;
-		FileOutputStream fos;
-		FileInputStream fis;
-		BufferedOutputStream output;
-		BufferedInputStream input;
 		int[] solved_table = new int[24];
 		int[] tmp_list = new int[64*3];
 		File fname;
 		CubeStage1 stage1_solved = new CubeStage1();
-		CubeStage1 stage1_solved2 = new CubeStage1();
 		CubeStage2 stage2_solved = new CubeStage2();
 		CubeStage2 stage2_solved2 = new CubeStage2();
 		CubeStage3 stage3_solved = new CubeStage3();
@@ -87,16 +82,16 @@ public final class CubePruningTableMgr {
 		CubeState cs1 = new CubeState();
 
 		/*** Stage 1 ***/
+		/*
 		System.out.println ("Creating pruning tables for "+metric_long_names[metric]+" turns.\nStage1...");
 		stage1_solved.init ();
 		solved_table[0] = stage1_solved.m_co;
-		stage1_solved2 = stage1_solved;
-		stage1_solved2.do_whole_cube_move (2);
-		stage1_solved2.do_whole_cube_move (1);
-		solved_table[1] = stage1_solved2.m_co;
-		stage1_solved2.do_whole_cube_move (2);
-		stage1_solved2.do_whole_cube_move (1);
-		solved_table[2] = stage1_solved2.m_co;
+		stage1_solved.do_whole_cube_move (2);
+		stage1_solved.do_whole_cube_move (1);
+		solved_table[1] = stage1_solved.m_co;
+		stage1_solved.do_whole_cube_move (2);
+		stage1_solved.do_whole_cube_move (1);
+		solved_table[2] = stage1_solved.m_co;
 
 		pcpt_cor1 = new CubePruningTable (Constants.N_CORNER_ORIENT, CubeStage1.prune_table_cor1, new DoMoveC1STM());
 		switch (metric) {
@@ -123,14 +118,14 @@ public final class CubePruningTableMgr {
 	
 		fname = new File( Constants.datafiles_path, "stage1_" + metric_names[metric] + "_edg_prune.rbk" );
 		if (! fname.exists() ) {
+			stage1_solved.init();
 			solved_table[0] = stage1_solved.m_edge_ud_combo8;
-			stage1_solved2 = stage1_solved;
-			stage1_solved2.do_whole_cube_move (2);
-			stage1_solved2.do_whole_cube_move (1);
-			solved_table[1] = stage1_solved2.m_edge_ud_combo8;
-			stage1_solved2.do_whole_cube_move (2);
-			stage1_solved2.do_whole_cube_move (1);
-			solved_table[2] = stage1_solved2.m_edge_ud_combo8;
+			stage1_solved.do_whole_cube_move (2);
+			stage1_solved.do_whole_cube_move (1);
+			solved_table[1] = stage1_solved.m_edge_ud_combo8;
+			stage1_solved.do_whole_cube_move (2);
+			stage1_solved.do_whole_cube_move (1);
+			solved_table[2] = stage1_solved.m_edge_ud_combo8;
 
 			pcpt_edg1 = new CubePruningTable (Constants.N_EDGE_COMBO8, CubeStage1.prune_table_edg1, new DoMoveE1STM());
 			switch (metric) {
@@ -152,6 +147,7 @@ public final class CubePruningTableMgr {
 			readFromFile( fname, CubeStage1.prune_table_edg1, (Constants.N_EDGE_COMBO8 + 1)/2);
 		}
 
+		*/
 		/*** Stage 2 ***/
 		System.out.println("Stage2...");
 		int clocfx;

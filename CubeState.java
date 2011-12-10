@@ -273,14 +273,26 @@ public final class CubeState implements java.io.Serializable{
 	}
 
 	public void convert_to_stage1 (CubeStage1 result_cube){
+		CubeState cube = new CubeState();
 		int i;
-		int ebm = 0;
-		for (i = 0; i < 24; ++i) {
-			if (m_edge[i] >= 16) {
-				ebm |= (1 << i);
+		int minEdge = 99999999;
+		int minSym = 0;
+		for (int sym=0; sym < Constants.N_SYM_STAGE1; sym++ ){
+			copyTo (cube);
+			cube.conjugate(sym);
+			int ebm = 0;
+			for (i = 0; i < 24; ++i) {
+				if (cube.m_edge[i] >= 16) {
+					ebm |= (1 << i);
+				}
+			}
+			if( Tables.ebm2eloc[ebm] < minEdge){
+				minEdge = Tables.ebm2eloc[ebm];
+				minSym = sym;
 			}
 		}
-		result_cube.m_edge_ud_combo8 = Tables.ebm2eloc[ebm];
+		result_cube.m_sym_edge_ud_combo8 = Symmetry.getRep(Tables.symEdgeToEdgeSTAGE1, minEdge)*Constants.N_SYM_STAGE1 + minSym;
+
 		int orientc = 0;
 		for (i = 0; i < 7; ++i) {	//don't want 8th edge orientation
 			orientc = 3*orientc + (m_cor[i] >> 3);
