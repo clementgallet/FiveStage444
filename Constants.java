@@ -5,10 +5,11 @@ package fivestage444;
  */
 public final class Constants{
 
-	public static final String datafiles_path = "./";
+	public static final String datafiles_path = "./fivestage444/";
 
 	public static final int N_SYM = 48;
 	public static final int N_SYM_STAGE1 = 16;
+	public static final int N_SYM_STAGE4 = 16;
 
 	public static final int N_CORNER_ORIENT = 2187;
 
@@ -30,6 +31,7 @@ public final class Constants{
 
 	public static final int N_STAGE4_CENTER_CONFIGS = 70;	//8!/(4!*4!)
 	public static final int N_STAGE4_EDGE_CONFIGS = 88200;	//420*420/2
+	public static final int N_STAGE4_SYMEDGE_CONFIGS = 5968;
 	public static final int N_STAGE4_CORNER_CONFIGS = 420;	//8!/96
 	public static final int N_STAGE4_EDGE_HASH_TABLE = 200383;	//100153;
 	public static final int N_STAGE4_EDGE_HASH_DIVISOR = N_STAGE4_EDGE_HASH_TABLE - 2;	//also prime
@@ -618,6 +620,15 @@ public final class Constants{
 	Df, Df3, Df2, Ds2,
 	Lf2, Ls2, Rf2, Rs2,
 	Ff2, Fs2, Bf2, Bs2
+	};
+
+	public static final int stage4_inv_slice_moves[] = {
+	0, 1, 2, -1, -1, 3,
+	4, 5, 6, -1, -1, 7,
+	-1, -1, 8, -1, -1, 9,
+	-1, -1, 10, -1, -1, 11,
+	-1, -1, 12, -1, -1, 13,
+	-1, -1, 14, -1, -1, 15
 	};
 
 	public static final int stg4_Uf = 0;

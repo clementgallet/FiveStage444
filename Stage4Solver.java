@@ -49,34 +49,31 @@ public final class Stage4Solver extends StageSolver{
 
 	public void run (){
 		while (pullState()) {
-			foundSol = false;
-			for (goal = 0; goal < 30; ++goal) {
-				treeSearch (cube, goal, 0, 0);
-				if (foundSol)
-					break;
-			}
+			treeSearch (cube, 0, 0);
 		}
 
 		pushStopSignal();
 		closePipes();
 	}
 
-	public boolean treeSearch (CubeStage4 cube1, int depth, int moves_done, int move_state){
+	public boolean treeSearch (CubeStage4 cube1, int moves_done, int move_state){
 		//Statistics.addNode(4, depth);
 		CubeStage4 cube2 = new CubeStage4();
 		int mov_idx, mc, j;
+		int dist = cube1.get_dist();
 		int next_ms = 0;
-		if (depth == 0) {
-			if (! cube1.is_solved ()) {
-				return false;
+		if (dist == 3) {
+			if (cube1.is_solved ()) {
+				goal = moves_done;
+				pushState();
+				Statistics.addLeaf(4, goal);
+				return true; // true: take the first solution, false: take all solutions.
 			}
-			pushState();
-			Statistics.addLeaf(4, goal);
-			return true; // true: take the first solution, false: take all solutions.
 		}
 		for (mov_idx = 0; mov_idx < n_moves_metric_stg4[metric]; ++mov_idx) {
 			boolean did_move = false;
-			cube2.m_edge = cube1.m_edge;
+			//cube2.m_edge = cube1.m_edge;
+			cube2.m_sym_edge = cube1.m_sym_edge;
 			cube2.m_corner = cube1.m_corner;
 			cube2.m_centerUD = cube1.m_centerUD; // TODO: use a copy method
 			switch (metric) {
@@ -103,8 +100,9 @@ public final class Stage4Solver extends StageSolver{
 				break;
 			}
 			if (did_move) {
-				if (cube2.prune_funcCENCOR_STAGE4() > depth-1) continue;
-				if (cube2.prune_funcEDGCEN_STAGE4() > depth-1) continue;
+				if ((cube2.get_dist() % 3) != (dist - 1)) continue;
+				//if (cube2.prune_funcCENCOR_STAGE4() > depth-1) continue;
+				//if (cube2.prune_funcEDGCEN_STAGE4() > depth-1) continue;
 				mc = mov_idx;
 				switch (metric) {
 				case 1:
@@ -115,7 +113,7 @@ public final class Stage4Solver extends StageSolver{
 					break;
 				}
 				move_list[moves_done] = (byte)mc;
-				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms)) return true;
+				if (treeSearch (cube2, moves_done + 1, next_ms)) return true;
 			}
 		}
 		return false;

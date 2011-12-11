@@ -146,6 +146,7 @@ public final class Symmetry {
 		int b = table.length;
 		int c = (a + b)/2;
 		while( table[c] != number ){
+			if( a == b ) System.out.println ("Stuck in getRep !!");
 			if( table[c] > number )
 				b = c;
 			else

@@ -23,8 +23,8 @@ public final class CubePruningTableMgr {
 	};
 
 
-	public static CubePruningTable pcpt_cor1;
-	public static CubePruningTable pcpt_edg1;
+	//public static CubePruningTable pcpt_cor1;
+	//public static CubePruningTable pcpt_edg1;
 	public static CubePruningTable pcpt_edgcen2;
 	public static CubePruningTable pcpt_cen3;
 	public static CubePruningTable pcpt_edg3;
@@ -74,7 +74,7 @@ public final class CubePruningTableMgr {
 		int[] solved_table = new int[24];
 		int[] tmp_list = new int[64*3];
 		File fname;
-		CubeStage1 stage1_solved = new CubeStage1();
+		//CubeStage1 stage1_solved = new CubeStage1();
 		CubeStage2 stage2_solved = new CubeStage2();
 		CubeStage2 stage2_solved2 = new CubeStage2();
 		CubeStage3 stage3_solved = new CubeStage3();
@@ -292,6 +292,7 @@ public final class CubePruningTableMgr {
 		pcpt_edg3.analyze ();
 	
 		/*** Stage 4 ***/
+		/*
 		System.out.println ("Stage4...");
 		stage4_solved.init ();
 		for (i = 0; i < Constants.STAGE4_NUM_SOLVED_CENTER_CONFIGS; ++i) {
@@ -346,7 +347,7 @@ public final class CubePruningTableMgr {
 		} else {
 			readFromFile( fname, CubeStage4.prune_table_edgcen4, Constants.N_STAGE4_EDGE_CONFIGS*Constants.N_STAGE4_CENTER_CONFIGS/2);
 		}
-
+		*/
 		/*** Stage 5 ***/
 		System.out.println ("Stage5...");
 		CubeSqsCoord sqs_solved = new CubeSqsCoord();

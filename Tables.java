@@ -25,9 +25,12 @@ public final class Tables {
 		threadInitEdgeBStage4.start();
 		threadInitEdgeAStage4.start();
 		threadInitEdgeRepStage4.start();
-		threadInitEdgeStage4.start();
+		//threadInitEdgeStage4.start();
+		threadInitSymEdgeStage4.start();
 		threadInitCornerStage4.start();
+		threadInitCornerConjStage4.start();
 		threadInitCenterStage4.start();
+		threadInitCenterConjStage4.start();
 		threadInitSquares2nd.start();
 		threadInitSquaresMovemap.start();
 		threadInitSquaresCenterMap.start();
@@ -57,9 +60,12 @@ public final class Tables {
 		threadInitEdgeBStage4.join();
 		threadInitEdgeAStage4.join();
 		threadInitEdgeRepStage4.join();
-		threadInitEdgeStage4.join();
+		//threadInitEdgeStage4.join();
+		threadInitSymEdgeStage4.join();
 		threadInitCornerStage4.join();
+		threadInitCornerConjStage4.join();
 		threadInitCenterStage4.join();
+		threadInitCenterConjStage4.join();
 		threadInitSquares2nd.join();
 		threadInitSquaresMovemap.join();
 		threadInitSquaresCenterMap.join();
@@ -918,7 +924,6 @@ public final class Tables {
 		}
 	}
 
-
 	public static final void lrfb_to_cube_state (int u, CubeState result_cube){
 		byte[] t = new byte[8];
 		result_cube.init ();
@@ -928,6 +933,7 @@ public final class Tables {
 		array8_to_set_b (t, result_cube);
 	}
 
+	
 	private static final int[] stage4_edge_hB = new int[40320]; // (40320 ?). Change from short to int then :(
 	private static final int[] stage4_edge_hgB = new int[40320]; // (40320 ?). Change from short to int then :(
 
@@ -1025,10 +1031,12 @@ public final class Tables {
 	}
 
 	private InitEdgeAStage4 threadInitEdgeAStage4 = new InitEdgeAStage4();
-
+	
+	/*
 	private static int[] stage4_edge_hash_table_val = new int[Constants.N_STAGE4_EDGE_HASH_TABLE]; // (200383)
 	public static int[] stage4_edge_hash_table_idx = new int[Constants.N_STAGE4_EDGE_HASH_TABLE]; // (200383)
 	public static final int[] stage4_edge_rep_table = new int[Constants.N_STAGE4_EDGE_CONFIGS]; // (88200)
+	*/
 
 	public static final int lrfb_get_edge_rep (int u){
 		int reph = stage4_edge_hgB[u/40320];
@@ -1036,6 +1044,7 @@ public final class Tables {
 		return 40320*reph + repl;
 	}
 
+	/*
 	public static void stage4_edge_table_init (){
 		int i;
 		for (i = 0; i < Constants.N_STAGE4_EDGE_HASH_TABLE; ++i) {
@@ -1066,6 +1075,9 @@ public final class Tables {
 		stage4_edge_hash_table_idx[hash_idx] = idx;
 		stage4_edge_rep_table[idx] = val;
 	}
+	*/
+
+	public static final int[] symEdgeToEdgeSTAGE4 = new int[Constants.N_STAGE4_SYMEDGE_CONFIGS]; // FIXME: Don't know yet...
 
 	private class InitEdgeRepStage4 extends Thread {
 	public void run (){
@@ -1077,23 +1089,24 @@ public final class Tables {
 		catch(InterruptedException ie){
 			ie.printStackTrace();
 		}
+		
 
 		System.out.println( "Starting edge rep stage 4..." );
-		int u1;
+		int u1, sym;
 		CubeState cs1 = new CubeState();
 		CubeState cs2 = new CubeState();
 		cs1.init ();
 		cs2.init ();
 
-		stage4_edge_table_init ();
+		//stage4_edge_table_init ();
 		int repcount = 0;
 		int n = 40320*40320;
 		for (u1 = 0; u1 < n; ++u1) {
 			if ((u1 << 22 ) == 0) { // Throughly u1 % 1000 == 0
-				if (repcount == 44100 && u1 < 105262000) { // Obtained though execution
-					u1 = 40320*20160;
+				if (repcount == 5958 && u1 < 104700000 ) { // Obtained though execution
+					u1 = 952220735; // big gap !!
 				}
-				if (repcount == 88200) {
+				if (repcount == Constants.N_STAGE4_SYMEDGE_CONFIGS) {
 					break;
 				}
 			}
@@ -1104,15 +1117,77 @@ public final class Tables {
 			}
 			int myrep = lrfb_get_edge_rep (u1);
 			if (myrep == u1) {
-				add_to_stage4_edge_table (myrep, repcount++);
+
+				lrfb_to_cube_state(u1, cs1);
+				boolean isRep = true;
+				for (sym = 0; sym < Constants.N_SYM_STAGE4; ++sym) {
+					System.arraycopy(cs1.m_edge, 0, cs2.m_edge, 0, 24);
+					cs2.conjugate (sym);
+					int newLrfb = cs2.cube_state_to_lrfb ();
+					if( lrfb_get_edge_rep(newLrfb) < u1 ){
+						isRep = false;
+						break;
+					}
+				}
+				if (isRep){
+					symEdgeToEdgeSTAGE4[repcount++] = u1;
+				}
 			}
 		}
-		System.out.println( "Finishing edge rep stage 4..." );
+		System.out.println( "Finishing edge rep stage 4, found "+repcount+" reps, last reped is "+symEdgeToEdgeSTAGE4[repcount-1]+"..." );
 	}
 	}
 
 	private InitEdgeRepStage4 threadInitEdgeRepStage4 = new InitEdgeRepStage4();
 
+	public static final int[][] move_table_symEdgeSTAGE4 = new int[Constants.N_STAGE4_SYMEDGE_CONFIGS][Constants.N_STAGE4_SLICE_MOVES]; // (5968*16) 5968*16.
+
+	private class InitSymEdgeStage4 extends Thread {
+	public void run (){
+
+		try{
+		threadInit4Of8.join();
+		threadInitEdgeRepStage4.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting sym edge stage 4..." );
+		int mc;
+		int u;
+		CubeState cs1 = new CubeState();
+		CubeState cs2 = new CubeState();
+		CubeState cs3 = new CubeState();
+		cs1.init ();
+		for (u = 0; u < Constants.N_STAGE4_SYMEDGE_CONFIGS; ++u) {
+			lrfb_to_cube_state (symEdgeToEdgeSTAGE4[u], cs1);
+			for (mc = 0; mc < Constants.N_STAGE4_SLICE_MOVES; ++mc) {
+				System.arraycopy(cs1.m_edge, 0, cs2.m_edge, 0, 24);
+				cs2.rotate_sliceEDGE (Constants.stage4_slice_moves[mc]);
+				int minEdge = 1999999999;
+				int minSym = 0;
+				for (int sym=0; sym < Constants.N_SYM_STAGE4; sym++ ){ /* TODO: Duplicate of convert_to_stage4 !! Same for stage1 */
+					System.arraycopy(cs2.m_edge, 0, cs3.m_edge, 0, 24);
+					cs3.conjugate(sym);
+
+					int u2 = lrfb_get_edge_rep(cs3.cube_state_to_lrfb ());
+
+					if( u2 < minEdge){
+						minEdge = u2;
+						minSym = sym;
+					}
+				}
+				move_table_symEdgeSTAGE4[u][mc] = Symmetry.getRep(symEdgeToEdgeSTAGE4, minEdge)*Constants.N_SYM_STAGE4 + minSym;
+			}
+		}
+		System.out.println( "Finishing sym edge stage 4..." );
+	}
+	}
+
+	private InitSymEdgeStage4 threadInitSymEdgeStage4 = new InitSymEdgeStage4();
+
+	/*
 	public static final int[][] move_table_edgeSTAGE4 = new int[Constants.N_STAGE4_EDGE_CONFIGS][Constants.N_STAGE4_SLICE_MOVES]; // (88200) 88200*16.
 
 	private class InitEdgeStage4 extends Thread {
@@ -1151,6 +1226,7 @@ public final class Tables {
 	}
 
 	private InitEdgeStage4 threadInitEdgeStage4 = new InitEdgeStage4();
+	*/
 
 	public static final short[][] move_table_cornerSTAGE4 = new short[Constants.N_STAGE4_CORNER_CONFIGS][Constants.N_STAGE4_SLICE_MOVES]; // (420) 420*16.
 
@@ -1190,6 +1266,44 @@ public final class Tables {
 
 	private InitCornerStage4 threadInitCornerStage4 = new InitCornerStage4();
 
+	public static final short[][] move_table_corner_conjSTAGE4 = new short[Constants.N_STAGE4_CORNER_CONFIGS][Constants.N_SYM_STAGE4]; // (420) 420*16.
+
+	private class InitCornerConjStage4 extends Thread {
+	public void run (){
+
+		try{
+		threadInit4Of8.join();
+		threadInitPerm420.join();
+		threadInitEdgeRepStage4.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting corner conj stage 4..." );
+		int sym;
+		int u;
+		CubeStage4 s4 = new CubeStage4();
+		CubeStage4 s4a = new CubeStage4();
+		s4.init ();
+		s4a.init ();
+		CubeState cs1 = new CubeState();
+		cs1.init ();
+		for (u = 0; u < Constants.N_STAGE4_CORNER_CONFIGS; ++u) {
+			for (sym = 0; sym < Constants.N_SYM_STAGE4; ++sym) {
+				s4.m_corner = (short)u;
+				s4.convert_to_std_cube (cs1);
+				cs1.conjugate (sym);
+				cs1.convert_to_stage4 (s4a);
+				move_table_corner_conjSTAGE4[u][sym] = s4a.m_corner;
+			}
+		}
+		System.out.println( "Finishing corner conj stage 4..." );
+	}
+	}
+
+	private InitCornerConjStage4 threadInitCornerConjStage4 = new InitCornerConjStage4();
+
 	public static final byte[][] move_table_cenSTAGE4 = new byte[Constants.N_STAGE4_CENTER_CONFIGS][Constants.N_STAGE4_SLICE_MOVES]; // (70) 70*16.
 
 	private class InitCenterStage4 extends Thread {
@@ -1227,6 +1341,44 @@ public final class Tables {
 	}
 
 	private InitCenterStage4 threadInitCenterStage4 = new InitCenterStage4();
+
+	public static final byte[][] move_table_cen_conjSTAGE4 = new byte[Constants.N_STAGE4_CENTER_CONFIGS][Constants.N_SYM_STAGE4]; // (70) 70*16.
+
+	private class InitCenterConjStage4 extends Thread {
+	public void run (){
+
+		try{
+		threadInit4Of8.join();
+		threadInitPerm420.join();
+		threadInitEdgeRepStage4.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting center stage 4..." );
+		int sym;
+		int u;
+		CubeStage4 s4 = new CubeStage4();
+		CubeStage4 s4a = new CubeStage4();
+		s4.init ();
+		s4a.init ();
+		CubeState cs1 = new CubeState();
+		cs1.init ();
+		for (u = 0; u < Constants.N_STAGE4_CENTER_CONFIGS; ++u) {
+			for (sym = 0; sym < Constants.N_SYM_STAGE4; ++sym) {
+				s4.m_centerUD = (byte)u;
+				s4.convert_to_std_cube (cs1);
+				cs1.conjugate (sym);
+				cs1.convert_to_stage4 (s4a);
+				move_table_cen_conjSTAGE4[u][sym] = s4a.m_centerUD;
+			}
+		}
+		System.out.println( "Finishing center conj stage 4..." );
+	}
+	}
+
+	private InitCenterConjStage4 threadInitCenterConjStage4 = new InitCenterConjStage4();
 
 	/*** init_stage5 ***/
 	//map a "squares" move code to one of six "canonical" move codes,

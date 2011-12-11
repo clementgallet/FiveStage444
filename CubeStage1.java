@@ -8,12 +8,19 @@ public final class CubeStage1 {
 
 	//public static byte[] prune_table_cor1 = new byte[(Constants.N_CORNER_ORIENT+1)/2];
 	//public static byte[] prune_table_edg1 = new byte[(Constants.N_EDGE_COMBO8+1)/2];
+	public static byte[] prune_table;
 
 	public void init (){
 		m_co = 0;
 		//m_edge_ud_combo8 = Constants.N_EDGE_COMBO8 - 1;
 		m_sym_edge_ud_combo8 = 741931;
 	}
+
+	public int get_dist (){
+		int idx = Constants.N_CORNER_ORIENT * (m_sym_edge_ud_combo8 >> 4 ) + Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 & 0xF];
+		return (prune_table[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
+	}
+
 	/*
 	public void computeSymEdge (){
 		CubeState cube = new CubeState();
@@ -37,26 +44,22 @@ public final class CubeStage1 {
 	}
 	*/
 
-	public int pruningIdx (){
-		return Constants.N_CORNER_ORIENT * (m_sym_edge_ud_combo8 / 16 ) + Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 % 16];
-	}
-
 	public void do_move (int move_code){
 		//m_edge_ud_combo8 = Tables.move_table_edgeSTAGE1[m_edge_ud_combo8][move_code];
 		int fmc = Constants.basic_to_face[move_code];
 		if (fmc >= 0)
 			m_co = Tables.move_table_co[m_co][fmc];
 
-		int sym = m_sym_edge_ud_combo8 % Constants.N_SYM_STAGE1;
-		int rep = m_sym_edge_ud_combo8 / Constants.N_SYM_STAGE1;
+		int sym = m_sym_edge_ud_combo8 & 0xF;
+		int rep = m_sym_edge_ud_combo8 >> 4;
 
 		int moveConj = Symmetry.moveConjugate[move_code][sym];
 		int newEdge = Tables.move_table_symEdgeSTAGE1[rep][moveConj];
 
-		int newRep = newEdge / Constants.N_SYM_STAGE1;
-		int newSym = newEdge % Constants.N_SYM_STAGE1;
+		int newSym = newEdge & 0xF;
+		int newRep = newEdge >> 4;
 
-		m_sym_edge_ud_combo8 = newRep * Constants.N_SYM_STAGE1 + Symmetry.symIdxMultiply[newSym][sym]; // TODO: Replace all /% by <<>>
+		m_sym_edge_ud_combo8 = ( newRep << 4 ) + Symmetry.symIdxMultiply[newSym][sym];
 
 		/*
 		int bakSym = m_sym_edge_ud_combo8;
@@ -102,7 +105,7 @@ public final class CubeStage1 {
 	}*/
 	
 	public boolean is_solved (){
-		if (m_co == 0 && (m_sym_edge_ud_combo8 >> 16) == 46370)
+		if (m_co == 0 && (m_sym_edge_ud_combo8 / 16) == 46370)
 			return true;
 		if (m_co == 1373 && (m_sym_edge_ud_combo8 & 0xFFFFFF2) == 2)
 			return true;
@@ -129,8 +132,8 @@ public final class CubeStage1 {
 		}
 		*/
 
-		/*
-		int ebm = Tables.eloc2ebm[Tables.symEdgeToEdgeSTAGE1[m_sym_edge_ud_combo8/16]];
+		
+		int ebm = Tables.eloc2ebm[Tables.symEdgeToEdgeSTAGE1[m_sym_edge_ud_combo8>>4]];
 		byte lrfb = 0;
 		byte ud = 16;
 		for (i = 0; i < 24; ++i) {
@@ -141,8 +144,8 @@ public final class CubeStage1 {
 			}
 			result_cube.m_cen[i] = (byte)(i/4);
 		}
-		result_cube.conjugate(m_sym_edge_ud_combo8%16);
-		*/
+		result_cube.conjugate(m_sym_edge_ud_combo8 & 0xF);
+		
 
 		int orientc = m_co;
 		int orientcmod3 = 0;

@@ -4,23 +4,43 @@ public final class CubeStage4 {
 
 	public byte m_centerUD; //center coordinate (70)
 	public short m_corner; //corner coordinate	(420)
-	public int m_edge; //edge coordinate (420*420)
+	//public int m_edge; //edge coordinate (420*420)
+	public int m_sym_edge; //sym edge coordinate (5968*16)
 
 	public static byte sqs_to_std[] = { 0, 2, 5, 7, 1, 3, 4, 6 };
 
-	public static byte[] prune_table_cencor4 = new byte[Constants.N_STAGE4_CORNER_CONFIGS*Constants.N_STAGE4_CENTER_CONFIGS/2];
-	public static byte[] prune_table_edgcen4 = new byte[Constants.N_STAGE4_EDGE_CONFIGS*Constants.N_STAGE4_CENTER_CONFIGS/2];
+	//public static byte[] prune_table_cencor4 = new byte[Constants.N_STAGE4_CORNER_CONFIGS*Constants.N_STAGE4_CENTER_CONFIGS/2];
+	//public static byte[] prune_table_edgcen4 = new byte[Constants.N_STAGE4_EDGE_CONFIGS*Constants.N_STAGE4_CENTER_CONFIGS/2];
+	public static byte[] prune_table;
 
 	public void init (){
-		m_edge = 0;
+		//m_edge = 0;
+		m_sym_edge = 0;
 		m_corner = 0;
 		m_centerUD = 0;
+	}
+
+	public int get_dist (){
+		int idx = (((( m_sym_edge >> 4 ) * Constants.N_STAGE4_CORNER_CONFIGS ) + Tables.move_table_corner_conjSTAGE4[m_corner][m_sym_edge & 0xF] ) * Constants.N_STAGE4_CENTER_CONFIGS ) + Tables.move_table_cen_conjSTAGE4[m_centerUD][m_sym_edge & 0xF];
+		return (prune_table[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
 	}
 
 	public void do_move (int move_code){
 		m_centerUD = Tables.move_table_cenSTAGE4[m_centerUD][move_code];
 		m_corner = Tables.move_table_cornerSTAGE4[m_corner][move_code];
-		m_edge = Tables.move_table_edgeSTAGE4[m_edge][move_code];
+
+		int sym = m_sym_edge & 0xF;
+		int rep = m_sym_edge >> 4;
+
+		int moveConj = Constants.stage4_inv_slice_moves[Symmetry.moveConjugate[Constants.stage4_slice_moves[move_code]][sym]];
+		int newEdge = Tables.move_table_symEdgeSTAGE4[rep][moveConj];
+
+		int newSym = newEdge & 0xF;
+		int newRep = newEdge >> 4;
+
+		m_sym_edge = ( newRep << 4 ) + Symmetry.symIdxMultiply[newSym][sym];
+
+		//m_edge = Tables.move_table_edgeSTAGE4[m_edge][move_code];
 	}
 
 	public boolean is_solved (){
@@ -29,7 +49,10 @@ public final class CubeStage4 {
 		if (m_corner != 0) {
 			return false;	//not solved if wrong corner value
 		}
-		if (m_edge != 0) {
+		/*if (m_edge != 0) {
+			return false;	//not solved if wrong edge value
+		}*/
+		if ((m_sym_edge >> 4) != 0) {
 			return false;	//not solved if wrong edge value
 		}
 		for (i = 0; i < Constants.STAGE4_NUM_SOLVED_CENTER_CONFIGS; ++i)
@@ -47,8 +70,11 @@ public final class CubeStage4 {
 		//But the do_move function for std_cube assumes "standard" mapping.
 		//Therefore the m_cor array must be converted accordingly using this conversion array.
 
-		int edge = Tables.stage4_edge_rep_table[m_edge];
-		Tables.lrfb_to_cube_state (edge, result_cube);	//note: initializes result_cube! so we do this first
+		/* We shouldn't need to convert edges... I hope ! */
+		int edge = Tables.symEdgeToEdgeSTAGE4[m_sym_edge>>4];
+		Tables.lrfb_to_cube_state (edge, result_cube);
+		result_cube.conjugate(m_sym_edge & 0xF);
+
 		int cor_bm = Tables.bm4of8[m_corner / 6];
 		Constants.perm_n_unpack (4, m_corner % 6, t6, 0);
 		int a = 0;
@@ -75,7 +101,7 @@ public final class CubeStage4 {
 			result_cube.m_cen[i] = (byte)(i/4);
 		}
 	}
-
+	/*
 	public int prune_funcCENCOR_STAGE4 (){
 		int idx = Constants.N_STAGE4_CENTER_CONFIGS*m_corner + m_centerUD;
 		return Constants.get_dist_4bit (idx, prune_table_cencor4);
@@ -85,5 +111,5 @@ public final class CubeStage4 {
 		int idx = Constants.N_STAGE4_CENTER_CONFIGS*m_edge + m_centerUD;
 		return Constants.get_dist_4bit (idx, prune_table_edgcen4);
 	}
-
+	*/
 }

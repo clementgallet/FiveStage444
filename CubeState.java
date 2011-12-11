@@ -360,15 +360,33 @@ public final class CubeState implements java.io.Serializable{
 		//Note: for corners, use of perm_to_420 array requires "squares" style mapping.
 		//But the do_move function for std_cube assumes "standard" mapping.
 		//Therefore the m_cor array must be converted accordingly using this conversion array.
-		int edge = cube_state_to_lrfb ();
-		int edgerep = Tables.lrfb_get_edge_rep (edge);
-		int hash_idx = Tables.stage4_edge_table_lookup (edgerep);
-		result_cube.m_edge = Tables.stage4_edge_hash_table_idx[hash_idx];
+
+		CubeState cube = new CubeState();
+		int minEdge = 1999999999;
+		int minSym = 0;
+		for (int sym=0; sym < Constants.N_SYM_STAGE4; sym++ ){
+			copyTo (cube);
+			cube.conjugate(sym);
+			int u2 = Tables.lrfb_get_edge_rep(cube.cube_state_to_lrfb ());
+
+			if( u2 < minEdge){
+				minEdge = u2;
+				minSym = sym;
+			}
+		}
+		result_cube.m_sym_edge = Symmetry.getRep(Tables.symEdgeToEdgeSTAGE4, minEdge)*Constants.N_SYM_STAGE4 + minSym;
+
+		//int edge = cube_state_to_lrfb ();
+		//int edgerep = Tables.lrfb_get_edge_rep (edge);
+		//int hash_idx = Tables.stage4_edge_table_lookup (edgerep);
+		//result_cube.m_edge = Tables.stage4_edge_hash_table_idx[hash_idx];
+
 		for (i = 0; i < 8; ++i) {
 			t6[std_to_sqs[i]] = std_to_sqs[m_cor[i]];
 		}
 		int u = Constants.perm_n_pack (8, t6, 0);
 		result_cube.m_corner = Tables.perm_to_420[u];
+
 		int cenbm4of8 = 0;
 		for (i = 0; i < 8; ++i) {
 			if (m_cen[i] >= 2) { // TODO: Remove this.

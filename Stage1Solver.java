@@ -53,7 +53,7 @@ public final class Stage1Solver extends StageSolver{
 		//Statistics.addNode(1, depth);
 		CubeStage1 cube2 = new CubeStage1();
 		int mov_idx, mc, j;
-		int dist = CubePruningTableStage1.get_dist(cube1.pruningIdx());
+		int dist = cube1.get_dist();
 		if (dist == 3){
 			if (cube1.is_solved ()) {
 				goal = moves_done;
@@ -90,7 +90,7 @@ public final class Stage1Solver extends StageSolver{
 				break;
 			}
 			if (did_move) {
-				if ((CubePruningTableStage1.get_dist(cube2.pruningIdx()) % 3) != (dist - 1)) continue;
+				if ((cube2.get_dist() % 3) != (dist - 1)) continue;
 				move_list[moves_done] = (byte)mov_idx;
 				if (treeSearch (cube2, moves_done + 1, mov_idx)) return true;
 			}
