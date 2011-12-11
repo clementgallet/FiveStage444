@@ -99,8 +99,6 @@ abstract class Pruning {
 		}
 
 		writeToFile();
-
-		System.out.println("Finished stage 1 pruning table");
 	}
 
 	void generate (int idx, int dist)

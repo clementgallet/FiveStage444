@@ -3,7 +3,7 @@ package fivestage444;
 public final class Statistics{
 
 	static long[][] nodeNumber = new long[6][30];
-	static long[][] leafNumber = new long[6][30];
+	static int[][] leafNumber = new int[6][100];
 
 	Statistics(){
 		int i, j;
@@ -43,11 +43,15 @@ public final class Statistics{
 
 		System.out.println("");
 		System.out.println( "Leaf number:" );
-		for (i=1; i<=5; i++){
-			System.out.println("Stage "+i);
+		for (i=0; i<=5; i++){
+			if (i==0)
+				System.out.println("Solution");
+			else
+				System.out.println("Stage "+i);
+
 			System.out.println("Depth\tNumber");
 
-			for (j=0; j<30; j++)
+			for (j=0; j<100; j++)
 				if( leafNumber[i][j] > 0 )
 					System.out.println(j + "\t" + leafNumber[i][j]);
 

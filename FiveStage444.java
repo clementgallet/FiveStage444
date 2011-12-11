@@ -127,6 +127,7 @@ public final class FiveStage444 {
 		CubePruningTableMgr.init_pruning_tables (metric);
 		new PruningStage1().analyse();
 		new PruningStage4().analyse();
+		new PruningStage5().analyse();
 		try{
 			initPipes();
 		} catch(java.io.IOException e) { e.printStackTrace(); }
@@ -179,7 +180,7 @@ public final class FiveStage444 {
 		solveme.scramble(scramble_len, random_list);
 		System.out.println ("scramble: ");
 		print_move_list (scramble_len, random_list);
-		solveit4x4x4IDA (solveme, metric);
+		solveit4x4x4IDA (i, solveme, metric);
 	}
 
 }
@@ -238,12 +239,12 @@ public final class FiveStage444 {
 		stage5Solver.start();
 	}
 
-	public static void solveit4x4x4IDA (CubeState cube, int metric) {
+	public static void solveit4x4x4IDA (int id, CubeState cube, int metric) {
 
 		ObjectOutputStream myPipeOut = null;
 		try{
 			myPipeOut = new ObjectOutputStream (pipeStage01out);
-			myPipeOut.writeObject(new SolverState(cube, metric, null, 0, 0));
+			myPipeOut.writeObject(new SolverState(id, cube, metric, null, 0, 0));
 		}
 		catch (java.io.IOException ioe) { ioe.getMessage(); }
 	}
@@ -251,8 +252,11 @@ public final class FiveStage444 {
 	public static void getSolutions () {
 
 		ObjectInputStream myPipeIn = null;
-		SolverState solution = new SolverState(null, 0, null, 0, 0);
-		while ( solution.metric != -1 ) {
+		SolverState solution;
+		int old_id = 0;
+		int old_move_count = 0;
+		byte[] old_move_list = new byte[120];
+		do {
 			solution = null;
 			while (solution == null) {
 				try{
@@ -270,8 +274,16 @@ public final class FiveStage444 {
 					e.printStackTrace();
 				}
 			}
+			if(( old_id != 0 ) && ( old_id != solution.id )){
+				//print_move_list (old_move_count, old_move_list);
+				Statistics.addLeaf(0, old_move_count);
+			}
 			print_move_list (solution.move_count, solution.move_list);
+			old_id = solution.id;
+			old_move_count = solution.move_count;
+			System.arraycopy( solution.move_list, 0, old_move_list, 0, old_move_count);
 		}
+		while ( solution.id != -1 );
 	}
 
 	public static void stopThreads () {
@@ -279,7 +291,7 @@ public final class FiveStage444 {
 		ObjectOutputStream myPipeOut = null;
 		try{
 			myPipeOut = new ObjectOutputStream (pipeStage01out);
-			myPipeOut.writeObject(new SolverState(null, -1, null, 0, 0)); // metric = -1 -> stop
+			myPipeOut.writeObject(new SolverState(-1, null, 0, null, 0, 0)); // id = -1 -> stop
 		}
 		catch (java.io.IOException ioe) { ioe.getMessage(); }
 	}

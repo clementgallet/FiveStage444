@@ -50,7 +50,7 @@ abstract class StageSolver extends Thread{
 		System.arraycopy(sol_move_list, 0, move_list_all, ss.move_count, goal);
 		//print_move_list( goal, sol_move_list );
 
-		SolverState nss = new SolverState(cs, ss.metric, move_list_all, ss.move_count + goal, r);
+		SolverState nss = new SolverState(ss.id, cs, ss.metric, move_list_all, ss.move_count + goal, r);
 		writeState( nss );
 	}
 
@@ -69,7 +69,7 @@ abstract class StageSolver extends Thread{
 		ObjectOutputStream stateOut = null;
 		try{
 			stateOut = new ObjectOutputStream (pipeOut);
-			stateOut.writeObject(new SolverState(null, -1, null, 0, 0)); // metric = -1 -> stop
+			stateOut.writeObject(new SolverState(-1, null, 0, null, 0, 0)); // id = -1 -> stop
 		}
 		catch (java.io.IOException ioe) { ioe.getMessage(); }
 	}
@@ -96,7 +96,7 @@ abstract class StageSolver extends Thread{
 		}
 
 		metric = ss.metric;
-		if( metric == -1 ) return false;
+		if( ss.id == -1 ) return false;
 		importState();
 		return true;
 	}

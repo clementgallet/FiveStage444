@@ -34,6 +34,10 @@ public final class Tables {
 		threadInitSquares2nd.start();
 		threadInitSquaresMovemap.start();
 		threadInitSquaresCenterMap.start();
+		threadInitSymEdgeToEdgeStage5.start();
+		threadInitSymEdgeStage5.start();
+		threadInitCornerConjStage5.start();
+		threadInitCenterConjStage5.start();
 
 		waitAllThreads();
 	}
@@ -69,6 +73,10 @@ public final class Tables {
 		threadInitSquares2nd.join();
 		threadInitSquaresMovemap.join();
 		threadInitSquaresCenterMap.join();
+		threadInitSymEdgeToEdgeStage5.join();
+		threadInitSymEdgeStage5.join();
+		threadInitCornerConjStage5.join();
+		threadInitCenterConjStage5.join();
 		}
 		catch(InterruptedException ie){
 			ie.printStackTrace();
@@ -891,7 +899,7 @@ public final class Tables {
 	private InitEdgeStage3 threadInitEdgeStage3 = new InitEdgeStage3();
 
 	/*** init_stage4 ***/
-	private static final int sqs_rep_to_perm[][] = {
+	public static final int sqs_rep_to_perm[][] = {
 		{  0,  7, 16, 23 },
 		{  1,  6, 17, 22 },
 		{  2, 10, 13, 21 },
@@ -1383,7 +1391,7 @@ public final class Tables {
 	/*** init_stage5 ***/
 	//map a "squares" move code to one of six "canonical" move codes,
 	//or -1 for moves that don't affect the corresponding pieces.
-	private static final int squares_map[][] = {
+	public static final int squares_map[][] = {
 		{  0, -1,  1, -1, -1,  2, -1,  3,  4, -1,  5, -1 },		//LR edges
 		{  4, -1,  5, -1,  0, -1,  1, -1, -1,  2, -1,  3 },		//FB edges
 		{ -1,  2, -1,  3,  4, -1,  5, -1,  0, -1,  1, -1 },		//UD edges
@@ -1393,16 +1401,16 @@ public final class Tables {
 		{ -1,  2, -1,  3, -1,  4, -1,  5,  0, -1,  1, -1 }		//FB centers
 	};
 
-	private static final short squares_cen_map[] = { 0x0F, 0x33, 0x3C, 0x55, 0x5A, 0x66, 0x99, 0xA5, 0xAA, 0xC3, 0xCC, 0xF0 };
+	public static final short squares_cen_map[] = { 0x0F, 0x33, 0x3C, 0x55, 0x5A, 0x66, 0x99, 0xA5, 0xAA, 0xC3, 0xCC, 0xF0 };
 
-	private static final int sqs_perm_to_rep[] = {
+	public static final int sqs_perm_to_rep[] = {
 		0, 1, 2, 3, 4, 5,
 		1, 0, 4, 5, 2, 3,
 		3, 2, 5, 4, 0, 1,
 		5, 4, 3, 2, 1, 0
 	};
 
-	private static int mov_lst[] = { Constants.Uf2, Constants.Df2, Constants.Ls2, Constants.Rs2, Constants.Ff2, Constants.Bf2 };
+	private static int mov_lst[] = { Constants.Uf2, Constants.Df2, Constants.Lf2, Constants.Rf2, Constants.Ff2, Constants.Bf2 };
 	private static short cen_swapbits_map[] = {
 		0x90, 0x60, //Uf2
 		0x09, 0x06, //Df2
@@ -1464,7 +1472,8 @@ public final class Tables {
 
 	private InitSquares2nd threadInitSquares2nd = new InitSquares2nd();
 
-	private static final byte[][] squares_movemap = new byte[96][6]; // (96 ?)
+	public static final byte[][] squares_movemap = new byte[96][6]; // (96 ?)
+	public static final byte[][] move_table_cornerSTAGE5 = new byte[Constants.N_SQS_CORNER_PERM][Constants.N_SQMOVES]; // TODO: (???) 46371*36 = 6677424
 
 	private class InitSquaresMovemap extends Thread {
 	public void run (){
@@ -1484,19 +1493,26 @@ public final class Tables {
 		for (i = 0; i < 96; ++i) {
 			if(( i % 4 ) == 0 ){ // Only need to update once every 4 iterations.
 				first_perm = i / 4;
-				Constants.perm_n_unpack (4, first_perm, cube1.m_edge, 0);
+				Constants.perm_n_unpack (4, first_perm, cube1.m_cor, 0);
 			}
 			second_perm = squares_2nd_perm[first_perm][i % 4];
-			Constants.perm_n_unpack (4, second_perm, cube1.m_edge, 4);
+			Constants.perm_n_unpack (4, second_perm, cube1.m_cor, 4);
 			for (j = 4; j < 8; ++j) {
-				cube1.m_edge[j] += 4;
+				cube1.m_cor[j] += 4;
 			}
 			for (j = 0; j < 6; ++j) {
-				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 8);
-				cube2.rotate_sliceEDGE (mov_lst[j]);
-				int x1 = Constants.perm_n_pack (4, cube2.m_edge, 0);
-				int x2 = cube2.m_edge[4] - 4;
+				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
+				cube2.rotate_sliceCORNER (mov_lst[j]);
+				int x1 = Constants.perm_n_pack (4, cube2.m_cor, 0);
+				int x2 = cube2.m_cor[4] - 4;
 				squares_movemap[i][j] = (byte)(4*x1 + x2);
+			}
+			for (int m = 0; m < 12; ++m) {
+				int move_code6 = Tables.squares_map[3][m];
+				if (move_code6 < 0)
+					move_table_cornerSTAGE5[i][m]= (byte) i;
+				else
+					move_table_cornerSTAGE5[i][m]= (byte) Tables.squares_movemap[i][move_code6];
 			}
 		}
 		System.out.println( "Finishing squares movemap..." );
@@ -1506,17 +1522,19 @@ public final class Tables {
 	private InitSquaresMovemap threadInitSquaresMovemap = new InitSquaresMovemap();
 
 	public static final byte[] squares_cen_revmap = new byte[256]; // (12)
-	private static final byte[][] squares_cen_movemap = new byte[12][6]; // (12)
+	public static final byte[][] squares_cen_movemap = new byte[12][6]; // (12)
+	public static final short[][] move_table_cenSTAGE5 = new short[Constants.N_SQS_CENTER_PERM][Constants.N_SQMOVES]; // TODO: (???) 46371*36 = 6677424
 
 	private class InitSquaresCenterMap extends Thread {
 	public void run (){
 
+		/*
 		try{
 		threadInitSquaresMovemap.join();
 		}
 		catch(InterruptedException ie){
 			ie.printStackTrace();
-		}
+		}*/
 
 		System.out.println( "Starting squares center map..." );
 		int i, j;
@@ -1534,33 +1552,200 @@ public final class Tables {
 				squares_cen_movemap[i][j] = squares_cen_revmap[x2];
 			}
 		}
+		for (i = 0; i < 12*12*12; ++i) {
+			//int cen0 = cen % 12;
+			//int cen1 = (cen/12) % 12;
+			//int cen2 = cen/(12*12);
+			for (int m = 0; m < 12; ++m) {
+				int pos = 1;
+				int res = 0;
+				int cen = i;
+				for (int k=4; k <= 6; k++) {
+					int cenk = cen % 12;
+					int move_code6 = Tables.squares_map[k][m];
+					if (move_code6 < 0)
+						res += pos*cenk;
+					else
+						res += pos*squares_cen_movemap[cenk][move_code6];
+					pos *= 12;
+					cen /= 12;
+				}
+
+				move_table_cenSTAGE5[i][m]= (short) res;
+			}
+		}
 		System.out.println( "Finishing squares center map..." );
 	}
 	}
 
 	private InitSquaresCenterMap threadInitSquaresCenterMap = new InitSquaresCenterMap();
 
-	public static final int squares_move (int pos96, int move_code6){
-		if (move_code6 < 0) {
-			return pos96;
+	/*** init stage 5 symEdgeToEdge ***/
+	public static final int[] symEdgeToEdgeSTAGE5 = new int[Constants.N_SQS_SYMEDGE_PERM];
+
+	private class InitSymEdgeToEdgeStage5 extends Thread {
+
+	public void run (){
+
+		System.out.println( "Starting symEdgeToEdge stage 5..." );
+		int i, sym;
+		int u, repIdx = 0;
+		CubeSqsCoord cs = new CubeSqsCoord();
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+
+		byte[] isRepTable = new byte[Constants.N_SQS_EDGE_PERM]; // TODO: Could take less memory: one value per bit.
+		for (u = 0; u < Constants.N_SQS_EDGE_PERM; ++u) {
+			if( isRepTable[u] == -1 ) continue;
+			cs.m_ep96x96x96 = u;
+			cs.convert_edges_to_std_cube (cube1);
+
+			for (sym = 0; sym < Constants.N_SYM_STAGE5; ++sym) {
+				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
+				cube2.conjugate (sym);
+				int edge = cube2.convert_edges_to_squares ();
+				isRepTable[edge] = -1; // not a rep.
+			}
+			symEdgeToEdgeSTAGE5[repIdx++] = u;
 		}
-		return squares_movemap[pos96][move_code6];
+		System.out.println( "Finishing symEdgeToEdge stage 5... generated "+repIdx+" reps." );
+	}
 	}
 
-	public static final int squares_move_corners (int pos96, int sqs_move_code){
-		return squares_move (pos96, squares_map[3][sqs_move_code]);
-	}
+	private InitSymEdgeToEdgeStage5 threadInitSymEdgeToEdgeStage5 = new InitSymEdgeToEdgeStage5();
 
-	public static final int squares_move_edges (int pos96, int sqs_move_code, int edge_group){
-		return squares_move (pos96, squares_map[edge_group][sqs_move_code]);
-	}
+	/*** init stage 5 symEdges ***/
+	public static final int[][] move_table_symEdgeSTAGE5 = new int[Constants.N_SQS_SYMEDGE_PERM][Constants.N_SQMOVES]; // (???) 46371*36 = 6677424
 
-	public static final int squares_move_centers (int pos12, int sqs_move_code, int cen_group){
-		int move_code6 = squares_map[4+cen_group][sqs_move_code];
-		if (move_code6 < 0) {
-			return pos12;
+	private class InitSymEdgeStage5 extends Thread {
+
+	public void run (){
+
+		try{
+		threadInitSymEdgeToEdgeStage5.join();
 		}
-		return squares_cen_movemap[pos12][move_code6];
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting symEdge stage 5..." );
+		int i, mc;
+		int u, edge;
+		CubeSqsCoord cs = new CubeSqsCoord();
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		CubeState cube3 = new CubeState();
+		cube1.init ();
+		cube2.init ();
+		cube3.init ();
+		for (u = 0; u < Constants.N_SQS_SYMEDGE_PERM; ++u) {
+			cs.m_ep96x96x96 = symEdgeToEdgeSTAGE5[u];
+			cs.convert_edges_to_std_cube (cube1);
+
+			for (mc = 0; mc < Constants.N_SQMOVES; ++mc) {
+				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
+				cube2.rotate_sliceEDGE (Constants.stage5_slice_moves[mc]);
+				int minEdge = 99999999;
+				int minSym = 0;
+				for (int sym=0; sym < Constants.N_SYM_STAGE5; sym++ ){
+					System.arraycopy(cube2.m_edge, 0, cube3.m_edge, 0, 24); // TODO: duplicate in CubeState !!
+					cube3.conjugate(sym);
+					edge = cube3.convert_edges_to_squares ();
+					if( edge < minEdge){
+						minEdge = edge;
+						minSym = sym;
+					}
+				}
+
+				move_table_symEdgeSTAGE5[u][mc] = Symmetry.getRep(symEdgeToEdgeSTAGE5, minEdge)*Constants.N_SYM_STAGE5 + minSym;
+			}
+		}
+		System.out.println( "Finishing symEdge stage 5..." );
 	}
+	}
+
+	private InitSymEdgeStage5 threadInitSymEdgeStage5 = new InitSymEdgeStage5();
+
+	/*** init stage 5 corner conjugate ***/
+	public static final byte[][] move_table_corner_conjSTAGE5 = new byte[Constants.N_SQS_CORNER_PERM][Constants.N_SYM_STAGE5]; // (96) 96*48
+
+	private class InitCornerConjStage5 extends Thread {
+
+	public void run (){
+
+		try{
+		threadInitSquaresMovemap.join();
+		threadInitSquaresCenterMap.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting corner conjugate stage 5..." );
+		int i, sym;
+		int u;
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		cube1.init ();
+		cube2.init ();
+		CubeSqsCoord s1 = new CubeSqsCoord();
+		s1.init ();
+		for (u = 0; u < Constants.N_SQS_CORNER_PERM; ++u) {
+			s1.m_cp96 = (byte)u;
+			s1.convert_to_std_cube (cube1);
+			//cube1.print();
+			for (sym = 0; sym < Constants.N_SYM_STAGE5; ++sym) {
+				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
+				cube2.conjugate (sym);
+				//System.out.println("SYM="+sym);
+				//cube2.print();
+				move_table_corner_conjSTAGE5[u][sym] = cube2.convert_corners_to_squares ();
+			}
+		}
+		System.out.println( "Finishing corner conjugate stage 5..." );
+	}
+	}
+
+	private InitCornerConjStage5 threadInitCornerConjStage5 = new InitCornerConjStage5();
+
+	/*** init stage 5 center conjugate ***/
+	public static final short[][] move_table_cen_conjSTAGE5 = new short[Constants.N_SQS_CENTER_PERM][Constants.N_SYM_STAGE5]; // (1728) 1728*48
+
+	private class InitCenterConjStage5 extends Thread {
+
+	public void run (){
+
+		try{
+		threadInitSquaresMovemap.join();
+		threadInitSquaresCenterMap.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting center conjugate stage 5..." );
+		int i, sym;
+		int u;
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		cube1.init ();
+		cube2.init ();
+		CubeSqsCoord s1 = new CubeSqsCoord();
+		s1.init ();
+		for (u = 0; u < Constants.N_SQS_CENTER_PERM; ++u) {
+			s1.m_cen12x12x12 = (short)u;
+			s1.convert_to_std_cube (cube1);
+			for (sym = 0; sym < Constants.N_SYM_STAGE5; ++sym) {
+				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
+				cube2.conjugate (sym);
+				move_table_cen_conjSTAGE5[u][sym] = cube2.convert_centers_to_squares();
+			}
+		}
+		System.out.println( "Finishing center conjugate stage 5..." );
+	}
+	}
+
+	private InitCenterConjStage5 threadInitCenterConjStage5 = new InitCenterConjStage5();
+
 
 }

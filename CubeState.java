@@ -115,6 +115,31 @@ public final class CubeState implements java.io.Serializable{
 			m_edge[i] = cs1.m_edge[cs2.m_edge[i]];
 	}
 
+	public void inverse() {
+		int i;
+		byte[] t = new byte[24];
+		byte[] x = new byte[6];
+
+		for (i = 0; i < 8; ++i) {
+			t[m_cor[i]] = (byte)i;
+		}
+		for (i = 0; i < 8; ++i) {
+			m_cor[i] = t[i];
+		}
+		for (i = 0; i < 24; ++i) {
+			t[m_edge[i]] = (byte)i;
+		}
+		for (i = 0; i < 24; ++i) {
+			m_edge[i] = t[i];
+		}
+		for (i = 0; i < 24; ++i) {
+			t[m_cen[i]] = (byte)i;
+		}
+		for (i = 0; i < 24; ++i) {
+			m_cen[i] = t[i];
+		}
+	}
+
 	public void conjugate (int symIdx){
 		int i;
 		byte temp_c_orient;
@@ -446,35 +471,26 @@ public final class CubeState implements java.io.Serializable{
 		16, 19, 17, 18, 21, 22, 20, 23
 	};
 
-	public void convert_to_squares (CubeSqsCoord result_cube){
-		int i;
-		//We must convert between "squares"-style cubie numbering and the "standard"-style
-		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
-		byte[] old_m_cor = new byte[8]; // FIXME.
-		for (i = 0; i < 8; ++i) { // Add. May be faster ?
-			old_m_cor[i] = m_cor[i];
-		}
-		byte[] old_m_cen = new byte[24]; // FIXME.
-		for (i = 0; i < 24; ++i) { // Add. May be faster ?
-			old_m_cen[i] = m_cen[i];
-		}
-		for (i = 0; i < 8; ++i) {
-			m_cor[std_to_sqs_cor[i]] = std_to_sqs_cor[old_m_cor[i]];
-		}
-		for (i = 0; i < 24; ++i) {
-			m_cen[std_to_sqs_cen[i]] = (byte)(std_to_sqs_cen[4*old_m_cen[i]]/4);
-		}
-		pack_cubeSQS (result_cube);
-	}
-
-	public void pack_cubeSQS (CubeSqsCoord result_cube){
+	public int convert_edges_to_squares (){ // TODO: make a function like that for all stages and all pieces.
 		int ep1 = Constants.perm_n_pack (4, m_edge, 0);
 		int ep2 = Constants.perm_n_pack (4, m_edge, 8);
 		int ep3 = Constants.perm_n_pack (4, m_edge, 16);
-		result_cube.m_ep96x96x96 = 96*96*(4*ep3 + (m_edge[20] - 20)) + 96*(4*ep2 + (m_edge[12] - 12)) +
+		return 96*96*(4*ep3 + (m_edge[20] - 20)) + 96*(4*ep2 + (m_edge[12] - 12)) +
 			4*ep1 + (m_edge[4] - 4);
-		result_cube.m_cp96 = (byte)(4*Constants.perm_n_pack (4, m_cor, 0) + (m_cor[4] - 4));
-		result_cube.m_cen12x12x12 = squares_pack_centers ();
+	}
+
+	public short convert_centers_to_squares (){
+		int i;
+		//We must convert between "squares"-style cubie numbering and the "standard"-style
+		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
+
+		byte[] old_m_cen = new byte[24];
+		System.arraycopy(m_cen, 0, old_m_cen, 0, 24);
+		for (i = 0; i < 24; ++i) {
+			m_cen[std_to_sqs_cen[i]] = (byte)(std_to_sqs_cen[4*old_m_cen[i]]/4); // FIXME: Modify the cube state !
+		}
+
+		return squares_pack_centers ();
 	}
 
 	public short squares_pack_centers (){
@@ -491,6 +507,42 @@ public final class CubeState implements java.io.Serializable{
 		short cen2 = (short)Tables.squares_cen_revmap[(x >> 8) & 0xFF];
 		short cen3 = (short)Tables.squares_cen_revmap[x & 0xFF];
 		return (short)(cen1 + 12*cen2 + 12*12*cen3);
+	}
+
+	public byte convert_corners_to_squares (){
+		int i;
+		//We must convert between "squares"-style cubie numbering and the "standard"-style
+		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
+
+		byte[] old_m_cor = new byte[8];
+		System.arraycopy(m_cor, 0, old_m_cor, 0, 8);
+		for (i = 0; i < 8; ++i) {
+			m_cor[std_to_sqs_cor[i]] = std_to_sqs_cor[old_m_cor[i]];
+		}
+
+		return (byte)(4*Constants.perm_n_pack (4, m_cor, 0) + (m_cor[4] - 4));
+	}
+
+	public void convert_to_squares (CubeSqsCoord result_cube){
+		int i;
+
+		result_cube.m_ep96x96x96 = convert_edges_to_squares ();
+		result_cube.m_cp96 = convert_corners_to_squares ();
+		result_cube.m_cen12x12x12 = convert_centers_to_squares ();
+
+		CubeState cube = new CubeState();
+		int minEdge = 99999999;
+		int minSym = 0;
+		for (int sym=0; sym < Constants.N_SYM_STAGE5; sym++ ){
+			System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
+			cube.conjugate(sym);
+			int edge = cube.convert_edges_to_squares ();
+			if( edge < minEdge){
+				minEdge = edge;
+				minSym = sym;
+			}
+		}
+		result_cube.m_sym_ep96x96x96 = Symmetry.getRep(Tables.symEdgeToEdgeSTAGE5, minEdge)*Constants.N_SYM_STAGE5 + minSym;
 	}
 
 	private static int dbltwists[][] = {

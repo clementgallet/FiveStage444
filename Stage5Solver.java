@@ -127,14 +127,26 @@ public final class Stage5Solver extends StageSolver{
 		ss.cube.convert_to_squares (cube);
 	}
 
+	int id;
+	int best;
+
 	public void run (){
 		int init_move_state[] = { 12, 23, 6 };
-		bestCount = 999;
+		id = 0;
 
 		while(pullState()) {
-			for (goal = 0; goal < bestCount - ss.move_count; ++goal) {
-				if (treeSearch (cube, goal, 0, init_move_state[metric])) {
-					//bestCount = ss.move_count + goal;
+			if( id != ss.id ){
+				id = ss.id;
+				best = 100;
+			}
+
+			int cubeDist = getDistance();
+			if( cubeDist > ( best - ss.move_count ))
+				continue;
+
+			for (goal = 0; goal < best - ss.move_count; ++goal) {
+				if (treeSearch (cube, goal, 0, init_move_state[metric], cubeDist)) {
+					best = ss.move_count + goal;
 					break;
 				}
 			}
@@ -144,7 +156,66 @@ public final class Stage5Solver extends StageSolver{
 		closePipes();
 	}
 
-	public boolean treeSearch (CubeSqsCoord cube1, int depth, int moves_done, int move_state){
+	public int getDistance (){
+		CubeSqsCoord cube1 = new CubeSqsCoord();
+		CubeSqsCoord cube2 = new CubeSqsCoord();
+		int mov_idx, mc, j, dist1, dist2;
+		int nDist = 0;
+		
+		cube1.m_cen12x12x12 = cube.m_cen12x12x12;
+		cube1.m_sym_ep96x96x96 = cube.m_sym_ep96x96x96;
+
+		dist1 = cube1.get_dist();
+
+		while (! cube1.edges_centers_solved()) {
+
+			System.out.println("dist "+nDist+": edg="+cube1.m_sym_ep96x96x96+" - cen="+cube1.m_cen12x12x12);
+			//System.out.println("current dist:"+dist1);
+			boolean noMoves=true;
+			for (mov_idx = 0; mov_idx < n_moves_metric_stg5[metric]; ++mov_idx) {
+				cube2.m_cen12x12x12 = cube1.m_cen12x12x12;
+				//cube2.m_cp96 = cube1.m_cp96;
+				//cube2.m_ep96x96x96 = cube1.m_ep96x96x96;
+				cube2.m_sym_ep96x96x96 = cube1.m_sym_ep96x96x96;
+				switch (metric) {
+				case 0:
+					cube2.do_move (mov_idx);
+					break;
+				case 1:
+					for (j = 0; j < 2 && sq_twist_moves[mov_idx][j] >= 0; ++j) {
+						mc = sq_twist_moves[mov_idx][j];		//!!! metric dependency
+						cube2.do_move (mc);		//!!! metric dependency
+					}
+					break;
+				case 2:
+					for (j = 0; sq_block_moves[mov_idx][j] >= 0; ++j) {
+						mc = sq_block_moves[mov_idx][j];
+						cube2.do_move (mc);
+					}
+					break;
+				}
+				dist2 = cube2.get_dist();
+				//System.out.println("moved "+mov_idx+", dist:"+dist2);
+				if ((dist2 % 3) != (dist1 - 1)) continue;
+				//if (cube2.prune_funcEDGCOR_STAGE5() > depth-1) continue;
+				//if (cube2.prune_funcCENCOR_STAGE5() > depth-1) continue;
+				cube1.m_cen12x12x12 = cube2.m_cen12x12x12;
+				cube1.m_sym_ep96x96x96 = cube2.m_sym_ep96x96x96;
+				nDist++;
+				dist1 = dist2;
+				noMoves=false;
+				break;
+			}
+			if( noMoves){
+				System.out.println("Could not find a move that lowers the distance !!");
+				break;
+			}
+		}
+		System.out.println("Successfully found distance "+nDist);
+		return nDist;
+	}
+
+	public boolean treeSearch (CubeSqsCoord cube1, int depth, int moves_done, int move_state, int distance){
 		//Statistics.addNode(5, depth);
 		CubeSqsCoord cube2 = new CubeSqsCoord();
 		int mov_idx, mc, j;
@@ -161,7 +232,8 @@ public final class Stage5Solver extends StageSolver{
 			boolean did_move = false;
 			cube2.m_cen12x12x12 = cube1.m_cen12x12x12;
 			cube2.m_cp96 = cube1.m_cp96;
-			cube2.m_ep96x96x96 = cube1.m_ep96x96x96;
+			//cube2.m_ep96x96x96 = cube1.m_ep96x96x96;
+			cube2.m_sym_ep96x96x96 = cube1.m_sym_ep96x96x96;
 			switch (metric) {
 			case 0:
 				if ((sqs_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
@@ -192,8 +264,10 @@ public final class Stage5Solver extends StageSolver{
 				break;
 			}
 			if (did_move) {
-				if (cube2.prune_funcEDGCOR_STAGE5() > depth-1) continue;
-				if (cube2.prune_funcCENCOR_STAGE5() > depth-1) continue;
+				int newDist = ((cube2.get_dist() - (distance%3) + 4) % 3 ) + distance - 1;
+				if (newDist > depth-1) continue;
+				//if (cube2.prune_funcEDGCOR_STAGE5() > depth-1) continue;
+				//if (cube2.prune_funcCENCOR_STAGE5() > depth-1) continue;
 				mc = mov_idx;
 				switch (metric) {
 				case 1:
@@ -204,7 +278,7 @@ public final class Stage5Solver extends StageSolver{
 					break;
 				}
 				move_list[moves_done] = (byte)mc;
-				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms)) return true;
+				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms, newDist)) return true;
 			}
 		}
 		return false;

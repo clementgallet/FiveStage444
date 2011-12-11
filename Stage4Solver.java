@@ -100,7 +100,7 @@ public final class Stage4Solver extends StageSolver{
 				break;
 			}
 			if (did_move) {
-				if ((cube2.get_dist() % 3) != (dist - 1)) continue;
+				if ((cube2.get_dist() % 3) != (dist - 1)) continue; // TODO: computing get_dist twice !
 				//if (cube2.prune_funcCENCOR_STAGE4() > depth-1) continue;
 				//if (cube2.prune_funcEDGCEN_STAGE4() > depth-1) continue;
 				mc = mov_idx;

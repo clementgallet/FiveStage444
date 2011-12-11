@@ -7,15 +7,13 @@ public final class Constants{
 
 	public static final String datafiles_path = "./fivestage444/";
 
+	public static final int N_SYM_ALL = 96; // With inverse.
 	public static final int N_SYM = 48;
 	public static final int N_SYM_STAGE1 = 16;
 	public static final int N_SYM_STAGE4 = 16;
+	public static final int N_SYM_STAGE5 = 48; // Seems putting 96 here don't improve anything...
 
 	public static final int N_CORNER_ORIENT = 2187;
-
-	public static final int N_SQS_EDGE_PERM = 96*96*96;
-	public static final int N_SQS_CENTER_PERM = 12*12*12;
-	public static final int N_SQS_CORNER_PERM = 96;
 
 	public static final int N_EDGE_COMBO8 = 735471;	// 24!/(16!*8!)
 	public static final int N_SYMEDGE_COMBO8 = 46371;
@@ -35,6 +33,11 @@ public final class Constants{
 	public static final int N_STAGE4_CORNER_CONFIGS = 420;	//8!/96
 	public static final int N_STAGE4_EDGE_HASH_TABLE = 200383;	//100153;
 	public static final int N_STAGE4_EDGE_HASH_DIVISOR = N_STAGE4_EDGE_HASH_TABLE - 2;	//also prime
+
+	public static final int N_SQS_EDGE_PERM = 96*96*96;
+	public static final int N_SQS_SYMEDGE_PERM = 21908;
+	public static final int N_SQS_CENTER_PERM = 12*12*12;
+	public static final int N_SQS_CORNER_PERM = 96;
 
 	public static final byte UP = 0;
 	public static final byte DOWN = 1;
@@ -126,6 +129,15 @@ public final class Constants{
 	public static final int Fs2Bs2 = 62;
 
 	public static final int N_SQMOVES = 12;
+	public static final byte stage5_slice_moves[] = { Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2 };
+	public static final byte stage5_inv_slice_moves[] = {
+	-1, -1, 0, -1, -1, 1,
+	-1, -1, 2, -1, -1, 3,
+	-1, -1, 4, -1, -1, 5,
+	-1, -1, 6, -1, -1, 7,
+	-1, -1, 8, -1, -1, 9,
+	-1, -1, 10, -1, -1, 11
+	};
 
 	public static final int N_FACE_MOVES = 18;
 

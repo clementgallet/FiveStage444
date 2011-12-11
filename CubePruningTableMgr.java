@@ -349,6 +349,7 @@ public final class CubePruningTableMgr {
 		}
 		*/
 		/*** Stage 5 ***/
+		/*
 		System.out.println ("Stage5...");
 		CubeSqsCoord sqs_solved = new CubeSqsCoord();
 		CubeSqsCoord sqs_solved2 = new CubeSqsCoord();
@@ -414,6 +415,7 @@ public final class CubePruningTableMgr {
 		} else {
 			readFromFile( fname, CubeSqsCoord.prune_table_edgcor5, Constants.N_SQS_EDGE_PERM*Constants.N_SQS_CORNER_PERM/2);
 		}
+		*/
 	}
 };
 
