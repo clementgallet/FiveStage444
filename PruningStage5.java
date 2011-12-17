@@ -55,8 +55,6 @@ public final class PruningStage5 extends Pruning {
 		// Fill the solved states.
 		set_dist(0, 3);
 		set_dist(21616*Constants.N_SQS_CENTER_PERM+143, 3);
-
-		count = 2;
 	}
 
 	int do_move (int idx, int move){
@@ -69,7 +67,24 @@ public final class PruningStage5 extends Pruning {
 
 		cen = Tables.move_table_cenSTAGE5[cen][move];
 		cen = Tables.move_table_cen_conjSTAGE5[cen][sym];
-
+		//if( idx == 20626457 ) System.out.println("Edge:"+edgeRep+"Idx:"+(edgeRep*Constants.N_SQS_CENTER_PERM + cen)+" - move:"+move);
 		return edgeRep*Constants.N_SQS_CENTER_PERM + cen;
+	}
+
+	void saveIdxAndSyms (int idx, int dist){
+		set_dist (idx, dist);
+
+		int edge = idx / Constants.N_SQS_CENTER_PERM;
+		short cen = (short)(idx % Constants.N_SQS_CENTER_PERM);
+		int symI = 0;
+		long syms = Tables.hasSymEdgeSTAGE5[edge];
+		while (syms != 0){
+			if(( syms & 0x1L ) == 1 ){
+				short cen2 = Tables.move_table_cen_conjSTAGE5[cen][symI];
+				set_dist (edge*Constants.N_SQS_CENTER_PERM + cen2, dist);
+			}
+			symI++;
+			syms >>= 1;
+		}
 	}
 }

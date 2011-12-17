@@ -178,8 +178,8 @@ public final class FiveStage444 {
 			random_list[j] = (byte)r.nextInt(36);
 		}
 		solveme.scramble(scramble_len, random_list);
-		System.out.println ("scramble: ");
-		print_move_list (scramble_len, random_list);
+		//System.out.println ("scramble: ");
+		//print_move_list (scramble_len, random_list);
 		solveit4x4x4IDA (i, solveme, metric);
 	}
 
@@ -247,6 +247,38 @@ public final class FiveStage444 {
 			myPipeOut.writeObject(new SolverState(id, cube, metric, null, 0, 0));
 		}
 		catch (java.io.IOException ioe) { ioe.getMessage(); }
+		/*
+		cube.do_move (Lf3);
+		cube.do_move (Ls3);
+		cube.do_move (Rs);
+		cube.do_move (Rf);
+		cube.do_move (Uf3);
+		cube.do_move (Us3);
+		cube.do_move (Ds);
+		cube.do_move (Df);
+
+		myPipeOut = null;
+		try{
+			myPipeOut = new ObjectOutputStream (pipeStage01out);
+			myPipeOut.writeObject(new SolverState(id, cube, metric, null, 0, 0));
+		}
+		catch (java.io.IOException ioe) { ioe.getMessage(); }
+
+		cube.do_move (Lf3);
+		cube.do_move (Ls3);
+		cube.do_move (Rs);
+		cube.do_move (Rf);
+		cube.do_move (Uf3);
+		cube.do_move (Us3);
+		cube.do_move (Ds);
+		cube.do_move (Df);
+
+		myPipeOut = null;
+		try{
+			myPipeOut = new ObjectOutputStream (pipeStage01out);
+			myPipeOut.writeObject(new SolverState(id, cube, metric, null, 0, 0));
+		}
+		catch (java.io.IOException ioe) { ioe.getMessage(); }*/
 	}
 
 	public static void getSolutions () {

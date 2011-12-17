@@ -164,13 +164,16 @@ public final class Stage5Solver extends StageSolver{
 		
 		cube1.m_cen12x12x12 = cube.m_cen12x12x12;
 		cube1.m_sym_ep96x96x96 = cube.m_sym_ep96x96x96;
+		//cube1.m_ep96x96x96 = cube.m_ep96x96x96;
 
 		dist1 = cube1.get_dist();
 
 		while (! cube1.edges_centers_solved()) {
 
-			System.out.println("dist "+nDist+": edg="+cube1.m_sym_ep96x96x96+" - cen="+cube1.m_cen12x12x12);
+			//System.out.println("dist "+nDist+": symedg="+cube1.m_sym_ep96x96x96+" - cen="+cube1.m_cen12x12x12+" - edg="+cube1.m_ep96x96x96);
 			//System.out.println("current dist:"+dist1);
+			//if( cube1.m_sym_ep96x96x96 == 572929) System.out.println("init_idx = "+(( cube1.m_sym_ep96x96x96 / 48 ) * Constants.N_SQS_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[cube1.m_cen12x12x12][cube1.m_sym_ep96x96x96 % 48])+" - init_dist = "+dist1);
+
 			boolean noMoves=true;
 			for (mov_idx = 0; mov_idx < n_moves_metric_stg5[metric]; ++mov_idx) {
 				cube2.m_cen12x12x12 = cube1.m_cen12x12x12;
@@ -195,12 +198,16 @@ public final class Stage5Solver extends StageSolver{
 					break;
 				}
 				dist2 = cube2.get_dist();
+
+				//if( cube1.m_sym_ep96x96x96 == 572929) System.out.println("idx = "+(( cube2.m_sym_ep96x96x96 / 48 ) * Constants.N_SQS_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[cube2.m_cen12x12x12][cube2.m_sym_ep96x96x96 % 48])+" dist = "+dist2);
+
 				//System.out.println("moved "+mov_idx+", dist:"+dist2);
 				if ((dist2 % 3) != (dist1 - 1)) continue;
 				//if (cube2.prune_funcEDGCOR_STAGE5() > depth-1) continue;
 				//if (cube2.prune_funcCENCOR_STAGE5() > depth-1) continue;
 				cube1.m_cen12x12x12 = cube2.m_cen12x12x12;
 				cube1.m_sym_ep96x96x96 = cube2.m_sym_ep96x96x96;
+				//cube1.m_ep96x96x96 = cube2.m_ep96x96x96;
 				nDist++;
 				dist1 = dist2;
 				noMoves=false;
@@ -211,7 +218,8 @@ public final class Stage5Solver extends StageSolver{
 				break;
 			}
 		}
-		System.out.println("Successfully found distance "+nDist);
+		//System.out.println("Successfully found distance "+nDist);
+		//System.out.println("symedg="+(cube1.m_sym_ep96x96x96%48)+" - cen="+cube1.m_cen12x12x12+" - edg="+cube1.m_ep96x96x96+" - conjCen="+Tables.move_table_cen_conjSTAGE5[cube1.m_cen12x12x12][cube1.m_sym_ep96x96x96 % 48]);
 		return nDist;
 	}
 
@@ -264,7 +272,7 @@ public final class Stage5Solver extends StageSolver{
 				break;
 			}
 			if (did_move) {
-				int newDist = ((cube2.get_dist() - (distance%3) + 4) % 3 ) + distance - 1;
+				int newDist = ((cube2.get_dist() - (distance%3) + 4) % 3 ) + distance - 1; // TODO: Could make a better formula...
 				if (newDist > depth-1) continue;
 				//if (cube2.prune_funcEDGCOR_STAGE5() > depth-1) continue;
 				//if (cube2.prune_funcCENCOR_STAGE5() > depth-1) continue;

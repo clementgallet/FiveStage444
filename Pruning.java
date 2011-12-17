@@ -14,7 +14,7 @@ abstract class Pruning {
 	int[] move_list;
 	int num_solved;
 	int[] psolved;
-	int count;
+	int count = 0;
 	int metric = 0;
 	File fname;
 
@@ -70,6 +70,7 @@ abstract class Pruning {
 
 	void set_dist (int idx, int value){
 		ptable[idx>>2] |= (byte)(value << ((idx & 0x3) << 1));
+		count++;
 	}
 
 	abstract int do_move (int idx, int move);
@@ -105,15 +106,28 @@ abstract class Pruning {
 	{
 		int i, j;
 
+		//if( idx == 20626457 ) System.out.println("Init_dist:"+get_dist(idx)+"set_dist:"+dist);
+
 		for (i = 0; i < num_moves; ++i) {
 			int idx2 = do_move (idx, move_list[3*i]);
 			for (j = 1; j < 3 && move_list[3*i + j] >= 0; ++j) {
 				idx2 = do_move (idx2, move_list[3*i + j]);
 			}
 			if (get_dist(idx2) == 0){
-				set_dist (idx2, dist);
-				count++;
+				saveIdxAndSyms( idx2, dist );
+				/*
+				if( idx2 == 20626457 ){
+					//System.out.println("From idx "+idx+" with distance "+get_dist(idx)+" I set cur_idx to "+dist+" with move "+i);
+					System.out.println("From edge "+(idx/Constants.N_SQS_CENTER_PERM)+" I set cur_edge "+(20626457/48));
+					System.out.println("Applying the same move gives idx "+(do_move(idx2,i)));
+					System.out.println("Applying the same move again gives idx "+(do_move(do_move(idx2,i),i)));
+				}*/
+				//set_dist (idx2, dist);
+				//count++;
 			}
 		}
 	}
+
+	abstract void saveIdxAndSyms (int idx, int dist);
+
 }

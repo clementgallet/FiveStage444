@@ -740,6 +740,31 @@ public final class Constants{
 	};
 
 	/**
+	 * Extract an element from a table that stores eight numbers per byte.
+	 * @param x	table index
+	 * @param p	table
+	 * @return	extracted value
+	 */
+	public static final byte get_value_1bit (int x, byte[] p)
+	{
+		int x2 = x >> 3;
+		int j = x & 0x7;
+		return (byte)((p[x2] >> j) & 0x1);
+	}
+
+	/**
+	 * Write a 1 into a table.
+	 * @param x	table index
+	 * @param p	table
+	 */
+	public static final void set_1_1bit (int x, byte[] p)
+	{
+		int x2 = x >> 3;
+		int j = x & 0x7;
+		p[x2] |= (0x1 << j);
+	}
+
+	/**
 	 * Extract an element from a table that stores two numbers per byte.
 	 * @param x	table index
 	 * @param p	table

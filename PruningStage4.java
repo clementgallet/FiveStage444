@@ -56,8 +56,6 @@ public final class PruningStage4 extends Pruning {
 		for (i = 0; i < Constants.STAGE4_NUM_SOLVED_CENTER_CONFIGS; ++i) {
 			set_dist( Tables.bm4of8_to_70[Constants.stage4_solved_centers_bm[i]], 3);
 		}
-
-		count = Constants.STAGE4_NUM_SOLVED_CENTER_CONFIGS;
 	}
 
 	int do_move (int idx, int move){
@@ -78,4 +76,26 @@ public final class PruningStage4 extends Pruning {
 
 		return (edgeRep*Constants.N_STAGE4_CORNER_CONFIGS + cor) * Constants.N_STAGE4_CENTER_CONFIGS + cen;
 	}
+
+	void saveIdxAndSyms (int idx, int dist){
+		set_dist (idx, dist);
+
+		byte cen = (byte)(idx % Constants.N_STAGE4_CENTER_CONFIGS);
+		int rest = idx / Constants.N_STAGE4_CENTER_CONFIGS;
+		short cor = (short) (rest % Constants.N_STAGE4_CORNER_CONFIGS);
+		int edge = rest / Constants.N_STAGE4_CORNER_CONFIGS;
+
+		int symI = 0;
+		int syms = Tables.hasSymEdgeSTAGE4[edge];
+		while (syms != 0){
+			if(( syms & 0x1 ) == 1 ){
+				byte cen2 = Tables.move_table_cen_conjSTAGE4[cen][symI];
+				short cor2 = Tables.move_table_corner_conjSTAGE4[cor][symI];
+				set_dist ((edge*Constants.N_STAGE4_CORNER_CONFIGS + cor2) * Constants.N_STAGE4_CENTER_CONFIGS + cen2, dist);
+			}
+			symI++;
+			syms >>= 1;
+		}
+	}
+
 }

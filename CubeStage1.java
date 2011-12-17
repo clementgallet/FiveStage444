@@ -105,12 +105,15 @@ public final class CubeStage1 {
 	}*/
 	
 	public boolean is_solved (){
-		if (m_co == 0 && (m_sym_edge_ud_combo8 / 16) == 46370)
+		if (m_co == 0 && (m_sym_edge_ud_combo8 >> 4) == 46370)
 			return true;
+		if (( m_sym_edge_ud_combo8 >> 4 ) == 0 && Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 & 0xF] == 1906)
+			return true;
+		/*
 		if (m_co == 1373 && (m_sym_edge_ud_combo8 & 0xFFFFFF2) == 2)
 			return true;
 		if (m_co == 1906 && (m_sym_edge_ud_combo8 & 0xFFFFFF2) == 0)
-			return true;
+			return true;*/
 		return false;
 	}
 

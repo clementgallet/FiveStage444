@@ -7,10 +7,6 @@ public final class CubeSqsCoord {
 	public short m_cen12x12x12; // (1728)
 	public byte m_cp96; // (96)
 
-	/*
-	public static byte[] prune_table_cencor5 = new byte[Constants.N_SQS_CENTER_PERM*Constants.N_SQS_CORNER_PERM/2];
-	public static byte[] prune_table_edgcor5 = new byte[Constants.N_SQS_EDGE_PERM*Constants.N_SQS_CORNER_PERM/2];
-	*/
 	public static byte[] prune_table;
 	
 
@@ -27,31 +23,8 @@ public final class CubeSqsCoord {
 	}
 
 	public void do_move (int sqs_move_code){
-		int cen = m_cen12x12x12;
 		m_cen12x12x12 = Tables.move_table_cenSTAGE5[m_cen12x12x12][sqs_move_code];
-
-		/*
-		int ep = m_ep96x96x96;
-		int ep0 = ep%96;
-		int ep1 = (ep/96) % 96;
-		int ep2 = ep/(96*96);
-		m_ep96x96x96 = squares_move_edges (ep0, sqs_move_code, 0) +
-			96*squares_move_edges (ep1, sqs_move_code, 1) +
-			96*96*squares_move_edges (ep2, sqs_move_code, 2);
-		*/
-
-		int cor = m_cp96;
 		m_cp96 = Tables.move_table_cornerSTAGE5[m_cp96][sqs_move_code];
-
-		if (squares_move_corners( cor, sqs_move_code ) != m_cp96 ) System.out.println("Wrong corner move !");
-
-		int cen0 = cen % 12;
-		int cen1 = (cen/12) % 12;
-		int cen2 = cen/(12*12); 
-		int ccc = (short)(squares_move_centers (cen0, sqs_move_code, 0) +
-			12*squares_move_centers (cen1, sqs_move_code, 1) +
-			12*12*squares_move_centers (cen2, sqs_move_code, 2));
-		if (ccc != m_cen12x12x12) System.out.println("Wrong center move !");
 
 		int sym = m_sym_ep96x96x96 % 48;
 		int rep = m_sym_ep96x96x96 / 48;
@@ -63,32 +36,6 @@ public final class CubeSqsCoord {
 		int newRep = newEdge / 48;
 
 		m_sym_ep96x96x96 = ( newRep * 48 ) + Symmetry.symIdxMultiply[newSym][sym];
-
-	}
-
-	public static final int squares_move (int pos96, int move_code6){
-		if (move_code6 < 0) {
-			return pos96;
-		}
-		return Tables.squares_movemap[pos96][move_code6];
-	}
-
-	
-	public static final int squares_move_corners (int pos96, int sqs_move_code){
-		return squares_move (pos96, Tables.squares_map[3][sqs_move_code]);
-	}
-	
-	public static final int squares_move_edges (int pos96, int sqs_move_code, int edge_group){
-		return squares_move (pos96, Tables.squares_map[edge_group][sqs_move_code]);
-	}
-
-	
-	public static final int squares_move_centers (int pos12, int sqs_move_code, int cen_group){
-		int move_code6 = Tables.squares_map[4+cen_group][sqs_move_code];
-		if (move_code6 < 0) {
-			return pos12;
-		}
-		return Tables.squares_cen_movemap[pos12][move_code6];
 	}
 
 	public void do_whole_cube_move (int sqs_whole_cube_move){
@@ -118,61 +65,21 @@ public final class CubeSqsCoord {
 
 	public boolean is_solved (){
 
-		/*if (m_cen12x12x12 == 0 && m_cp96 == 0 && m_ep96x96x96 == 0) {
-			return true;
-		}*/
 		if (m_cen12x12x12 == 0 && m_cp96 == 0 && ( m_sym_ep96x96x96 / 48 ) == 0) {
 			return true;
 		}
-		if (m_sym_ep96x96x96 / 48 == 21616) {
-			int sym = m_sym_ep96x96x96 % 48;
-			if (m_cen12x12x12 == 1716 && m_cp96 == 29 && (((sym >> 4) == 1 && (sym & 0x2) == 0) || ((sym >> 4) == 2 && (sym & 0x2) == 2 )))
-				return true;
-			if (m_cen12x12x12 == 143 && m_cp96 == 66 && (((sym >> 4) == 0 && (sym & 0x2) == 0) || ((sym >> 4) == 1 && (sym & 0x2) == 2 )))
-				return true;
-			if (m_cen12x12x12 == 1595 && m_cp96 == 95 && (((sym >> 4) == 2 && (sym & 0x2) == 0) || ((sym >> 4) == 0 && (sym & 0x2) == 2 )))
-				return true;
-		}
-
-		/*if (m_cen12x12x12 == 1716 && m_cp96 == 29 && m_ep96x96x96 == 881885) {
+		if (m_sym_ep96x96x96 / 48 == 21616 && Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48] == 66 && Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48] == 143)
 			return true;
-		}
-		if (m_cen12x12x12 == 143 && m_cp96 == 66 && m_ep96x96x96 == 276450) {
-			return true;
-		}
-		if (m_cen12x12x12 == 1595 && m_cp96 == 95 && m_ep96x96x96 == 611135) {
-			return true;
-		}*/
 		return false;
 	}
 
 	public boolean edges_centers_solved (){
 
-		/*if (m_cen12x12x12 == 0 && m_cp96 == 0 && m_ep96x96x96 == 0) {
-			return true;
-		}*/
 		if (m_cen12x12x12 == 0 && ( m_sym_ep96x96x96 / 48 ) == 0) {
 			return true;
 		}
-		if (m_sym_ep96x96x96 / 48 == 21616) {
-			int sym = m_sym_ep96x96x96 % 48;
-			if (m_cen12x12x12 == 1716 &&  (((sym >> 4) == 1 && (sym & 0x2) == 0) || ((sym >> 4) == 2 && (sym & 0x2) == 2 )))
-				return true;
-			if (m_cen12x12x12 == 143 && (((sym >> 4) == 0 && (sym & 0x2) == 0) || ((sym >> 4) == 1 && (sym & 0x2) == 2 )))
-				return true;
-			if (m_cen12x12x12 == 1595 && (((sym >> 4) == 2 && (sym & 0x2) == 0) || ((sym >> 4) == 0 && (sym & 0x2) == 2 )))
-				return true;
-		}
-
-		/*if (m_cen12x12x12 == 1716 && m_cp96 == 29 && m_ep96x96x96 == 881885) {
+		if (m_sym_ep96x96x96 / 48 == 21616 && Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48] == 143)
 			return true;
-		}
-		if (m_cen12x12x12 == 143 && m_cp96 == 66 && m_ep96x96x96 == 276450) {
-			return true;
-		}
-		if (m_cen12x12x12 == 1595 && m_cp96 == 95 && m_ep96x96x96 == 611135) {
-			return true;
-		}*/
 		return false;
 	}
 
@@ -244,17 +151,4 @@ public final class CubeSqsCoord {
 			b >>= 1;
 		}
 	}
-
-	/*
-	public int prune_funcCENCOR_STAGE5 (){
-		int idx = Constants.N_SQS_CORNER_PERM*m_cen12x12x12 + m_cp96;
-		return Constants.get_dist_4bit (idx, prune_table_cencor5);
-	}
-
-	public int prune_funcEDGCOR_STAGE5 (){
-		int idx = Constants.N_SQS_CORNER_PERM*m_ep96x96x96 + m_cp96;
-		return Constants.get_dist_4bit (idx, prune_table_edgcor5);
-	}
-	*/
-
 }

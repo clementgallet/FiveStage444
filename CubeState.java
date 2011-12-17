@@ -484,21 +484,23 @@ public final class CubeState implements java.io.Serializable{
 		//We must convert between "squares"-style cubie numbering and the "standard"-style
 		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
 
-		byte[] old_m_cen = new byte[24];
-		System.arraycopy(m_cen, 0, old_m_cen, 0, 24);
+		byte[] new_m_cen = new byte[24];
 		for (i = 0; i < 24; ++i) {
-			m_cen[std_to_sqs_cen[i]] = (byte)(std_to_sqs_cen[4*old_m_cen[i]]/4); // FIXME: Modify the cube state !
+			new_m_cen[std_to_sqs_cen[i]] = (byte)(std_to_sqs_cen[4*m_cen[i]]/4);
 		}
 
-		return squares_pack_centers ();
+		//System.out.println("After rearranging");
+		//print();
+
+		return squares_pack_centers (new_m_cen);
 	}
 
-	public short squares_pack_centers (){
+	public short squares_pack_centers (byte[] new_m_cen){
 		int i;
 		int x = 0;
 		int b = 0x800000;
 		for (i = 0; i < 24; ++i) {
-			if ((m_cen[i] & 0x1) != 0) {
+			if ((new_m_cen[i] & 0x1) != 0) {
 				x |= b;
 			}
 			b >>= 1;
@@ -514,13 +516,12 @@ public final class CubeState implements java.io.Serializable{
 		//We must convert between "squares"-style cubie numbering and the "standard"-style
 		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
 
-		byte[] old_m_cor = new byte[8];
-		System.arraycopy(m_cor, 0, old_m_cor, 0, 8);
+		byte[] new_m_cor = new byte[8];
 		for (i = 0; i < 8; ++i) {
-			m_cor[std_to_sqs_cor[i]] = std_to_sqs_cor[old_m_cor[i]];
+			new_m_cor[std_to_sqs_cor[i]] = std_to_sqs_cor[m_cor[i]];
 		}
 
-		return (byte)(4*Constants.perm_n_pack (4, m_cor, 0) + (m_cor[4] - 4));
+		return (byte)(4*Constants.perm_n_pack (4, new_m_cor, 0) + (new_m_cor[4] - 4));
 	}
 
 	public void convert_to_squares (CubeSqsCoord result_cube){
