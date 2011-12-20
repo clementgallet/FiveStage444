@@ -229,13 +229,30 @@ public final class Stage2Solver extends StageSolver{
 		ss.cube.convert_to_stage2 (cube);
 	}
 
+	int id;
+	int best;
+
 	public void run (){
-		while (pullState()) {
+		id = 0;
+
+		while(pullState()) {
+			if( id != ss.id ){
+				id = ss.id;
+				best = 100;
+			}
+			/*
+			int cubeDist = cube.prune_funcEDGCEN_STAGE2();
+			if( cubeDist > ( best - ss.move_count ))
+				continue;
+			*/
 			foundSol = false;
-			for (goal = 0; goal <= 30; ++goal) {
+			//for (goal = 0; goal < ( best - ss.move_count ); ++goal) {
+			for (goal = 0; goal < 30; ++goal) {
 				treeSearch (cube, goal, 0, 0);
-				if (foundSol)
+				if (foundSol){
+					best = ss.move_count + goal;
 					break;
+				}
 			}
 		}
 

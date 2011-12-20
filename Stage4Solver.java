@@ -47,8 +47,16 @@ public final class Stage4Solver extends StageSolver{
 		ss.cube.convert_to_stage4 (cube);
 	}
 
+	int id;
+	int best;
+
 	public void run (){
 		while (pullState()) {
+			if( id != ss.id ){
+				id = ss.id;
+				best = 100;
+			}
+
 			treeSearch (cube, 0, 0);
 		}
 
@@ -65,11 +73,14 @@ public final class Stage4Solver extends StageSolver{
 		if (dist == 3) {
 			if (cube1.is_solved ()) {
 				goal = moves_done;
+				best = ss.move_count + goal;
 				pushState();
 				Statistics.addLeaf(4, goal);
-				return true; // true: take the first solution, false: take all solutions.
+				return false; // true: take the first solution, false: take all solutions.
 			}
 		}
+		if (moves_done >= best - ss.move_count - 1) return false;
+
 		for (mov_idx = 0; mov_idx < n_moves_metric_stg4[metric]; ++mov_idx) {
 			boolean did_move = false;
 			//cube2.m_edge = cube1.m_edge;

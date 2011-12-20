@@ -59,7 +59,7 @@ public final class Stage1Solver extends StageSolver{
 				goal = moves_done;
 				pushState();
 				Statistics.addLeaf(1, goal);
-				return true; // true: take the first solution, false: take all solutions
+				return false; // true: take the first solution, false: take all solutions
 			}
 		}
 		for (mov_idx = 0; mov_idx < n_moves_metric_stg1[metric]; ++mov_idx) {

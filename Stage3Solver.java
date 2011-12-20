@@ -44,13 +44,32 @@ public final class Stage3Solver extends StageSolver{
 		cube.m_edge_odd = ss.cube.edgeUD_parity_odd ();
 	}
 
+	int id;
+	int best;
+
 	public void run (){
-		while (pullState()) {
+		id = 0;
+
+		while(pullState()) {
+			if( id != ss.id ){
+				id = ss.id;
+				best = 100;
+			}
+			/*
+			int cubeDist = cube.prune_funcCEN_STAGE3();
+			if ( cubeDist < cube.prune_funcEDGE_STAGE3())
+				cubeDist = cube.prune_funcEDGE_STAGE3();
+			if( cubeDist > ( best - ss.move_count ))
+				continue;
+			*/
 			foundSol = false;
-			for (goal = 0; goal <= 30; ++goal) {
+			//for (goal = 0; goal < best - ss.move_count; ++goal) {
+			for (goal = 0; goal < 30; ++goal) {
 				treeSearch (cube, goal, 0, 0);
-				if (foundSol)
+				if (foundSol){
+					//best = ss.move_count + goal;
 					break;
+				}
 			}
 		}
 
