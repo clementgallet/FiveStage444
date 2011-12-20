@@ -12,7 +12,6 @@ public final class Tables {
 		threadInitBm12.start();
 		threadInitCloc.start();
 		threadInitPerm420.start();
-		//threadInitEdgeStage1.start();
 		threadInitSymEdgeToEdgeStage1.start();
 		threadInitSymEdgeStage1.start();
 		threadInitCornerStage1.start();
@@ -25,7 +24,6 @@ public final class Tables {
 		threadInitEdgeBStage4.start();
 		threadInitEdgeAStage4.start();
 		threadInitEdgeRepStage4.start();
-		//threadInitEdgeStage4.start();
 		threadInitSymEdgeStage4.start();
 		threadInitCornerStage4.start();
 		threadInitCornerConjStage4.start();
@@ -51,7 +49,6 @@ public final class Tables {
 		threadInitBm12.join();
 		threadInitCloc.join();
 		threadInitPerm420.join();
-		//threadInitEdgeStage1.join();
 		threadInitSymEdgeToEdgeStage1.join();
 		threadInitSymEdgeStage1.join();
 		threadInitCornerStage1.join();
@@ -64,7 +61,6 @@ public final class Tables {
 		threadInitEdgeBStage4.join();
 		threadInitEdgeAStage4.join();
 		threadInitEdgeRepStage4.join();
-		//threadInitEdgeStage4.join();
 		threadInitSymEdgeStage4.join();
 		threadInitCornerStage4.join();
 		threadInitCornerConjStage4.join();
@@ -424,57 +420,6 @@ public final class Tables {
 
 	private InitPerm420 threadInitPerm420 = new InitPerm420();
 
-	/*** init stage 1 edges ***/
-	public static final int[][] move_table_edgeSTAGE1 = new int[Constants.N_EDGE_COMBO8][Constants.N_BASIC_MOVES]; // (735471) 735471*36 > 100MB !
-
-	private class InitEdgeStage1 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInitEbmEloc.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
-
-		System.out.println( "Starting edge stage 1..." );
-		int i, mc;
-		byte lrfb, ud;
-		int u;
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
-		cube1.init ();
-		cube2.init ();
-		for (u = 0; u < Constants.N_EDGE_COMBO8; ++u) {
-			int ebm = eloc2ebm[u];
-			lrfb = 0;
-			ud = 16;
-			for (i = 0; i < 24; ++i) {
-				if ((ebm & (1 << i)) == 0) {
-					cube1.m_edge[i] = lrfb++;
-				} else {
-					cube1.m_edge[i] = ud++;
-				}
-			}
-			for (mc = 0; mc < Constants.N_BASIC_MOVES; ++mc) {
-				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.rotate_sliceEDGE (mc);
-				ebm = 0;
-				for (i = 0; i < 24; ++i) {
-					if (cube2.m_edge[i] >= 16) {
-						ebm |= (1 << i);
-					}
-				}
-				move_table_edgeSTAGE1[u][mc] = ebm2eloc[ebm];
-			}
-		}
-		System.out.println( "Finishing edge stage 1..." );
-	}
-	}
-
-	private InitEdgeStage1 threadInitEdgeStage1 = new InitEdgeStage1();
-
 	/*** init stage 1 symEdgeToEdge ***/
 	public static final int[] symEdgeToEdgeSTAGE1 = new int[Constants.N_SYMEDGE_COMBO8];
 	public static final int[] hasSymEdgeSTAGE1 = new int[Constants.N_SYMEDGE_COMBO8];
@@ -515,7 +460,7 @@ public final class Tables {
 
 			for (sym = 1; sym < Constants.N_SYM_STAGE1; ++sym) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.conjugate (sym);
+				cube2.conjugateEdges (sym);
 				ebm = 0;
 				for (i = 0; i < 24; ++i) {
 					if (cube2.m_edge[i] >= 16) {
@@ -579,7 +524,7 @@ public final class Tables {
 				int minSym = 0;
 				for (int sym=0; sym < Constants.N_SYM_STAGE1; sym++ ){
 					System.arraycopy(cube2.m_edge, 0, cube3.m_edge, 0, 24);
-					cube3.conjugate(sym);
+					cube3.conjugateEdges(sym);
 					ebm = 0;
 					for (i = 0; i < 24; ++i) {
 						if (cube3.m_edge[i] >= 16) {
@@ -1043,12 +988,6 @@ public final class Tables {
 	}
 
 	private InitEdgeAStage4 threadInitEdgeAStage4 = new InitEdgeAStage4();
-	
-	/*
-	private static int[] stage4_edge_hash_table_val = new int[Constants.N_STAGE4_EDGE_HASH_TABLE]; // (200383)
-	public static int[] stage4_edge_hash_table_idx = new int[Constants.N_STAGE4_EDGE_HASH_TABLE]; // (200383)
-	public static final int[] stage4_edge_rep_table = new int[Constants.N_STAGE4_EDGE_CONFIGS]; // (88200)
-	*/
 
 	public static final int lrfb_get_edge_rep (int u){
 		int reph = stage4_edge_hgB[u/40320];
@@ -1056,41 +995,8 @@ public final class Tables {
 		return 40320*reph + repl;
 	}
 
-	/*
-	public static void stage4_edge_table_init (){
-		int i;
-		for (i = 0; i < Constants.N_STAGE4_EDGE_HASH_TABLE; ++i) {
-			stage4_edge_hash_table_val[i] = 40320*40320;	//an "invalid" value
-			stage4_edge_hash_table_idx[i] = 88200;	//also "invalid" but shouldn't matter
-		}
-	}
-
-	public static int stage4_edge_table_lookup (int val){
-		int hash = val % Constants.N_STAGE4_EDGE_HASH_DIVISOR;
-		int i = hash + 1;
-		while (stage4_edge_hash_table_val[i] < 40320*40320) {
-			if (stage4_edge_hash_table_val[i] == val) {
-				return i;
-			}
-			i += hash;
-			i %= Constants.N_STAGE4_EDGE_HASH_TABLE;
-			if (i == 0) {	//relies on table being a prime number in size
-				return 0;	//not found, table full, return 0
-			}
-		}
-		return i;	//new position, it was not found in the table
-	}
-
-	private static void add_to_stage4_edge_table (int val, int idx){
-		int hash_idx = stage4_edge_table_lookup (val);
-		stage4_edge_hash_table_val[hash_idx] = val;
-		stage4_edge_hash_table_idx[hash_idx] = idx;
-		stage4_edge_rep_table[idx] = val;
-	}
-	*/
-
-	public static final int[] symEdgeToEdgeSTAGE4 = new int[Constants.N_STAGE4_SYMEDGE_CONFIGS]; // FIXME: Don't know yet...
-	public static final int[] hasSymEdgeSTAGE4 = new int[Constants.N_STAGE4_SYMEDGE_CONFIGS];
+	public static final int[] symEdgeToEdgeSTAGE4 = new int[Constants.N_STAGE4_SYMEDGE_CONFIGS]; // 5968
+	public static final int[] hasSymEdgeSTAGE4 = new int[Constants.N_STAGE4_SYMEDGE_CONFIGS]; // 5968
 
 	private class InitEdgeRepStage4 extends Thread {
 	public void run (){
@@ -1111,7 +1017,6 @@ public final class Tables {
 		cs1.init ();
 		cs2.init ();
 
-		//stage4_edge_table_init ();
 		int repcount = 0;
 		//int n = 40320*40320; // 952222297
 		int n = 952222297+1;
@@ -1136,7 +1041,7 @@ public final class Tables {
 				boolean isRep = true;
 				for (sym = 1; sym < Constants.N_SYM_STAGE4; ++sym) {
 					System.arraycopy(cs1.m_edge, 0, cs2.m_edge, 0, 24);
-					cs2.conjugate (sym);
+					cs2.conjugateEdges (sym);
 					int newLrfb = lrfb_get_edge_rep(cs2.cube_state_to_lrfb ());
 					if( newLrfb == u1 )
 						hasSymEdgeSTAGE4[repcount] |= ( 1 << sym );
@@ -1186,7 +1091,7 @@ public final class Tables {
 				int minSym = 0;
 				for (int sym=0; sym < Constants.N_SYM_STAGE4; sym++ ){ /* TODO: Duplicate of convert_to_stage4 !! Same for stage1 */
 					System.arraycopy(cs2.m_edge, 0, cs3.m_edge, 0, 24);
-					cs3.conjugate(sym);
+					cs3.conjugateEdges(sym);
 
 					int u2 = lrfb_get_edge_rep(cs3.cube_state_to_lrfb ());
 
@@ -1203,47 +1108,6 @@ public final class Tables {
 	}
 
 	private InitSymEdgeStage4 threadInitSymEdgeStage4 = new InitSymEdgeStage4();
-
-	/*
-	public static final int[][] move_table_edgeSTAGE4 = new int[Constants.N_STAGE4_EDGE_CONFIGS][Constants.N_STAGE4_SLICE_MOVES]; // (88200) 88200*16.
-
-	private class InitEdgeStage4 extends Thread {
-	public void run (){
-
-		try{
-		threadInit4Of8.join();
-		threadInitEdgeRepStage4.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
-
-		System.out.println( "Starting edge stage 4..." );
-		int mc;
-		int u;
-		CubeStage4 s4 = new CubeStage4();
-		CubeStage4 s4a = new CubeStage4();
-		s4.init ();
-		s4a.init ();
-		CubeState cs1 = new CubeState();
-		cs1.init ();
-		for (u = 0; u < Constants.N_STAGE4_EDGE_CONFIGS; ++u) {
-			for (mc = 0; mc < Constants.N_STAGE4_SLICE_MOVES; ++mc) {
-				s4.m_edge = u;
-				s4.convert_to_std_cube (cs1);
-				cs1.rotate_sliceEDGE (Constants.stage4_slice_moves[mc]);
-				int u2 = cs1.cube_state_to_lrfb ();
-				int edgerep = lrfb_get_edge_rep (u2);
-				int hash_idx = stage4_edge_table_lookup (edgerep);
-				move_table_edgeSTAGE4[u][mc] = stage4_edge_hash_table_idx[hash_idx];
-			}
-		}
-		System.out.println( "Finishing edge stage 4..." );
-	}
-	}
-
-	private InitEdgeStage4 threadInitEdgeStage4 = new InitEdgeStage4();
-	*/
 
 	public static final short[][] move_table_cornerSTAGE4 = new short[Constants.N_STAGE4_CORNER_CONFIGS][Constants.N_STAGE4_SLICE_MOVES]; // (420) 420*16.
 
@@ -1477,7 +1341,7 @@ public final class Tables {
 
 	private InitSquares2nd threadInitSquares2nd = new InitSquares2nd();
 
-	public static final byte[][] move_table_cornerSTAGE5 = new byte[Constants.N_SQS_CORNER_PERM][Constants.N_SQMOVES]; // TODO: (???) 46371*36 = 6677424
+	public static final byte[][] move_table_cornerSTAGE5 = new byte[Constants.N_SQS_CORNER_PERM][Constants.N_SQMOVES]; // TODO: (96) 96*12
 
 	private class InitSquaresMovemap extends Thread { // TODO: Update the name ?
 	public void run (){
@@ -1521,7 +1385,7 @@ public final class Tables {
 
 	public static final byte[] squares_cen_revmap = new byte[256]; // (12)
 	public static final byte[][] squares_cen_movemap = new byte[12][6]; // (12)
-	public static final short[][] move_table_cenSTAGE5 = new short[Constants.N_SQS_CENTER_PERM][Constants.N_SQMOVES]; // TODO: (???) 46371*36 = 6677424
+	public static final short[][] move_table_cenSTAGE5 = new short[Constants.N_SQS_CENTER_PERM][Constants.N_SQMOVES]; // TODO: (1728) 1728*12 = 20736
 
 	private class InitSquaresCenterMap extends Thread {
 	public void run (){
@@ -1582,7 +1446,7 @@ public final class Tables {
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 
-		byte[] isRepTable = new byte[Constants.N_SQS_EDGE_PERM >> 3]; // TODO: Could take less memory: one value per bit.
+		byte[] isRepTable = new byte[Constants.N_SQS_EDGE_PERM >> 3];
 		for (u = 0; u < ( Constants.N_SQS_EDGE_PERM >> 3 ); ++u){
 			isRepTable[u] = 0;
 		}
@@ -1597,7 +1461,7 @@ public final class Tables {
 
 			for (sym = 1; sym < Constants.N_SYM_STAGE5; ++sym) { // starts with 1 because sym 0 is id.
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.conjugate (sym);
+				cube2.conjugateEdges (sym);
 				int edge = cube2.convert_edges_to_squares ();
 				Constants.set_1_1bit( edge, isRepTable ); // not a rep.
 				if( edge == u )
@@ -1612,7 +1476,7 @@ public final class Tables {
 	private InitSymEdgeToEdgeStage5 threadInitSymEdgeToEdgeStage5 = new InitSymEdgeToEdgeStage5();
 
 	/*** init stage 5 symEdges ***/
-	public static final int[][] move_table_symEdgeSTAGE5 = new int[Constants.N_SQS_SYMEDGE_PERM][Constants.N_SQMOVES]; // (???) 46371*36 = 6677424
+	public static final int[][] move_table_symEdgeSTAGE5 = new int[Constants.N_SQS_SYMEDGE_PERM][Constants.N_SQMOVES]; // (21908*48) 21908*12 = 6677424
 
 	private class InitSymEdgeStage5 extends Thread {
 
@@ -1647,7 +1511,7 @@ public final class Tables {
 				int minSym = 0;
 				for (int sym=0; sym < Constants.N_SYM_STAGE5; sym++ ){
 					System.arraycopy(cube2.m_edge, 0, cube3.m_edge, 0, 24); // TODO: duplicate in CubeState !!
-					cube3.conjugate(sym);
+					cube3.conjugateEdges(sym);
 					edge = cube3.convert_edges_to_squares ();
 					if( edge < minEdge){
 						minEdge = edge;

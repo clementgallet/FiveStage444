@@ -22,16 +22,9 @@ public final class CubePruningTableMgr {
 		{ 18, 19, 22, 23 }
 	};
 
-
-	//public static CubePruningTable pcpt_cor1;
-	//public static CubePruningTable pcpt_edg1;
 	public static CubePruningTable pcpt_edgcen2;
 	public static CubePruningTable pcpt_cen3;
 	public static CubePruningTable pcpt_edg3;
-	public static CubePruningTable pcpt_cencor4;
-	public static CubePruningTable pcpt_edgcen4;
-	public static CubePruningTable pcpt_cencor5;
-	public static CubePruningTable pcpt_edgcor5;
 
 	private static void writeToFile( File fname, byte[] array, int length ){
 		try {
@@ -74,80 +67,11 @@ public final class CubePruningTableMgr {
 		int[] solved_table = new int[24];
 		int[] tmp_list = new int[64*3];
 		File fname;
-		//CubeStage1 stage1_solved = new CubeStage1();
 		CubeStage2 stage2_solved = new CubeStage2();
 		CubeStage2 stage2_solved2 = new CubeStage2();
 		CubeStage3 stage3_solved = new CubeStage3();
-		CubeStage4 stage4_solved = new CubeStage4();
 		CubeState cs1 = new CubeState();
 
-		/*** Stage 1 ***/
-		/*
-		System.out.println ("Creating pruning tables for "+metric_long_names[metric]+" turns.\nStage1...");
-		stage1_solved.init ();
-		solved_table[0] = stage1_solved.m_co;
-		stage1_solved.do_whole_cube_move (2);
-		stage1_solved.do_whole_cube_move (1);
-		solved_table[1] = stage1_solved.m_co;
-		stage1_solved.do_whole_cube_move (2);
-		stage1_solved.do_whole_cube_move (1);
-		solved_table[2] = stage1_solved.m_co;
-
-		pcpt_cor1 = new CubePruningTable (Constants.N_CORNER_ORIENT, CubeStage1.prune_table_cor1, new DoMoveC1STM());
-		switch (metric) {
-		case 0:		// single-slice
-			pcpt_cor1.init_move_list (0, Constants.N_BASIC_MOVES, tmp_list);
-			break;
-		case 1:		// twist
-			for (i = 0; i < Constants.N_STAGE1_TWIST_MOVES; ++i) {
-				tmp_list[2*i] = Constants.stage1_twist_moves[i][0];
-				tmp_list[2*i+1] = Constants.stage1_twist_moves[i][1];
-			}
-			pcpt_cor1.init_move_list (2, Constants.N_STAGE1_TWIST_MOVES, tmp_list);
-			break;
-		case 2:		// block
-			for (i = 0; i < Constants.N_STAGE1_BLOCK_MOVES; ++i) {
-				tmp_list[2*i] = Constants.stage1_block_moves[i][0];
-				tmp_list[2*i+1] = Constants.stage1_block_moves[i][1];
-			}
-			pcpt_cor1.init_move_list (2, Constants.N_STAGE1_BLOCK_MOVES, tmp_list);
-			break;
-		}
-		pcpt_cor1.init_solved_list (3, solved_table);
-		pcpt_cor1.analyze ();
-	
-		fname = new File( Constants.datafiles_path, "stage1_" + metric_names[metric] + "_edg_prune.rbk" );
-		if (! fname.exists() ) {
-			stage1_solved.init();
-			solved_table[0] = stage1_solved.m_edge_ud_combo8;
-			stage1_solved.do_whole_cube_move (2);
-			stage1_solved.do_whole_cube_move (1);
-			solved_table[1] = stage1_solved.m_edge_ud_combo8;
-			stage1_solved.do_whole_cube_move (2);
-			stage1_solved.do_whole_cube_move (1);
-			solved_table[2] = stage1_solved.m_edge_ud_combo8;
-
-			pcpt_edg1 = new CubePruningTable (Constants.N_EDGE_COMBO8, CubeStage1.prune_table_edg1, new DoMoveE1STM());
-			switch (metric) {
-			case 0:
-				pcpt_edg1.init_move_list (0, Constants.N_BASIC_MOVES, tmp_list);
-				break;
-			case 1:
-				pcpt_edg1.init_move_list (2, Constants.N_STAGE1_TWIST_MOVES, tmp_list);
-				break;
-			case 2:
-				pcpt_edg1.init_move_list (2, Constants.N_STAGE1_BLOCK_MOVES, tmp_list);
-				break;
-			}
-			pcpt_edg1.init_solved_list (3, solved_table);
-			pcpt_edg1.analyze ();
-
-			writeToFile( fname, CubeStage1.prune_table_edg1, (Constants.N_EDGE_COMBO8 + 1)/2);
-		} else {
-			readFromFile( fname, CubeStage1.prune_table_edg1, (Constants.N_EDGE_COMBO8 + 1)/2);
-		}
-
-		*/
 		/*** Stage 2 ***/
 		System.out.println("Stage2...");
 		int clocfx;
@@ -289,133 +213,7 @@ public final class CubePruningTableMgr {
 		}
 		pcpt_edg3.init_move_list (0, Constants.N_STAGE3_SLICE_MOVES, tmp_list);
 		pcpt_edg3.init_solved_list (1, solved_table);
-		pcpt_edg3.analyze ();
-	
-		/*** Stage 4 ***/
-		/*
-		System.out.println ("Stage4...");
-		stage4_solved.init ();
-		for (i = 0; i < Constants.STAGE4_NUM_SOLVED_CENTER_CONFIGS; ++i) {
-			solved_table[i] = Constants.N_STAGE4_CENTER_CONFIGS*stage4_solved.m_corner + Tables.bm4of8_to_70[Constants.stage4_solved_centers_bm[i]];
-		}
-
-		pcpt_cencor4 = new CubePruningTable (Constants.N_STAGE4_CORNER_CONFIGS*Constants.N_STAGE4_CENTER_CONFIGS, CubeStage4.prune_table_cencor4, new DoMoveCC4STM());
-		switch (metric) {
-		case 0:
-			pcpt_cencor4.init_move_list (0, Constants.N_STAGE4_SLICE_MOVES, tmp_list);
-			break;
-		case 1:
-			for (i = 0; i < Constants.N_STAGE4_TWIST_MOVES; ++i) {
-				tmp_list[2*i] = Constants.stage4_twist_moves[i][0];
-				tmp_list[2*i+1] = Constants.stage4_twist_moves[i][1];
-			}
-			pcpt_cencor4.init_move_list (2, Constants.N_STAGE4_TWIST_MOVES, tmp_list);
-			break;
-		case 2:
-			for (i = 0; i < Constants.N_STAGE4_BLOCK_MOVES; ++i) {
-				tmp_list[2*i] = Constants.stage4_block_moves[i][0];
-				tmp_list[2*i+1] = Constants.stage4_block_moves[i][1];
-			}
-			pcpt_cencor4.init_move_list (2, Constants.N_STAGE4_BLOCK_MOVES, tmp_list);
-			break;
-		}
-		pcpt_cencor4.init_solved_list (Constants.STAGE4_NUM_SOLVED_CENTER_CONFIGS, solved_table);
-		pcpt_cencor4.analyze ();
-
-		fname = new File( Constants.datafiles_path, "stage4_" + metric_names[metric] + "_edgcen_prune.rbk" );
-		if ( ! fname.exists() ) {
-			for (i = 0; i < Constants.STAGE4_NUM_SOLVED_CENTER_CONFIGS; ++i) {
-				solved_table[i] = Constants.N_STAGE4_CENTER_CONFIGS*stage4_solved.m_edge + Tables.bm4of8_to_70[Constants.stage4_solved_centers_bm[i]];
-			}
-
-			pcpt_edgcen4 = new CubePruningTable (Constants.N_STAGE4_EDGE_CONFIGS*Constants.N_STAGE4_CENTER_CONFIGS, CubeStage4.prune_table_edgcen4, new DoMoveEC4STM());
-			switch (metric) {
-			case 0:
-				pcpt_edgcen4.init_move_list (0, Constants.N_STAGE4_SLICE_MOVES, tmp_list);
-				break;
-			case 1:
-				pcpt_edgcen4.init_move_list (2, Constants.N_STAGE4_TWIST_MOVES, tmp_list);
-				break;
-			case 2:
-				pcpt_edgcen4.init_move_list (2, Constants.N_STAGE4_BLOCK_MOVES, tmp_list);
-				break;
-			}
-			pcpt_edgcen4.init_solved_list (Constants.STAGE4_NUM_SOLVED_CENTER_CONFIGS, solved_table);
-			pcpt_edgcen4.analyze ();
-
-			writeToFile( fname, CubeStage4.prune_table_edgcen4, Constants.N_STAGE4_EDGE_CONFIGS*Constants.N_STAGE4_CENTER_CONFIGS/2);
-		} else {
-			readFromFile( fname, CubeStage4.prune_table_edgcen4, Constants.N_STAGE4_EDGE_CONFIGS*Constants.N_STAGE4_CENTER_CONFIGS/2);
-		}
-		*/
-		/*** Stage 5 ***/
-		/*
-		System.out.println ("Stage5...");
-		CubeSqsCoord sqs_solved = new CubeSqsCoord();
-		CubeSqsCoord sqs_solved2 = new CubeSqsCoord();
-		sqs_solved.init ();
-		solved_table[0] = Constants.N_SQS_CORNER_PERM*sqs_solved.m_cen12x12x12 + sqs_solved.m_cp96;
-		for (i = 1; i < 4; ++i) {
-			sqs_solved2.m_cen12x12x12 = sqs_solved.m_cen12x12x12; // TODO: use a copy method.
-			sqs_solved2.m_cp96 = sqs_solved.m_cp96;
-			sqs_solved2.m_ep96x96x96 = sqs_solved.m_ep96x96x96;
-			sqs_solved2.do_whole_cube_move (i);
-			solved_table[i] = Constants.N_SQS_CORNER_PERM*sqs_solved2.m_cen12x12x12 + sqs_solved2.m_cp96;
-		}
-
-		pcpt_cencor5 = new CubePruningTable (Constants.N_SQS_CENTER_PERM*Constants.N_SQS_CORNER_PERM, CubeSqsCoord.prune_table_cencor5, new DoMoveCC5());
-		switch (metric) {
-		case 0:
-			pcpt_cencor5.init_move_list (0, 12, tmp_list);
-			break;
-		case 1:
-			for (i = 0; i < Constants.N_SQ_TWIST_MOVES; ++i) {
-				tmp_list[2*i] = Constants.sq_twist_moves[i][0];
-				tmp_list[2*i+1] = Constants.sq_twist_moves[i][1];
-			}
-			pcpt_cencor5.init_move_list (2, Constants.N_SQ_TWIST_MOVES, tmp_list);
-			break;
-		case 2:
-			for (i = 0; i < Constants.N_SQ_BLOCK_MOVES; ++i) {
-				tmp_list[2*i] = Constants.sq_block_moves[i][0];
-				tmp_list[2*i+1] = Constants.sq_block_moves[i][1];
-			}
-			pcpt_cencor5.init_move_list (2, Constants.N_SQ_BLOCK_MOVES, tmp_list);
-			break;
-		}
-		pcpt_cencor5.init_solved_list (4, solved_table);
-		pcpt_cencor5.analyze ();
-
-		fname = new File( Constants.datafiles_path, "stage5_" + metric_names[metric] + "_edgcor_prune.rbk" );
-		if ( ! fname.exists() ) {
-			sqs_solved.init ();
-			solved_table[0] = Constants.N_SQS_CORNER_PERM*sqs_solved.m_ep96x96x96 + sqs_solved.m_cp96;
-			for (i = 1; i < 4; ++i) {
-				sqs_solved2 = sqs_solved;
-				sqs_solved2.do_whole_cube_move (i);
-				solved_table[i] = Constants.N_SQS_CORNER_PERM*sqs_solved2.m_ep96x96x96 + sqs_solved2.m_cp96;
-			}
-
-			pcpt_edgcor5 = new CubePruningTable (Constants.N_SQS_EDGE_PERM*Constants.N_SQS_CORNER_PERM, CubeSqsCoord.prune_table_edgcor5, new DoMoveEC5());
-			switch (metric) {
-			case 0:
-				pcpt_edgcor5.init_move_list (0, 12, tmp_list);
-				break;
-			case 1:
-				pcpt_edgcor5.init_move_list (2, Constants.N_SQ_TWIST_MOVES, tmp_list);
-				break;
-			case 2:
-				pcpt_edgcor5.init_move_list (2, Constants.N_SQ_BLOCK_MOVES, tmp_list);
-				break;
-			}
-			pcpt_edgcor5.init_solved_list (4, solved_table);
-			pcpt_edgcor5.analyze ();
-
-			writeToFile( fname, CubeSqsCoord.prune_table_edgcor5, Constants.N_SQS_EDGE_PERM*Constants.N_SQS_CORNER_PERM/2);
-		} else {
-			readFromFile( fname, CubeSqsCoord.prune_table_edgcor5, Constants.N_SQS_EDGE_PERM*Constants.N_SQS_CORNER_PERM/2);
-		}
-		*/
+		pcpt_edg3.analyze ();	
 	}
 };
 

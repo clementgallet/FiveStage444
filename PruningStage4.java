@@ -1,10 +1,6 @@
 package fivestage444;
 
 import java.io.File;
-//import java.io.FileOutputStream;
-//import java.io.BufferedOutputStream;
-//import java.io.FileInputStream;
-//import java.io.BufferedInputStream;
 
 public final class PruningStage4 extends Pruning {
 

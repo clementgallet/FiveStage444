@@ -76,26 +76,24 @@ Memory
 
 Move tables          Positions        Moves        Size        Memory (byte)
 ------------------------------------------------------------------------------
-stage 1 edges          735,471           36           4          105,907,824
+stage 1 edges           46,371           36           4            6,677,424
 stage 1 corners          2,187           18           2               78,732
 stage 2 centers         10,626           28           2              595,056
 stage 2 edges              420           28           2               23,520
 stage 3 centers        900,900           20           4           72,072,000
 stage 3 edges           12,870           20           2              514,800
-stage 4 edges           88,200           16           4            5,644,800
+stage 4 edges            5,968           16           4              381,952
 stage 4 corners            420           16           2               13,440
 stage 4 centers             70           16           1                1,120
-stage 5 edges/corners       96            6           1                  576
-stage 5 centers             12            6           1                   72
+stage 5 edges           21,908           12           1              262,896
+stage 5 corners             96           12           1                1,152
+stage 5 centers          1,728           12           1               20,736
 
 Pruning tables              Positions        Memory (byte)
 ----------------------------------------------------------
-stage 1 edges                 735,471              367,736
-stage 1 corners                 2,187                1,094
+stage 1                   101,413,377           25,353,344
 stage 2 centers/edges       4,462,920            2,231,460
 stage 3 centers               900,900              450,450
 stage 3 edges                  25,740               12,870
-stage 4 corners/centers        29,400               14,700
-stage 4 edges/centers       6,174,000            3,087,000
-stage 5 centers/corners       165,888               82,944
-stage 5 edges/corners      84,934,656           42,467,328
+stage 4                   175,459,200           43,864,800
+stage 5 edges/centers      37,857,024            9,464,256

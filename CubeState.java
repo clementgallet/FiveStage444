@@ -140,11 +140,24 @@ public final class CubeState implements java.io.Serializable{
 		}
 	}
 
+	public void conjugateEdges (int symIdx){
+		int i;
+		byte[] edge = new byte[24];
+
+		System.arraycopy(m_edge, 0, edge, 0, 24);
+
+		for (i = 0; i < 24; ++i){
+			m_edge[i] = Symmetry.symEdges[symIdx][edge[Symmetry.symEdges[Symmetry.invSymIdx[symIdx]][i]]];
+		}
+	}
+
 	public void conjugate (int symIdx){
 		int i;
 		byte temp_c_orient;
 		CubeState cs = new CubeState();
 		copyTo(cs);
+
+		conjugateEdges (symIdx);
 
 		// Transform centers into unique facelets.
 		int[] cenN = new int[6];
@@ -156,7 +169,6 @@ public final class CubeState implements java.io.Serializable{
 
 		// Conjugate edges and centers.
 		for (i = 0; i < 24; ++i){
-			m_edge[i] = Symmetry.symEdges[symIdx][cs.m_edge[Symmetry.symEdges[Symmetry.invSymIdx[symIdx]][i]]];
 			m_cen[i] = Symmetry.symCenters[symIdx][cs.m_cen[Symmetry.symCenters[Symmetry.invSymIdx[symIdx]][i]]];
 		}
 
