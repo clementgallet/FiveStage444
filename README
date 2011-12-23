@@ -36,7 +36,7 @@ One-time whole cube rotations allowed:
 90-degree turn about U-D axis.
 
 Stage 3
-Put centers for left and right faces into the left and right faces so that they are in one of the 12 configurations that can be solved using only half-turn moves. This leaves the centers for the U and D faces arbitrarily arranged in the U and D faces. Put top and and bottom layer edges into positions such that the U or D facelet is facing either up or down. Also, put these edges into an even permutation.
+Put centers for left and right faces into the left and right faces so that they are in one of the 12 configurations that can be solved using only half-turn moves. This leaves the centers for the U and D faces arbitrarily arranged in the U and D faces. Put top and bottom layer edges into positions such that the U or D facelet is facing either up or down. Also, put these edges into an even permutation.
 Slice turns allowed:
         U,U',U2,u2,D,D',D2,d2,
         L2,l2,R2,r2,

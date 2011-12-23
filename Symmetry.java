@@ -17,7 +17,7 @@ public final class Symmetry {
 		byte[] symRLCorners = {1, 0, 3, 2, 5, 4, 7, 6};
 		byte[] symRLCenters = {2, 3, 0, 1, 6, 7, 4, 5, 14, 15, 12, 13, 10, 11, 8, 9, 19, 18, 17, 16, 23, 22, 21, 20};
 
-		int i, z, a, b, c, d, idx=0;
+		int i, a, b, c, d, e, idx=0;
 		CubeState cube = new CubeState();
 		for (i = 0; i < 24; ++i) {
 			cube.m_edge[i] = (byte)i;
@@ -27,34 +27,40 @@ public final class Symmetry {
 			cube.m_cor[i] = (byte)i;
 		}
 
-		for (z=0;z<2;z++){ //Inverse
-			for (a=0;a<3;a++){ //SymUR3
-				for (b=0;b<2;b++){ //SymF2
-					for (c=0;c<4;c++){ //SymU4
-						//SymLR2
-						for (i=0; i<24; i++){
-							symEdges[idx][i] = cube.m_edge[i];
-							symEdges[idx+1][i] = cube.m_edge[symRLEdges[i]];
-							symCenters[idx][i] = cube.m_cen[i];
-							symCenters[idx+1][i] = cube.m_cen[symRLCenters[i]];
-						}
-						for (i=0; i<8; i++){
-							symCornersPerm[idx][i] = (byte)(cube.m_cor[i] % 8);
-							symCornersPerm[idx+1][i] = (byte)(cube.m_cor[symRLCorners[i]] % 8);
-							symCornersOrient[idx][i] = (byte)(cube.m_cor[i] / 8);
-							symCornersOrient[idx+1][i] = (byte)(3 + (cube.m_cor[symRLCorners[i]] / 8));
-						}
-						idx += 2;
+		for (a=0;a<2;a++){ //Inverse
+			for (b=0;b<3;b++){ //SymUR3
+				for (c=0;c<2;c++){ //SymU
+					for (d=0;d<2;d++){ //SymF2
+						for (e=0;e<2;e++){ //SymU2
+							//SymLR2
+							for (i=0; i<24; i++){
+								symEdges[idx][i] = cube.m_edge[i];
+								symEdges[idx+1][i] = cube.m_edge[symRLEdges[i]];
+								symCenters[idx][i] = cube.m_cen[i];
+								symCenters[idx+1][i] = cube.m_cen[symRLCenters[i]];
+							}
+							for (i=0; i<8; i++){
+								symCornersPerm[idx][i] = (byte)(cube.m_cor[i] % 8);
+								symCornersPerm[idx+1][i] = (byte)(cube.m_cor[symRLCorners[i]] % 8);
+								symCornersOrient[idx][i] = (byte)(cube.m_cor[i] / 8);
+								symCornersOrient[idx+1][i] = (byte)(3 + (cube.m_cor[symRLCorners[i]] / 8));
+							}
+							idx += 2;
 
-						cube.do_move (Uf);
-						cube.do_move (Us);
-						cube.do_move (Ds3);
-						cube.do_move (Df3);
+							cube.do_move (Uf2);
+							cube.do_move (Us2);
+							cube.do_move (Ds2);
+							cube.do_move (Df2);
+						}
+						cube.do_move (Ff2);
+						cube.do_move (Fs2);
+						cube.do_move (Bs2);
+						cube.do_move (Bf2);
 					}
-					cube.do_move (Ff2);
-					cube.do_move (Fs2);
-					cube.do_move (Bs2);
-					cube.do_move (Bf2);
+					cube.do_move (Uf);
+					cube.do_move (Us);
+					cube.do_move (Ds3);
+					cube.do_move (Df3);
 				}
 				cube.do_move (Uf3);
 				cube.do_move (Us3);
