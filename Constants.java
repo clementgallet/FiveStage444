@@ -10,6 +10,7 @@ public final class Constants{
 	public static final int N_SYM_ALL = 96; // With inverse.
 	public static final int N_SYM = 48;
 	public static final int N_SYM_STAGE1 = 16;
+	public static final int N_SYM_STAGE3 = 8;
 	public static final int N_SYM_STAGE4 = 16;
 	public static final int N_SYM_STAGE5 = 48; // Seems putting 96 here don't improve anything...
 
@@ -23,6 +24,7 @@ public final class Constants{
 	public static final int N_CENTER_COMBO4 = 10626;
 
 	public static final int N_STAGE3_CENTER_CONFIGS = 900900;	//(16*15*14*13/24)*(12*11*10*9/24)
+	public static final int N_STAGE3_SYMCENTER_CONFIGS = 113330;
 	public static final int N_COMBO_16_8 = 12870;				//16!/(8!*8!)
 	public static final int N_STAGE3_EDGE_PAR = 2;
 	public static final int N_STAGE3_EDGE_CONFIGS = N_COMBO_16_8;	//16!/(8!*8!), does not include parity info

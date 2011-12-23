@@ -151,6 +151,31 @@ public final class CubeState implements java.io.Serializable{
 		}
 	}
 
+	public void conjugateCenters (int symIdx){
+		int i;
+		byte[] cen = new byte[24];
+
+		System.arraycopy(m_cen, 0, cen, 0, 24);
+
+		// Transform centers into unique facelets.
+		int[] cenN = new int[6];
+		for (i = 0; i < 6; ++i) cenN[i] = 0;
+
+		for (i = 0; i < 24; ++i){
+			cen[i] = (byte)(cen[i] * 4 + cenN[cen[i]]++);
+		}
+
+		// Conjugate edges and centers.
+		for (i = 0; i < 24; ++i){
+			m_cen[i] = Symmetry.symCenters[symIdx][cen[Symmetry.symCenters[Symmetry.invSymIdx[symIdx]][i]]];
+		}
+
+		// Transform centers back.
+		for (i = 0; i < 24; ++i){
+			m_cen[i] /= 4;
+		}
+	}
+
 	public void conjugate (int symIdx){
 		int i;
 		byte temp_c_orient;
@@ -158,25 +183,7 @@ public final class CubeState implements java.io.Serializable{
 		copyTo(cs);
 
 		conjugateEdges (symIdx);
-
-		// Transform centers into unique facelets.
-		int[] cenN = new int[6];
-		for (i = 0; i < 6; ++i) cenN[i] = 0;
-
-		for (i = 0; i < 24; ++i){
-			cs.m_cen[i] = (byte)(cs.m_cen[i] * 4 + cenN[cs.m_cen[i]]++);
-		}
-
-		// Conjugate edges and centers.
-		for (i = 0; i < 24; ++i){
-			m_cen[i] = Symmetry.symCenters[symIdx][cs.m_cen[Symmetry.symCenters[Symmetry.invSymIdx[symIdx]][i]]];
-		}
-
-		// Transform centers back.
-		for (i = 0; i < 24; ++i){
-			m_cen[i] /= 4;
-		}
-
+		conjugateCenters (symIdx);
 
 		// Conjugate corners (in two phases).
 		for (i = 0; i < 8; ++i){

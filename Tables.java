@@ -20,6 +20,8 @@ public final class Tables {
 		threadInitEdgeStage2.start();
 		threadInitE16Bm.start();
 		threadInitCenterStage3.start();
+		threadInitSymCenterToCenterStage3.start();
+		threadInitSymCenterStage3.start();
 		threadInitEdgeStage3.start();
 		threadInitEdgeBStage4.start();
 		threadInitEdgeAStage4.start();
@@ -57,6 +59,8 @@ public final class Tables {
 		threadInitEdgeStage2.join();
 		threadInitE16Bm.join();
 		threadInitCenterStage3.join();
+		threadInitSymCenterToCenterStage3.join();
+		threadInitSymCenterStage3.join();
 		threadInitEdgeStage3.join();
 		threadInitEdgeBStage4.join();
 		threadInitEdgeAStage4.join();
@@ -546,7 +550,6 @@ public final class Tables {
 
 	private InitSymEdgeStage1 threadInitSymEdgeStage1 = new InitSymEdgeStage1();
 
-
 	/*** init stage 1 corners ***/
 	public static final short[][] move_table_co = new short[Constants.N_CORNER_ORIENT][Constants.N_FACE_MOVES]; // (2187) 2187*18
 
@@ -814,6 +817,108 @@ public final class Tables {
 
 	private InitCenterStage3 threadInitCenterStage3 = new InitCenterStage3();
 
+	/*** init stage 3 symCenterToCenter ***/
+	public static final int[] symCenterToCenterSTAGE3 = new int[Constants.N_STAGE3_SYMCENTER_CONFIGS];
+	public static final int[] hasSymCenterSTAGE3 = new int[Constants.N_STAGE3_SYMCENTER_CONFIGS]; // Could use less than int. Problem with (byte)1 << 7 and sign...
+
+	private class InitSymCenterToCenterStage3 extends Thread {
+
+	public void run (){
+
+		try{
+		threadInitE16Bm.join();
+		threadInit4Of8.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting symCenterToCenter stage 3..." );
+		int i, sym;
+		int u, repIdx = 0;
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		cube1.init ();
+		cube2.init ();
+		CubeStage3 s3 = new CubeStage3();
+
+		byte[] isRepTable = new byte[(Constants.N_STAGE3_CENTER_CONFIGS>>3) + 1];
+		for (u = 0; u < Constants.N_STAGE3_CENTER_CONFIGS; ++u) {
+			if( Constants.get_value_1bit(u, isRepTable) != 0 ) continue;
+
+			s3.m_centerLR = u;
+			s3.convert_centers_to_std_cube(cube1);
+
+			for (sym = 1; sym < Constants.N_SYM_STAGE3; ++sym) {
+				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
+				cube2.conjugateCenters (sym);
+				cube2.convert_centers_to_stage3 (s3);
+				Constants.set_1_1bit( s3.m_centerLR, isRepTable); // not a rep.
+				if( s3.m_centerLR == u )
+					hasSymCenterSTAGE3[repIdx] |= (1 << sym);
+			}
+			symCenterToCenterSTAGE3[repIdx++] = u;
+		}
+		System.out.println( "Finishing symCenterToCenter stage 3... generated "+repIdx+" reps." );
+	}
+	}
+
+	private InitSymCenterToCenterStage3 threadInitSymCenterToCenterStage3 = new InitSymCenterToCenterStage3();
+
+	/*** init stage 3 symCenters ***/
+	public static final int[][] move_table_symCenterSTAGE3 = new int[Constants.N_STAGE3_SYMCENTER_CONFIGS][Constants.N_STAGE3_SLICE_MOVES]; // TODO...
+
+	private class InitSymCenterStage3 extends Thread {
+
+	public void run (){
+
+		try{
+		threadInitSymCenterToCenterStage3.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting symCenters stage 3..." );
+		int i, mc;
+		byte lrfb, ud;
+		int u, edge;
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		CubeState cube3 = new CubeState();
+		cube1.init ();
+		cube2.init ();
+		cube3.init ();
+		CubeStage3 s3 = new CubeStage3();
+		for (u = 0; u < Constants.N_STAGE3_SYMCENTER_CONFIGS; ++u) {
+			s3.m_centerLR = symCenterToCenterSTAGE3[u];
+			s3.convert_centers_to_std_cube(cube1);
+
+			for (mc = 0; mc < Constants.N_STAGE3_SLICE_MOVES; ++mc) {
+				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
+				cube2.rotate_sliceEDGE (Constants.stage3_slice_moves[mc]);
+				int minCen = 99999999;
+				int minSym = 0;
+				for (int sym=0; sym < Constants.N_SYM_STAGE3; sym++ ){
+					System.arraycopy(cube2.m_edge, 0, cube3.m_edge, 0, 24);
+					cube3.conjugateCenters(sym);
+					cube3.convert_centers_to_stage3 (s3);
+					if( s3.m_centerLR < minCen){
+						minCen = s3.m_centerLR;
+						minSym = sym;
+					}
+				}
+
+				move_table_symCenterSTAGE3[u][mc] = Symmetry.getRep(symCenterToCenterSTAGE3, minCen)*Constants.N_SYM_STAGE3 + minSym;
+			}
+		}
+		System.out.println( "Finishing symCenter stage 3..." );
+	}
+	}
+
+	private InitSymCenterStage3 threadInitSymCenterStage3 = new InitSymCenterStage3();
+
+	/*** init stage 3 edges ***/
 	public static final short[][] move_table_edgeSTAGE3 = new short[Constants.N_STAGE3_EDGE_CONFIGS][Constants.N_STAGE3_SLICE_MOVES]; // (12870) 12870*20
 
 	private class InitEdgeStage3 extends Thread {
