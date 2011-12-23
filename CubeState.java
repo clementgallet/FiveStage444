@@ -394,6 +394,23 @@ public final class CubeState implements java.io.Serializable{
 	public void convert_to_stage3 (CubeStage3 result_cube){
 		convert_centers_to_stage3 (result_cube);
 		convert_edges_to_stage3 (result_cube);
+
+		CubeState cube = new CubeState();
+		CubeStage3 s3 = new CubeStage3(); // TODO: don't need this after modifying convert_centers_to_stage3
+		int minCen = 99999999;
+		int minSym = 0;
+		for (int sym=0; sym < Constants.N_SYM_STAGE3; sym++ ){
+			System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
+			cube.conjugateCenters(sym);
+			cube.convert_centers_to_stage3 (s3);
+			if( s3.m_centerLR < minCen){
+				minCen = s3.m_centerLR;
+				minSym = sym;
+			}
+		}
+
+		result_cube.m_sym_centerLR = Symmetry.getRep(Tables.symCenterToCenterSTAGE3, minCen)*Constants.N_SYM_STAGE3 + minSym;
+
 	}
 
 	private static byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };

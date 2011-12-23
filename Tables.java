@@ -23,6 +23,7 @@ public final class Tables {
 		threadInitSymCenterToCenterStage3.start();
 		threadInitSymCenterStage3.start();
 		threadInitEdgeStage3.start();
+		threadInitEdgeConjStage3.start();
 		threadInitEdgeBStage4.start();
 		threadInitEdgeAStage4.start();
 		threadInitEdgeRepStage4.start();
@@ -62,6 +63,7 @@ public final class Tables {
 		threadInitSymCenterToCenterStage3.join();
 		threadInitSymCenterStage3.join();
 		threadInitEdgeStage3.join();
+		threadInitEdgeConjStage3.join();
 		threadInitEdgeBStage4.join();
 		threadInitEdgeAStage4.join();
 		threadInitEdgeRepStage4.join();
@@ -597,7 +599,7 @@ public final class Tables {
 	private InitCornerStage1 threadInitCornerStage1 = new InitCornerStage1();
 
 	/*** init stage 1 corner conjugate ***/
-	public static final short[][] move_table_co_conj = new short[Constants.N_CORNER_ORIENT][Constants.N_SYM]; // (2187) 2187*48
+	public static final short[][] move_table_co_conj = new short[Constants.N_CORNER_ORIENT][Constants.N_SYM_STAGE1]; // (2187) 2187*48
 
 	private class InitCornerConjStage1 extends Thread {
 
@@ -626,7 +628,7 @@ public final class Tables {
 		for (u = 0; u < Constants.N_CORNER_ORIENT; ++u) {
 			s1.m_co = (short)u;
 			s1.convert_to_std_cube (cube1);
-			for (sym = 0; sym < Constants.N_SYM; ++sym) {
+			for (sym = 0; sym < Constants.N_SYM_STAGE1; ++sym) {
 				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
 				cube2.conjugate (sym);
 				cube2.convert_to_stage1 (s2);
@@ -937,12 +939,15 @@ public final class Tables {
 		int mc;
 		int u;
 		CubeStage3 s3 = new CubeStage3();
-		s3.init ();
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
 		for (u = 0; u < Constants.N_STAGE3_EDGE_CONFIGS; ++u) {
-			s3.m_centerLR = 0;
+			s3.m_edge = (short)u;
+			s3.convert_to_std_cube(cube1);
 			for (mc = 0; mc < Constants.N_STAGE3_SLICE_MOVES; ++mc) {
-				s3.m_edge = (short)u;
-				s3.do_move_slow (mc);
+				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
+				cube2.do_move (Constants.stage3_slice_moves[mc]);
+				cube2.convert_edges_to_stage3 (s3);
 				move_table_edgeSTAGE3[u][mc] = s3.m_edge;
 			}
 		}
@@ -951,6 +956,49 @@ public final class Tables {
 	}
 
 	private InitEdgeStage3 threadInitEdgeStage3 = new InitEdgeStage3();
+
+	/*** init stage 3 edge conjugate ***/
+	public static final short[][] move_table_edge_conjSTAGE3 = new short[Constants.N_STAGE3_EDGE_CONFIGS][Constants.N_SYM_STAGE3]; // (2187) 2187*48
+
+	private class InitEdgeConjStage3 extends Thread {
+
+	public void run (){
+
+		try{
+		threadInitE16Bm.join();
+		threadInit4Of8.join();
+		}
+		catch(InterruptedException ie){
+			ie.printStackTrace();
+		}
+
+		System.out.println( "Starting edge conjugate stage 3..." );
+		int i, sym;
+		int u;
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		cube1.init ();
+		cube2.init ();
+		CubeStage3 s1 = new CubeStage3();
+		CubeStage3 s2 = new CubeStage3();
+		s1.init ();
+		s2.init ();
+		for (u = 0; u < Constants.N_STAGE3_EDGE_CONFIGS; ++u) {
+			s1.m_edge = (short)u;
+			s1.convert_edges_to_std_cube (cube1);
+			for (sym = 0; sym < Constants.N_SYM_STAGE3; ++sym) {
+				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
+				cube2.conjugate (sym);
+				cube2.convert_edges_to_stage3 (s2);
+				move_table_edge_conjSTAGE3[u][sym] = s2.m_edge;
+			}
+		}
+		System.out.println( "Finishing edge conjugate stage 3..." );
+	}
+	}
+
+	private InitEdgeConjStage3 threadInitEdgeConjStage3 = new InitEdgeConjStage3();
+
 
 	/*** init_stage4 ***/
 	public static final int sqs_rep_to_perm[][] = {

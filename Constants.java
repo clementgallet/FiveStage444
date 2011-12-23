@@ -522,6 +522,15 @@ public final class Constants{
 	Ff2, Fs, Fs3, Fs2, Bf2, Bs, Bs3, Bs2
 	};
 
+	public static final int stage3_inv_slice_moves[] = {
+	0, 1, 2, -1, -1, 3,
+	4, 5, 6, -1, -1, 7,
+	-1, -1, 8, -1, -1, 9,
+	-1, -1, 10, -1, -1, 11,
+	-1, -1, 12, 13, 14, 15,
+	-1, -1, 16, 17, 18, 19
+	};
+
 	public static final int stg3_Uf = 0; // TODO: Use enum type
 	public static final int stg3_Uf3 = 1;
 	public static final int stg3_Uf2 = 2;
@@ -866,6 +875,11 @@ public final class Constants{
 	public static final int stage3_solved_centers[] = {
 	900830, 900844,	900850, 900853, 900857, 900858,
 	900871, 900872, 900876,	900879, 900885, 900899
+	};
+
+	public static final int STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS = 7;
+	public static final int stage3_solved_sym_centers[] = {
+	900830, 900844,	900850, 900853, 900857, 900858, 900899
 	};
 
 	public static final int STAGE4_NUM_SOLVED_CENTER_CONFIGS = 12;
