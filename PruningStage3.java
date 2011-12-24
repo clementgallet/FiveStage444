@@ -6,37 +6,15 @@ public final class PruningStage3 extends Pruning {
 
 	void init (){
 		int i;
-		fname = new File( Constants.datafiles_path, "stage3_" + metric_names[metric] + "_prune.rbk" );
+		fname = new File( Constants.datafiles_path, "stage3_stm_prune.rbk" );
 
 		// Definition of the allowed moves.
-		switch (metric) {
-		case 0:
-			num_moves = Constants.N_STAGE3_SLICE_MOVES;
-			move_list = new int[3*num_moves];
-			for (i = 0; i < num_moves; ++i) {
-				move_list[3*i] = i;
-				move_list[3*i+1] = -1;
-				move_list[3*i+2] = -1;
-			}
-			break;
-		case 1:
-			num_moves = Constants.N_STAGE3_TWIST_MOVES;
-			move_list = new int[3*num_moves];
-			for (i = 0; i < num_moves; ++i) {
-				move_list[3*i] = Constants.stage3_twist_moves[i][0];
-				move_list[3*i+1] = Constants.stage3_twist_moves[i][1];
-				move_list[3*i+2] = -1;
-			}// FIXME: Broken ! Need 2Twist moves.
-			break;
-		case 2:
-			num_moves = Constants.N_STAGE3_BLOCK_MOVES;
-			move_list = new int[3*num_moves];
-			for (i = 0; i < num_moves; ++i) {
-				move_list[3*i] = Constants.stage3_block_moves[i][0];
-				move_list[3*i+1] = Constants.stage3_block_moves[i][1];
-				move_list[3*i+2] = -1;
-			}
-			break;
+		num_moves = Constants.N_STAGE3_SLICE_MOVES;
+		move_list = new int[3*num_moves];
+		for (i = 0; i < num_moves; ++i) {
+			move_list[3*i] = i;
+			move_list[3*i+1] = -1;
+			move_list[3*i+2] = -1;
 		}
 
 		// Creation of the pruning table.

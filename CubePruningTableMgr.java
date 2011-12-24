@@ -11,9 +11,6 @@ import java.io.IOException;
 //Class to create and clean up all pruning tables
 public final class CubePruningTableMgr {
 
-	private static String metric_names [] = { "stm", "ttm", "btm" };
-	private static String metric_long_names[] = { "slice", "twist", "block" };
-
 	private static byte switch_list[][] = {
 		{ 17, 19, 20, 22 },
 		{ 17, 19, 21, 23 },
@@ -23,7 +20,7 @@ public final class CubePruningTableMgr {
 	};
 
 	public static CubePruningTable pcpt_edgcen2;
-	public static CubePruningTable pcpt_cen3;
+	//public static CubePruningTable pcpt_cen3;
 	public static CubePruningTable pcpt_edg3;
 
 	private static void writeToFile( File fname, byte[] array, int length ){
@@ -62,7 +59,7 @@ public final class CubePruningTableMgr {
 		}
 	}
 
-	public static void init_pruning_tables (int metric){
+	public static void init_pruning_tables (){
 		int i;
 		int[] solved_table = new int[24];
 		int[] tmp_list = new int[64*3];
@@ -75,7 +72,7 @@ public final class CubePruningTableMgr {
 		/*** Stage 2 ***/
 		System.out.println("Stage2...");
 		int clocfx;
-		fname = new File( Constants.datafiles_path, "stage2_" + metric_names[metric] + "_edgcen_prune.rbk" );
+		fname = new File( Constants.datafiles_path, "stage2_stm_edgcen_prune.rbk" );
 		if (! fname.exists() ) {
 			stage2_solved.init ();
 			clocfx = Tables.stage2_cen_to_cloc4sf (stage2_solved.m_centerFB);
@@ -122,29 +119,7 @@ public final class CubePruningTableMgr {
 			}
 
 			pcpt_edgcen2 = new CubePruningTable (Constants.N_CENTER_COMBO4*Constants.N_STAGE2_EDGE_CONFIGS, CubeStage2.prune_table_edgcen2, new DoMoveEC2STM());
-			switch (metric) {
-			case 0:
-				pcpt_edgcen2.init_move_list (0, Constants.N_STAGE2_SLICE_MOVES, tmp_list);
-				break;
-			case 1:
-				for (i = 0; i < Constants.N_STAGE2_TWIST_MOVES; ++i) {
-					tmp_list[2*i] = Constants.stage2_twist_moves[i][0];
-					tmp_list[2*i+1] = Constants.stage2_twist_moves[i][1];
-				}
-				pcpt_edgcen2.init_move_list (2, Constants.N_STAGE2_TWIST_MOVES, tmp_list);
-				for (i = 0; i < Constants.N_STAGE2_2TWIST_MOVES; ++i) {
-					tmp_list[2*i] = Constants.stage2_2twist_moves[i][0];
-					tmp_list[2*i+1] = Constants.stage2_2twist_moves[i][1];
-				}
-				pcpt_edgcen2.init_move_list2 (2, Constants.N_STAGE2_2TWIST_MOVES, tmp_list);
-				break;
-			case 2:
-				for (i = 0; i < Constants.N_STAGE2_BLOCK_MOVES; ++i) {
-					tmp_list[2*i] = Constants.stage2_block_moves[i][0];
-					tmp_list[2*i+1] = Constants.stage2_block_moves[i][1];
-				}
-				pcpt_edgcen2.init_move_list (2, Constants.N_STAGE2_BLOCK_MOVES, tmp_list);
-			}
+			pcpt_edgcen2.init_move_list (0, Constants.N_STAGE2_SLICE_MOVES, tmp_list);
 			pcpt_edgcen2.init_solved_list (24, solved_table);
 			pcpt_edgcen2.analyze ();
 
@@ -193,25 +168,6 @@ public final class CubePruningTableMgr {
 		solved_table[0] = stage3_solved.m_edge;
 
 		pcpt_edg3 = new CubePruningTable (Constants.N_STAGE3_EDGE_PAR*Constants.N_STAGE3_EDGE_CONFIGS, CubeStage3.prune_table_edg3, new DoMoveE3STM());
-		switch (metric) {
-		case 0:
-			break;
-		case 1:
-			for (i = 0; i < Constants.N_STAGE3_TWIST_MOVES; ++i) {
-				tmp_list[2*i] = Constants.stage3_twist_moves[i][0];
-				tmp_list[2*i+1] = Constants.stage3_twist_moves[i][1];
-			}
-			pcpt_edg3.init_move_list (2, Constants.N_STAGE3_TWIST_MOVES, tmp_list);
-			for (i = 0; i < Constants.N_STAGE3_2TWIST_MOVES; ++i) {
-				tmp_list[2*i] = Constants.stage3_2twist_moves[i][0];
-				tmp_list[2*i+1] = Constants.stage3_2twist_moves[i][1];
-			}
-			pcpt_edg3.init_move_list2 (2, Constants.N_STAGE3_2TWIST_MOVES, tmp_list);
-			break;
-		case 2:
-			pcpt_edg3.init_move_list (2, Constants.N_STAGE3_BLOCK_MOVES, tmp_list);
-			break;
-		}
 		pcpt_edg3.init_move_list (0, Constants.N_STAGE3_SLICE_MOVES, tmp_list);
 		pcpt_edg3.init_solved_list (1, solved_table);
 		pcpt_edg3.analyze ();

@@ -116,7 +116,6 @@ public final class FiveStage444 {
 	public static void main(String[] args){
 
 		int random_count = 100;
-		int metric = 0;
 
 		Symmetry.initSymTables();
 		Symmetry.initInvSymIdx();
@@ -124,7 +123,7 @@ public final class FiveStage444 {
 		Symmetry.initMoveConjugate();
 
 		new Tables().init_all ();
-		CubePruningTableMgr.init_pruning_tables (metric);
+		CubePruningTableMgr.init_pruning_tables ();
 		new PruningStage1().analyse();
 		new PruningStage3().analyse();
 		new PruningStage4().analyse();
@@ -143,7 +142,7 @@ public final class FiveStage444 {
 		/* Start getting the solutions */
 		getS.start();
 
-		do_random_cubes (metric, random_count);
+		do_random_cubes (random_count);
 
 		/* Tells the threads that there are no more scrambles */
 		stopThreads();
@@ -164,7 +163,7 @@ public final class FiveStage444 {
 		catch (java.io.IOException ioe) { ioe.getMessage(); }
 	}
 
-	public static void do_random_cubes (int metric, int count) {
+	public static void do_random_cubes (int count) {
 	int i, i1;
 	//Random r = new Random();
 	Random r = new Random(42);
@@ -181,9 +180,8 @@ public final class FiveStage444 {
 		solveme.scramble(scramble_len, random_list);
 		//System.out.println ("scramble: ");
 		//print_move_list (scramble_len, random_list);
-		solveit4x4x4IDA (i, solveme, metric);
+		solveit4x4x4IDA (i, solveme);
 	}
-
 }
 
 	public static PipedOutputStream pipeStage01out = null;
@@ -240,12 +238,12 @@ public final class FiveStage444 {
 		stage5Solver.start();
 	}
 
-	public static void solveit4x4x4IDA (int id, CubeState cube, int metric) {
+	public static void solveit4x4x4IDA (int id, CubeState cube) {
 
 		ObjectOutputStream myPipeOut = null;
 		try{
 			myPipeOut = new ObjectOutputStream (pipeStage01out);
-			myPipeOut.writeObject(new SolverState(id, cube, metric, null, 0, 0));
+			myPipeOut.writeObject(new SolverState(id, cube, null, 0, 0));
 		}
 		catch (java.io.IOException ioe) { ioe.getMessage(); }
 		/*
@@ -261,7 +259,7 @@ public final class FiveStage444 {
 		myPipeOut = null;
 		try{
 			myPipeOut = new ObjectOutputStream (pipeStage01out);
-			myPipeOut.writeObject(new SolverState(id, cube, metric, null, 0, 0));
+			myPipeOut.writeObject(new SolverState(id, cube, null, 0, 0));
 		}
 		catch (java.io.IOException ioe) { ioe.getMessage(); }
 
@@ -277,7 +275,7 @@ public final class FiveStage444 {
 		myPipeOut = null;
 		try{
 			myPipeOut = new ObjectOutputStream (pipeStage01out);
-			myPipeOut.writeObject(new SolverState(id, cube, metric, null, 0, 0));
+			myPipeOut.writeObject(new SolverState(id, cube, null, 0, 0));
 		}
 		catch (java.io.IOException ioe) { ioe.getMessage(); }*/
 	}
@@ -324,7 +322,7 @@ public final class FiveStage444 {
 		ObjectOutputStream myPipeOut = null;
 		try{
 			myPipeOut = new ObjectOutputStream (pipeStage01out);
-			myPipeOut.writeObject(new SolverState(-1, null, 0, null, 0, 0)); // id = -1 -> stop
+			myPipeOut.writeObject(new SolverState(-1, null, null, 0, 0)); // id = -1 -> stop
 		}
 		catch (java.io.IOException ioe) { ioe.getMessage(); }
 	}

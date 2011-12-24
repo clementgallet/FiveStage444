@@ -15,10 +15,7 @@ abstract class Pruning {
 	int num_solved;
 	int[] psolved;
 	int count = 0;
-	int metric = 0;
 	File fname;
-
-	String metric_names [] = { "stm", "ttm", "btm" };
 
 	void writeToFile(){
 		try {
@@ -59,10 +56,6 @@ abstract class Pruning {
 
 
 	abstract void init ();
-
-	public void set_metric(int m) {
-		metric = m;
-	}
 
 	int get_dist (int idx){
 		return (ptable[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;

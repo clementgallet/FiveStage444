@@ -10,12 +10,9 @@ import static fivestage444.Constants.*;
 abstract class StageSolver extends Thread{
 
 	byte[] stage_slice_list;
-	byte[] stage_twist_list;
-	byte[] stage_block_list;
 
 	protected SolverState ss;
 	protected byte[] move_list = new byte[30];
-	protected int metric;
 	protected int goal;
 	protected PipedOutputStream pipeOut;
 	protected PipedInputStream pipeIn;
@@ -26,8 +23,6 @@ abstract class StageSolver extends Thread{
 		this.pipeOut = pipeOut;
 
 		stage_slice_list = new byte[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63};
-		stage_twist_list = new byte[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63};
-		stage_block_list = new byte[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63};
 
 	}
 
@@ -50,7 +45,7 @@ abstract class StageSolver extends Thread{
 		System.arraycopy(sol_move_list, 0, move_list_all, ss.move_count, goal);
 		//print_move_list( goal, sol_move_list );
 
-		SolverState nss = new SolverState(ss.id, cs, ss.metric, move_list_all, ss.move_count + goal, r);
+		SolverState nss = new SolverState(ss.id, cs, move_list_all, ss.move_count + goal, r);
 		writeState( nss );
 	}
 
@@ -69,7 +64,7 @@ abstract class StageSolver extends Thread{
 		ObjectOutputStream stateOut = null;
 		try{
 			stateOut = new ObjectOutputStream (pipeOut);
-			stateOut.writeObject(new SolverState(-1, null, 0, null, 0, 0)); // id = -1 -> stop
+			stateOut.writeObject(new SolverState(-1, null, null, 0, 0)); // id = -1 -> stop
 		}
 		catch (java.io.IOException ioe) { ioe.getMessage(); }
 	}
@@ -95,7 +90,6 @@ abstract class StageSolver extends Thread{
 			catch (java.lang.ClassNotFoundException e) { e.printStackTrace(); }
 		}
 
-		metric = ss.metric;
 		if( ss.id == -1 ) return false;
 		importState();
 		return true;
@@ -105,22 +99,8 @@ abstract class StageSolver extends Thread{
 
 	protected void formatMoves( byte[] sol_move_list){
 		int i;
-		switch (metric) {
-		case 0:
-			for (i = 0; i < goal; ++i) {
-				sol_move_list[i] = stage_slice_list[sol_move_list[i]];
-			}
-			break;
-		case 1:
-			for (i = 0; i < goal; ++i) {
-				sol_move_list[i] = stage_twist_list[sol_move_list[i]];
-			}
-			break;
-		case 2:
-			for (i = 0; i < goal; ++i) {
-				sol_move_list[i] = stage_block_list[sol_move_list[i]];
-			}
-			break;
+		for (i = 0; i < goal; ++i) {
+			sol_move_list[i] = stage_slice_list[sol_move_list[i]];
 		}
 	}
 

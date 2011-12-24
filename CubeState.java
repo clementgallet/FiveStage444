@@ -583,28 +583,11 @@ public final class CubeState implements java.io.Serializable{
 		result_cube.m_sym_ep96x96x96 = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, minEdge)*Constants.N_SYM_STAGE5 + minSym;
 	}
 
-	private static int dbltwists[][] = {
-	{ Uf, Us }, { Uf3, Us3 }, { Uf2, Us2 },
-	{ Df, Ds }, { Df3, Ds3 }, { Df2, Ds2 },
-	{ Lf, Ls }, { Lf3, Ls3 }, { Lf2, Ls2 },
-	{ Rf, Rs }, { Rf3, Rs3 }, { Rf2, Rs2 },
-	{ Ff, Fs }, { Ff3, Fs3 }, { Ff2, Fs2 },
-	{ Bf, Bs }, { Bf3, Bs3 }, { Bf2, Bs2 },
-	{ Us, Ds3 }, { Us3, Ds }, { Us2, Ds2 },
-	{ Ls, Rs3 }, { Ls3, Rs }, { Ls2, Rs2 },
-	{ Fs, Bs3 }, { Fs3, Bs }, { Fs2, Bs2 }
-	};
-
 	public void scramble (int move_count, byte[] move_arr){
 		int i;
 		for (i = 0; i < move_count; ++i) {
 			byte mc = move_arr[i];
-			if (mc >= Ufs) {
-				do_move (dbltwists[mc - Ufs][0]);
-				do_move (dbltwists[mc - Ufs][1]);
-			} else {
-				do_move (mc);
-			}
+			do_move (mc);
 		}
 	}
 
@@ -622,6 +605,5 @@ public final class CubeState implements java.io.Serializable{
 			System.out.print(m_cen[i]+"-");
 		System.out.println("");
 	}
-
 }
 
