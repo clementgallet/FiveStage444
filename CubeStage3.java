@@ -17,7 +17,7 @@ public final class CubeStage3 {
 
 	//public static byte[] prune_table_cen3 = new byte[Constants.N_STAGE3_CENTER_CONFIGS/2];
 	public static byte[] prune_table_edg3 = new byte[Constants.N_STAGE3_EDGE_CONFIGS*Constants.N_STAGE3_EDGE_PAR/2];
-	public static byte[] prune_table;
+	public static byte[] prune_table_cen;
 
 
 	public void init (){
@@ -27,9 +27,9 @@ public final class CubeStage3 {
 		m_edge_odd = false;	
 	}
 
-	public int get_dist (){
+	public int get_dist_cen (){
 		int idx = m_sym_centerLR >> 3;
-		return (prune_table[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
+		return (prune_table_cen[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
 	}
 
 /*

@@ -62,7 +62,7 @@ public final class Stage4Solver extends StageSolver{
 				best = ss.move_count + goal;
 				pushState();
 				Statistics.addLeaf(4, goal);
-				return false; // true: take the first solution, false: take all solutions.
+				return true; // true: take the first solution, false: take all solutions.
 			}
 		}
 		if (moves_done >= best - ss.move_count - 1) return false;

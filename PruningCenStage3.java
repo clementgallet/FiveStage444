@@ -2,20 +2,20 @@ package fivestage444;
 
 import java.io.File;
 
-public final class PruningStage3 extends Pruning {
+public final class PruningCenStage3 extends Pruning {
 
 	void init (){
 		int i;
-		fname = new File( Constants.datafiles_path, "stage3_stm_prune.rbk" );
+		fname = new File( Constants.datafiles_path, "stage3_cen_stm_prune.rbk" );
 
 		// Definition of the allowed moves.
 		num_moves = Constants.N_STAGE3_SLICE_MOVES;
 
 		// Creation of the pruning table.
 		num_positions = Constants.N_STAGE3_SYMCENTER_CONFIGS;
-		int n = num_positions/4 + 1;
-		CubeStage3.prune_table = new byte[n];
-		ptable = CubeStage3.prune_table;
+		int n = (int)(num_positions/4 + 1);
+		CubeStage3.prune_table_cen = new byte[n];
+		ptable = CubeStage3.prune_table_cen;
 		for (i = 0; i < n; ++i) {
 			ptable[i] = 0;
 		}
@@ -26,14 +26,14 @@ public final class PruningStage3 extends Pruning {
 		}
 	}
 
-	int do_move (int idx, int move){
-		int newCen = Tables.move_table_symCenterSTAGE3[idx][move];
+	long do_move (long idx, int move){
+		int newCen = Tables.move_table_symCenterSTAGE3[(int)idx][move];
 		int cenRep = newCen >> 3;
 
 		return cenRep;
 	}
 
-	void saveIdxAndSyms (int idx, int dist){
+	void saveIdxAndSyms (long idx, int dist){
 		set_dist (idx, dist);
 	}
 

@@ -42,7 +42,7 @@ public final class Stage1Solver extends StageSolver{
 				goal = moves_done;
 				pushState();
 				Statistics.addLeaf(1, goal);
-				return false; // true: take the first solution, false: take all solutions
+				return true; // true: take the first solution, false: take all solutions
 			}
 		}
 		for (mov_idx = 0; mov_idx < N_BASIC_MOVES; ++mov_idx) {

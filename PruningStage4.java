@@ -13,7 +13,7 @@ public final class PruningStage4 extends Pruning {
 
 		// Creation of the pruning table.
 		num_positions = Constants.N_STAGE4_SYMEDGE_CONFIGS*Constants.N_STAGE4_CORNER_CONFIGS*Constants.N_STAGE4_CENTER_CONFIGS;
-		int n = num_positions/4 + 1;
+		int n = (int)(num_positions/4 + 1);
 		CubeStage4.prune_table = new byte[n];
 		ptable = CubeStage4.prune_table;
 		for (i = 0; i < n; ++i) {
@@ -26,9 +26,9 @@ public final class PruningStage4 extends Pruning {
 		}
 	}
 
-	int do_move (int idx, int move){
+	long do_move (long idx, int move){
 		byte cen = (byte)(idx % Constants.N_STAGE4_CENTER_CONFIGS);
-		int rest = idx / Constants.N_STAGE4_CENTER_CONFIGS;
+		int rest = (int)(idx / Constants.N_STAGE4_CENTER_CONFIGS);
 		short cor = (short) (rest % Constants.N_STAGE4_CORNER_CONFIGS);
 		int edge = rest / Constants.N_STAGE4_CORNER_CONFIGS;
 	
@@ -45,11 +45,11 @@ public final class PruningStage4 extends Pruning {
 		return (edgeRep*Constants.N_STAGE4_CORNER_CONFIGS + cor) * Constants.N_STAGE4_CENTER_CONFIGS + cen;
 	}
 
-	void saveIdxAndSyms (int idx, int dist){
+	void saveIdxAndSyms (long idx, int dist){
 		set_dist (idx, dist);
 
 		byte cen = (byte)(idx % Constants.N_STAGE4_CENTER_CONFIGS);
-		int rest = idx / Constants.N_STAGE4_CENTER_CONFIGS;
+		int rest = (int)(idx / Constants.N_STAGE4_CENTER_CONFIGS);
 		short cor = (short) (rest % Constants.N_STAGE4_CORNER_CONFIGS);
 		int edge = rest / Constants.N_STAGE4_CORNER_CONFIGS;
 

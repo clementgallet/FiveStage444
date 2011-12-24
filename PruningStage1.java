@@ -13,7 +13,7 @@ public final class PruningStage1 extends Pruning {
 
 		// Creation of the pruning table.
 		num_positions = Constants.N_CORNER_ORIENT*Constants.N_SYMEDGE_COMBO8;
-		int n = num_positions/4 + 1;
+		int n = (int)(num_positions/4 + 1);
 		CubeStage1.prune_table = new byte[n];
 		ptable = CubeStage1.prune_table;
 		for (i = 0; i < n; ++i) {
@@ -25,9 +25,9 @@ public final class PruningStage1 extends Pruning {
 		set_dist( 0    *Constants.N_CORNER_ORIENT + 1906, 3);
 	}
 
-	int do_move (int idx, int move){
+	long do_move (long idx, int move){
 		short co = (short)(idx % Constants.N_CORNER_ORIENT);
-		int edge = (idx / Constants.N_CORNER_ORIENT);
+		int edge = (int)(idx / Constants.N_CORNER_ORIENT);
 		
 		int newEdge = Tables.move_table_symEdgeSTAGE1[edge][move];
 		int sym = newEdge & 0xF;
@@ -41,11 +41,11 @@ public final class PruningStage1 extends Pruning {
 		return edgeRep*Constants.N_CORNER_ORIENT + co;
 	}
 
-	void saveIdxAndSyms (int idx, int dist){
+	void saveIdxAndSyms (long idx, int dist){
 		set_dist (idx, dist);
 
 		short co = (short)(idx % Constants.N_CORNER_ORIENT);
-		int edge = (idx / Constants.N_CORNER_ORIENT);
+		int edge = (int)(idx / Constants.N_CORNER_ORIENT);
 		int symI = 0;
 		int syms = Tables.hasSymEdgeSTAGE1[edge];
 		while (syms != 0){

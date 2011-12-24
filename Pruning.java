@@ -8,7 +8,7 @@ import java.io.BufferedInputStream;
 
 abstract class Pruning {
 
-	int num_positions;
+	long num_positions;
 	byte[] ptable;
 	int num_moves;
 	int num_solved;
@@ -22,7 +22,7 @@ abstract class Pruning {
 			BufferedOutputStream output = new BufferedOutputStream(fos);
 
 			System.out.println ("Creating pruning table file '"+fname.getName()+"'.");
-			output.write( ptable, 0, num_positions/4 + 1);
+			output.write( ptable, 0, (int)(num_positions/4 + 1));
 			output.flush();
 			output.close();
 			}
@@ -38,7 +38,7 @@ abstract class Pruning {
 		try {
 			FileInputStream fis = new FileInputStream (fname);
 			BufferedInputStream input = new BufferedInputStream(fis);
-			input.read (ptable, 0, num_positions/4 + 1);
+			input.read (ptable, 0, (int)(num_positions/4 + 1));
 			input.close();
 		}
 		catch(java.io.FileNotFoundException e)
@@ -56,20 +56,21 @@ abstract class Pruning {
 
 	abstract void init ();
 
-	int get_dist (int idx){
-		return (ptable[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
+	int get_dist (long idx){
+		return (ptable[(int)(idx>>2)] >> ((idx & 0x3) << 1)) & 0x3;
 	}
 
-	void set_dist (int idx, int value){
-		ptable[idx>>2] |= (byte)(value << ((idx & 0x3) << 1));
+	void set_dist (long idx, int value){
+		ptable[(int)(idx>>2)] |= (byte)(value << ((idx & 0x3) << 1));
 		count++;
 	}
 
-	abstract int do_move (int idx, int move);
+	abstract long do_move (long idx, int move);
 
 	public void analyse (){
-		int i, idx, dist;
-		int max_dist = 20;	//MAX_DISTANCE;
+		int i, dist;
+		long idx;
+		int max_dist = 25;	//MAX_DISTANCE;
 
 		init ();
 
@@ -93,18 +94,18 @@ abstract class Pruning {
 		writeToFile();
 	}
 
-	void generate (int idx, int dist)
+	void generate (long idx, int dist)
 	{
 		int i, j;
 
 		for (i = 0; i < num_moves; ++i) {
-			int idx2 = do_move (idx, i);
+			long idx2 = do_move (idx, i);
 			if (get_dist(idx2) == 0){
 				saveIdxAndSyms( idx2, dist );
 			}
 		}
 	}
 
-	abstract void saveIdxAndSyms (int idx, int dist);
+	abstract void saveIdxAndSyms (long idx, int dist);
 
 }

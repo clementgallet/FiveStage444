@@ -9,6 +9,7 @@ public final class CubeSqsCoord {
 
 	public static byte[] prune_table_edgcen;
 	public static byte[] prune_table_edgcor;
+	public static byte[] prune_table;
 	
 
 	public void init (){
