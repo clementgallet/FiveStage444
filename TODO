@@ -7,3 +7,4 @@ TODO:
 - Use a logger.
 - Doc the code !
 - Use symmetry reduction. With this, it would be possible to get stage 1 and 4 full pruning tables (see http://kociemba.org/cube.htm).
+- Use backward search when generating pruning tables

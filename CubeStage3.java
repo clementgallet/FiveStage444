@@ -11,6 +11,7 @@ public final class CubeStage3 {
 	//public static byte[] prune_table_edg3 = new byte[Constants.N_STAGE3_EDGE_CONFIGS*Constants.N_STAGE3_EDGE_PAR/2];
 	public static byte[] prune_table_cen;
 	public static byte[] prune_table_edg;
+	public static byte[] prune_table;
 
 
 	public void init (){

@@ -127,6 +127,7 @@ public final class FiveStage444 {
 		new PruningStage1().analyse();
 		new PruningCenStage3().analyse();
 		new PruningEdgStage3().analyse();
+		//new PruningStage3().analyse();
 		new PruningStage4().analyse();
 		//new PruningStage5().analyse();
 		new PruningEdgCenStage5().analyse();
