@@ -2,22 +2,15 @@ package fivestage444;
 
 public final class CubeStage3 {
 
-	public static boolean stage3_move_parity[] = {
-		false, false, false, false,
-		false, false, false, false,
-		false, false, false, false,
-		false, true,  true,  false,
-		false, true,  true,  false
-	};
-
 	public int m_centerLR; // (900900)
 	public int m_sym_centerLR; // (113330)
 	public short m_edge; //edge coordinate (12870)
 	public boolean m_edge_odd; //odd parity of edges
 
 	//public static byte[] prune_table_cen3 = new byte[Constants.N_STAGE3_CENTER_CONFIGS/2];
-	public static byte[] prune_table_edg3 = new byte[Constants.N_STAGE3_EDGE_CONFIGS*Constants.N_STAGE3_EDGE_PAR/2];
+	//public static byte[] prune_table_edg3 = new byte[Constants.N_STAGE3_EDGE_CONFIGS*Constants.N_STAGE3_EDGE_PAR/2];
 	public static byte[] prune_table_cen;
+	public static byte[] prune_table_edg;
 
 
 	public void init (){
@@ -31,6 +24,13 @@ public final class CubeStage3 {
 		int idx = m_sym_centerLR >> 3;
 		return (prune_table_cen[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
 	}
+
+	public int get_dist_edg (){
+		int idx = (m_edge << 1);
+		if( m_edge_odd ) idx++;
+		return (prune_table_edg[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
+	}
+
 
 /*
 	public void do_move_slow (int move_code){
@@ -48,7 +48,7 @@ public final class CubeStage3 {
 	public void do_move (int move_code){
 		//m_centerLR = Tables.move_table_cenSTAGE3[m_centerLR][move_code];
 		m_edge = Tables.move_table_edgeSTAGE3[m_edge][move_code];
-		if (stage3_move_parity[move_code]) {
+		if (Constants.stage3_move_parity[move_code]) {
 			m_edge_odd = ! m_edge_odd;
 		}
 		int sym = m_sym_centerLR & 0x7;
@@ -78,6 +78,16 @@ public final class CubeStage3 {
 		return false;
 	}
 
+	public boolean edges_solved ()
+	{
+		if (m_edge_odd)
+			return false;	//not solved if odd edge parity
+
+		if (m_edge != 494)
+			return false;	//not solved if wrong edge value
+
+		return true;
+	}
 
 	public boolean is_solved ()
 	{
@@ -146,13 +156,13 @@ public final class CubeStage3 {
 	public int prune_funcCEN_STAGE3 (){
 		return Constants.get_dist_4bit (m_centerLR, prune_table_cen3);
 	}*/
-
+	/*
 	public int prune_funcEDGE_STAGE3 (){
 		int idx = m_edge;
 		if (m_edge_odd) {
 			idx += Constants.N_STAGE3_EDGE_CONFIGS;
 		}
 		return Constants.get_dist_4bit (idx, prune_table_edg3);
-	}
+	}*/
 }
 

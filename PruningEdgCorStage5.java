@@ -12,8 +12,8 @@ public final class PruningEdgCorStage5 extends Pruning {
 		num_moves = Constants.N_SQMOVES;
 
 		// Creation of the pruning table.
-		num_positions = Constants.N_SQS_SYMEDGE_PERM*Constants.N_SQS_CORNER_PERM;
-		int n = num_positions/4 + 1;
+		num_positions = (long)(Constants.N_SQS_SYMEDGE_PERM*Constants.N_SQS_CORNER_PERM);
+		int n = (int)(num_positions/4 + 1);
 		CubeSqsCoord.prune_table_edgcor = new byte[n];
 		ptable = CubeSqsCoord.prune_table_edgcor;
 		for (i = 0; i < n; ++i) {
@@ -25,9 +25,9 @@ public final class PruningEdgCorStage5 extends Pruning {
 		set_dist(21616*Constants.N_SQS_CORNER_PERM+66, 3);
 	}
 
-	int do_move (int idx, int move){
+	long do_move (long idx, int move){
 		byte cor = (byte)(idx % Constants.N_SQS_CORNER_PERM);
-		int edge = idx / Constants.N_SQS_CORNER_PERM;
+		int edge = (int)(idx / Constants.N_SQS_CORNER_PERM);
 
 		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][move];
 		int sym = newEdge % 48;
@@ -38,11 +38,11 @@ public final class PruningEdgCorStage5 extends Pruning {
 		return edgeRep*Constants.N_SQS_CORNER_PERM + cor;
 	}
 
-	void saveIdxAndSyms (int idx, int dist){
+	void saveIdxAndSyms (long idx, int dist){
 		set_dist (idx, dist);
 
-		int edge = idx / Constants.N_SQS_CORNER_PERM;
 		byte cor = (byte)(idx % Constants.N_SQS_CORNER_PERM);
+		int edge = (int)(idx / Constants.N_SQS_CORNER_PERM);
 		int symI = 0;
 		long syms = Tables.hasSymEdgeSTAGE5[edge];
 		while (syms != 0){

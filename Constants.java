@@ -179,6 +179,14 @@ public final class Constants{
 	-1, -1, 16, 17, 18, 19
 	};
 
+	public static boolean stage3_move_parity[] = {
+		false, false, false, false,
+		false, false, false, false,
+		false, false, false, false,
+		false, true,  true,  false,
+		false, true,  true,  false
+	};
+
 /*
 	public static final int stg3_Uf = 0; // TODO: Use enum type
 	public static final int stg3_Uf3 = 1;

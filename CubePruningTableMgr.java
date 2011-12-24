@@ -21,7 +21,7 @@ public final class CubePruningTableMgr {
 
 	public static CubePruningTable pcpt_edgcen2;
 	//public static CubePruningTable pcpt_cen3;
-	public static CubePruningTable pcpt_edg3;
+	//public static CubePruningTable pcpt_edg3;
 
 	private static void writeToFile( File fname, byte[] array, int length ){
 		try {
@@ -163,14 +163,14 @@ public final class CubePruningTableMgr {
 		}
 		pcpt_cen3.init_solved_list (Constants.STAGE3_NUM_SOLVED_CENTER_CONFIGS, solved_table);
 		pcpt_cen3.analyze ();*/
-	
+		/*	
 		stage3_solved.init ();
 		solved_table[0] = stage3_solved.m_edge;
 
 		pcpt_edg3 = new CubePruningTable (Constants.N_STAGE3_EDGE_PAR*Constants.N_STAGE3_EDGE_CONFIGS, CubeStage3.prune_table_edg3, new DoMoveE3STM());
 		pcpt_edg3.init_move_list (0, Constants.N_STAGE3_SLICE_MOVES, tmp_list);
 		pcpt_edg3.init_solved_list (1, solved_table);
-		pcpt_edg3.analyze ();
+		pcpt_edg3.analyze ();*/
 	}
 };
 

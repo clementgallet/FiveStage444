@@ -126,8 +126,9 @@ public final class FiveStage444 {
 		CubePruningTableMgr.init_pruning_tables ();
 		new PruningStage1().analyse();
 		new PruningCenStage3().analyse();
+		new PruningEdgStage3().analyse();
 		new PruningStage4().analyse();
-		new PruningStage5().analyse();
+		//new PruningStage5().analyse();
 		new PruningEdgCenStage5().analyse();
 		new PruningEdgCorStage5().analyse();
 		try{
