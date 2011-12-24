@@ -1,6 +1,7 @@
 package fivestage444;
 
 import java.lang.Thread;
+import java.util.Arrays;
 
 public final class Tables {
 
@@ -19,7 +20,7 @@ public final class Tables {
 		threadInitCenterStage2.start();
 		threadInitEdgeStage2.start();
 		threadInitE16Bm.start();
-		threadInitCenterStage3.start();
+		//threadInitCenterStage3.start();
 		threadInitSymCenterToCenterStage3.start();
 		threadInitSymCenterStage3.start();
 		threadInitEdgeStage3.start();
@@ -59,7 +60,7 @@ public final class Tables {
 		threadInitCenterStage2.join();
 		threadInitEdgeStage2.join();
 		threadInitE16Bm.join();
-		threadInitCenterStage3.join();
+		//threadInitCenterStage3.join();
 		threadInitSymCenterToCenterStage3.join();
 		threadInitSymCenterStage3.join();
 		threadInitEdgeStage3.join();
@@ -543,7 +544,7 @@ public final class Tables {
 					}
 				}
 
-				move_table_symEdgeSTAGE1[u][mc] = Symmetry.getRep(symEdgeToEdgeSTAGE1, minEdge)*Constants.N_SYM_STAGE1 + minSym;
+				move_table_symEdgeSTAGE1[u][mc] = Arrays.binarySearch(symEdgeToEdgeSTAGE1, minEdge)*Constants.N_SYM_STAGE1 + minSym;
 			}
 		}
 		System.out.println( "Finishing symEdge stage 1..." );
@@ -783,6 +784,7 @@ public final class Tables {
 
 	private InitE16Bm threadInitE16Bm = new InitE16Bm();
 
+	/*
 	public static final int[][] move_table_cenSTAGE3 = new int[Constants.N_STAGE3_CENTER_CONFIGS][Constants.N_STAGE3_SLICE_MOVES]; // 900900*20 = 72MB
 
 	private class InitCenterStage3 extends Thread {
@@ -817,7 +819,7 @@ public final class Tables {
 	}
 	}
 
-	private InitCenterStage3 threadInitCenterStage3 = new InitCenterStage3();
+	private InitCenterStage3 threadInitCenterStage3 = new InitCenterStage3();*/
 
 	/*** init stage 3 symCenterToCenter ***/
 	public static final int[] symCenterToCenterSTAGE3 = new int[Constants.N_STAGE3_SYMCENTER_CONFIGS];
@@ -868,7 +870,7 @@ public final class Tables {
 	private InitSymCenterToCenterStage3 threadInitSymCenterToCenterStage3 = new InitSymCenterToCenterStage3();
 
 	/*** init stage 3 symCenters ***/
-	public static final int[][] move_table_symCenterSTAGE3 = new int[Constants.N_STAGE3_SYMCENTER_CONFIGS][Constants.N_STAGE3_SLICE_MOVES]; // TODO...
+	public static final int[][] move_table_symCenterSTAGE3 = new int[Constants.N_STAGE3_SYMCENTER_CONFIGS][Constants.N_STAGE3_SLICE_MOVES]; // (906640) 113330*20=9MB
 
 	private class InitSymCenterStage3 extends Thread {
 
@@ -898,11 +900,11 @@ public final class Tables {
 
 			for (mc = 0; mc < Constants.N_STAGE3_SLICE_MOVES; ++mc) {
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-				cube2.rotate_sliceEDGE (Constants.stage3_slice_moves[mc]);
+				cube2.rotate_sliceCENTER (Constants.stage3_slice_moves[mc]);
 				int minCen = 99999999;
 				int minSym = 0;
 				for (int sym=0; sym < Constants.N_SYM_STAGE3; sym++ ){
-					System.arraycopy(cube2.m_edge, 0, cube3.m_edge, 0, 24);
+					System.arraycopy(cube2.m_cen, 0, cube3.m_cen, 0, 24);
 					cube3.conjugateCenters(sym);
 					cube3.convert_centers_to_stage3 (s3);
 					if( s3.m_centerLR < minCen){
@@ -911,7 +913,7 @@ public final class Tables {
 					}
 				}
 
-				move_table_symCenterSTAGE3[u][mc] = Symmetry.getRep(symCenterToCenterSTAGE3, minCen)*Constants.N_SYM_STAGE3 + minSym;
+				move_table_symCenterSTAGE3[u][mc] = Arrays.binarySearch(symCenterToCenterSTAGE3, minCen)*Constants.N_SYM_STAGE3 + minSym;
 			}
 		}
 		System.out.println( "Finishing symCenter stage 3..." );
@@ -943,7 +945,7 @@ public final class Tables {
 		CubeState cube2 = new CubeState();
 		for (u = 0; u < Constants.N_STAGE3_EDGE_CONFIGS; ++u) {
 			s3.m_edge = (short)u;
-			s3.convert_to_std_cube(cube1);
+			s3.convert_edges_to_std_cube(cube1);
 			for (mc = 0; mc < Constants.N_STAGE3_SLICE_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
 				cube2.do_move (Constants.stage3_slice_moves[mc]);
@@ -1253,7 +1255,7 @@ public final class Tables {
 						minSym = sym;
 					}
 				}
-				move_table_symEdgeSTAGE4[u][mc] = Symmetry.getRep(symEdgeToEdgeSTAGE4, minEdge)*Constants.N_SYM_STAGE4 + minSym;
+				move_table_symEdgeSTAGE4[u][mc] = Arrays.binarySearch(symEdgeToEdgeSTAGE4, minEdge)*Constants.N_SYM_STAGE4 + minSym;
 			}
 		}
 		System.out.println( "Finishing sym edge stage 4..." );
@@ -1672,7 +1674,7 @@ public final class Tables {
 					}
 				}
 
-				move_table_symEdgeSTAGE5[u][mc] = Symmetry.getRep(symEdgeToEdgeSTAGE5, minEdge)*Constants.N_SYM_STAGE5 + minSym;
+				move_table_symEdgeSTAGE5[u][mc] = Arrays.binarySearch(symEdgeToEdgeSTAGE5, minEdge)*Constants.N_SYM_STAGE5 + minSym;
 			}
 		}
 		System.out.println( "Finishing symEdge stage 5..." );

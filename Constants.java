@@ -879,7 +879,7 @@ public final class Constants{
 
 	public static final int STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS = 7;
 	public static final int stage3_solved_sym_centers[] = {
-	900830, 900844,	900850, 900853, 900857, 900858, 900899
+	113311, 113319,	113320, 113322, 113323, 113324, 113329
 	};
 
 	public static final int STAGE4_NUM_SOLVED_CENTER_CONFIGS = 12;

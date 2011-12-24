@@ -15,8 +15,9 @@ public final class CubeStage3 {
 	public short m_edge; //edge coordinate (12870)
 	public boolean m_edge_odd; //odd parity of edges
 
-	public static byte[] prune_table_cen3 = new byte[Constants.N_STAGE3_CENTER_CONFIGS/2];
+	//public static byte[] prune_table_cen3 = new byte[Constants.N_STAGE3_CENTER_CONFIGS/2];
 	public static byte[] prune_table_edg3 = new byte[Constants.N_STAGE3_EDGE_CONFIGS*Constants.N_STAGE3_EDGE_PAR/2];
+	public static byte[] prune_table;
 
 
 	public void init (){
@@ -25,6 +26,12 @@ public final class CubeStage3 {
 		m_sym_centerLR = 906488;
 		m_edge_odd = false;	
 	}
+
+	public int get_dist (){
+		int idx = m_sym_centerLR >> 3;
+		return (prune_table[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
+	}
+
 /*
 	public void do_move_slow (int move_code){
 		boolean par = m_edge_odd;
@@ -39,7 +46,7 @@ public final class CubeStage3 {
 	}
 */
 	public void do_move (int move_code){
-		m_centerLR = Tables.move_table_cenSTAGE3[m_centerLR][move_code];
+		//m_centerLR = Tables.move_table_cenSTAGE3[m_centerLR][move_code];
 		m_edge = Tables.move_table_edgeSTAGE3[m_edge][move_code];
 		if (stage3_move_parity[move_code]) {
 			m_edge_odd = ! m_edge_odd;
@@ -57,24 +64,30 @@ public final class CubeStage3 {
 
 	}
 
+	public boolean centers_solved ()
+	{
+		/*
+		for (i = 0; i < Constants.STAGE3_NUM_SOLVED_CENTER_CONFIGS; ++i)
+			if (m_centerLR == Constants.stage3_solved_centers[i])
+				return true;	//If we found a matching center value, then it is solved.
+		*/
+		for (int i = 0; i < Constants.STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS; ++i)
+			if (( m_sym_centerLR >> 3 ) == Constants.stage3_solved_sym_centers[i])
+				return true;	//If we found a matching center value, then it is solved.
+
+		return false;
+	}
+
+
 	public boolean is_solved ()
 	{
-		int i;	
 		if (m_edge_odd)
 			return false;	//not solved if odd edge parity
 
 		if (m_edge != 494)
 			return false;	//not solved if wrong edge value
 
-		for (i = 0; i < Constants.STAGE3_NUM_SOLVED_CENTER_CONFIGS; ++i)
-			if (m_centerLR == Constants.stage3_solved_centers[i])
-				return true;	//If we found a matching center value, then it is solved.
-
-		for (i = 0; i < Constants.STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS; ++i)
-			if (( m_sym_centerLR >> 3 ) == Constants.stage3_solved_sym_centers[i])
-				return true;	//If we found a matching center value, then it is solved.
-
-		return false;
+		return centers_solved();
 	}
 
 	public void convert_centers_to_std_cube (CubeState result_cube){
@@ -119,6 +132,7 @@ public final class CubeStage3 {
 		}
 	}
 
+	/*
 	public void convert_to_std_cube (CubeState result_cube){
 		int i;
 		for (i = 0; i < 8; ++i) {
@@ -126,11 +140,12 @@ public final class CubeStage3 {
 		}
 		convert_centers_to_std_cube( result_cube );
 		convert_edges_to_std_cube( result_cube );
-	}
+	}*/
 
+	/*
 	public int prune_funcCEN_STAGE3 (){
 		return Constants.get_dist_4bit (m_centerLR, prune_table_cen3);
-	}
+	}*/
 
 	public int prune_funcEDGE_STAGE3 (){
 		int idx = m_edge;
@@ -139,7 +154,5 @@ public final class CubeStage3 {
 		}
 		return Constants.get_dist_4bit (idx, prune_table_edg3);
 	}
-
-
 }
 

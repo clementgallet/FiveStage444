@@ -44,30 +44,14 @@ public final class Stage3Solver extends StageSolver{
 		cube.m_edge_odd = ss.cube.edgeUD_parity_odd ();
 	}
 
-	int id;
-	int best;
-
 	public void run (){
-		id = 0;
-
 		while(pullState()) {
-			if( id != ss.id ){
-				id = ss.id;
-				best = 100;
-			}
-			/*
-			int cubeDist = cube.prune_funcCEN_STAGE3();
-			if ( cubeDist < cube.prune_funcEDGE_STAGE3())
-				cubeDist = cube.prune_funcEDGE_STAGE3();
-			if( cubeDist > ( best - ss.move_count ))
-				continue;
-			*/
+
+			int cubeDist = getDistance();
 			foundSol = false;
-			//for (goal = 0; goal < best - ss.move_count; ++goal) {
-			for (goal = 0; goal < 30; ++goal) {
-				treeSearch (cube, goal, 0, 0);
+			for (goal = cubeDist; goal < 30; ++goal) {
+				treeSearch (cube, goal, 0, 0, cubeDist);
 				if (foundSol){
-					//best = ss.move_count + goal;
 					break;
 				}
 			}
@@ -77,7 +61,76 @@ public final class Stage3Solver extends StageSolver{
 		closePipes();
 	}
 
-	public boolean treeSearch (CubeStage3 cube1, int depth, int moves_done, int move_state){
+	public int getDistance (){
+		CubeStage3 cube1 = new CubeStage3();
+		CubeStage3 cube2 = new CubeStage3();
+		int mov_idx, mc, j, dist1, dist2;
+		int nDist = 0;
+		
+		cube1.m_sym_centerLR = cube.m_sym_centerLR;
+
+		dist1 = cube1.get_dist();
+
+		while (! cube1.centers_solved()) {
+
+			boolean noMoves=true;
+
+		/*if (metric == 1 && depth >= 2) {
+			for (mov_idx = 0; mov_idx < Constants.N_STAGE3_2TWIST_MOVES; ++mov_idx) {
+				cube2.m_sym_centerLR = cube1.m_sym_centerLR;
+				mc = stage3_2twist_moves[mov_idx][0];		//!!! metric dependency
+				cube2.do_move (mc);
+				mc = stage3_2twist_moves[mov_idx][1];
+				if (mc >= 0) {
+					cube2.do_move (mc);
+				}
+
+				if (cube2.prune_funcCEN_STAGE3() > depth-1) continue;
+				if (cube2.prune_funcEDGE_STAGE3() > depth-1) continue;
+				move_list[moves_done] = (byte)stage3_twist_map1[Constants.N_STAGE3_TWIST_MOVES + mov_idx];
+				move_list[moves_done + 1] = (byte)stage3_twist_map2[Constants.N_STAGE3_TWIST_MOVES + mov_idx];
+				if (treeSearch (cube2, depth - 2, moves_done + 2, next_ms)) return true;
+			}
+		}*/
+		for (mov_idx = 0; mov_idx < n_moves_metric_stg3[metric]; ++mov_idx) {
+			cube2.m_sym_centerLR = cube1.m_sym_centerLR;
+			switch (metric) {
+			case 0:
+				cube2.do_move (mov_idx);
+				break;
+			case 1:
+				//old TODO: This not finished.
+				for (j = 0; stage3_twist_moves[mov_idx][j] >= 0; ++j) {
+					mc = stage3_twist_moves[mov_idx][j];		//!!! metric dependency
+					cube2.do_move (mc);		//!!! metric dependency
+				}
+				break;
+			case 2:
+				//old TODO: This not finished.
+				for (j = 0; stage3_block_moves[mov_idx][j] >= 0; ++j) {
+					mc = stage3_block_moves[mov_idx][j];		//!!! metric dependency
+					cube2.do_move (mc);		//!!! metric dependency
+				}
+				break;
+			}
+				dist2 = cube2.get_dist();
+				if ((dist2 % 3) != (dist1 - 1)) continue;
+				cube1.m_sym_centerLR = cube2.m_sym_centerLR;
+				nDist++;
+				dist1 = dist2;
+				noMoves=false;
+				break;
+			}
+			if( noMoves){
+				System.out.println("Could not find a move that lowers the distance !!");
+				break;
+			}
+		}
+		return nDist;
+	}
+
+
+	public boolean treeSearch (CubeStage3 cube1, int depth, int moves_done, int move_state, int distance){
 		//Statistics.addNode(3, depth);
 		CubeStage3 cube2 = new CubeStage3();
 		int mov_idx, mc, j;
@@ -93,6 +146,7 @@ public final class Stage3Solver extends StageSolver{
 		if (metric == 1 && depth >= 2) {
 			for (mov_idx = 0; mov_idx < Constants.N_STAGE3_2TWIST_MOVES; ++mov_idx) {
 				cube2.m_centerLR = cube1.m_centerLR; // TODO: Add a method copy.
+				cube2.m_sym_centerLR = cube1.m_sym_centerLR;
 				cube2.m_edge = cube1.m_edge;
 				cube2.m_edge_odd = cube1.m_edge_odd;
 
@@ -101,17 +155,18 @@ public final class Stage3Solver extends StageSolver{
 				mc = stage3_2twist_moves[mov_idx][1];
 				if (mc >= 0) {
 					cube2.do_move (mc);
-				}
+				}/*
 				if (cube2.prune_funcCEN_STAGE3() > depth-1) continue;
 				if (cube2.prune_funcEDGE_STAGE3() > depth-1) continue;
 				move_list[moves_done] = (byte)stage3_twist_map1[Constants.N_STAGE3_TWIST_MOVES + mov_idx];
 				move_list[moves_done + 1] = (byte)stage3_twist_map2[Constants.N_STAGE3_TWIST_MOVES + mov_idx];
-				if (treeSearch (cube2, depth - 2, moves_done + 2, next_ms)) return true;
+				if (treeSearch (cube2, depth - 2, moves_done + 2, next_ms)) return true;*/
 			}
 		}
 		for (mov_idx = 0; mov_idx < n_moves_metric_stg3[metric]; ++mov_idx) {
 			boolean did_move = false;
 			cube2.m_centerLR = cube1.m_centerLR; // TODO: Add a method copy.
+			cube2.m_sym_centerLR = cube1.m_sym_centerLR;
 			cube2.m_edge = cube1.m_edge;
 			cube2.m_edge_odd = cube1.m_edge_odd;
 			switch (metric) {
@@ -140,7 +195,9 @@ public final class Stage3Solver extends StageSolver{
 				break;
 			}
 			if (did_move) {
-				if (cube2.prune_funcCEN_STAGE3() > depth-1) continue;
+				int newDist = ((cube2.get_dist() - (distance%3) + 4) % 3 ) + distance - 1; // TODO: Could make a better formula...
+				if (newDist > depth-1) continue;
+				//if (cube2.prune_funcCEN_STAGE3() > depth-1) continue;
 				if (cube2.prune_funcEDGE_STAGE3() > depth-1) continue;
 				mc = mov_idx;
 				switch (metric) {
@@ -152,7 +209,7 @@ public final class Stage3Solver extends StageSolver{
 					break;
 				}
 				move_list[moves_done] = (byte)mc;
-				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms)) return true;
+				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms, newDist)) return true;
 			}
 		}
 		return false;

@@ -144,7 +144,7 @@ public final class Stage5Solver extends StageSolver{
 			if( cubeDist > ( best - ss.move_count ))
 				continue;
 
-			for (goal = 0; goal < best - ss.move_count; ++goal) {
+			for (goal = cubeDist; goal < best - ss.move_count; ++goal) {
 				if (treeSearch (cube, goal, 0, init_move_state[metric], cubeDist)) {
 					best = ss.move_count + goal;
 					break;

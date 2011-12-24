@@ -1,6 +1,7 @@
 package fivestage444;
 
 import static fivestage444.Constants.*;
+import java.util.Arrays;
 
 //CubeState structure: a cubie-level representation of the cube.
 public final class CubeState implements java.io.Serializable{
@@ -335,7 +336,7 @@ public final class CubeState implements java.io.Serializable{
 				minSym = sym;
 			}
 		}
-		result_cube.m_sym_edge_ud_combo8 = Symmetry.getRep(Tables.symEdgeToEdgeSTAGE1, minEdge)*Constants.N_SYM_STAGE1 + minSym;
+		result_cube.m_sym_edge_ud_combo8 = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE1, minEdge)*Constants.N_SYM_STAGE1 + minSym;
 
 		int orientc = 0;
 		for (i = 0; i < 7; ++i) {	//don't want 8th edge orientation
@@ -400,7 +401,7 @@ public final class CubeState implements java.io.Serializable{
 		int minCen = 99999999;
 		int minSym = 0;
 		for (int sym=0; sym < Constants.N_SYM_STAGE3; sym++ ){
-			System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
+			System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
 			cube.conjugateCenters(sym);
 			cube.convert_centers_to_stage3 (s3);
 			if( s3.m_centerLR < minCen){
@@ -409,7 +410,7 @@ public final class CubeState implements java.io.Serializable{
 			}
 		}
 
-		result_cube.m_sym_centerLR = Symmetry.getRep(Tables.symCenterToCenterSTAGE3, minCen)*Constants.N_SYM_STAGE3 + minSym;
+		result_cube.m_sym_centerLR = Arrays.binarySearch(Tables.symCenterToCenterSTAGE3, minCen)*Constants.N_SYM_STAGE3 + minSym;
 
 	}
 
@@ -435,7 +436,7 @@ public final class CubeState implements java.io.Serializable{
 				minSym = sym;
 			}
 		}
-		result_cube.m_sym_edge = Symmetry.getRep(Tables.symEdgeToEdgeSTAGE4, minEdge)*Constants.N_SYM_STAGE4 + minSym;
+		result_cube.m_sym_edge = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE4, minEdge)*Constants.N_SYM_STAGE4 + minSym;
 
 		//int edge = cube_state_to_lrfb ();
 		//int edgerep = Tables.lrfb_get_edge_rep (edge);
@@ -579,7 +580,7 @@ public final class CubeState implements java.io.Serializable{
 				minSym = sym;
 			}
 		}
-		result_cube.m_sym_ep96x96x96 = Symmetry.getRep(Tables.symEdgeToEdgeSTAGE5, minEdge)*Constants.N_SYM_STAGE5 + minSym;
+		result_cube.m_sym_ep96x96x96 = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, minEdge)*Constants.N_SYM_STAGE5 + minSym;
 	}
 
 	private static int dbltwists[][] = {

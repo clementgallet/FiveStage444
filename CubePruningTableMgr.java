@@ -154,6 +154,7 @@ public final class CubePruningTableMgr {
 		}
 	
 		/*** Stage 3 ***/
+		/*
 		System.out.println ("Stage3...");
 		for (i = 0; i < Constants.STAGE3_NUM_SOLVED_CENTER_CONFIGS; ++i) {
 			solved_table[i] = Constants.stage3_solved_centers[i];
@@ -186,7 +187,7 @@ public final class CubePruningTableMgr {
 			break;
 		}
 		pcpt_cen3.init_solved_list (Constants.STAGE3_NUM_SOLVED_CENTER_CONFIGS, solved_table);
-		pcpt_cen3.analyze ();
+		pcpt_cen3.analyze ();*/
 	
 		stage3_solved.init ();
 		solved_table[0] = stage3_solved.m_edge;
@@ -213,7 +214,7 @@ public final class CubePruningTableMgr {
 		}
 		pcpt_edg3.init_move_list (0, Constants.N_STAGE3_SLICE_MOVES, tmp_list);
 		pcpt_edg3.init_solved_list (1, solved_table);
-		pcpt_edg3.analyze ();	
+		pcpt_edg3.analyze ();
 	}
 };
 
