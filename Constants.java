@@ -33,8 +33,8 @@ public final class Constants{
 	public static final int N_STAGE4_EDGE_CONFIGS = 88200;	//420*420/2
 	public static final int N_STAGE4_SYMEDGE_CONFIGS = 5968;
 	public static final int N_STAGE4_CORNER_CONFIGS = 420;	//8!/96
-	public static final int N_STAGE4_EDGE_HASH_TABLE = 200383;	//100153;
-	public static final int N_STAGE4_EDGE_HASH_DIVISOR = N_STAGE4_EDGE_HASH_TABLE - 2;	//also prime
+	//public static final int N_STAGE4_EDGE_HASH_TABLE = 200383;	//100153;
+	//public static final int N_STAGE4_EDGE_HASH_DIVISOR = N_STAGE4_EDGE_HASH_TABLE - 2;	//also prime
 
 	public static final int N_SQS_EDGE_PERM = 96*96*96;
 	public static final int N_SQS_SYMEDGE_PERM = 21908;

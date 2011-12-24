@@ -30,7 +30,7 @@ Stage 2
 Put front and back centers onto the front and back faces into one of the twelve configurations that can be solved using only half-turn moves. Arrange u- and d-layer edges within the u- and d-layers so that they will be in one of the 96 configurations that can be solved using only half-turn moves.
 Slice turns allowed:
         U,U',U2,u,u',u2,D,D',D2,d,d',d2,
-        L2,l2,R2,r2,
+        L2,l,l',l2,R2,r,r',r2,
         F2,f,f',f2,B2,b,b',b2
 One-time whole cube rotations allowed:
 90-degree turn about U-D axis.
@@ -76,16 +76,16 @@ Memory
 
 Move tables          Positions        Moves        Size        Memory (byte)
 ------------------------------------------------------------------------------
-stage 1 edges           46,371           36           4            6,677,424
+stage 1 symedges        46,371           36           4            6,677,424
 stage 1 corners          2,187           18           2               78,732
 stage 2 centers         10,626           28           2              595,056
 stage 2 edges              420           28           2               23,520
-stage 3 centers        900,900           20           4           72,072,000
+stage 3 symcenters     113,330           20           4            9,066,400
 stage 3 edges           12,870           20           2              514,800
-stage 4 edges            5,968           16           4              381,952
+stage 4 symedges         5,968           16           4              381,952
 stage 4 corners            420           16           2               13,440
 stage 4 centers             70           16           1                1,120
-stage 5 edges           21,908           12           1              262,896
+stage 5 symedges        21,908           12           1              262,896
 stage 5 corners             96           12           1                1,152
 stage 5 centers          1,728           12           1               20,736
 
@@ -93,7 +93,9 @@ Pruning tables              Positions        Memory (byte)
 ----------------------------------------------------------
 stage 1                   101,413,377           25,353,344
 stage 2 centers/edges       4,462,920            2,231,460
-stage 3 centers               900,900              450,450
-stage 3 edges                  25,740               12,870
+stage 3 symcenters            113,330               28,332
+stage 3 edges                  25,740                6,435
 stage 4                   175,459,200           43,864,800
-stage 5 edges/centers      37,857,024            9,464,256
+stage 5 symedges/centers   37,857,024            9,464,256
+stage 5 symedges/corners    2,103,168              525,792
+
