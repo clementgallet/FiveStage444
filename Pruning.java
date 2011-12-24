@@ -11,7 +11,6 @@ abstract class Pruning {
 	int num_positions;
 	byte[] ptable;
 	int num_moves;
-	int[] move_list;
 	int num_solved;
 	int[] psolved;
 	int count = 0;
@@ -69,10 +68,9 @@ abstract class Pruning {
 	abstract int do_move (int idx, int move);
 
 	public void analyse (){
-		int i;
-		int idx;
-		int dist;
+		int i, idx, dist;
 		int max_dist = 20;	//MAX_DISTANCE;
+
 		init ();
 
 		if (fname.exists() ) {
@@ -99,24 +97,10 @@ abstract class Pruning {
 	{
 		int i, j;
 
-		//if( idx == 20626457 ) System.out.println("Init_dist:"+get_dist(idx)+"set_dist:"+dist);
-
 		for (i = 0; i < num_moves; ++i) {
-			int idx2 = do_move (idx, move_list[3*i]);
-			for (j = 1; j < 3 && move_list[3*i + j] >= 0; ++j) {
-				idx2 = do_move (idx2, move_list[3*i + j]);
-			}
+			int idx2 = do_move (idx, i);
 			if (get_dist(idx2) == 0){
 				saveIdxAndSyms( idx2, dist );
-				/*
-				if( idx2 == 20626457 ){
-					//System.out.println("From idx "+idx+" with distance "+get_dist(idx)+" I set cur_idx to "+dist+" with move "+i);
-					System.out.println("From edge "+(idx/Constants.N_SQS_CENTER_PERM)+" I set cur_edge "+(20626457/48));
-					System.out.println("Applying the same move gives idx "+(do_move(idx2,i)));
-					System.out.println("Applying the same move again gives idx "+(do_move(do_move(idx2,i),i)));
-				}*/
-				//set_dist (idx2, dist);
-				//count++;
 			}
 		}
 	}

@@ -10,12 +10,6 @@ public final class PruningStage1 extends Pruning {
 
 		// Definition of the allowed moves.
 		num_moves = Constants.N_BASIC_MOVES;
-		move_list = new int[3*num_moves];
-		for (i = 0; i < Constants.N_BASIC_MOVES; ++i) {
-			move_list[3*i] = i;
-			move_list[3*i+1] = -1;
-			move_list[3*i+2] = -1;
-		}
 
 		// Creation of the pruning table.
 		num_positions = Constants.N_CORNER_ORIENT*Constants.N_SYMEDGE_COMBO8;

@@ -4,6 +4,7 @@ import java.io.PipedOutputStream;
 import java.io.PipedInputStream;
 
 import static fivestage444.Constants.*;
+import java.lang.Math;
 
 public final class Stage5Solver extends StageSolver{
 
@@ -40,12 +41,13 @@ public final class Stage5Solver extends StageSolver{
 				best = 100;
 			}
 
-			int cubeDist = getDistance();
-			if( cubeDist > ( best - ss.move_count ))
+			int distEdgCen = getDistanceEdgCen();
+			int distEdgCor = getDistanceEdgCor();
+			if( Math.max(distEdgCen, distEdgCor) > ( best - ss.move_count ))
 				continue;
 
-			for (goal = cubeDist; goal < best - ss.move_count; ++goal) {
-				if (treeSearch (cube, goal, 0, 12, cubeDist)) {
+			for (goal = Math.max(distEdgCen, distEdgCor); goal < best - ss.move_count; ++goal) {
+				if (treeSearch (cube, goal, 0, 12, distEdgCen, distEdgCor)) {
 					best = ss.move_count + goal;
 					break;
 				}
@@ -56,7 +58,7 @@ public final class Stage5Solver extends StageSolver{
 		closePipes();
 	}
 
-	public int getDistance (){
+	public int getDistanceEdgCen (){
 		CubeSqsCoord cube1 = new CubeSqsCoord();
 		CubeSqsCoord cube2 = new CubeSqsCoord();
 		int mov_idx, mc, j, dist1, dist2;
@@ -65,7 +67,7 @@ public final class Stage5Solver extends StageSolver{
 		cube1.m_cen12x12x12 = cube.m_cen12x12x12;
 		cube1.m_sym_ep96x96x96 = cube.m_sym_ep96x96x96;
 
-		dist1 = cube1.get_dist();
+		dist1 = cube1.get_dist_edgcen();
 
 		while (! cube1.edges_centers_solved()) {
 
@@ -74,7 +76,7 @@ public final class Stage5Solver extends StageSolver{
 				cube2.m_cen12x12x12 = cube1.m_cen12x12x12;
 				cube2.m_sym_ep96x96x96 = cube1.m_sym_ep96x96x96;
 				cube2.do_move (mov_idx);
-				dist2 = cube2.get_dist();
+				dist2 = cube2.get_dist_edgcen();
 
 				if ((dist2 % 3) != (dist1 - 1)) continue;
 				cube1.m_cen12x12x12 = cube2.m_cen12x12x12;
@@ -92,7 +94,44 @@ public final class Stage5Solver extends StageSolver{
 		return nDist;
 	}
 
-	public boolean treeSearch (CubeSqsCoord cube1, int depth, int moves_done, int move_state, int distance){
+	public int getDistanceEdgCor (){
+		CubeSqsCoord cube1 = new CubeSqsCoord();
+		CubeSqsCoord cube2 = new CubeSqsCoord();
+		int mov_idx, mc, j, dist1, dist2;
+		int nDist = 0;
+		
+		cube1.m_cp96 = cube.m_cp96;
+		cube1.m_sym_ep96x96x96 = cube.m_sym_ep96x96x96;
+
+		dist1 = cube1.get_dist_edgcor();
+
+		while (! cube1.edges_corners_solved()) {
+
+			boolean noMoves=true;
+			for (mov_idx = 0; mov_idx < N_SQMOVES; ++mov_idx) {
+				cube2.m_cp96 = cube1.m_cp96;
+				cube2.m_sym_ep96x96x96 = cube1.m_sym_ep96x96x96;
+				cube2.do_move (mov_idx);
+				dist2 = cube2.get_dist_edgcor();
+
+				if ((dist2 % 3) != (dist1 - 1)) continue;
+				cube1.m_cp96 = cube2.m_cp96;
+				cube1.m_sym_ep96x96x96 = cube2.m_sym_ep96x96x96;
+				nDist++;
+				System.out.println("Stage5EdgCor - Dist="+nDist+" cp="+cube1.m_cp96+" symcp"+(Tables.move_table_corner_conjSTAGE5[cube1.m_cp96][cube1.m_sym_ep96x96x96 % 48])+" edg="+(cube2.m_sym_ep96x96x96/48));
+				dist1 = dist2;
+				noMoves=false;
+				break;
+			}
+			if( noMoves){
+				System.out.println("Could not find a move that lowers the distance !!");
+				break;
+			}
+		}
+		return nDist;
+	}
+
+	public boolean treeSearch (CubeSqsCoord cube1, int depth, int moves_done, int move_state, int distEdgCen, int distEdgCor){
 		//Statistics.addNode(5, depth);
 		CubeSqsCoord cube2 = new CubeSqsCoord();
 		int mov_idx, mc, j;
@@ -108,18 +147,17 @@ public final class Stage5Solver extends StageSolver{
 		for (mov_idx = 0; mov_idx < N_SQMOVES; ++mov_idx) {
 			cube2.m_cen12x12x12 = cube1.m_cen12x12x12;
 			cube2.m_cp96 = cube1.m_cp96;
-			//cube2.m_ep96x96x96 = cube1.m_ep96x96x96;
 			cube2.m_sym_ep96x96x96 = cube1.m_sym_ep96x96x96;
 			if ((sqs_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
 				cube2.do_move (mov_idx);
 				next_ms = sqs_stm_next_ms[mov_idx];
-				int newDist = ((cube2.get_dist() - (distance%3) + 4) % 3 ) + distance - 1; // TODO: Could make a better formula...
-				if (newDist > depth-1) continue;
-				//if (cube2.prune_funcEDGCOR_STAGE5() > depth-1) continue;
-				//if (cube2.prune_funcCENCOR_STAGE5() > depth-1) continue;
+				int newDistEdgCen = ((cube2.get_dist_edgcen() - (distEdgCen%3) + 4) % 3 ) + distEdgCen - 1; // TODO: Could make a better formula...
+				int newDistEdgCor = ((cube2.get_dist_edgcor() - (distEdgCor%3) + 4) % 3 ) + distEdgCor - 1; // TODO: Could make a better formula...
+				if (newDistEdgCen > depth-1) continue;
+				if (newDistEdgCor > depth-1) continue;
 				mc = mov_idx;
 				move_list[moves_done] = (byte)mc;
-				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms, newDist)) return true;
+				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms, newDistEdgCen, newDistEdgCor)) return true;
 			}
 		}
 		return false;

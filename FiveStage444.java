@@ -127,7 +127,8 @@ public final class FiveStage444 {
 		new PruningStage1().analyse();
 		new PruningStage3().analyse();
 		new PruningStage4().analyse();
-		new PruningStage5().analyse();
+		new PruningEdgCenStage5().analyse();
+		new PruningEdgCorStage5().analyse();
 		try{
 			initPipes();
 		} catch(java.io.IOException e) { e.printStackTrace(); }

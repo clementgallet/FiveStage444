@@ -7,7 +7,8 @@ public final class CubeSqsCoord {
 	public short m_cen12x12x12; // (1728)
 	public byte m_cp96; // (96)
 
-	public static byte[] prune_table;
+	public static byte[] prune_table_edgcen;
+	public static byte[] prune_table_edgcor;
 	
 
 	public void init (){
@@ -17,9 +18,14 @@ public final class CubeSqsCoord {
 		m_sym_ep96x96x96 = 0;
 	}
 
-	public int get_dist (){
+	public int get_dist_edgcen (){
 		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_SQS_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48];
-		return (prune_table[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
+		return (prune_table_edgcen[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
+	}
+
+	public int get_dist_edgcor (){
+		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_SQS_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
+		return (prune_table_edgcor[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
 	}
 
 	public void do_move (int sqs_move_code){
@@ -69,6 +75,16 @@ public final class CubeSqsCoord {
 			return true;
 		}
 		if (m_sym_ep96x96x96 / 48 == 21616 && Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48] == 66 && Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48] == 143)
+			return true;
+		return false;
+	}
+
+	public boolean edges_corners_solved (){
+
+		if (m_cp96 == 0 && ( m_sym_ep96x96x96 / 48 ) == 0) {
+			return true;
+		}
+		if (m_sym_ep96x96x96 / 48 == 21616 && Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48] == 66)
 			return true;
 		return false;
 	}

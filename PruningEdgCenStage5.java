@@ -2,26 +2,20 @@ package fivestage444;
 
 import java.io.File;
 
-public final class PruningStage5 extends Pruning {
+public final class PruningEdgCenStage5 extends Pruning {
 
 	void init (){
 		int i;
-		fname = new File( Constants.datafiles_path, "stage5_stm_prune.rbk" );
+		fname = new File( Constants.datafiles_path, "stage5_edgcen_stm_prune.rbk" );
 
 		// Definition of the allowed moves.
 		num_moves = Constants.N_SQMOVES;
-		move_list = new int[3*num_moves];
-		for (i = 0; i < num_moves; ++i) {
-			move_list[3*i] = i;
-			move_list[3*i+1] = -1;
-			move_list[3*i+2] = -1;
-		}
 
 		// Creation of the pruning table.
 		num_positions = Constants.N_SQS_SYMEDGE_PERM*Constants.N_SQS_CENTER_PERM;
 		int n = num_positions/4 + 1;
-		CubeSqsCoord.prune_table = new byte[n];
-		ptable = CubeSqsCoord.prune_table;
+		CubeSqsCoord.prune_table_edgcen = new byte[n];
+		ptable = CubeSqsCoord.prune_table_edgcen;
 		for (i = 0; i < n; ++i) {
 			ptable[i] = 0;
 		}
