@@ -97,7 +97,7 @@ public final class Stage5Solver extends StageSolver{
 	public int getDistanceEdgCor (){
 		CubeSqsCoord cube1 = new CubeSqsCoord();
 		CubeSqsCoord cube2 = new CubeSqsCoord();
-		int mov_idx, mc, j, dist1, dist2;
+		int mov_idx, mc, j, dist1, dist2, idx; // TODO: idx is for debugging.
 		int nDist = 0;
 		
 		cube1.m_cp96 = cube.m_cp96;
@@ -112,13 +112,13 @@ public final class Stage5Solver extends StageSolver{
 				cube2.m_cp96 = cube1.m_cp96;
 				cube2.m_sym_ep96x96x96 = cube1.m_sym_ep96x96x96;
 				cube2.do_move (mov_idx);
+
 				dist2 = cube2.get_dist_edgcor();
 
 				if ((dist2 % 3) != (dist1 - 1)) continue;
 				cube1.m_cp96 = cube2.m_cp96;
 				cube1.m_sym_ep96x96x96 = cube2.m_sym_ep96x96x96;
 				nDist++;
-				System.out.println("Stage5EdgCor - Dist="+nDist+" cp="+cube1.m_cp96+" symcp"+(Tables.move_table_corner_conjSTAGE5[cube1.m_cp96][cube1.m_sym_ep96x96x96 % 48])+" edg="+(cube2.m_sym_ep96x96x96/48));
 				dist1 = dist2;
 				noMoves=false;
 				break;

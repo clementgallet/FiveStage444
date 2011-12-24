@@ -1434,7 +1434,7 @@ public final class Tables {
 		5, 4, 3, 2, 1, 0
 	};
 
-	private static int mov_lst[] = { Constants.Uf2, Constants.Df2, Constants.Lf2, Constants.Rf2, Constants.Ff2, Constants.Bf2 };
+	private static int mov_lst[] = { Constants.Uf2, Constants.Df2, Constants.Ls2, Constants.Rs2, Constants.Ff2, Constants.Bf2 };
 	private static short cen_swapbits_map[] = {
 		0x90, 0x60, //Uf2
 		0x09, 0x06, //Df2
@@ -1519,15 +1519,15 @@ public final class Tables {
 				Constants.perm_n_unpack (4, first_perm, cube1.m_edge, 0);
 			}
 			second_perm = squares_2nd_perm[first_perm][i % 4];
-			Constants.perm_n_unpack (4, second_perm, cube1.m_cor, 4);
+			Constants.perm_n_unpack (4, second_perm, cube1.m_edge, 4);
 			for (j = 4; j < 8; ++j) {
-				cube1.m_cor[j] += 4;
+				cube1.m_edge[j] += 4;
 			}
 			for (j = 0; j < 6; ++j) {
-				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
-				cube2.rotate_sliceCORNER (mov_lst[j]);
-				int x1 = Constants.perm_n_pack (4, cube2.m_cor, 0);
-				int x2 = cube2.m_cor[4] - 4;
+				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 8);
+				cube2.rotate_sliceEDGE (mov_lst[j]);
+				int x1 = Constants.perm_n_pack (4, cube2.m_edge, 0);
+				int x2 = cube2.m_edge[4] - 4;
 				move_table_cornerSTAGE5[i][2*j]= (byte)(4*x1 + x2);
 				move_table_cornerSTAGE5[i][2*j+1]= (byte)(i);
 			}
