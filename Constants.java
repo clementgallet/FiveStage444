@@ -33,22 +33,11 @@ public final class Constants{
 	public static final int N_STAGE4_EDGE_CONFIGS = 88200;	//420*420/2
 	public static final int N_STAGE4_SYMEDGE_CONFIGS = 5968;
 	public static final int N_STAGE4_CORNER_CONFIGS = 420;	//8!/96
-	//public static final int N_STAGE4_EDGE_HASH_TABLE = 200383;	//100153;
-	//public static final int N_STAGE4_EDGE_HASH_DIVISOR = N_STAGE4_EDGE_HASH_TABLE - 2;	//also prime
 
 	public static final int N_SQS_EDGE_PERM = 96*96*96;
 	public static final int N_SQS_SYMEDGE_PERM = 21908;
 	public static final int N_SQS_CENTER_PERM = 12*12*12;
 	public static final int N_SQS_CORNER_PERM = 96;
-
-/*
-	public static final byte UP = 0;
-	public static final byte DOWN = 1;
-	public static final byte LEFT = 2;
-	public static final byte RIGHT = 3;
-	public static final byte FRONT = 4;
-	public static final byte BACK = 5;
-*/
 
 //slice rotate codes
 	public static final int Uf  = 0;	//Up "face" (top slice) clockwise wrt top
@@ -131,37 +120,6 @@ public final class Constants{
 	Ff2, Fs, Fs3, Fs2, Bf2, Bs, Bs3, Bs2
 	};
 
-/*
-	public static final int stg2_Uf = 0; //TODO: Use enum type.
-	public static final int stg2_Uf3 = 1;
-	public static final int stg2_Uf2 = 2;
-	public static final int stg2_Us = 3;
-	public static final int stg2_Us3 = 4;
-	public static final int stg2_Us2 = 5;
-	public static final int stg2_Df = 6;
-	public static final int stg2_Df3 = 7;
-	public static final int stg2_Df2 = 8;
-	public static final int stg2_Ds = 9;
-	public static final int stg2_Ds3 = 10;
-	public static final int stg2_Ds2 = 11;
-	public static final int stg2_Lf2 = 12;
-	public static final int stg2_Ls = 13;
-	public static final int stg2_Ls3 = 14;
-	public static final int stg2_Ls2 = 15;
-	public static final int stg2_Rf2 = 16;
-	public static final int stg2_Rs = 17;
-	public static final int stg2_Rs3 = 18;
-	public static final int stg2_Rs2 = 19;
-	public static final int stg2_Ff2 = 20;
-	public static final int stg2_Fs = 21;
-	public static final int stg2_Fs3 = 22;
-	public static final int stg2_Fs2 = 23;
-	public static final int stg2_Bf2 = 24;
-	public static final int stg2_Bs = 25;
-	public static final int stg2_Bs3 = 26;
-	public static final int stg2_Bs2 = 27;
-*/
-
 	public static final int N_STAGE3_SLICE_MOVES = 20;
 	public static final int stage3_slice_moves[] = {
 	Uf, Uf3, Uf2, Us2,
@@ -187,29 +145,6 @@ public final class Constants{
 		false, true,  true,  false
 	};
 
-/*
-	public static final int stg3_Uf = 0; // TODO: Use enum type
-	public static final int stg3_Uf3 = 1;
-	public static final int stg3_Uf2 = 2;
-	public static final int stg3_Us2 = 3;
-	public static final int stg3_Df = 4;
-	public static final int stg3_Df3 = 5;
-	public static final int stg3_Df2 = 6;
-	public static final int stg3_Ds2 = 7;
-	public static final int stg3_Lf2 = 8;
-	public static final int stg3_Ls2 = 9;
-	public static final int stg3_Rf2 = 10;
-	public static final int stg3_Rs2 = 11;
-	public static final int stg3_Ff2 = 12;
-	public static final int stg3_Fs = 13;
-	public static final int stg3_Fs3 = 14;
-	public static final int stg3_Fs2 = 15;
-	public static final int stg3_Bf2 = 16;
-	public static final int stg3_Bs = 17;
-	public static final int stg3_Bs3 = 18;
-	public static final int stg3_Bs2 = 19;
-*/
-
 	public static final int N_STAGE4_SLICE_MOVES = 16;
 	public static final int stage4_slice_moves[] = {
 	Uf, Uf3, Uf2, Us2,
@@ -226,25 +161,6 @@ public final class Constants{
 	-1, -1, 12, -1, -1, 13,
 	-1, -1, 14, -1, -1, 15
 	};
-
-/*
-	public static final int stg4_Uf = 0;
-	public static final int stg4_Uf3 = 1;
-	public static final int stg4_Uf2 = 2;
-	public static final int stg4_Us2 = 3;
-	public static final int stg4_Df = 4;
-	public static final int stg4_Df3 = 5;
-	public static final int stg4_Df2 = 6;
-	public static final int stg4_Ds2 = 7;
-	public static final int stg4_Lf2 = 8;
-	public static final int stg4_Ls2 = 9;
-	public static final int stg4_Rf2 = 10;
-	public static final int stg4_Rs2 = 11;
-	public static final int stg4_Ff2 = 12;
-	public static final int stg4_Fs2 = 13;
-	public static final int stg4_Bf2 = 14;
-	public static final int stg4_Bs2 = 15;
-*/
 
 	public static final int N_SQMOVES = 12;
 	public static final byte stage5_slice_moves[] = { Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2 };
@@ -401,12 +317,6 @@ public final class Constants{
 			m--;
 		}
 	}
-
-	public static final int STAGE3_NUM_SOLVED_CENTER_CONFIGS = 12;
-	public static final int stage3_solved_centers[] = {
-	900830, 900844,	900850, 900853, 900857, 900858,
-	900871, 900872, 900876,	900879, 900885, 900899
-	};
 
 	public static final int STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS = 7;
 	public static final int stage3_solved_sym_centers[] = {

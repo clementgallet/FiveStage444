@@ -177,38 +177,41 @@ public final class CubeState implements java.io.Serializable{
 		}
 	}
 
-	public void conjugate (int symIdx){
+	public void conjugateCorners (int symIdx){
 		int i;
 		byte temp_c_orient;
-		CubeState cs = new CubeState();
-		copyTo(cs);
+		byte[] cor = new byte[8];
+		System.arraycopy(m_cor, 0, cor, 0, 8);
 
-		conjugateEdges (symIdx);
-		conjugateCenters (symIdx);
-
-		// Conjugate corners (in two phases).
+		// Conjugate corners in two phases.
 		for (i = 0; i < 8; ++i){
-			temp_c_orient = (byte) (cs.m_cor[Symmetry.symCornersPerm[Symmetry.invSymIdx[symIdx]][i]] / 8);
+			temp_c_orient = (byte) (cor[Symmetry.symCornersPerm[Symmetry.invSymIdx[symIdx]][i]] / 8);
 			temp_c_orient += Symmetry.symCornersOrient[Symmetry.invSymIdx[symIdx]][i] % 3;
 			if (Symmetry.symCornersOrient[Symmetry.invSymIdx[symIdx]][i] >= 3)
 				temp_c_orient += 3;
-			m_cor[i] = (byte) (8*temp_c_orient + (cs.m_cor[Symmetry.symCornersPerm[Symmetry.invSymIdx[symIdx]][i]] % 8));
+			m_cor[i] = (byte) (8*temp_c_orient + (cor[Symmetry.symCornersPerm[Symmetry.invSymIdx[symIdx]][i]] % 8));
 		}
 
 		// Copy again to copy cube for the second phase.
 		for (i = 0; i < 8; ++i){
-			cs.m_cor[i] = m_cor[i];
+			cor[i] = m_cor[i];
 		}
 
 		// Second phase.
 		for (i = 0; i < 8; ++i){
-			temp_c_orient = (byte) (Symmetry.symCornersOrient[symIdx][(cs.m_cor[i] % 8)]);
+			temp_c_orient = (byte) (Symmetry.symCornersOrient[symIdx][(cor[i] % 8)]);
 			if (temp_c_orient >= 3)
-				temp_c_orient = (byte)((3 + temp_c_orient - (cs.m_cor[i] / 8)) % 3);
+				temp_c_orient = (byte)((3 + temp_c_orient - (cor[i] / 8)) % 3);
 			else
-				temp_c_orient = (byte)((temp_c_orient + (cs.m_cor[i] / 8)) % 3);
-			m_cor[i] = (byte) (8*temp_c_orient + Symmetry.symCornersPerm[symIdx][(cs.m_cor[i] % 8)]);
+				temp_c_orient = (byte)((temp_c_orient + (cor[i] / 8)) % 3);
+			m_cor[i] = (byte) (8*temp_c_orient + Symmetry.symCornersPerm[symIdx][(cor[i] % 8)]);
 		}
+	}
+
+	public void conjugate (int symIdx){
+		conjugateEdges (symIdx);
+		conjugateCenters (symIdx);
+		conjugateCorners (symIdx);
 	}
 
 	public void invert_fbcen (){
@@ -317,35 +320,52 @@ public final class CubeState implements java.io.Serializable{
 		}
 	}
 
-	public void convert_to_stage1 (CubeStage1 result_cube){
+	public int convert_edges_to_stage1 (){
+		int i, ebm = 0;
+		for (i = 0; i < 24; ++i) {
+			if (m_edge[i] >= 16) {
+				ebm |= (1 << i);
+			}
+		}
+		return Tables.ebm2eloc[ebm];
+	}
+
+	public int convert_symedges_to_stage1 (){
 		CubeState cube = new CubeState();
 		int i;
 		int minEdge = 99999999;
 		int minSym = 0;
 		for (int sym=0; sym < Constants.N_SYM_STAGE1; sym++ ){
 			copyTo (cube);
-			cube.conjugate(sym);
-			int ebm = 0;
-			for (i = 0; i < 24; ++i) {
-				if (cube.m_edge[i] >= 16) {
-					ebm |= (1 << i);
-				}
-			}
-			if( Tables.ebm2eloc[ebm] < minEdge){
-				minEdge = Tables.ebm2eloc[ebm];
+			cube.conjugateEdges(sym);
+			int edge = cube.convert_edges_to_stage1();
+			if( edge < minEdge){
+				minEdge = edge;
 				minSym = sym;
 			}
 		}
-		result_cube.m_sym_edge_ud_combo8 = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE1, minEdge)*Constants.N_SYM_STAGE1 + minSym;
+		return Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE1, minEdge)*Constants.N_SYM_STAGE1 + minSym;
+	}
 
-		int orientc = 0;
+	public short convert_corners_to_stage1 (){
+		int i, orientc = 0;
 		for (i = 0; i < 7; ++i) {	//don't want 8th edge orientation
 			orientc = 3*orientc + (m_cor[i] >> 3);
 		}
-		result_cube.m_co = (short)orientc;
+		return (short)orientc;
 	}
 
-	public void convert_to_stage2 (CubeStage2 result_cube){
+	public void convert_to_stage1 (CubeStage1 result_cube){
+		result_cube.m_co = convert_corners_to_stage1();
+		result_cube.m_sym_edge_ud_combo8 = convert_symedges_to_stage1();
+	}
+
+	public short convert_edges_to_stage2 (){
+		int u = Constants.perm_n_pack (8, m_edge, 16);
+		return Tables.perm_to_420[u];
+	}
+
+	public int convert_centers_to_stage2 (){
 		int i;
 		int cenbm = 0;
 		int cenbm4of8 = 0;
@@ -359,12 +379,15 @@ public final class CubeState implements java.io.Serializable{
 				++j;
 			}
 		}
-		result_cube.m_centerFB = 70*Tables.ebm2eloc[cenbm] + Tables.bm4of8_to_70[cenbm4of8];
-		int u = Constants.perm_n_pack (8, m_edge, 16);
-		result_cube.m_edge = Tables.perm_to_420[u];
+		return 70*Tables.ebm2eloc[cenbm] + Tables.bm4of8_to_70[cenbm4of8];
 	}
 
-	public void convert_centers_to_stage3 (CubeStage3 result_cube){
+	public void convert_to_stage2 (CubeStage2 result_cube){
+		result_cube.m_edge = convert_edges_to_stage2();
+		result_cube.m_centerFB = convert_centers_to_stage2();
+	}
+
+	public int convert_centers_to_stage3 (){
 		int i;
 		int cenbm = 0;
 		int cenbm4of8 = 0;
@@ -378,10 +401,27 @@ public final class CubeState implements java.io.Serializable{
 				++j;
 			}
 		}
-		result_cube.m_centerLR = 70*Tables.e16bm2eloc[cenbm] + Tables.bm4of8_to_70[cenbm4of8];
+		return 70*Tables.e16bm2eloc[cenbm] + Tables.bm4of8_to_70[cenbm4of8];
 	}
 
-	public void convert_edges_to_stage3 (CubeStage3 result_cube){
+	public int convert_symcenters_to_stage3 (){
+		CubeState cube = new CubeState();
+		int minCen = 99999999;
+		int minSym = 0;
+		for (int sym=0; sym < Constants.N_SYM_STAGE3; sym++ ){
+			System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
+			cube.conjugateCenters(sym);
+			int cen = cube.convert_centers_to_stage3();
+			if( cen < minCen){
+				minCen = cen;
+				minSym = sym;
+			}
+		}
+
+		return Arrays.binarySearch(Tables.symCenterToCenterSTAGE3, minCen)*Constants.N_SYM_STAGE3 + minSym;
+	}
+
+	public short convert_edges_to_stage3 (){
 		int i;
 		int edge_bm = 0;
 		for (i = 0; i < 16; ++i) {
@@ -389,46 +429,23 @@ public final class CubeState implements java.io.Serializable{
 				edge_bm |= (1 << i);
 			}
 		}
-		result_cube.m_edge = (short)Tables.e16bm2eloc[edge_bm];
+		return (short)Tables.e16bm2eloc[edge_bm];
 	}
 
 	public void convert_to_stage3 (CubeStage3 result_cube){
-		convert_centers_to_stage3 (result_cube);
-		convert_edges_to_stage3 (result_cube);
-
-		CubeState cube = new CubeState();
-		CubeStage3 s3 = new CubeStage3(); // TODO: don't need this after modifying convert_centers_to_stage3
-		int minCen = 99999999;
-		int minSym = 0;
-		for (int sym=0; sym < Constants.N_SYM_STAGE3; sym++ ){
-			System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
-			cube.conjugateCenters(sym);
-			cube.convert_centers_to_stage3 (s3);
-			if( s3.m_centerLR < minCen){
-				minCen = s3.m_centerLR;
-				minSym = sym;
-			}
-		}
-
-		result_cube.m_sym_centerLR = Arrays.binarySearch(Tables.symCenterToCenterSTAGE3, minCen)*Constants.N_SYM_STAGE3 + minSym;
-
+		result_cube.m_sym_centerLR = convert_symcenters_to_stage3 ();
+		result_cube.m_edge = convert_edges_to_stage3 ();
 	}
 
 	private static byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
 
-	public void convert_to_stage4 (CubeStage4 result_cube){
-		int i;
-		byte[] t6 = new byte[8];
-		//Note: for corners, use of perm_to_420 array requires "squares" style mapping.
-		//But the do_move function for std_cube assumes "standard" mapping.
-		//Therefore the m_cor array must be converted accordingly using this conversion array.
-
+	public int convert_symedges_to_stage4 (){
 		CubeState cube = new CubeState();
 		int minEdge = 1999999999;
 		int minSym = 0;
 		for (int sym=0; sym < Constants.N_SYM_STAGE4; sym++ ){
 			copyTo (cube);
-			cube.conjugate(sym);
+			cube.conjugateEdges(sym);
 			int u2 = Tables.lrfb_get_edge_rep(cube.cube_state_to_lrfb ());
 
 			if( u2 < minEdge){
@@ -436,30 +453,38 @@ public final class CubeState implements java.io.Serializable{
 				minSym = sym;
 			}
 		}
-		result_cube.m_sym_edge = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE4, minEdge)*Constants.N_SYM_STAGE4 + minSym;
+		return Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE4, minEdge)*Constants.N_SYM_STAGE4 + minSym;
+	}
 
-		//int edge = cube_state_to_lrfb ();
-		//int edgerep = Tables.lrfb_get_edge_rep (edge);
-		//int hash_idx = Tables.stage4_edge_table_lookup (edgerep);
-		//result_cube.m_edge = Tables.stage4_edge_hash_table_idx[hash_idx];
+	public short convert_corners_to_stage4 (){
+		int i;
+		byte[] t6 = new byte[8];
 
+		//Note: for corners, use of perm_to_420 array requires "squares" style mapping.
+		//But the do_move function for std_cube assumes "standard" mapping.
+		//Therefore the m_cor array must be converted accordingly using this conversion array.
 		for (i = 0; i < 8; ++i) {
 			t6[std_to_sqs[i]] = std_to_sqs[m_cor[i]];
 		}
 		int u = Constants.perm_n_pack (8, t6, 0);
-		result_cube.m_corner = Tables.perm_to_420[u];
+		return Tables.perm_to_420[u];
+	}
 
+	public byte convert_centers_to_stage4 (){
+		int i;
 		int cenbm4of8 = 0;
 		for (i = 0; i < 8; ++i) {
-			if (m_cen[i] >= 2) { // TODO: Remove this.
-				System.out.println ("error: cube state not a stage4 position");
-				//exit (1);
-			}
 			if (m_cen[i] == 0) {
 				cenbm4of8 |= (1 << i);
 			}
 		}
-		result_cube.m_centerUD = Tables.bm4of8_to_70[cenbm4of8];
+		return Tables.bm4of8_to_70[cenbm4of8];
+	}
+
+	public void convert_to_stage4 (CubeStage4 result_cube){
+		result_cube.m_sym_edge = convert_symedges_to_stage4();
+		result_cube.m_corner = convert_corners_to_stage4();
+		result_cube.m_centerUD = convert_centers_to_stage4();
 	}
 
 	public int cube_state_to_lrfb_l (){
@@ -508,12 +533,28 @@ public final class CubeState implements java.io.Serializable{
 		16, 19, 17, 18, 21, 22, 20, 23
 	};
 
-	public int convert_edges_to_squares (){ // TODO: make a function like that for all stages and all pieces.
+	public int convert_edges_to_squares (){
 		int ep1 = Constants.perm_n_pack (4, m_edge, 0);
 		int ep2 = Constants.perm_n_pack (4, m_edge, 8);
 		int ep3 = Constants.perm_n_pack (4, m_edge, 16);
 		return 96*96*(4*ep3 + (m_edge[20] - 20)) + 96*(4*ep2 + (m_edge[12] - 12)) +
 			4*ep1 + (m_edge[4] - 4);
+	}
+
+	public int convert_symedges_to_squares (){
+		CubeState cube = new CubeState();
+		int minEdge = 99999999;
+		int minSym = 0;
+		for (int sym=0; sym < Constants.N_SYM_STAGE5; sym++ ){
+			System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
+			cube.conjugateEdges(sym);
+			int edge = cube.convert_edges_to_squares ();
+			if( edge < minEdge){
+				minEdge = edge;
+				minSym = sym;
+			}
+		}
+		return Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, minEdge)*Constants.N_SYM_STAGE5 + minSym;
 	}
 
 	public short convert_centers_to_squares (){
@@ -525,9 +566,6 @@ public final class CubeState implements java.io.Serializable{
 		for (i = 0; i < 24; ++i) {
 			new_m_cen[std_to_sqs_cen[i]] = (byte)(std_to_sqs_cen[4*m_cen[i]]/4);
 		}
-
-		//System.out.println("After rearranging");
-		//print();
 
 		return squares_pack_centers (new_m_cen);
 	}
@@ -562,25 +600,9 @@ public final class CubeState implements java.io.Serializable{
 	}
 
 	public void convert_to_squares (CubeSqsCoord result_cube){
-		int i;
-
-		result_cube.m_ep96x96x96 = convert_edges_to_squares ();
 		result_cube.m_cp96 = convert_corners_to_squares ();
 		result_cube.m_cen12x12x12 = convert_centers_to_squares ();
-
-		CubeState cube = new CubeState();
-		int minEdge = 99999999;
-		int minSym = 0;
-		for (int sym=0; sym < Constants.N_SYM_STAGE5; sym++ ){
-			System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
-			cube.conjugate(sym);
-			int edge = cube.convert_edges_to_squares ();
-			if( edge < minEdge){
-				minEdge = edge;
-				minSym = sym;
-			}
-		}
-		result_cube.m_sym_ep96x96x96 = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, minEdge)*Constants.N_SYM_STAGE5 + minSym;
+		result_cube.m_sym_ep96x96x96 = convert_symedges_to_squares ();
 	}
 
 	public void scramble (int move_count, byte[] move_arr){

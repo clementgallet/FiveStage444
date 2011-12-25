@@ -20,8 +20,6 @@ public final class CubePruningTableMgr {
 	};
 
 	public static CubePruningTable pcpt_edgcen2;
-	//public static CubePruningTable pcpt_cen3;
-	//public static CubePruningTable pcpt_edg3;
 
 	private static void writeToFile( File fname, byte[] array, int length ){
 		try {
@@ -128,49 +126,6 @@ public final class CubePruningTableMgr {
 			readFromFile( fname, CubeStage2.prune_table_edgcen2, Constants.N_CENTER_COMBO4*Constants.N_STAGE2_EDGE_CONFIGS/2);
 		}
 	
-		/*** Stage 3 ***/
-		/*
-		System.out.println ("Stage3...");
-		for (i = 0; i < Constants.STAGE3_NUM_SOLVED_CENTER_CONFIGS; ++i) {
-			solved_table[i] = Constants.stage3_solved_centers[i];
-		}
-
-		pcpt_cen3 = new CubePruningTable (Constants.N_STAGE3_CENTER_CONFIGS, CubeStage3.prune_table_cen3, new DoMoveC3STM());
-		switch (metric) {
-		case 0:
-			pcpt_cen3.init_move_list (0, Constants.N_STAGE3_SLICE_MOVES, tmp_list);
-			break;
-		case 1:
-			for (i = 0; i < Constants.N_STAGE3_TWIST_MOVES; ++i) {
-				tmp_list[2*i] = Constants.stage3_twist_moves[i][0];
-				tmp_list[2*i+1] = Constants.stage3_twist_moves[i][1];
-			}
-			pcpt_cen3.init_move_list (2, Constants.N_STAGE3_TWIST_MOVES, tmp_list);
-			for (i = 0; i < Constants.N_STAGE3_2TWIST_MOVES; ++i) {
-				tmp_list[2*i] = Constants.stage3_2twist_moves[i][0];
-				tmp_list[2*i+1] = Constants.stage3_2twist_moves[i][1];
-			}
-			pcpt_cen3.init_move_list2 (2, Constants.N_STAGE3_2TWIST_MOVES, tmp_list);
-	
-			break;
-		case 2:
-			for (i = 0; i < Constants.N_STAGE3_BLOCK_MOVES; ++i) {
-				tmp_list[2*i] = Constants.stage3_block_moves[i][0];
-				tmp_list[2*i+1] = Constants.stage3_block_moves[i][1];
-			}
-			pcpt_cen3.init_move_list (2, Constants.N_STAGE3_BLOCK_MOVES, tmp_list);
-			break;
-		}
-		pcpt_cen3.init_solved_list (Constants.STAGE3_NUM_SOLVED_CENTER_CONFIGS, solved_table);
-		pcpt_cen3.analyze ();*/
-		/*	
-		stage3_solved.init ();
-		solved_table[0] = stage3_solved.m_edge;
-
-		pcpt_edg3 = new CubePruningTable (Constants.N_STAGE3_EDGE_PAR*Constants.N_STAGE3_EDGE_CONFIGS, CubeStage3.prune_table_edg3, new DoMoveE3STM());
-		pcpt_edg3.init_move_list (0, Constants.N_STAGE3_SLICE_MOVES, tmp_list);
-		pcpt_edg3.init_solved_list (1, solved_table);
-		pcpt_edg3.analyze ();*/
 	}
 };
 

@@ -34,14 +34,6 @@ public final class CubeStage2 {
 		return false;
 	}
 
-	public void do_move_slow (int move_code)
-	{
-		CubeState cube1 = new CubeState();
-		convert_to_std_cube(cube1);
-		cube1.do_move (Constants.stage2_slice_moves[move_code]);
-		cube1.convert_to_stage2 (this);
-	}
-
 	public void do_move (int move_code){
 		int i;
 		byte[] t1 = new byte[4];
@@ -113,9 +105,8 @@ public final class CubeStage2 {
 		}
 	}
 
-	public void convert_to_std_cube (CubeState result_cube){
+	public void convert_centers_to_std_cube (CubeState result_cube){
 		int i;
-		byte[] t6 = new byte[4];
 		int cenbm = Tables.eloc2ebm[m_centerFB/70];
 		int cenbm4of8 = Tables.bm4of8[m_centerFB % 70];
 		int udlr = 0;
@@ -130,9 +121,11 @@ public final class CubeStage2 {
 					result_cube.m_cen[i] = 4;
 			}
 		}
-		for (i = 0; i < 8; ++i)
-			result_cube.m_cor[i] = (byte)i;
+	}
 
+	public void convert_edges_to_std_cube (CubeState result_cube){
+		int i;
+		byte[] t6 = new byte[4];
 		int edgeFbm = Tables.bm4of8[m_edge / 6];
 		Constants.perm_n_unpack (4, m_edge % 6, t6, 0);
 		for (i = 0; i < 16; ++i)
@@ -159,5 +152,4 @@ public final class CubeStage2 {
 		}
 		return d1;
 	}
-
 }
