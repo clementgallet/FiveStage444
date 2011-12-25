@@ -95,7 +95,11 @@ stage 1                   101,413,377           25,353,344
 stage 2 centers/edges       4,462,920            2,231,460
 stage 3 symcenters            113,330               28,332
 stage 3 edges                  25,740                6,435
+stage 3                 2,917,114,200          729,278,550
 stage 4                   175,459,200           43,864,800
 stage 5 symedges/centers   37,857,024            9,464,256
 stage 5 symedges/corners    2,103,168              525,792
+stage 5                 3,634,274,304          908,568,576
+
+Full pruning tables for stage 3 and 5 can be enabled at the begining of Constants.java.
 

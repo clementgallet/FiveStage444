@@ -33,54 +33,39 @@ public final class Stage4Solver extends StageSolver{
 		ss.cube.convert_to_stage4 (cube);
 	}
 
-	int id;
-	int best;
-
 	public void run (){
 		while (pullState()) {
-			if( id != ss.id ){
-				id = ss.id;
-				best = 100;
-			}
-
-			treeSearch (cube, 0, 0);
+			solve (cube, 0, 0, cube.get_dist());
 		}
 
 		pushStopSignal();
 		closePipes();
 	}
 
-	public boolean treeSearch (CubeStage4 cube1, int moves_done, int move_state){
+	public boolean solve (CubeStage4 cube1, int moves_done, int move_state, int dist){
 		//Statistics.addNode(4, depth);
 		CubeStage4 cube2 = new CubeStage4();
-		int mov_idx, mc, j;
-		int dist = cube1.get_dist();
+		int mov_idx, j, dist2;
 		int next_ms = 0;
 		if (dist == 3) {
 			if (cube1.is_solved ()) {
 				goal = moves_done;
-				best = ss.move_count + goal;
 				pushState();
 				Statistics.addLeaf(4, goal);
 				return true; // true: take the first solution, false: take all solutions.
 			}
 		}
-		if (moves_done >= best - ss.move_count - 1) return false;
-
 		for (mov_idx = 0; mov_idx < N_STAGE4_SLICE_MOVES; ++mov_idx) {
-			//cube2.m_edge = cube1.m_edge;
 			cube2.m_sym_edge = cube1.m_sym_edge;
 			cube2.m_corner = cube1.m_corner;
 			cube2.m_centerUD = cube1.m_centerUD; // TODO: use a copy method
 			if ((stage4_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
 				cube2.do_move (mov_idx);
 				next_ms = stage4_stm_next_ms[mov_idx];
-				if ((cube2.get_dist() % 3) != (dist - 1)) continue; // TODO: computing get_dist twice !
-				//if (cube2.prune_funcCENCOR_STAGE4() > depth-1) continue;
-				//if (cube2.prune_funcEDGCEN_STAGE4() > depth-1) continue;
-				mc = mov_idx;
-				move_list[moves_done] = (byte)mc;
-				if (treeSearch (cube2, moves_done + 1, next_ms)) return true;
+				dist2 = cube2.get_dist();
+				if ((dist2 % 3) != (dist - 1)) continue;
+				move_list[moves_done] = (byte)mov_idx;
+				if (solve (cube2, moves_done + 1, next_ms, dist2)) return true;
 			}
 		}
 		return false;
@@ -93,5 +78,4 @@ public final class Stage4Solver extends StageSolver{
 		}
 		return ss.rotate;
 	}
-
 }

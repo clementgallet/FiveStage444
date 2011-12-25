@@ -28,6 +28,12 @@ public final class CubeStage3 {
 		return (prune_table_edg[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
 	}
 
+	public int get_dist (){
+		long idx = (((long)(m_sym_centerLR >> 3))*Constants.N_STAGE3_EDGE_CONFIGS + Tables.move_table_edge_conjSTAGE3[m_edge][m_sym_centerLR & 0x7])<<1;
+		if (m_edge_odd) idx++;
+		return (prune_table[(int)(idx>>2)] >> ((idx & 0x3) << 1)) & 0x3;
+	}
+
 	public void do_move (int move_code){
 		m_edge = Tables.move_table_edgeSTAGE3[m_edge][move_code];
 		if (Constants.stage3_move_parity[move_code]) {

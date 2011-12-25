@@ -27,6 +27,11 @@ public final class CubeSqsCoord {
 		return (prune_table_edgcor[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
 	}
 
+	public int get_dist (){
+		long idx = (long)(( m_sym_ep96x96x96 / 48 ) * Constants.N_SQS_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48])* Constants.N_SQS_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
+		return (prune_table[(int)(idx>>2)] >> ((idx & 0x3) << 1)) & 0x3;
+	}
+
 	public void do_move (int sqs_move_code){
 		m_cen12x12x12 = Tables.move_table_cenSTAGE5[m_cen12x12x12][sqs_move_code];
 		m_cp96 = Tables.move_table_cornerSTAGE5[m_cp96][sqs_move_code];

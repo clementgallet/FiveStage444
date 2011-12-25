@@ -6,6 +6,8 @@ package fivestage444;
 public final class Constants{
 
 	public static final String datafiles_path = "./fivestage444/";
+	public static final boolean USE_FULL_PRUNING_STAGE3 = false;
+	public static final boolean USE_FULL_PRUNING_STAGE5 = true;
 
 	public static final int N_SYM_ALL = 96; // With inverse.
 	public static final int N_SYM = 48;

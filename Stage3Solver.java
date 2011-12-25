@@ -59,7 +59,6 @@ public final class Stage3Solver extends StageSolver{
 		int nDist = 0;
 		
 		cube1.m_sym_centerLR = cube.m_sym_centerLR;
-
 		dist1 = cube1.get_dist_cen();
 
 		while (! cube1.centers_solved()) {
@@ -93,7 +92,6 @@ public final class Stage3Solver extends StageSolver{
 		
 		cube1.m_edge = cube.m_edge;
 		cube1.m_edge_odd = cube.m_edge_odd;
-
 		dist1 = cube1.get_dist_edg();
 
 		while (! cube1.edges_solved()) {
@@ -124,7 +122,7 @@ public final class Stage3Solver extends StageSolver{
 	public boolean treeSearch (CubeStage3 cube1, int depth, int moves_done, int move_state, int distCen, int distEdg){
 		//Statistics.addNode(3, depth);
 		CubeStage3 cube2 = new CubeStage3();
-		int mov_idx, mc, j;
+		int mov_idx, j;
 		int next_ms = 0;
 		if (depth == 0) {
 			if (! cube1.is_solved ()) {
@@ -135,8 +133,6 @@ public final class Stage3Solver extends StageSolver{
 			return true; // true: take the first solution, false: take all solutions
 		}
 		for (mov_idx = 0; mov_idx < N_STAGE3_SLICE_MOVES; ++mov_idx) {
-			boolean did_move = false;
-			//cube2.m_centerLR = cube1.m_centerLR; // TODO: Add a method copy.
 			cube2.m_sym_centerLR = cube1.m_sym_centerLR;
 			cube2.m_edge = cube1.m_edge;
 			cube2.m_edge_odd = cube1.m_edge_odd;
@@ -147,11 +143,37 @@ public final class Stage3Solver extends StageSolver{
 				int newDistEdg = ((cube2.get_dist_edg() - (distEdg%3) + 4) % 3 ) + distEdg - 1; // TODO: Could make a better formula...
 				if (newDistCen > depth-1) continue;
 				if (newDistEdg > depth-1) continue;
-				//if (cube2.prune_funcCEN_STAGE3() > depth-1) continue;
-				//if (cube2.prune_funcEDGE_STAGE3() > depth-1) continue;
-				mc = mov_idx;
-				move_list[moves_done] = (byte)mc;
+				move_list[moves_done] = (byte)mov_idx;
 				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms, newDistCen, newDistEdg)) return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean solve (CubeStage3 cube1, int moves_done, int move_state, int dist){
+		//Statistics.addNode(3, depth);
+		CubeStage3 cube2 = new CubeStage3();
+		int mov_idx, mc, j, dist2;
+		int next_ms = 0;
+		if (dist == 3) {
+			if (cube1.is_solved ()) {
+				goal = moves_done;
+				pushState();
+				Statistics.addLeaf(3, goal);
+				return true; // true: take the first solution, false: take all solutions
+			}
+		}
+		for (mov_idx = 0; mov_idx < N_STAGE3_SLICE_MOVES; ++mov_idx) {
+			cube2.m_sym_centerLR = cube1.m_sym_centerLR;
+			cube2.m_edge = cube1.m_edge;
+			cube2.m_edge_odd = cube1.m_edge_odd;
+			if ((stage3_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
+				cube2.do_move (mov_idx);
+				next_ms = stage3_stm_next_ms[mov_idx];
+				dist2 = cube2.get_dist();
+				if ((dist2 % 3) != (dist - 1)) continue; // If distance is not lowered by 1, continue.
+				move_list[moves_done] = (byte)mov_idx;
+				if (solve (cube2, moves_done + 1, next_ms, dist2)) return true;
 			}
 		}
 		return false;

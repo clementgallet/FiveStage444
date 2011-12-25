@@ -125,13 +125,19 @@ public final class FiveStage444 {
 		new Tables().init_all ();
 		CubePruningTableMgr.init_pruning_tables ();
 		new PruningStage1().analyse();
-		new PruningCenStage3().analyse();
-		new PruningEdgStage3().analyse();
-		//new PruningStage3().analyse();
+		if( USE_FULL_PRUNING_STAGE3)
+			new PruningStage3().analyse();
+		else{
+			new PruningCenStage3().analyse();
+			new PruningEdgStage3().analyse();
+		}
 		new PruningStage4().analyse();
-		//new PruningStage5().analyse();
-		new PruningEdgCenStage5().analyse();
-		new PruningEdgCorStage5().analyse();
+		if( USE_FULL_PRUNING_STAGE5)
+			new PruningStage5().analyse();
+		else{
+			new PruningEdgCenStage5().analyse();
+			new PruningEdgCorStage5().analyse();
+		}
 		try{
 			initPipes();
 		} catch(java.io.IOException e) { e.printStackTrace(); }

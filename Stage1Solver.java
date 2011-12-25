@@ -25,18 +25,17 @@ public final class Stage1Solver extends StageSolver{
 
 	public void run (){
 		while (pullState()) {
-			treeSearch (cube, 0, N_BASIC_MOVES);
+			solve (cube, 0, N_BASIC_MOVES, cube.get_dist());
 		}
 
 		pushStopSignal();
 		closePipes();
 	}
 
-	private boolean treeSearch (CubeStage1 cube1, int moves_done, int move_state){
+	private boolean solve (CubeStage1 cube1, int moves_done, int move_state, int dist){
 		//Statistics.addNode(1, depth);
 		CubeStage1 cube2 = new CubeStage1();
-		int mov_idx, mc, j;
-		int dist = cube1.get_dist();
+		int mov_idx, j, dist2;
 		if (dist == 3){
 			if (cube1.is_solved ()) {
 				goal = moves_done;
@@ -47,13 +46,13 @@ public final class Stage1Solver extends StageSolver{
 		}
 		for (mov_idx = 0; mov_idx < N_BASIC_MOVES; ++mov_idx) {
 			cube2.m_co = cube1.m_co;
-			//cube2.m_edge_ud_combo8 = cube1.m_edge_ud_combo8;
 			cube2.m_sym_edge_ud_combo8 = cube1.m_sym_edge_ud_combo8;
 			if ((stage1_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
 				cube2.do_move (mov_idx);
-				if ((cube2.get_dist() % 3) != (dist - 1)) continue;
+				dist2 = cube2.get_dist();
+				if ((dist2 % 3) != (dist - 1)) continue; // If distance is not lowered by 1, continue.
 				move_list[moves_done] = (byte)mov_idx;
-				if (treeSearch (cube2, moves_done + 1, mov_idx)) return true;
+				if (solve (cube2, moves_done + 1, mov_idx, dist2)) return true;
 			}
 		}
 		return false;

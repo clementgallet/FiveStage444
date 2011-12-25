@@ -33,28 +33,12 @@ public final class Stage2Solver extends StageSolver{
 		ss.cube.convert_to_stage2 (cube);
 	}
 
-	int id;
-	int best;
-
 	public void run (){
-		id = 0;
-
 		while(pullState()) {
-			if( id != ss.id ){
-				id = ss.id;
-				best = 100;
-			}
-			/*
-			int cubeDist = cube.prune_funcEDGCEN_STAGE2();
-			if( cubeDist > ( best - ss.move_count ))
-				continue;
-			*/
 			foundSol = false;
-			//for (goal = 0; goal < ( best - ss.move_count ); ++goal) {
-			for (goal = 0; goal < 30; ++goal) {
+			for (goal = cube.prune_funcEDGCEN_STAGE2(); goal < 30; ++goal) {
 				treeSearch (cube, goal, 0, 0);
 				if (foundSol){
-					best = ss.move_count + goal;
 					break;
 				}
 			}
@@ -85,8 +69,7 @@ public final class Stage2Solver extends StageSolver{
 				next_ms = stage2_stm_next_ms[mov_idx];
 
 				if (cube2.prune_funcEDGCEN_STAGE2() > depth-1) continue;
-				mc = mov_idx;
-				move_list[moves_done] = (byte)mc;
+				move_list[moves_done] = (byte)mov_idx;
 				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms)) return true;
 			}
 		}
