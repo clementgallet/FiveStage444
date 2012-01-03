@@ -36,28 +36,10 @@ public final class CubeStage2 {
 
 	public void do_move (int move_code){
 		int i;
-		byte[] t1 = new byte[4];
-		byte[] t2 = new byte[4];
-		int cenbm = Tables.eloc2ebm[m_centerFB / 70];
-		int cenbm4of8 = Tables.bm4of8[m_centerFB % 70];
-		int j1 = 0;
-		int j2 = 0;
-		for (i = 0; cenbm != 0; ++i) {
-			if ((cenbm & 0x1) != 0) {
-				if ((cenbm4of8 & 0x1) == 0) {
-					t2[j2++] = (byte)i;
-				} else {
-					t1[j1++] = (byte)i;
-				}
-				cenbm4of8 >>= 1;
-			}
-			cenbm >>= 1;
-		}
-		int idx1 = 24*24*24*t1[0] + 24*24*t1[1] + 24*t1[2] + t1[3];
-		int idx2 = 24*24*24*t2[0] + 24*24*t2[1] + 24*t2[2] + t2[3];
+		int j1;
 
-		int cloc1 = Tables.c4_to_cloc[idx1];
-		int cloc2 = Tables.c4_to_cloc[idx2];
+		int cloc1 = Tables.stage2_cen_to_cloc4sf (m_centerFB);
+		int cloc2 = Tables.stage2_cen_to_cloc4sb (m_centerFB);
 		int cloc1b = Tables.move_table_cenSTAGE2[cloc1][move_code];
 		int cloc2b = Tables.move_table_cenSTAGE2[cloc2][move_code];
 		int cbm1b = Tables.cloc_to_bm[cloc1b];

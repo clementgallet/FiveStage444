@@ -7,11 +7,11 @@ public final class Constants{
 
 	public static final String datafiles_path = "./fivestage444/";
 	public static final boolean USE_FULL_PRUNING_STAGE3 = false;
-	public static final boolean USE_FULL_PRUNING_STAGE5 = true;
+	public static final boolean USE_FULL_PRUNING_STAGE5 = false;
 
 	public static final int N_SYM_ALL = 96; // With inverse.
 	public static final int N_SYM = 48;
-	public static final int N_SYM_STAGE1 = 16;
+	public static final int N_SYM_STAGE1 = 48;
 	public static final int N_SYM_STAGE3 = 8;
 	public static final int N_SYM_STAGE4 = 16;
 	public static final int N_SYM_STAGE5 = 48; // Seems putting 96 here don't improve anything...
@@ -19,7 +19,7 @@ public final class Constants{
 	public static final int N_CORNER_ORIENT = 2187;
 
 	public static final int N_EDGE_COMBO8 = 735471;	// 24!/(16!*8!)
-	public static final int N_SYMEDGE_COMBO8 = 46371;
+	public static final int N_SYMEDGE_COMBO8 = 15582;
 
 	public static final int N_STAGE2_EDGE_CONFIGS = 420;
 	public static final int N_STAGE2_CENTER_CONFIGS = 51482970;	// 24!/(16!*24*24)

@@ -9,11 +9,11 @@ public final class CubeStage1 {
 
 	public void init (){
 		m_co = 0;
-		m_sym_edge_ud_combo8 = 741931;
+		m_sym_edge_ud_combo8 = 24;
 	}
 
 	public int get_dist (){
-		int idx = Constants.N_CORNER_ORIENT * (m_sym_edge_ud_combo8 >> 4 ) + Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 & 0xF];
+		int idx = Constants.N_CORNER_ORIENT * (m_sym_edge_ud_combo8 >> 6 ) + Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 & 0x3F];
 		return (prune_table[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
 	}
 
@@ -22,16 +22,16 @@ public final class CubeStage1 {
 		if (fmc >= 0)
 			m_co = Tables.move_table_co[m_co][fmc];
 
-		int sym = m_sym_edge_ud_combo8 & 0xF;
-		int rep = m_sym_edge_ud_combo8 >> 4;
+		int sym = m_sym_edge_ud_combo8 & 0x3F;
+		int rep = m_sym_edge_ud_combo8 >> 6;
 
 		int moveConj = Symmetry.moveConjugate[move_code][sym];
 		int newEdge = Tables.move_table_symEdgeSTAGE1[rep][moveConj];
 
-		int newSym = newEdge & 0xF;
-		int newRep = newEdge >> 4;
+		int newSym = newEdge & 0x3F;
+		int newRep = newEdge >> 6;
 
-		m_sym_edge_ud_combo8 = ( newRep << 4 ) + Symmetry.symIdxMultiply[newSym][sym];
+		m_sym_edge_ud_combo8 = ( newRep << 6 ) + Symmetry.symIdxMultiply[newSym][sym];
 	}
 
 	public void do_whole_cube_move (int whole_cube_move){
@@ -60,9 +60,7 @@ public final class CubeStage1 {
 	}
 	
 	public boolean is_solved (){
-		if (m_co == 0 && (m_sym_edge_ud_combo8 >> 4) == 46370)
-			return true;
-		if (( m_sym_edge_ud_combo8 >> 4 ) == 0 && Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 & 0xF] == 1906)
+		if (( m_sym_edge_ud_combo8 >> 6 ) == 0 && Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 & 0x3F] == 1906)
 			return true;
 		return false;
 	}

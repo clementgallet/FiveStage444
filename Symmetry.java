@@ -148,20 +148,4 @@ public final class Symmetry {
 
 		System.out.println( "Finishing initMoveConjugate..." );
 	}
-
-	public static int getRep(int[] table, int number){
-		int a = 0;
-		int b = table.length;
-		int c = (a + b)/2;
-		while( table[c] != number ){
-			if( a == b ) System.out.println ("Stuck in getRep !!");
-			if( table[c] > number )
-				b = c;
-			else
-				a = c;
-			c = (a + b)/2;
-		}
-
-		return c;
-	}
 }

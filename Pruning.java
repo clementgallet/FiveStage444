@@ -90,6 +90,7 @@ abstract class Pruning {
 			}
 			new_count = count - old_count;
 		}
+		System.out.println("Generate "+count+" positions.");
 
 		writeToFile();
 	}

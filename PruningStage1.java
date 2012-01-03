@@ -21,8 +21,7 @@ public final class PruningStage1 extends Pruning {
 		}
 
 		// Fill the solved states.
-		set_dist( 46370*Constants.N_CORNER_ORIENT + 0   , 3);
-		set_dist( 0    *Constants.N_CORNER_ORIENT + 1906, 3);
+		set_dist( 0*Constants.N_CORNER_ORIENT + 1906, 3);
 	}
 
 	long do_move (long idx, int move){
@@ -30,15 +29,15 @@ public final class PruningStage1 extends Pruning {
 		int edge = (int)(idx / Constants.N_CORNER_ORIENT);
 		
 		int newEdge = Tables.move_table_symEdgeSTAGE1[edge][move];
-		int sym = newEdge & 0xF;
-		int edgeRep = newEdge >> 4;
+		int sym = newEdge & 0x3F;
+		int edgeRep = newEdge >> 6;
 
 		int fmc = Constants.basic_to_face[move];
 		if (fmc >= 0)
 			co = Tables.move_table_co[co][fmc];
 		co = Tables.move_table_co_conj[co][sym];
 
-		return edgeRep*Constants.N_CORNER_ORIENT + co;
+		return (long)(edgeRep*Constants.N_CORNER_ORIENT + co);
 	}
 
 	void saveIdxAndSyms (long idx, int dist){
@@ -47,9 +46,9 @@ public final class PruningStage1 extends Pruning {
 		short co = (short)(idx % Constants.N_CORNER_ORIENT);
 		int edge = (int)(idx / Constants.N_CORNER_ORIENT);
 		int symI = 0;
-		int syms = Tables.hasSymEdgeSTAGE1[edge];
+		long syms = Tables.hasSymEdgeSTAGE1[edge];
 		while (syms != 0){
-			if(( syms & 0x1 ) == 1 ){
+			if(( syms & 0x1L ) == 1 ){
 				short co2 = Tables.move_table_co_conj[co][symI];
 				set_dist (edge*Constants.N_CORNER_ORIENT + co2, dist);
 			}

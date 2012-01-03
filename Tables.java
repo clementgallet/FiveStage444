@@ -429,7 +429,7 @@ public final class Tables {
 
 	/*** init stage 1 symEdgeToEdge ***/
 	public static final int[] symEdgeToEdgeSTAGE1 = new int[Constants.N_SYMEDGE_COMBO8];
-	public static final int[] hasSymEdgeSTAGE1 = new int[Constants.N_SYMEDGE_COMBO8];
+	public static final long[] hasSymEdgeSTAGE1 = new long[Constants.N_SYMEDGE_COMBO8];
 
 	private class InitSymEdgeToEdgeStage1 extends Thread {
 
@@ -459,11 +459,11 @@ public final class Tables {
 
 			for (sym = 1; sym < Constants.N_SYM_STAGE1; ++sym) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.conjugateEdges (sym);
+				cube2.rightMultEdges (Symmetry.invSymIdx[sym]);
 				int edge = cube2.convert_edges_to_stage1();
 				Constants.set_1_1bit( edge, isRepTable); // not a rep.
 				if( edge == u )
-					hasSymEdgeSTAGE1[repIdx] |= (1 << sym);
+					hasSymEdgeSTAGE1[repIdx] |= (0x1L << sym);
 			}
 			symEdgeToEdgeSTAGE1[repIdx++] = u;
 		}
@@ -474,7 +474,7 @@ public final class Tables {
 	private InitSymEdgeToEdgeStage1 threadInitSymEdgeToEdgeStage1 = new InitSymEdgeToEdgeStage1();
 
 	/*** init stage 1 symEdges ***/
-	public static final int[][] move_table_symEdgeSTAGE1 = new int[Constants.N_SYMEDGE_COMBO8][Constants.N_BASIC_MOVES]; // (46371) 46371*36 = 6677424
+	public static final int[][] move_table_symEdgeSTAGE1 = new int[Constants.N_SYMEDGE_COMBO8][Constants.N_BASIC_MOVES]; // (15582*64) 15582*36 = 560952
 
 	private class InitSymEdgeStage1 extends Thread {
 
@@ -587,7 +587,8 @@ public final class Tables {
 			s1.convert_corners_to_std_cube (cube1);
 			for (sym = 0; sym < Constants.N_SYM_STAGE1; ++sym) {
 				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
-				cube2.conjugateCorners (sym);
+				cube2.rightMultCorners (Symmetry.invSymIdx[sym]);
+				cube2.deMirrorCorners ();
 				move_table_co_conj[u][sym] = cube2.convert_corners_to_stage1 ();
 			}
 		}

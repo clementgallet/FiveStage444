@@ -141,34 +141,44 @@ public final class CubeState implements java.io.Serializable{
 		}
 	}
 
-	public void conjugateEdges (int symIdx){
+	public void leftMultEdges (int symIdx){
+		int i;
+		for (i = 0; i < 24; ++i){
+			//System.out.println(m_edge[i]+"->"+Symmetry.symEdges[symIdx][m_edge[i]]);
+			m_edge[i] = Symmetry.symEdges[symIdx][m_edge[i]];
+		}
+	}
+
+	public void rightMultEdges (int symIdx){
 		int i;
 		byte[] edge = new byte[24];
 
 		System.arraycopy(m_edge, 0, edge, 0, 24);
 
 		for (i = 0; i < 24; ++i){
-			m_edge[i] = Symmetry.symEdges[symIdx][edge[Symmetry.symEdges[Symmetry.invSymIdx[symIdx]][i]]];
+			m_edge[i] = edge[Symmetry.symEdges[symIdx][i]];
 		}
 	}
 
-	public void conjugateCenters (int symIdx){
-		int i;
-		byte[] cen = new byte[24];
+	public void conjugateEdges (int symIdx){
+		rightMultEdges( Symmetry.invSymIdx[symIdx] );
+		leftMultEdges( symIdx );
+	}
 
-		System.arraycopy(m_cen, 0, cen, 0, 24);
+	public void leftMultCenters (int symIdx){
+		int i;
 
 		// Transform centers into unique facelets.
 		int[] cenN = new int[6];
 		for (i = 0; i < 6; ++i) cenN[i] = 0;
 
 		for (i = 0; i < 24; ++i){
-			cen[i] = (byte)(cen[i] * 4 + cenN[cen[i]]++);
+			m_cen[i] = (byte)(m_cen[i] * 4 + cenN[m_cen[i]]++);
 		}
 
-		// Conjugate edges and centers.
+		// Multiply.
 		for (i = 0; i < 24; ++i){
-			m_cen[i] = Symmetry.symCenters[symIdx][cen[Symmetry.symCenters[Symmetry.invSymIdx[symIdx]][i]]];
+			m_cen[i] = Symmetry.symCenters[symIdx][m_cen[i]];
 		}
 
 		// Transform centers back.
@@ -177,35 +187,86 @@ public final class CubeState implements java.io.Serializable{
 		}
 	}
 
-	public void conjugateCorners (int symIdx){
+	public void rightMultCenters (int symIdx){
 		int i;
-		byte temp_c_orient;
+		byte[] cen = new byte[24];
+
+		System.arraycopy(m_cen, 0, cen, 0, 24);
+
+		// Conjugate edges and centers.
+		for (i = 0; i < 24; ++i){
+			m_cen[i] = cen[Symmetry.symCenters[symIdx][i]];
+		}
+	}
+
+	public void conjugateCenters (int symIdx){
+		rightMultCenters( Symmetry.invSymIdx[symIdx] );
+		leftMultCenters( symIdx );
+	}
+
+	private byte multD3( byte oriA, byte oriB){
+		byte ori;
+		if (oriA<3 && oriB<3){ //if both cubes are regular cubes... 
+			ori = (byte)(oriA + oriB); //just do an addition modulo 3 here  
+			if (ori>=3) ori-=3; //the composition is a regular cube
+			return ori;
+		}
+		if (oriA<3 && oriB>=3){ //if cube b is in a mirrored state...
+			ori = (byte)(oriA + oriB);
+			if (ori>=6) ori-=3; //the composition is a mirrored cube
+			return ori;
+		}
+		if (oriA>=3 && oriB<3){ //if cube a is an a mirrored state...
+			ori = (byte)(oriA - oriB);
+			if (ori<3) ori+=3; //the composition is a mirrored cube	
+			return ori;
+		}
+		if (oriA>=3 && oriB>=3){ //if both cubes are in mirrored states...
+			ori = (byte)(oriA - oriB);
+			if (ori<0) ori+=3; //the composition is a regular cube
+			return ori;
+		}
+		return -1;
+	}
+
+	public void leftMultCorners (int symIdx){
+		int i;
+		byte orientA, orientB;
+
+		for (i = 0; i < 8; ++i){
+			orientA = Symmetry.symCornersOrient[symIdx][(m_cor[i] & 0x7)];
+			orientB = (byte)(m_cor[i] >> 3);
+			m_cor[i] = (byte) ((multD3(orientA, orientB) << 3 ) + Symmetry.symCornersPerm[symIdx][(m_cor[i] & 0x7)]);
+		}
+	}
+
+	public void rightMultCorners (int symIdx){
+		int i;
+		byte orientA, orientB;
 		byte[] cor = new byte[8];
 		System.arraycopy(m_cor, 0, cor, 0, 8);
 
-		// Conjugate corners in two phases.
 		for (i = 0; i < 8; ++i){
-			temp_c_orient = (byte) (cor[Symmetry.symCornersPerm[Symmetry.invSymIdx[symIdx]][i]] / 8);
-			temp_c_orient += Symmetry.symCornersOrient[Symmetry.invSymIdx[symIdx]][i] % 3;
-			if (Symmetry.symCornersOrient[Symmetry.invSymIdx[symIdx]][i] >= 3)
-				temp_c_orient += 3;
-			m_cor[i] = (byte) (8*temp_c_orient + (cor[Symmetry.symCornersPerm[Symmetry.invSymIdx[symIdx]][i]] % 8));
+			orientA = (byte) (cor[Symmetry.symCornersPerm[symIdx][i]] >> 3);
+			orientB = Symmetry.symCornersOrient[symIdx][i];
+			m_cor[i] = (byte) (( multD3(orientA, orientB) << 3 ) + (cor[Symmetry.symCornersPerm[symIdx][i]] & 0x7));
 		}
+	}
 
-		// Copy again to copy cube for the second phase.
+	public void deMirrorCorners (){
+		int i, co;
 		for (i = 0; i < 8; ++i){
-			cor[i] = m_cor[i];
+			co = (m_cor[i] >> 3);
+			if( co >= 3 ){
+				co = ( 6 - co ) % 3;
+				m_cor[i] = (byte)(( co << 3 ) + (m_cor[i] & 0x7));
+			}
 		}
+	}
 
-		// Second phase.
-		for (i = 0; i < 8; ++i){
-			temp_c_orient = (byte) (Symmetry.symCornersOrient[symIdx][(cor[i] % 8)]);
-			if (temp_c_orient >= 3)
-				temp_c_orient = (byte)((3 + temp_c_orient - (cor[i] / 8)) % 3);
-			else
-				temp_c_orient = (byte)((temp_c_orient + (cor[i] / 8)) % 3);
-			m_cor[i] = (byte) (8*temp_c_orient + Symmetry.symCornersPerm[symIdx][(cor[i] % 8)]);
-		}
+	public void conjugateCorners (int symIdx){
+		rightMultCorners( Symmetry.invSymIdx[symIdx] );
+		leftMultCorners( symIdx );
 	}
 
 	public void conjugate (int symIdx){
@@ -333,18 +394,18 @@ public final class CubeState implements java.io.Serializable{
 	public int convert_symedges_to_stage1 (){
 		CubeState cube = new CubeState();
 		int i;
-		int minEdge = 99999999;
+		int minEdge = 999999999;
 		int minSym = 0;
 		for (int sym=0; sym < Constants.N_SYM_STAGE1; sym++ ){
 			copyTo (cube);
-			cube.conjugateEdges(sym);
+			cube.rightMultEdges(Symmetry.invSymIdx[sym]);
 			int edge = cube.convert_edges_to_stage1();
 			if( edge < minEdge){
 				minEdge = edge;
 				minSym = sym;
 			}
 		}
-		return Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE1, minEdge)*Constants.N_SYM_STAGE1 + minSym;
+		return ( Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE1, minEdge) << 6 ) + minSym;
 	}
 
 	public short convert_corners_to_stage1 (){
