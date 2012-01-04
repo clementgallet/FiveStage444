@@ -426,26 +426,23 @@ public final class CubeState implements java.io.Serializable{
 		return Tables.perm_to_420[u];
 	}
 
-	public int convert_centers_to_stage2 (){
-		int i;
-		int cenbm = 0;
-		int cenbm4of8 = 0;
-		int j = 0;
+	public short convert_centers_to_stage2 (int c){
+		int i, j;
+		byte[] t = new byte[8];
+		j = 0;
 		for (i = 0; i < 24; ++i) {
-			if (m_cen[i] >= 4) {
-				cenbm |= (1 << i);
-				if (m_cen[i] == 4) {
-					cenbm4of8 |= (1 << j);
-				}
-				++j;
+			if (m_cen[i] == c) {
+				t[j++] = (byte)i;
 			}
 		}
-		return 70*Tables.ebm2eloc[cenbm] + Tables.bm4of8_to_70[cenbm4of8];
+		int idx = 24*24*24*t[0] + 24*24*t[1] + 24*t[2] + t[3];
+		return (short)Tables.c4_to_cloc[idx];
 	}
 
 	public void convert_to_stage2 (CubeStage2 result_cube){
 		result_cube.m_edge = convert_edges_to_stage2();
-		result_cube.m_centerFB = convert_centers_to_stage2();
+		result_cube.m_centerF = convert_centers_to_stage2(4);
+		result_cube.m_centerB = convert_centers_to_stage2(5);
 	}
 
 	public int convert_centers_to_stage3 (){

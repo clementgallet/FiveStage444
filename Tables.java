@@ -97,9 +97,11 @@ public final class Tables {
 		int a1, a2, a3, a4;
 		int i;
 		int count = 0;
+		
 		for (i = 0; i < 256; ++i) {
 			bm4of8_to_70[i] = 99;
 		}
+		
 		for (a1 = 0; a1 < 8-3; ++a1) {
 			for (a2 = a1+1; a2 < 8-2; ++a2) {
 				for (a3 = a2+1; a3 < 8-1; ++a3) {
@@ -238,6 +240,7 @@ public final class Tables {
 	private InitMap96 threadInitMap96 = new InitMap96();
 
 	/*** init bm12 ***/
+	
 	private static final int[][] bm12_4of8_to_high_idx = new int[4096][70];
 	private static final int[][] bm12_4of8_to_low_idx = new int[4096][70];
 
@@ -309,7 +312,7 @@ public final class Tables {
 	}
 
 	private InitBm12 threadInitBm12 = new InitBm12();
-
+	
 	public static final int swapbits (int x, int b){
 		int x2 = x & b;
 		if (x2 == 0 || x2 == b) {
@@ -615,33 +618,19 @@ public final class Tables {
 		System.out.println( "Starting center stage 2..." );
 		int i, j;
 		int u;
-		byte[] t = new byte[8];
 		int mc, udlrf;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		cube1.init ();
 		cube2.init ();
+		CubeStage2 s2 = new CubeStage2();
 		for (u = 0; u < Constants.N_CENTER_COMBO4; ++u) {
-			int cbm = cloc_to_bm[u];
-			udlrf = 0;
-			for (i = 0; i < 24; ++i) {
-				if ((cbm & (1 << i)) == 0) {
-					cube1.m_cen[i] = (byte)(udlrf++/4);
-				} else {
-					cube1.m_cen[i] = 5;
-				}
-			}
+			s2.m_centerB = (short)u;
+			s2.convert_centers_to_std_cube (cube1);
 			for (mc = 0; mc < Constants.N_STAGE2_SLICE_MOVES; ++mc) {
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
 				cube2.rotate_sliceCENTER (Constants.stage2_slice_moves[mc]);
-				j = 0;
-				for (i = 0; i < 24; ++i) {
-					if (cube2.m_cen[i] == 5) {
-						t[j++] = (byte)i;
-					}
-				}
-				int idx = 24*24*24*t[0] + 24*24*t[1] + 24*t[2] + t[3];
-				move_table_cenSTAGE2[u][mc] = (short)c4_to_cloc[idx];
+				move_table_cenSTAGE2[u][mc] = cube2.convert_centers_to_stage2 (5);
 			}
 		}
 		System.out.println( "Finishing center stage 2..." );
@@ -686,7 +675,7 @@ public final class Tables {
 	}
 
 	private InitEdgeStage2 threadInitEdgeStage2 = new InitEdgeStage2();
-
+	
 	public static final int stage2_cen_to_cloc4sf (int cen){
 		int cenbm = eloc2ebm[cen / 70];
 		int idx1 = bm12_4of8_to_high_idx[cenbm >> 12][cen % 70];

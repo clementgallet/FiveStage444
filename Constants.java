@@ -320,6 +320,16 @@ public final class Constants{
 		}
 	}
 
+	public static final int STAGE2_NUM_SOLVED_FB_CENTER_CONFIGS = 12;
+	public static final int stage2_solved_fb_centers[] = {
+	10556, 10570, 10576, 10579, 10583, 10584, 10597, 10598, 10602, 10605, 10611, 10625
+	};
+
+	public static final int STAGE2_NUM_SOLVED_RL_CENTER_CONFIGS = 12;
+	public static final int stage2_solved_rl_centers[] = {
+	8806, 8852, 8910, 8921, 8977, 8986, 9275, 9284, 9340, 9351, 9625, 10131
+	};
+
 	public static final int STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS = 7;
 	public static final int stage3_solved_sym_centers[] = {
 	113311, 113319,	113320, 113322, 113323, 113324, 113329

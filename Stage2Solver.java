@@ -64,7 +64,8 @@ public final class Stage2Solver extends StageSolver{
 		for (mov_idx = 0; mov_idx < N_STAGE2_SLICE_MOVES; ++mov_idx) {
 			if ((stage2_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
 				cube2.m_edge = cube1.m_edge;
-				cube2.m_centerFB = cube1.m_centerFB;
+				cube2.m_centerF = cube1.m_centerF;
+				cube2.m_centerB = cube1.m_centerB;
 				cube2.do_move (mov_idx);
 				next_ms = stage2_stm_next_ms[mov_idx];
 
