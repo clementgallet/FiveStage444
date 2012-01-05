@@ -35,9 +35,13 @@ public final class Stage2Solver extends StageSolver{
 
 	public void run (){
 		while(pullState()) {
+
+			int cubeDistCenF = getDistanceEdgCen(true);
+			int cubeDistCenB = getDistanceEdgCen(false);
+
 			foundSol = false;
-			for (goal = cube.prune_funcEDGCEN_STAGE2(); goal < 30; ++goal) {
-				treeSearch (cube, goal, 0, 0);
+			for (goal = Math.max(cubeDistCenF, cubeDistCenB); goal < 30; ++goal) {
+				treeSearch (cube, goal, 0, 0, cubeDistCenF, cubeDistCenB);
 				if (foundSol){
 					break;
 				}
@@ -48,7 +52,45 @@ public final class Stage2Solver extends StageSolver{
 		closePipes();
 	}
 
-	public boolean treeSearch (CubeStage2 cube1, int depth, int moves_done, int move_state){
+	public int getDistanceEdgCen (boolean front){
+		CubeStage2 cube1 = new CubeStage2();
+		CubeStage2 cube2 = new CubeStage2();
+		int mov_idx, mc, j, dist1, dist2;
+		int nDist = 0;
+
+		cube1.m_edge = cube.m_edge;
+		cube1.m_centerF = cube.m_centerF;
+		cube1.m_centerB = cube.m_centerB;
+		dist1 = cube1.get_dist_edgcen(front);
+
+		while (! cube1.edges_center_solved(front)) {
+
+			boolean noMoves=true;
+			for (mov_idx = 0; mov_idx < N_STAGE2_SLICE_MOVES; ++mov_idx) {
+				cube2.m_edge = cube1.m_edge;
+				cube2.m_centerF = cube1.m_centerF;
+				cube2.m_centerB = cube1.m_centerB;
+				cube2.do_move (mov_idx);
+				dist2 = cube2.get_dist_edgcen(front);
+
+				if ((dist2 % 3) != (dist1 - 1)) continue;
+				cube1.m_edge = cube2.m_edge;
+				cube1.m_centerF = cube2.m_centerF;
+				cube1.m_centerB = cube2.m_centerB;
+				nDist++;
+				dist1 = dist2;
+				noMoves=false;
+				break;
+			}
+			if( noMoves){
+				System.out.println("Could not find a move that lowers the distance !!");
+				break;
+			}
+		}
+		return nDist;
+	}
+
+	public boolean treeSearch (CubeStage2 cube1, int depth, int moves_done, int move_state, int distCenF, int distCenB){
 		//Statistics.addNode(2, depth);
 		CubeStage2 cube2 = new CubeStage2();
 		int mov_idx, mc, j;
@@ -69,9 +111,12 @@ public final class Stage2Solver extends StageSolver{
 				cube2.do_move (mov_idx);
 				next_ms = stage2_stm_next_ms[mov_idx];
 
-				if (cube2.prune_funcEDGCEN_STAGE2() > depth-1) continue;
+				int newDistCenF = ((cube2.get_dist_edgcen(true) - (distCenF%3) + 4) % 3 ) + distCenF - 1; // TODO: Could make a better formula...
+				int newDistCenB = ((cube2.get_dist_edgcen(false) - (distCenB%3) + 4) % 3 ) + distCenB - 1; // TODO: Could make a better formula...
+				if (newDistCenF > depth-1) continue;
+				if (newDistCenB > depth-1) continue;
 				move_list[moves_done] = (byte)mov_idx;
-				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms)) return true;
+				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms, newDistCenF, newDistCenB)) return true;
 			}
 		}
 		return false;

@@ -123,8 +123,8 @@ public final class FiveStage444 {
 		Symmetry.initMoveConjugate();
 
 		new Tables().init_all ();
-		CubePruningTableMgr.init_pruning_tables ();
 		new PruningStage1().analyse();
+		new PruningEdgCenStage2().analyse();
 		if( USE_FULL_PRUNING_STAGE3)
 			new PruningStage3().analyse();
 		else{

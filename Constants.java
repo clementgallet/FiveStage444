@@ -1,7 +1,7 @@
 package fivestage444;
 
 /**
- * Class containing all the constants used in the program, and some usefull functions.
+ * Class containing all the constants used in the program, and some useful functions.
  */
 public final class Constants{
 
@@ -12,9 +12,10 @@ public final class Constants{
 	public static final int N_SYM_ALL = 96; // With inverse.
 	public static final int N_SYM = 48;
 	public static final int N_SYM_STAGE1 = 48;
+	public static final int N_SYM_STAGE2 = 16;
 	public static final int N_SYM_STAGE3 = 8;
 	public static final int N_SYM_STAGE4 = 16;
-	public static final int N_SYM_STAGE5 = 48; // Seems putting 96 here don't improve anything...
+	public static final int N_SYM_STAGE5 = 48;
 
 	public static final int N_CORNER_ORIENT = 2187;
 
@@ -24,6 +25,7 @@ public final class Constants{
 	public static final int N_STAGE2_EDGE_CONFIGS = 420;
 	public static final int N_STAGE2_CENTER_CONFIGS = 51482970;	// 24!/(16!*24*24)
 	public static final int N_CENTER_COMBO4 = 10626;
+	public static final int N_SYMCENTER_COMBO4 = 716;
 
 	public static final int N_STAGE3_CENTER_CONFIGS = 900900;	//(16*15*14*13/24)*(12*11*10*9/24)
 	public static final int N_STAGE3_SYMCENTER_CONFIGS = 113330;
@@ -120,6 +122,15 @@ public final class Constants{
 	Df, Df3, Df2, Ds, Ds3, Ds2,
 	Lf2, Ls, Ls3, Ls2, Rf2, Rs, Rs3, Rs2,
 	Ff2, Fs, Fs3, Fs2, Bf2, Bs, Bs3, Bs2
+	};
+
+	public static final int stage2_inv_slice_moves[] = {
+	0, 1, 2, 3, 4, 5,
+	6, 7, 8, 9, 10, 11,
+	-1, -1, 12, 13, 14, 15,
+	-1, -1, 16, 17, 18, 19,
+	-1, -1, 20, 21, 22, 23,
+	-1, -1, 24, 25, 26, 27
 	};
 
 	public static final int N_STAGE3_SLICE_MOVES = 20;
@@ -319,7 +330,7 @@ public final class Constants{
 			m--;
 		}
 	}
-
+/*
 	public static final int STAGE2_NUM_SOLVED_FB_CENTER_CONFIGS = 12;
 	public static final int stage2_solved_fb_centers[] = {
 	10556, 10570, 10576, 10579, 10583, 10584, 10597, 10598, 10602, 10605, 10611, 10625
@@ -328,6 +339,11 @@ public final class Constants{
 	public static final int STAGE2_NUM_SOLVED_RL_CENTER_CONFIGS = 12;
 	public static final int stage2_solved_rl_centers[] = {
 	8806, 8852, 8910, 8921, 8977, 8986, 9275, 9284, 9340, 9351, 9625, 10131
+	};
+*/
+	public static final int STAGE2_NUM_SOLVED_SYMCENTER_CONFIGS = 6;
+	public static final int stage2_solved_symcenters[] = {
+	582, 606, 631, 641, 664, 673
 	};
 
 	public static final int STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS = 7;
@@ -339,14 +355,6 @@ public final class Constants{
 	public static final short stage4_solved_centers_bm[] = {
 	0x0F, 0xF0, 0x55, 0xAA, 0x5A, 0xA5, 0x69, 0x96, 0x66, 0x99, 0x3C, 0xC3
 	};
-
-	/**
-	 * Interface that will be used to fill pruning tables.
-	 * @see CubePruningTableMgr
-	 */
-	public interface DoMove{
-		public int do_move(int idx, int move_code); 
-	}
 
 	private static String move_strings[] = {
 	"U", "U'", "U2", "u", "u'", "u2",

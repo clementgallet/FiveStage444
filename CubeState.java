@@ -439,10 +439,27 @@ public final class CubeState implements java.io.Serializable{
 		return (short)Tables.c4_to_cloc[idx];
 	}
 
+	public short convert_symcenters_to_stage2 (int c){
+		CubeState cube = new CubeState();
+		int i;
+		short minCen = 32000;
+		int minSym = 0;
+		for (int sym=0; sym < Constants.N_SYM_STAGE2; sym++ ){
+			copyTo (cube);
+			cube.rightMultCenters(Symmetry.invSymIdx[sym]);
+			short cen = cube.convert_centers_to_stage2(c);
+			if( cen < minCen){
+				minCen = cen;
+				minSym = sym;
+			}
+		}
+		return (short)(( Arrays.binarySearch(Tables.symCenterToCenterSTAGE2, minCen) << 4 ) + minSym);
+	}
+
 	public void convert_to_stage2 (CubeStage2 result_cube){
 		result_cube.m_edge = convert_edges_to_stage2();
-		result_cube.m_centerF = convert_centers_to_stage2(4);
-		result_cube.m_centerB = convert_centers_to_stage2(5);
+		result_cube.m_centerF = convert_symcenters_to_stage2(4);
+		result_cube.m_centerB = convert_symcenters_to_stage2(5);
 	}
 
 	public int convert_centers_to_stage3 (){
