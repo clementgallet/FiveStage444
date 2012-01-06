@@ -706,6 +706,7 @@ public final class Tables {
 			for (sym = 0; sym < N_SYM_STAGE2; ++sym) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
 				cube2.rightMultEdges (Symmetry.invSymIdx[sym]);
+				//if (u==414) System.out.println("sym:"+sym+"-edge"+cube2.convert_edges_to_stage2 ());
 				move_table_edge_conjSTAGE2[u][sym] = cube2.convert_edges_to_stage2 ();
 			}
 		}
@@ -749,8 +750,10 @@ public final class Tables {
 				cube2.rightMultCenters (Symmetry.invSymIdx[sym]);
 				short cen = cube2.convert_centers_to_stage2(5);
 				set_1_1bit( cen, isRepTable); // not a rep.
-				if( cen == u )
+				if( cen == u ){
 					hasSymCenterSTAGE2[repIdx] |= (1 << sym);
+					//if (repIdx == 664) System.out.println("664 sym:"+sym);
+				}
 			}
 			symCenterToCenterSTAGE2[repIdx++] = (short)u;
 		}

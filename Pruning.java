@@ -101,6 +101,7 @@ abstract class Pruning {
 
 		for (i = 0; i < num_moves; ++i) {
 			long idx2 = do_move (idx, i);
+			if(idx==292903) System.out.println("move:"+i+"-idx2:"+idx2+"-dist:"+get_dist(idx2)+"edge:"+(idx2 % Constants.N_STAGE2_EDGE_CONFIGS));
 			if (get_dist(idx2) == 0){
 				saveIdxAndSyms( idx2, dist );
 			}

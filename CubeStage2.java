@@ -29,8 +29,10 @@ public final class CubeStage2 {
 		if (front) cen = m_centerF;
 		else cen = m_centerB;
 
+		if (( m_edge != 0 ) && ( m_edge != 414 ))
+			return false;
 		for (i=0; i < Constants.STAGE2_NUM_SOLVED_SYMCENTER_CONFIGS; i++)
-			if (((cen>>4) == Constants.stage2_solved_symcenters[i]) && Tables.move_table_edge_conjSTAGE2[m_edge][cen&0xF] == 414)
+			if ((cen>>4) == Constants.stage2_solved_symcenters[i])
 				return true;
 
 		return false;
@@ -39,8 +41,11 @@ public final class CubeStage2 {
 	public boolean is_solved (){
 		int i;
 
+		if (( m_edge != 0 ) && ( m_edge != 414 ))
+			return false;
+
 		for (i=0; i < Constants.STAGE2_NUM_SOLVED_SYMCENTER_CONFIGS; i++)
-			if (((m_centerF>>4) == Constants.stage2_solved_symcenters[i]) && ((m_centerB>>4) == Constants.stage2_solved_symcenters[i]) && ((m_centerF&0x8) == (m_centerB&0x8)) && Tables.move_table_edge_conjSTAGE2[m_edge][m_centerF&0xF] == 414)
+			if (((m_centerF>>4) == Constants.stage2_solved_symcenters[i]) && ((m_centerB>>4) == Constants.stage2_solved_symcenters[i]) && ((m_centerF&0x8) == (m_centerB&0x8)) )
 				return true;
 
 		return false;
