@@ -1,13 +1,12 @@
 TODO:
 
-- Move to a more javaish code: yeah ! I'm using an abstract class !
-- Optimise the program.
-- Optimise the algorithm.
 - Better handle exceptions.
 - Use a logger.
 - Doc the code !
 - Use symmetry reduction. With this, it would be possible to get stage 1 and 4 full pruning tables (see http://kociemba.org/cube.htm).
 - Use backward search when generating pruning tables
+- Use tables when getting values from pruning tables
+- Pack 5 values into one byte instead of 4.
 
 First solutions:
 

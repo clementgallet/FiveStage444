@@ -144,7 +144,6 @@ public final class CubeState implements java.io.Serializable{
 	public void leftMultEdges (int symIdx){
 		int i;
 		for (i = 0; i < 24; ++i){
-			//System.out.println(m_edge[i]+"->"+Symmetry.symEdges[symIdx][m_edge[i]]);
 			m_edge[i] = Symmetry.symEdges[symIdx][m_edge[i]];
 		}
 	}
@@ -629,6 +628,7 @@ public final class CubeState implements java.io.Serializable{
 				minSym = sym;
 			}
 		}
+		if (Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, minEdge)< 0) System.out.println("minEdge:"+minEdge);
 		return Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, minEdge)*Constants.N_SYM_STAGE5 + minSym;
 	}
 
@@ -658,7 +658,9 @@ public final class CubeState implements java.io.Serializable{
 		short cen1 = (short)Tables.squares_cen_revmap[(x >> 16) & 0xFF];
 		short cen2 = (short)Tables.squares_cen_revmap[(x >> 8) & 0xFF];
 		short cen3 = (short)Tables.squares_cen_revmap[x & 0xFF];
-		return (short)(cen1 + 12*cen2 + 12*12*cen3);
+		short cen = (short)(cen1 + 12*cen2 + 12*12*cen3);
+		if (cen >= 12*12*12) System.out.println("Error: not a CubeStage5 !");
+		return cen;
 	}
 
 	public byte convert_corners_to_squares (){

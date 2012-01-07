@@ -20,24 +20,11 @@ public final class PruningEdgCenStage2 extends Pruning {
 			ptable[i] = 0;
 		}
 
-		// Fill the solved states.
+		// Fill the (almost) solved states.
 		for (i=0; i < Constants.STAGE2_NUM_SOLVED_SYMCENTER_CONFIGS; i++){
 			set_dist(Constants.stage2_solved_symcenters[i]*Constants.N_STAGE2_EDGE_CONFIGS + 414, 3);
-			System.out.println("solved:"+(Constants.stage2_solved_symcenters[i]*Constants.N_STAGE2_EDGE_CONFIGS + 414));
-			int symI = 0;
-			int syms = Tables.hasSymCenterSTAGE2[Constants.stage2_solved_symcenters[i]];
-			while (syms != 0){
-				if(( syms & 0x1 ) == 1 ){
-					short edge2 = Tables.move_table_edge_conjSTAGE2[414][symI];
-					if (edge2 == 0){
-						set_dist (Constants.stage2_solved_symcenters[i]*Constants.N_STAGE2_EDGE_CONFIGS, 3);
-						System.out.println("solved:"+(Constants.stage2_solved_symcenters[i]*Constants.N_STAGE2_EDGE_CONFIGS));
-						break;
-					}
-				}
-				symI++;
-			syms >>= 1;
-			}
+			set_dist(Constants.stage2_solved_symcenters[i]*Constants.N_STAGE2_EDGE_CONFIGS + 0  , 3);
+			unique_count++;
 		}
 	}
 
@@ -51,7 +38,6 @@ public final class PruningEdgCenStage2 extends Pruning {
 
 		edge = Tables.move_table_edgeSTAGE2[edge][move];
 		edge = Tables.move_table_edge_conjSTAGE2[edge][sym];
-		if((cenRep*Constants.N_STAGE2_EDGE_CONFIGS + edge) == 292903) System.out.println("coming from "+idx+"-edge:"+(idx % Constants.N_STAGE2_EDGE_CONFIGS));
 		return cenRep*Constants.N_STAGE2_EDGE_CONFIGS + edge;
 	}
 

@@ -18,6 +18,7 @@ public final class CubeSqsCoord {
 	}
 
 	public int get_dist_edgcen (){
+		//System.out.println("-ep:"+m_sym_ep96x96x96+"-cen:"+m_cen12x12x12);
 		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_SQS_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48];
 		return (prune_table_edgcen[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
 	}

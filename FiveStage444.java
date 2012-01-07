@@ -142,6 +142,56 @@ public final class FiveStage444 {
 			initPipes();
 		} catch(java.io.IOException e) { e.printStackTrace(); }
 
+	/*
+	byte switch_list[][] = {
+		{ 17, 19, 20, 22 },
+		{ 17, 19, 21, 23 },
+		{ 17, 18, 21, 22 },
+		{ 17, 18, 20, 23 },
+		{ 18, 19, 22, 23 }
+	};
+		int[] solved_table = new int[24];
+		int i;
+		CubeStage2 stage2_solved = new CubeStage2();
+		CubeStage2 stage2_solved2 = new CubeStage2();
+		CubeState cs1 = new CubeState();
+			cs1.init ();
+			cs1.convert_to_stage2 (stage2_solved);
+			System.out.println("Solved: edge="+stage2_solved.m_edge+"-cenF="+(stage2_solved.m_centerF >> 4)+"-sym:"+(stage2_solved.m_centerF & 0xF)+"-symedge="+Tables.move_table_edge_conjSTAGE2[stage2_solved.m_edge][stage2_solved.m_centerF & 0xF]);
+
+			stage2_solved2.m_centerF = stage2_solved.m_centerF;
+			stage2_solved2.m_edge = stage2_solved.m_edge;
+			stage2_solved2.do_whole_cube_move (1);
+			System.out.println("Solved: edge="+stage2_solved2.m_edge+"-cenF="+(stage2_solved2.m_centerF >> 4)+"-sym:"+(stage2_solved2.m_centerF & 0xF)+"-symedge="+Tables.move_table_edge_conjSTAGE2[stage2_solved2.m_edge][stage2_solved2.m_centerF & 0xF]);
+
+			cs1.init ();
+			cs1.invert_fbcen ();
+			cs1.convert_to_stage2 (stage2_solved2);
+			System.out.println("Solved: edge="+stage2_solved2.m_edge+"-cenF="+(stage2_solved2.m_centerF >> 4)+"-sym:"+(stage2_solved2.m_centerF & 0xF)+"-symedge="+Tables.move_table_edge_conjSTAGE2[stage2_solved2.m_edge][stage2_solved2.m_centerF & 0xF]);
+
+			stage2_solved2.do_whole_cube_move (1);
+			System.out.println("Solved: edge="+stage2_solved2.m_edge+"-cenF="+(stage2_solved2.m_centerF >> 4)+"-sym:"+(stage2_solved2.m_centerF & 0xF)+"-symedge="+Tables.move_table_edge_conjSTAGE2[stage2_solved2.m_edge][stage2_solved2.m_centerF & 0xF]);
+
+			for (i = 0; i < 5; ++i) {
+				int j;
+				cs1.init ();
+				for (j = 0; j < 4; ++j) {
+					cs1.m_cen[switch_list[i][j]] ^= 1;
+				}
+				cs1.convert_to_stage2 (stage2_solved2);
+			System.out.println("Solved: edge="+stage2_solved2.m_edge+"-cenF="+(stage2_solved2.m_centerF >> 4)+"-sym:"+(stage2_solved2.m_centerF & 0xF)+"-symedge="+Tables.move_table_edge_conjSTAGE2[stage2_solved2.m_edge][stage2_solved2.m_centerF & 0xF]);
+
+				stage2_solved2.do_whole_cube_move (1);
+			System.out.println("Solved: edge="+stage2_solved2.m_edge+"-cenF="+(stage2_solved2.m_centerF >> 4)+"-sym:"+(stage2_solved2.m_centerF & 0xF)+"-symedge="+Tables.move_table_edge_conjSTAGE2[stage2_solved2.m_edge][stage2_solved2.m_centerF & 0xF]);
+
+				cs1.invert_fbcen ();
+				cs1.convert_to_stage2 (stage2_solved2);
+			System.out.println("Solved: edge="+stage2_solved2.m_edge+"-cenF="+(stage2_solved2.m_centerF >> 4)+"-sym:"+(stage2_solved2.m_centerF & 0xF)+"-symedge="+Tables.move_table_edge_conjSTAGE2[stage2_solved2.m_edge][stage2_solved2.m_centerF & 0xF]);
+
+				stage2_solved2.do_whole_cube_move (1);
+			System.out.println("Solved: edge="+stage2_solved2.m_edge+"-cenF="+(stage2_solved2.m_centerF >> 4)+"-sym:"+(stage2_solved2.m_centerF & 0xF)+"-symedge="+Tables.move_table_edge_conjSTAGE2[stage2_solved2.m_edge][stage2_solved2.m_centerF & 0xF]);
+			}
+*/
 		/* Get solutions */
 		getS = new Thread(new Runnable() {
 			public void run() {

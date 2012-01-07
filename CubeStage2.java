@@ -45,32 +45,11 @@ public final class CubeStage2 {
 			return false;
 
 		for (i=0; i < Constants.STAGE2_NUM_SOLVED_SYMCENTER_CONFIGS; i++)
-			if (((m_centerF>>4) == Constants.stage2_solved_symcenters[i]) && ((m_centerB>>4) == Constants.stage2_solved_symcenters[i]) && ((m_centerF&0x8) == (m_centerB&0x8)) )
+			if (((m_centerF>>4) == Constants.stage2_solved_symcenters[i]) && ((m_centerB>>4) == Constants.stage2_solved_symcenters[i]) && ((m_centerF&0x8) == (m_centerB&0x8)) && ( ((m_centerF&0x8) == 0 && ( m_edge == 414 )) || ((m_centerF&0x8) != 0 && ( m_edge == 0 )) ))
 				return true;
 
 		return false;
 	}
-
-	/*
-	public boolean is_solved (){
-		int i;
-		if (m_edge == 0) {
-			if (m_centerF < Constants.stage2_solved_fb_centers[0] || m_centerF > Constants.stage2_solved_fb_centers[Constants.STAGE2_NUM_SOLVED_FB_CENTER_CONFIGS-1]
-			 || m_centerB < Constants.stage2_solved_fb_centers[0] || m_centerB > Constants.stage2_solved_fb_centers[Constants.STAGE2_NUM_SOLVED_FB_CENTER_CONFIGS-1])
-				return false;
-			for (i=0; i < Constants.STAGE2_NUM_SOLVED_FB_CENTER_CONFIGS; i++)
-				if ((m_centerF == Constants.stage2_solved_fb_centers[i]) && (m_centerB == Constants.stage2_solved_fb_centers[Constants.STAGE2_NUM_SOLVED_FB_CENTER_CONFIGS-i-1]))
-					return true;
-		} else if (m_edge == 414) {
-			if (m_centerF < Constants.stage2_solved_rl_centers[0] || m_centerF > Constants.stage2_solved_rl_centers[Constants.STAGE2_NUM_SOLVED_RL_CENTER_CONFIGS-1]
-			 || m_centerB < Constants.stage2_solved_rl_centers[0] || m_centerB > Constants.stage2_solved_rl_centers[Constants.STAGE2_NUM_SOLVED_RL_CENTER_CONFIGS-1])
-				return false;
-			for (i=0; i < Constants.STAGE2_NUM_SOLVED_RL_CENTER_CONFIGS; i++)
-				if ((m_centerF == Constants.stage2_solved_rl_centers[i]) && (m_centerB == Constants.stage2_solved_rl_centers[Constants.STAGE2_NUM_SOLVED_RL_CENTER_CONFIGS-i-1]))
-					return true;
-		}
-		return false;
-	}*/
 
 	public void do_move (int move_code){
 
@@ -134,20 +113,6 @@ public final class CubeStage2 {
 		}
 	}
 
-	/*
-	public void convert_centers_to_std_cube (CubeState result_cube){
-		int i;
-		int cbmb = Tables.cloc_to_bm[m_centerB];
-		int udlrf = 0;
-		for (i = 0; i < 24; ++i) {
-			if ((cbmb & (1 << i)) == 0) {
-				result_cube.m_cen[i] = (byte)(udlrf++/4);
-			} else {
-				result_cube.m_cen[i] = 5;
-			}
-		}
-	}*/
-
 	public void convert_edges_to_std_cube (CubeState result_cube){
 		int i;
 		byte[] t6 = new byte[4];
@@ -166,13 +131,4 @@ public final class CubeStage2 {
 			}
 		}
 	}
-	/*
-	public int prune_funcEDGCEN_STAGE2 (){
-		int d1 = Constants.get_dist_4bit (Constants.N_STAGE2_EDGE_CONFIGS*m_centerF + m_edge, prune_table_edgcen2);
-		int d2 = Constants.get_dist_4bit (Constants.N_STAGE2_EDGE_CONFIGS*m_centerB + m_edge, prune_table_edgcen2);
-		if (d2 >= d1) {
-			return d2;
-		}
-		return d1;
-	}*/
 }

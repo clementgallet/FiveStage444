@@ -77,8 +77,8 @@ public final class Stage2Solver extends StageSolver{
 				cube1.m_edge = cube2.m_edge;
 				cube1.m_centerF = cube2.m_centerF;
 				cube1.m_centerB = cube2.m_centerB;
-				if (front) System.out.println("dist:"+nDist+"-edge:"+cube1.m_edge+"-cen:"+cube1.m_centerF+"-idx:"+(Constants.N_STAGE2_EDGE_CONFIGS * (cube1.m_centerF >> 4 ) + Tables.move_table_edge_conjSTAGE2[cube1.m_edge][cube1.m_centerF & 0xF]));
-				else System.out.println("dist:"+nDist+"-edge:"+cube1.m_edge+"-cen:"+cube1.m_centerB+"-idx:"+(Constants.N_STAGE2_EDGE_CONFIGS * (cube1.m_centerB >> 4 ) + Tables.move_table_edge_conjSTAGE2[cube1.m_edge][cube1.m_centerB & 0xF]));
+				//if (front) System.out.println("dist:"+nDist+"-edge:"+cube1.m_edge+"-cen:"+cube1.m_centerF+"-idx:"+(Constants.N_STAGE2_EDGE_CONFIGS * (cube1.m_centerF >> 4 ) + Tables.move_table_edge_conjSTAGE2[cube1.m_edge][cube1.m_centerF & 0xF]));
+				//else System.out.println("dist:"+nDist+"-edge:"+cube1.m_edge+"-cen:"+cube1.m_centerB+"-idx:"+(Constants.N_STAGE2_EDGE_CONFIGS * (cube1.m_centerB >> 4 ) + Tables.move_table_edge_conjSTAGE2[cube1.m_edge][cube1.m_centerB & 0xF]));
 				nDist++;
 				dist1 = dist2;
 				noMoves=false;
@@ -101,6 +101,7 @@ public final class Stage2Solver extends StageSolver{
 			if (! cube1.is_solved ()) {
 				return false;
 			}
+			//System.out.println("Is solved ! centerF:"+(cube1.m_centerF>>4)+"-centerB:"+(cube1.m_centerB>>4)+"-edge"+(cube1.m_edge)+"-symedge:"+Tables.move_table_edge_conjSTAGE2[cube1.m_edge][cube1.m_centerF & 0xF]);
 			pushState();
 			Statistics.addLeaf(2, goal);
 			return true; // true: take the first solution, false: take all solutions.

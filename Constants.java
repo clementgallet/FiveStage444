@@ -236,22 +236,6 @@ public final class Constants{
 	}
 
 	/**
-	 * Extract an element from a table that stores two numbers per byte.
-	 * @param x	table index
-	 * @param p	table
-	 * @return	extracted value
-	 */
-	public static final int get_dist_4bit (int x, byte[] p)
-	{
-		int x2 = x >> 1;
-		int j = x & 0x1;
-		if (j == 0) {
-			return p[x2] & 0xF;
-		}
-		return (p[x2] >> 4) & 0xF;
-	}
-
-	/**
 	 * Converts an array of integers from 0 to n-1 into a corresponding number from 0 to n!-1.
 	 * @param n		cardinal of the permutation
 	 * @param array_in	permutation
@@ -330,17 +314,7 @@ public final class Constants{
 			m--;
 		}
 	}
-/*
-	public static final int STAGE2_NUM_SOLVED_FB_CENTER_CONFIGS = 12;
-	public static final int stage2_solved_fb_centers[] = {
-	10556, 10570, 10576, 10579, 10583, 10584, 10597, 10598, 10602, 10605, 10611, 10625
-	};
 
-	public static final int STAGE2_NUM_SOLVED_RL_CENTER_CONFIGS = 12;
-	public static final int stage2_solved_rl_centers[] = {
-	8806, 8852, 8910, 8921, 8977, 8986, 9275, 9284, 9340, 9351, 9625, 10131
-	};
-*/
 	public static final int STAGE2_NUM_SOLVED_SYMCENTER_CONFIGS = 6;
 	public static final int stage2_solved_symcenters[] = {
 	582, 606, 631, 641, 664, 673

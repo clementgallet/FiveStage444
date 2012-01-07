@@ -14,6 +14,7 @@ abstract class Pruning {
 	int num_solved;
 	int[] psolved;
 	int count = 0;
+	int unique_count = 0;
 	File fname;
 
 	void writeToFile(){
@@ -90,7 +91,7 @@ abstract class Pruning {
 			}
 			new_count = count - old_count;
 		}
-		System.out.println("Generate "+count+" positions.");
+		System.out.println("Generate "+count+" positions and "+unique_count+" unique.");
 
 		writeToFile();
 	}
@@ -101,8 +102,8 @@ abstract class Pruning {
 
 		for (i = 0; i < num_moves; ++i) {
 			long idx2 = do_move (idx, i);
-			if(idx==292903) System.out.println("move:"+i+"-idx2:"+idx2+"-dist:"+get_dist(idx2)+"edge:"+(idx2 % Constants.N_STAGE2_EDGE_CONFIGS));
 			if (get_dist(idx2) == 0){
+				unique_count++;
 				saveIdxAndSyms( idx2, dist );
 			}
 		}

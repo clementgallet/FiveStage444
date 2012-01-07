@@ -11,14 +11,12 @@ public final class Tables {
 		threadInitParityTable.start();
 		threadInitEbmEloc.start();
 		threadInitMap96.start();
-		//threadInitBm12.start();
 		threadInitCloc.start();
 		threadInitPerm420.start();
 		threadInitSymEdgeToEdgeStage1.start();
 		threadInitSymEdgeStage1.start();
 		threadInitCornerStage1.start();
 		threadInitCornerConjStage1.start();
-		//threadInitCenterStage2.start();
 		threadInitEdgeStage2.start();
 		threadInitEdgeConjStage2.start();
 		threadInitSymCenterToCenterStage2.start();
@@ -53,14 +51,12 @@ public final class Tables {
 		threadInitParityTable.join();
 		threadInitEbmEloc.join();
 		threadInitMap96.join();
-		//threadInitBm12.join();
 		threadInitCloc.join();
 		threadInitPerm420.join();
 		threadInitSymEdgeToEdgeStage1.join();
 		threadInitSymEdgeStage1.join();
 		threadInitCornerStage1.join();
 		threadInitCornerConjStage1.join();
-		//threadInitCenterStage2.join();
 		threadInitEdgeStage2.join();
 		threadInitEdgeConjStage2.join();
 		threadInitSymCenterToCenterStage2.join();
@@ -239,80 +235,6 @@ public final class Tables {
 
 	private InitMap96 threadInitMap96 = new InitMap96();
 
-	/*** init bm12 ***/
-	/*
-	private static final int[][] bm12_4of8_to_high_idx = new int[4096][70];
-	private static final int[][] bm12_4of8_to_low_idx = new int[4096][70];
-
-	private class InitBm12 extends Thread {
-
-	public void run (){
-
-		try{
-			threadInit4Of8.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
-
-		System.out.println( "Starting bm 12..." );
-
-		int a1, a2;
-		int i;
-		short u;
-		byte[] t = new byte[8];
-		// (old) optimization in progress...
-		for (u = 0; u < 4096; ++u) {
-			int u1;
-			for (u1 = 0; u1 < 70; ++u1) {
-				int u12 = u;
-				int bbbb = bm4of8[u1];
-				int j1 = 0;
-				int j2;
-				for (i = 0; u12 != 0; ++i) {
-					if ((u12 & 0x1) != 0) {
-						if ((bbbb & 0x1) == 0x1) {
-							t[j1++] = (byte)i;
-						}
-						bbbb >>= 1;
-					}
-					u12 >>= 1;
-				}
-				a1 = 0;
-				a2 = 24*24*24;
-				for (j2 = 0; j2 < j1; ++j2) {
-					a1 += a2*t[j2];
-					a2 /= 24;
-				}
-				bm12_4of8_to_low_idx[u][u1] = a1;
-				u12 = u;
-				bbbb = bm4of8[u1];
-				j1 = 0;
-				for (i = 24 - 1; u12 != 0; --i) {
-					if ((u12 & 0x800) != 0) {
-						if ((bbbb & 0x80) != 0) {
-							t[j1++] = (byte)i;
-						}
-						bbbb <<= 1;
-					}
-					u12 <<= 1;
-					u12 &= 0xFFF;		//need this to become 0 after no more than 12 iterations
-				}
-				a1 = 0;
-				a2 = 1;
-				for (j2 = 0; j2 < j1; ++j2) {
-					a1 += a2*t[j2];
-					a2 *= 24;
-				}
-				bm12_4of8_to_high_idx[u][u1] = a1;
-			}
-		}
-		System.out.println( "Finishing bm 12..." );
-	}
-	}
-
-	private InitBm12 threadInitBm12 = new InitBm12();*/
-	
 	public static final int swapbits (int x, int b){
 		int x2 = x & b;
 		if (x2 == 0 || x2 == b) {
@@ -599,45 +521,6 @@ public final class Tables {
 
 	private InitCornerConjStage1 threadInitCornerConjStage1 = new InitCornerConjStage1();
 
-	/*** init stage 2 centers ***/
-	/*
-	public static final short[][] move_table_cenSTAGE2 = new short[N_CENTER_COMBO4][N_STAGE2_SLICE_MOVES]; // 10626*28
-
-	private class InitCenterStage2 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInitCloc.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
-
-		System.out.println( "Starting center stage 2..." );
-		int i, j;
-		int u;
-		int mc, udlrf;
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
-		cube1.init ();
-		cube2.init ();
-		CubeStage2 s2 = new CubeStage2();
-		for (u = 0; u < N_CENTER_COMBO4; ++u) {
-			s2.m_centerB = (short)u;
-			s2.convert_centers_to_std_cube (cube1);
-			for (mc = 0; mc < N_STAGE2_SLICE_MOVES; ++mc) {
-				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-				cube2.rotate_sliceCENTER (stage2_slice_moves[mc]);
-				move_table_cenSTAGE2[u][mc] = cube2.convert_centers_to_stage2 (5);
-			}
-		}
-		System.out.println( "Finishing center stage 2..." );
-	}
-	}
-
-	private InitCenterStage2 threadInitCenterStage2 = new InitCenterStage2();*/
-
 	/*** init stage 2 edges ***/
 	public static final short[][] move_table_edgeSTAGE2 = new short[N_STAGE2_EDGE_CONFIGS][N_STAGE2_SLICE_MOVES]; // 420*28
 
@@ -706,7 +589,7 @@ public final class Tables {
 			for (sym = 0; sym < N_SYM_STAGE2; ++sym) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
 				cube2.rightMultEdges (Symmetry.invSymIdx[sym]);
-				//if (u==414) System.out.println("sym:"+sym+"-edge"+cube2.convert_edges_to_stage2 ());
+				//if (u==0) System.out.println("sym:"+sym+"-edge"+cube2.convert_edges_to_stage2 ());
 				move_table_edge_conjSTAGE2[u][sym] = cube2.convert_edges_to_stage2 ();
 			}
 		}
@@ -799,23 +682,6 @@ public final class Tables {
 
 	private InitSymCenterStage2 threadInitSymCenterStage2 = new InitSymCenterStage2();
 
-/*
-	public static final int stage2_cen_to_cloc4sf (int cen){
-		int cenbm = eloc2ebm[cen / 70];
-		int idx1 = bm12_4of8_to_high_idx[cenbm >> 12][cen % 70];
-		idx1 += bm12_4of8_to_low_idx[cenbm & 0xFFF][cen % 70];
-		return c4_to_cloc[idx1];
-	}
-
-	public static final int stage2_cen_to_cloc4sb (int cen){
-		int cenbm = eloc2ebm[cen / 70];
-		int cenbm4of8 = bm4of8[cen % 70];
-		int comp_70 = bm4of8_to_70[(~cenbm4of8) & 0xFF];	// (old) could be a direct lookup
-		int idx2 = bm12_4of8_to_high_idx[cenbm >> 12][comp_70];
-		idx2 += bm12_4of8_to_low_idx[cenbm & 0xFFF][comp_70];
-		return c4_to_cloc[idx2];
-	}
-*/
 	/*** init_stage3 ***/
 	public static final int[] e16bm2eloc = new int[256*256];
 	public static final int[] eloc2e16bm = new int[N_COMBO_16_8];
