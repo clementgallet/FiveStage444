@@ -62,13 +62,13 @@ One-time whole cube rotations allowed:
 Analysis
 ========
 
-Stage       Positions          Unique       Symmetries
+Stage       Positions          Unique     Symmetries
 ------------------------------------------------------
-  1     1,608,475,077      33,516,864               48
-  2    21,622,847,400   2,703,114,810               16
-  3    23,189,166,000   2,898,889,420                8
-  4     2,593,080,000     162,371,132               16
-  5   146,767,085,568   3,080,465,032               48
+  1     1,608,475,077      33,516,864             48
+  2    21,622,847,400   2,703,114,810             16
+  3    23,189,166,000   2,898,889,420              8
+  4     2,593,080,000     162,371,132             16
+  5   146,767,085,568   3,080,465,032             48
 
 ======
 Memory
@@ -91,15 +91,15 @@ stage 5 centers          1,728           12           2               41,472
 
 Pruning tables              Positions        Memory (byte)
 ----------------------------------------------------------
-stage 1                    34,077,834            8,519,458
-stage 2 centers/edges         300,720               75,180
-stage 3 symcenters            113,330               28,332
-stage 3 edges                  25,740                6,435
-stage 3                 2,917,114,200          729,278,550
-stage 4                   175,459,200           43,864,800
-stage 5 symedges/centers   37,857,024            9,464,256
-stage 5 symedges/corners    2,103,168              525,792
-stage 5                 3,634,274,304          908,568,576
+stage 1                    34,077,834            6,815,567
+stage 2 centers/edges         300,720               60,145
+stage 3 symcenters            113,330               22,667
+stage 3 edges                  25,740                5,149
+stage 3                 2,917,114,200          583,422,841
+stage 4                   175,459,200           35,091,841
+stage 5 symedges/centers   37,857,024            7,571,405
+stage 5 symedges/corners    2,103,168              420,634
+stage 5                 3,634,274,304          726,854,861
 
 Full pruning tables for stage 3 and 5 can be enabled at the begining of Constants.java.
 

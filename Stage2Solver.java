@@ -73,12 +73,10 @@ public final class Stage2Solver extends StageSolver{
 				cube2.do_move (mov_idx);
 				dist2 = cube2.get_dist_edgcen(front);
 
-				if ((dist2 % 3) != (dist1 - 1)) continue;
+				if (((dist2+1) % 3) != dist1) continue;
 				cube1.m_edge = cube2.m_edge;
 				cube1.m_centerF = cube2.m_centerF;
 				cube1.m_centerB = cube2.m_centerB;
-				//if (front) System.out.println("dist:"+nDist+"-edge:"+cube1.m_edge+"-cen:"+cube1.m_centerF+"-idx:"+(Constants.N_STAGE2_EDGE_CONFIGS * (cube1.m_centerF >> 4 ) + Tables.move_table_edge_conjSTAGE2[cube1.m_edge][cube1.m_centerF & 0xF]));
-				//else System.out.println("dist:"+nDist+"-edge:"+cube1.m_edge+"-cen:"+cube1.m_centerB+"-idx:"+(Constants.N_STAGE2_EDGE_CONFIGS * (cube1.m_centerB >> 4 ) + Tables.move_table_edge_conjSTAGE2[cube1.m_edge][cube1.m_centerB & 0xF]));
 				nDist++;
 				dist1 = dist2;
 				noMoves=false;
@@ -101,7 +99,6 @@ public final class Stage2Solver extends StageSolver{
 			if (! cube1.is_solved ()) {
 				return false;
 			}
-			//System.out.println("Is solved ! centerF:"+(cube1.m_centerF>>4)+"-centerB:"+(cube1.m_centerB>>4)+"-edge"+(cube1.m_edge)+"-symedge:"+Tables.move_table_edge_conjSTAGE2[cube1.m_edge][cube1.m_centerF & 0xF]);
 			pushState();
 			Statistics.addLeaf(2, goal);
 			return true; // true: take the first solution, false: take all solutions.
@@ -114,8 +111,8 @@ public final class Stage2Solver extends StageSolver{
 				cube2.do_move (mov_idx);
 				next_ms = stage2_stm_next_ms[mov_idx];
 
-				int newDistCenF = ((cube2.get_dist_edgcen(true) - (distCenF%3) + 4) % 3 ) + distCenF - 1; // TODO: Could make a better formula...
-				int newDistCenB = ((cube2.get_dist_edgcen(false) - (distCenB%3) + 4) % 3 ) + distCenB - 1; // TODO: Could make a better formula...
+				int newDistCenF = cube2.new_dist_edgcen(true, distCenF);
+				int newDistCenB = cube2.new_dist_edgcen(false, distCenB);
 				if (newDistCenF > depth-1) continue;
 				if (newDistCenB > depth-1) continue;
 				move_list[moves_done] = (byte)mov_idx;

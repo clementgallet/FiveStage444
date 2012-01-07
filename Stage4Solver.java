@@ -47,7 +47,7 @@ public final class Stage4Solver extends StageSolver{
 		CubeStage4 cube2 = new CubeStage4();
 		int mov_idx, j, dist2;
 		int next_ms = 0;
-		if (dist == 3) {
+		if (dist == 0) {
 			if (cube1.is_solved ()) {
 				goal = moves_done;
 				pushState();
@@ -63,7 +63,7 @@ public final class Stage4Solver extends StageSolver{
 				cube2.do_move (mov_idx);
 				next_ms = stage4_stm_next_ms[mov_idx];
 				dist2 = cube2.get_dist();
-				if ((dist2 % 3) != (dist - 1)) continue;
+				if (((dist2+1) % 3) != dist) continue;
 				move_list[moves_done] = (byte)mov_idx;
 				if (solve (cube2, moves_done + 1, next_ms, dist2)) return true;
 			}

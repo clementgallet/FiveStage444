@@ -69,7 +69,7 @@ public final class Stage3Solver extends StageSolver{
 				cube2.m_sym_centerLR = cube1.m_sym_centerLR;
 				cube2.do_move (mov_idx);
 				dist2 = cube2.get_dist_cen();
-				if ((dist2 % 3) != (dist1 - 1)) continue;
+				if (((dist2+1) % 3) != dist1) continue;
 				cube1.m_sym_centerLR = cube2.m_sym_centerLR;
 				nDist++;
 				dist1 = dist2;
@@ -103,7 +103,7 @@ public final class Stage3Solver extends StageSolver{
 				cube2.m_edge_odd = cube1.m_edge_odd;
 				cube2.do_move (mov_idx);
 				dist2 = cube2.get_dist_edg();
-				if ((dist2 % 3) != (dist1 - 1)) continue;
+				if (((dist2+1) % 3) != dist1) continue;
 				cube1.m_edge = cube2.m_edge;
 				cube1.m_edge_odd = cube2.m_edge_odd;
 				nDist++;
@@ -139,8 +139,8 @@ public final class Stage3Solver extends StageSolver{
 			if ((stage3_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
 				cube2.do_move (mov_idx);
 				next_ms = stage3_stm_next_ms[mov_idx];
-				int newDistCen = ((cube2.get_dist_cen() - (distCen%3) + 4) % 3 ) + distCen - 1; // TODO: Could make a better formula...
-				int newDistEdg = ((cube2.get_dist_edg() - (distEdg%3) + 4) % 3 ) + distEdg - 1; // TODO: Could make a better formula...
+				int newDistCen = cube2.new_dist_cen(distCen);
+				int newDistEdg = cube2.new_dist_edg(distEdg);
 				if (newDistCen > depth-1) continue;
 				if (newDistEdg > depth-1) continue;
 				move_list[moves_done] = (byte)mov_idx;
@@ -155,7 +155,7 @@ public final class Stage3Solver extends StageSolver{
 		CubeStage3 cube2 = new CubeStage3();
 		int mov_idx, mc, j, dist2;
 		int next_ms = 0;
-		if (dist == 3) {
+		if (dist == 0) {
 			if (cube1.is_solved ()) {
 				goal = moves_done;
 				pushState();
@@ -171,7 +171,7 @@ public final class Stage3Solver extends StageSolver{
 				cube2.do_move (mov_idx);
 				next_ms = stage3_stm_next_ms[mov_idx];
 				dist2 = cube2.get_dist();
-				if ((dist2 % 3) != (dist - 1)) continue; // If distance is not lowered by 1, continue.
+				if (((dist2+1) % 3) != dist) continue; // If distance is not lowered by 1, continue.
 				move_list[moves_done] = (byte)mov_idx;
 				if (solve (cube2, moves_done + 1, next_ms, dist2)) return true;
 			}

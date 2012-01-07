@@ -36,7 +36,7 @@ public final class Stage1Solver extends StageSolver{
 		//Statistics.addNode(1, depth);
 		CubeStage1 cube2 = new CubeStage1();
 		int mov_idx, j, dist2;
-		if (dist == 3){
+		if (dist == 0){
 			if (cube1.is_solved ()) {
 				goal = moves_done;
 				pushState();
@@ -50,7 +50,7 @@ public final class Stage1Solver extends StageSolver{
 			if ((stage1_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
 				cube2.do_move (mov_idx);
 				dist2 = cube2.get_dist();
-				if ((dist2 % 3) != (dist - 1)) continue; // If distance is not lowered by 1, continue.
+				if (((dist2+1) % 3) != dist) continue; // If distance is not lowered by 1, continue.
 				move_list[moves_done] = (byte)mov_idx;
 				if (solve (cube2, moves_done + 1, mov_idx, dist2)) return true;
 			}

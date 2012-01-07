@@ -82,7 +82,7 @@ public final class Stage5Solver extends StageSolver{
 				cube2.do_move (mov_idx);
 				dist2 = cube2.get_dist_edgcen();
 
-				if ((dist2 % 3) != (dist1 - 1)) continue;
+				if (((dist2+1) % 3) != dist1) continue;
 				cube1.m_cen12x12x12 = cube2.m_cen12x12x12;
 				cube1.m_sym_ep96x96x96 = cube2.m_sym_ep96x96x96;
 				nDist++;
@@ -118,7 +118,7 @@ public final class Stage5Solver extends StageSolver{
 
 				dist2 = cube2.get_dist_edgcor();
 
-				if ((dist2 % 3) != (dist1 - 1)) continue;
+				if (((dist2+1) % 3) != dist1) continue;
 				cube1.m_cp96 = cube2.m_cp96;
 				cube1.m_sym_ep96x96x96 = cube2.m_sym_ep96x96x96;
 				nDist++;
@@ -154,8 +154,8 @@ public final class Stage5Solver extends StageSolver{
 			if ((sqs_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
 				cube2.do_move (mov_idx);
 				next_ms = sqs_stm_next_ms[mov_idx];
-				int newDistEdgCen = ((cube2.get_dist_edgcen() - (distEdgCen%3) + 4) % 3 ) + distEdgCen - 1; // TODO: Could make a better formula...
-				int newDistEdgCor = ((cube2.get_dist_edgcor() - (distEdgCor%3) + 4) % 3 ) + distEdgCor - 1; // TODO: Could make a better formula...
+				int newDistEdgCen = cube2.new_dist_edgcen(distEdgCen);
+				int newDistEdgCor = cube2.new_dist_edgcor(distEdgCor);
 				if (newDistEdgCen > depth-1) continue;
 				if (newDistEdgCor > depth-1) continue;
 				move_list[moves_done] = (byte)mov_idx;
@@ -170,7 +170,7 @@ public final class Stage5Solver extends StageSolver{
 		CubeSqsCoord cube2 = new CubeSqsCoord();
 		int mov_idx, j, dist2;
 		int next_ms = 0;
-		if (dist == 3) {
+		if (dist == 0) {
 			if (cube1.is_solved ()) {
 				goal = moves_done;
 				best = ss.move_count + goal;
@@ -188,7 +188,7 @@ public final class Stage5Solver extends StageSolver{
 				cube2.do_move (mov_idx);
 				next_ms = sqs_stm_next_ms[mov_idx];
 				dist2 = cube2.get_dist();
-				if ((dist2 % 3) != (dist - 1)) continue;
+				if (((dist2+1) % 3) != dist) continue;
 				move_list[moves_done] = (byte)mov_idx;
 				if (solve (cube2, moves_done + 1, next_ms, dist2)) return true;
 			}

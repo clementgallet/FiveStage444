@@ -14,7 +14,7 @@ public final class CubeStage1 {
 
 	public int get_dist (){
 		int idx = Constants.N_CORNER_ORIENT * (m_sym_edge_ud_combo8 >> 6 ) + Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 & 0x3F];
-		return prune_table.get_dist(idx);
+		return prune_table.get_dist_packed(idx);
 	}
 
 	public void do_move (int move_code){

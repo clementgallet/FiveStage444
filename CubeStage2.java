@@ -15,13 +15,21 @@ public final class CubeStage2 {
 		m_centerB = 0;
 	}
 
-	public int get_dist_edgcen (boolean front){
+	private int get_idx(boolean front){
 		short cen;
 		if (front) cen = m_centerF;
 		else cen = m_centerB;
-		int idx = Constants.N_STAGE2_EDGE_CONFIGS * (cen >> 4 ) + Tables.move_table_edge_conjSTAGE2[m_edge][cen & 0xF];
-		return prune_table_edgcen.get_dist(idx);
+		return Constants.N_STAGE2_EDGE_CONFIGS * (cen >> 4 ) + Tables.move_table_edge_conjSTAGE2[m_edge][cen & 0xF];
 	}
+
+	public int get_dist_edgcen (boolean front){
+		return prune_table_edgcen.get_dist_packed(get_idx(front));
+	}
+
+	public int new_dist_edgcen (boolean front, int dist){
+		return prune_table_edgcen.new_dist(get_idx(front), dist);
+	}
+
 
 	public boolean edges_center_solved (boolean front){
 		int i;

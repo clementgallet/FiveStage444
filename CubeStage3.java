@@ -19,19 +19,30 @@ public final class CubeStage3 {
 
 	public int get_dist_cen (){
 		int idx = m_sym_centerLR >> 3;
-		return prune_table_cen.get_dist(idx);
+		return prune_table_cen.get_dist_packed(idx);
+	}
+
+	public int new_dist_cen (int dist){
+		int idx = m_sym_centerLR >> 3;
+		return prune_table_cen.new_dist(idx, dist);
 	}
 
 	public int get_dist_edg (){
 		int idx = (m_edge << 1);
 		if( m_edge_odd ) idx++;
-		return prune_table_edg.get_dist(idx);
+		return prune_table_edg.get_dist_packed(idx);
+	}
+
+	public int new_dist_edg (int dist){
+		int idx = (m_edge << 1);
+		if( m_edge_odd ) idx++;
+		return prune_table_edg.new_dist(idx, dist);
 	}
 
 	public int get_dist (){
 		long idx = (((long)(m_sym_centerLR >> 3))*Constants.N_STAGE3_EDGE_CONFIGS + Tables.move_table_edge_conjSTAGE3[m_edge][m_sym_centerLR & 0x7])<<1;
 		if (m_edge_odd) idx++;
-		return prune_table.get_dist(idx);
+		return prune_table.get_dist_packed(idx);
 	}
 
 	public void do_move (int move_code){
