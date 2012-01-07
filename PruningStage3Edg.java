@@ -2,7 +2,7 @@ package fivestage444;
 
 import java.io.File;
 
-public final class PruningEdgStage3 extends Pruning {
+public final class PruningStage3Edg extends Pruning {
 
 	void init (){
 		int i;
@@ -14,8 +14,7 @@ public final class PruningEdgStage3 extends Pruning {
 		// Creation of the pruning table.
 		num_positions = Constants.N_STAGE3_EDGE_CONFIGS*Constants.N_STAGE3_EDGE_PAR;
 		int n = (int)(num_positions/4 + 1);
-		CubeStage3.prune_table_edg = new byte[n];
-		ptable = CubeStage3.prune_table_edg;
+		ptable = new byte[n];
 		for (i = 0; i < n; ++i) {
 			ptable[i] = 0;
 		}

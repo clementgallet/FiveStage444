@@ -6,9 +6,9 @@ public final class CubeSqsCoord {
 	public short m_cen12x12x12; // (1728)
 	public byte m_cp96; // (96)
 
-	public static byte[] prune_table_edgcen;
-	public static byte[] prune_table_edgcor;
-	public static byte[] prune_table;
+	public static PruningStage5EdgCen prune_table_edgcen;
+	public static PruningStage5EdgCor prune_table_edgcor;
+	public static PruningStage5 prune_table;
 	
 
 	public void init (){
@@ -20,17 +20,17 @@ public final class CubeSqsCoord {
 	public int get_dist_edgcen (){
 		//System.out.println("-ep:"+m_sym_ep96x96x96+"-cen:"+m_cen12x12x12);
 		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_SQS_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48];
-		return (prune_table_edgcen[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
+		return prune_table_edgcen.get_dist(idx);
 	}
 
 	public int get_dist_edgcor (){
 		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_SQS_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
-		return (prune_table_edgcor[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
+		return prune_table_edgcor.get_dist(idx);
 	}
 
 	public int get_dist (){
 		long idx = (long)(( m_sym_ep96x96x96 / 48 ) * Constants.N_SQS_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48])* Constants.N_SQS_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
-		return (prune_table[(int)(idx>>2)] >> ((idx & 0x3) << 1)) & 0x3;
+		return prune_table.get_dist(idx);
 	}
 
 	public void do_move (int sqs_move_code){

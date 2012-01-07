@@ -8,7 +8,7 @@ public final class CubeStage4 {
 
 	public static byte sqs_to_std[] = { 0, 2, 5, 7, 1, 3, 4, 6 };
 
-	public static byte[] prune_table;
+	public static PruningStage4 prune_table;
 
 	public void init (){
 		m_sym_edge = 0;
@@ -18,7 +18,7 @@ public final class CubeStage4 {
 
 	public int get_dist (){
 		int idx = (((( m_sym_edge >> 4 ) * Constants.N_STAGE4_CORNER_CONFIGS ) + Tables.move_table_corner_conjSTAGE4[m_corner][m_sym_edge & 0xF] ) * Constants.N_STAGE4_CENTER_CONFIGS ) + Tables.move_table_cen_conjSTAGE4[m_centerUD][m_sym_edge & 0xF];
-		return (prune_table[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
+		return prune_table.get_dist(idx);
 	}
 
 	public void do_move (int move_code){

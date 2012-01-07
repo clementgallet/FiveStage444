@@ -14,8 +14,7 @@ public final class PruningStage5 extends Pruning {
 		// Creation of the pruning table.
 		num_positions = ((long)Constants.N_SQS_SYMEDGE_PERM)*Constants.N_SQS_CENTER_PERM*Constants.N_SQS_CORNER_PERM; // To avoid overflow.
 		int n = (int)(num_positions/4 + 1);
-		CubeSqsCoord.prune_table = new byte[n];
-		ptable = CubeSqsCoord.prune_table;
+		ptable = new byte[n];
 		for (i = 0; i < n; ++i) {
 			ptable[i] = 0;
 		}

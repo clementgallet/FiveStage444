@@ -14,8 +14,7 @@ public final class PruningStage1 extends Pruning {
 		// Creation of the pruning table.
 		num_positions = Constants.N_CORNER_ORIENT*Constants.N_SYMEDGE_COMBO8;
 		int n = (int)(num_positions/4 + 1);
-		CubeStage1.prune_table = new byte[n];
-		ptable = CubeStage1.prune_table;
+		ptable = new byte[n];
 		for (i = 0; i < n; ++i) {
 			ptable[i] = 0;
 		}

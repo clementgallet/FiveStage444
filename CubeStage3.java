@@ -6,9 +6,9 @@ public final class CubeStage3 {
 	public short m_edge; //edge coordinate (12870)
 	public boolean m_edge_odd; //odd parity of edges
 
-	public static byte[] prune_table_cen;
-	public static byte[] prune_table_edg;
-	public static byte[] prune_table;
+	public static PruningStage3Cen prune_table_cen;
+	public static PruningStage3Edg prune_table_edg;
+	public static PruningStage3 prune_table;
 
 
 	public void init (){
@@ -19,19 +19,19 @@ public final class CubeStage3 {
 
 	public int get_dist_cen (){
 		int idx = m_sym_centerLR >> 3;
-		return (prune_table_cen[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
+		return prune_table_cen.get_dist(idx);
 	}
 
 	public int get_dist_edg (){
 		int idx = (m_edge << 1);
 		if( m_edge_odd ) idx++;
-		return (prune_table_edg[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
+		return prune_table_edg.get_dist(idx);
 	}
 
 	public int get_dist (){
 		long idx = (((long)(m_sym_centerLR >> 3))*Constants.N_STAGE3_EDGE_CONFIGS + Tables.move_table_edge_conjSTAGE3[m_edge][m_sym_centerLR & 0x7])<<1;
 		if (m_edge_odd) idx++;
-		return (prune_table[(int)(idx>>2)] >> ((idx & 0x3) << 1)) & 0x3;
+		return prune_table.get_dist(idx);
 	}
 
 	public void do_move (int move_code){

@@ -5,7 +5,7 @@ public final class CubeStage1 {
 	public short m_co; // corner orientation (2187)
 	public int m_sym_edge_ud_combo8; // (46371)
 
-	public static byte[] prune_table;
+	public static PruningStage1 prune_table;
 
 	public void init (){
 		m_co = 0;
@@ -14,7 +14,7 @@ public final class CubeStage1 {
 
 	public int get_dist (){
 		int idx = Constants.N_CORNER_ORIENT * (m_sym_edge_ud_combo8 >> 6 ) + Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 & 0x3F];
-		return (prune_table[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
+		return prune_table.get_dist(idx);
 	}
 
 	public void do_move (int move_code){

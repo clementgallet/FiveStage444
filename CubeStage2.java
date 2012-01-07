@@ -7,7 +7,7 @@ public final class CubeStage2 {
 	public short m_centerB; //
 	public short m_edge; //edge coordinate (420)
 
-	public static byte[] prune_table_edgcen;
+	public static PruningStage2EdgCen prune_table_edgcen;
 
 	public void init (){
 		m_edge = 0;
@@ -20,7 +20,7 @@ public final class CubeStage2 {
 		if (front) cen = m_centerF;
 		else cen = m_centerB;
 		int idx = Constants.N_STAGE2_EDGE_CONFIGS * (cen >> 4 ) + Tables.move_table_edge_conjSTAGE2[m_edge][cen & 0xF];
-		return (prune_table_edgcen[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
+		return prune_table_edgcen.get_dist(idx);
 	}
 
 	public boolean edges_center_solved (boolean front){

@@ -123,20 +123,34 @@ public final class FiveStage444 {
 		Symmetry.initMoveConjugate();
 
 		new Tables().init_all ();
-		new PruningStage1().analyse();
-		new PruningEdgCenStage2().analyse();
-		if( USE_FULL_PRUNING_STAGE3)
-			new PruningStage3().analyse();
-		else{
-			new PruningCenStage3().analyse();
-			new PruningEdgStage3().analyse();
+
+		CubeStage1.prune_table = new PruningStage1();
+		CubeStage1.prune_table.analyse();
+
+		CubeStage2.prune_table_edgcen = new PruningStage2EdgCen();
+		CubeStage2.prune_table_edgcen.analyse();
+
+		if( USE_FULL_PRUNING_STAGE3){
+			CubeStage3.prune_table = new PruningStage3();
+			CubeStage3.prune_table.analyse();
+		}else{
+			CubeStage3.prune_table_cen = new PruningStage3Cen();
+			CubeStage3.prune_table_cen.analyse();
+			CubeStage3.prune_table_edg = new PruningStage3Edg();
+			CubeStage3.prune_table_edg.analyse();
 		}
-		new PruningStage4().analyse();
-		if( USE_FULL_PRUNING_STAGE5)
-			new PruningStage5().analyse();
-		else{
-			new PruningEdgCenStage5().analyse();
-			new PruningEdgCorStage5().analyse();
+
+		CubeStage4.prune_table = new PruningStage4();
+		CubeStage4.prune_table.analyse();
+
+		if( USE_FULL_PRUNING_STAGE5){
+			CubeSqsCoord.prune_table = new PruningStage5();
+			CubeSqsCoord.prune_table.analyse();
+		}else{
+			CubeSqsCoord.prune_table_edgcen = new PruningStage5EdgCen();
+			CubeSqsCoord.prune_table_edgcen.analyse();
+			CubeSqsCoord.prune_table_edgcor = new PruningStage5EdgCor();
+			CubeSqsCoord.prune_table_edgcor.analyse();
 		}
 		try{
 			initPipes();
