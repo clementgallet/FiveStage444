@@ -22,6 +22,7 @@ public final class PruningStage5EdgCor extends Pruning {
 		// Fill the solved states.
 		set_dist(0, 3);
 		set_dist(21616*Constants.N_SQS_CORNER_PERM+66, 3);
+		back_dist = 11;
 	}
 
 	long do_move (long idx, int move){

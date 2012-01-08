@@ -23,6 +23,7 @@ public final class PruningStage3 extends Pruning {
 		for (i = 0; i < Constants.STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS; ++i) {
 			set_dist( (long)(Constants.stage3_solved_sym_centers[i]*Constants.N_STAGE3_EDGE_CONFIGS + 494L)*Constants.N_STAGE3_EDGE_PAR + 0, 3);
 		}
+		back_dist = 14;
 	}
 
 	long do_move (long idx, int move){

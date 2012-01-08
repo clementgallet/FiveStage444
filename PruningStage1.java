@@ -21,6 +21,7 @@ public final class PruningStage1 extends Pruning {
 
 		// Fill the solved states.
 		set_dist( 0*Constants.N_CORNER_ORIENT + 1906, 3);
+		back_dist = 8;
 	}
 
 	long do_move (long idx, int move){

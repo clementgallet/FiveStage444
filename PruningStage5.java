@@ -22,6 +22,7 @@ public final class PruningStage5 extends Pruning {
 		// Fill the solved states.
 		set_dist(0, 3);
 		set_dist((21616L*Constants.N_SQS_CENTER_PERM+143L)*Constants.N_SQS_CORNER_PERM+66L, 3);
+		back_dist = 15;
 	}
 
 	long do_move (long idx, int move){

@@ -24,6 +24,7 @@ public final class PruningStage4 extends Pruning {
 			set_dist( Tables.bm4of8_to_70[Constants.stage4_solved_centers_bm[i]], 3);
 		}
 		unique_count = 5;
+		back_dist = 12;
 	}
 
 	long do_move (long idx, int move){

@@ -21,6 +21,7 @@ public final class PruningStage3Edg extends Pruning {
 
 		// Fill the solved states.
 		set_dist( 494 << 1, 3);
+		back_dist = 7;
 	}
 
 	long do_move (long idx, int move){

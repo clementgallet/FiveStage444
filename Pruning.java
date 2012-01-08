@@ -13,11 +13,10 @@ abstract class Pruning {
 	protected byte[] ptable;
 	protected byte[] ptable_packed;
 	protected int num_moves;
-	protected int num_solved;
-	protected int[] psolved;
-	protected int count = 0;
+	protected long count = 0;
 	protected int unique_count = 0;
 	protected File fname;
+	protected int back_dist = 30;
 
 	private static int[] nd = new int[30 * 4];
 	private static byte[] get_packed = new byte[243*8];
@@ -91,7 +90,7 @@ abstract class Pruning {
 
 	public void analyse (){
 		int i, dist;
-		long idx;
+		long idx, old_count = 0;
 		int max_dist = 30;	//MAX_DISTANCE;
 
 		init ();
@@ -103,33 +102,50 @@ abstract class Pruning {
 			return;
 		}
 
-		int new_count = count;
-		for (dist = 0; dist < max_dist && new_count > 0; ++dist) {
+		long new_count = count;
+		for (dist = 0; dist < max_dist && new_count > 0 && dist < back_dist; ++dist) {
 			System.out.println(" dist "+dist+": "+new_count+" positions.");
-			int old_count = count;
+			old_count = count;
 			for (idx = 0; idx < num_positions; ++idx) {
 				if (get_dist(idx) == (((dist + 2) % 3) + 1)){
-					generate (idx, (dist % 3) + 1);
+					generate (idx, 0, (dist % 3) + 1);
 				}
 			}
 			new_count = count - old_count;
 		}
+		System.out.println("Switch to backward search");
+		for (; dist < max_dist && new_count > 0; ++dist) {
+			System.out.println(" dist "+dist+": "+new_count+" positions.");
+			old_count = count;
+			for (idx = 0; idx < num_positions; ++idx) {
+				if (get_dist(idx) == 0){
+					generate (idx, ((dist + 2) % 3) + 1, (dist % 3) + 1);
+				}
+			}
+			new_count = count - old_count;
+		}
+
 		System.out.println("Generate "+count+" positions and "+unique_count+" unique.");
 
-		System.out.println("Packing table: "+((int)(num_positions/4+1))+" -> "+n_packed);
+		System.out.println("Packing table: "+(num_positions/4+1)+" -> "+n_packed);
 		pack();
 
 		writeToFile();
 	}
 
-	protected void generate (long idx, int dist){
+	protected void generate (long idx, int dist, int new_dist){
 		int i, j;
 
 		for (i = 0; i < num_moves; ++i) {
 			long idx2 = do_move (idx, i);
-			if (get_dist(idx2) == 0){
+			if (get_dist(idx2) == dist){
 				unique_count++;
-				saveIdxAndSyms( idx2, dist );
+				if ( dist == 0 )
+					saveIdxAndSyms( idx2, new_dist );
+				else {
+					saveIdxAndSyms( idx, new_dist );
+					break;
+				}
 			}
 		}
 	}

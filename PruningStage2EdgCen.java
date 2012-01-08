@@ -25,6 +25,7 @@ public final class PruningStage2EdgCen extends Pruning {
 			set_dist(Constants.stage2_solved_symcenters[i]*Constants.N_STAGE2_EDGE_CONFIGS + 0  , 3);
 			unique_count++;
 		}
+		back_dist = 9;
 	}
 
 	long do_move (long idx, int move){
