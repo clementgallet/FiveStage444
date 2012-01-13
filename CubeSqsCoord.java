@@ -9,13 +9,6 @@ public final class CubeSqsCoord {
 	public static PruningStage5EdgCen prune_table_edgcen;
 	public static PruningStage5EdgCor prune_table_edgcor;
 	public static PruningStage5 prune_table;
-	
-
-	public void init (){
-		m_cen12x12x12 = 0;
-		m_cp96 = 0;
-		m_sym_ep96x96x96 = 0;
-	}
 
 	public int get_dist_edgcen (){
 		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_SQS_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48];
@@ -56,31 +49,6 @@ public final class CubeSqsCoord {
 		int newRep = newEdge / 48;
 
 		m_sym_ep96x96x96 = ( newRep * 48 ) + Symmetry.symIdxMultiply[newSym][sym];
-	}
-
-	public void do_whole_cube_move (int sqs_whole_cube_move){
-		switch (sqs_whole_cube_move) {
-		case 1:
-			do_move (Constants.Uf2/3);
-			do_move (Constants.Us2/3);
-			do_move (Constants.Df2/3);
-			do_move (Constants.Ds2/3);
-			break;
-		case 2:
-			do_move (Constants.Ff2/3);
-			do_move (Constants.Fs2/3);
-			do_move (Constants.Bf2/3);
-			do_move (Constants.Bs2/3);
-			break;
-		case 3:
-			do_move (Constants.Lf2/3);
-			do_move (Constants.Ls2/3);
-			do_move (Constants.Rf2/3);
-			do_move (Constants.Rs2/3);
-			break;
-		default: //case 0
-			break;
-		}
 	}
 
 	public boolean is_solved (){

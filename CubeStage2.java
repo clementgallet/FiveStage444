@@ -9,12 +9,6 @@ public final class CubeStage2 {
 
 	public static PruningStage2EdgCen prune_table_edgcen;
 
-	public void init (){
-		m_edge = 0;
-		m_centerF = 0;
-		m_centerB = 0;
-	}
-
 	private int get_idx(boolean front){
 		short cen;
 		if (front) cen = m_centerF;
@@ -29,7 +23,6 @@ public final class CubeStage2 {
 	public int new_dist_edgcen (boolean front, int dist){
 		return prune_table_edgcen.new_dist(get_idx(front), dist);
 	}
-
 
 	public boolean edges_center_solved (boolean front){
 		int i;
@@ -81,31 +74,6 @@ public final class CubeStage2 {
 		m_centerB = (short)(( newRep << 4 ) + Symmetry.symIdxMultiply[newSym][sym]);
 
 		m_edge = Tables.move_table_edgeSTAGE2[m_edge][move_code];
-	}
-
-	public void do_whole_cube_move (int whole_cube_move){
-		switch (whole_cube_move) {
-		case 1:	//U u d' D'
-			do_move (0);
-			do_move (3);
-			do_move (7);
-			do_move (10);
-			break;
-		case 2:	//F2 f2 b2 B2
-			do_move (16);
-			do_move (19);
-			do_move (20);
-			do_move (23);
-			break;
-		case 3:	//L2 l2 r2 R2
-			do_move (12);
-			do_move (13);
-			do_move (14);
-			do_move (15);
-			break;
-		default: //case 0
-			break;
-		}
 	}
 
 	public void convert_centers_to_std_cube (int u, CubeState result_cube){

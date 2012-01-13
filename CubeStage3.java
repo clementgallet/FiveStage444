@@ -10,13 +10,6 @@ public final class CubeStage3 {
 	public static PruningStage3Edg prune_table_edg;
 	public static PruningStage3 prune_table;
 
-
-	public void init (){
-		m_edge = 494;
-		m_sym_centerLR = 906488;
-		m_edge_odd = false;	
-	}
-
 	public int get_dist_cen (){
 		int idx = m_sym_centerLR >> 3;
 		return prune_table_cen.get_dist_packed(idx);

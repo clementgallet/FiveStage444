@@ -7,11 +7,6 @@ public final class CubeStage1 {
 
 	public static PruningStage1 prune_table;
 
-	public void init (){
-		m_co = 0;
-		m_sym_edge_ud_combo8 = 24;
-	}
-
 	public int get_dist (){
 		int idx = Constants.N_CORNER_ORIENT * (m_sym_edge_ud_combo8 >> 6 ) + Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 & 0x3F];
 		return prune_table.get_dist_packed(idx);
@@ -34,31 +29,6 @@ public final class CubeStage1 {
 		m_sym_edge_ud_combo8 = ( newRep << 6 ) + Symmetry.symIdxMultiply[newSym][sym];
 	}
 
-	public void do_whole_cube_move (int whole_cube_move){
-		switch (whole_cube_move) {
-			case 1:
-				do_move (Constants.Uf);
-				do_move (Constants.Us);
-				do_move (Constants.Df3);
-				do_move (Constants.Ds3);
-			break;
-			case 2:
-				do_move (Constants.Ff);
-				do_move (Constants.Fs);
-				do_move (Constants.Bf3);
-				do_move (Constants.Bs3);
-				break;
-			case 3:
-				do_move (Constants.Lf);
-				do_move (Constants.Ls);
-				do_move (Constants.Rf3);
-				do_move (Constants.Rs3);
-				break;
-			default: //case 0
-				break;
-		}
-	}
-	
 	public boolean is_solved (){
 		if (( m_sym_edge_ud_combo8 >> 6 ) == 0 && Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 & 0x3F] == 1906)
 			return true;
