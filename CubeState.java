@@ -607,7 +607,7 @@ public final class CubeState implements java.io.Serializable{
 		16, 19, 17, 18, 21, 22, 20, 23
 	};
 
-	public int convert_edges_to_squares (){
+	public int convert_edges_to_stage5 (){
 		int ep1 = Constants.perm_n_pack (4, m_edge, 0);
 		int ep2 = Constants.perm_n_pack (4, m_edge, 8);
 		int ep3 = Constants.perm_n_pack (4, m_edge, 16);
@@ -615,14 +615,14 @@ public final class CubeState implements java.io.Serializable{
 			4*ep1 + (m_edge[4] - 4);
 	}
 
-	public int convert_symedges_to_squares (){
+	public int convert_symedges_to_stage5 (){
 		CubeState cube = new CubeState();
 		int minEdge = 99999999;
 		int minSym = 0;
 		for (int sym=0; sym < Constants.N_SYM_STAGE5; sym++ ){
 			System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
 			cube.conjugateEdges(sym);
-			int edge = cube.convert_edges_to_squares ();
+			int edge = cube.convert_edges_to_stage5 ();
 			if( edge < minEdge){
 				minEdge = edge;
 				minSym = sym;
@@ -632,7 +632,7 @@ public final class CubeState implements java.io.Serializable{
 		return Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, minEdge)*Constants.N_SYM_STAGE5 + minSym;
 	}
 
-	public short convert_centers_to_squares (){
+	public short convert_centers_to_stage5 (){
 		int i;
 		//We must convert between "squares"-style cubie numbering and the "standard"-style
 		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
@@ -663,7 +663,7 @@ public final class CubeState implements java.io.Serializable{
 		return cen;
 	}
 
-	public byte convert_corners_to_squares (){
+	public byte convert_corners_to_stage5 (){
 		int i;
 		//We must convert between "squares"-style cubie numbering and the "standard"-style
 		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
@@ -676,10 +676,10 @@ public final class CubeState implements java.io.Serializable{
 		return (byte)(4*Constants.perm_n_pack (4, new_m_cor, 0) + (new_m_cor[4] - 4));
 	}
 
-	public void convert_to_squares (CubeSqsCoord result_cube){
-		result_cube.m_cp96 = convert_corners_to_squares ();
-		result_cube.m_cen12x12x12 = convert_centers_to_squares ();
-		result_cube.m_sym_ep96x96x96 = convert_symedges_to_squares ();
+	public void convert_to_stage5 (CubeStage5 result_cube){
+		result_cube.m_cp96 = convert_corners_to_stage5 ();
+		result_cube.m_cen12x12x12 = convert_centers_to_stage5 ();
+		result_cube.m_sym_ep96x96x96 = convert_symedges_to_stage5 ();
 	}
 
 	public void scramble (int move_count, byte[] move_arr){

@@ -144,13 +144,13 @@ public final class FiveStage444 {
 		CubeStage4.prune_table.analyse();
 
 		if( USE_FULL_PRUNING_STAGE5){
-			CubeSqsCoord.prune_table = new PruningStage5();
-			CubeSqsCoord.prune_table.analyse();
+			CubeStage5.prune_table = new PruningStage5();
+			CubeStage5.prune_table.analyse();
 		}else{
-			CubeSqsCoord.prune_table_edgcen = new PruningStage5EdgCen();
-			CubeSqsCoord.prune_table_edgcen.analyse();
-			CubeSqsCoord.prune_table_edgcor = new PruningStage5EdgCor();
-			CubeSqsCoord.prune_table_edgcor.analyse();
+			CubeStage5.prune_table_edgcen = new PruningStage5EdgCen();
+			CubeStage5.prune_table_edgcen.analyse();
+			CubeStage5.prune_table_edgcor = new PruningStage5EdgCor();
+			CubeStage5.prune_table_edgcor.analyse();
 		}
 		try{
 			initPipes();
@@ -303,7 +303,7 @@ public final class FiveStage444 {
 		stage3Solver = new Stage3Solver(pipeStage23in, pipeStage34out);
 		stage4Solver = new Stage4Solver(pipeStage34in, pipeStage45out);
 		stage5Solver = new Stage5Solver(pipeStage45in, pipeStage50out);
-		stage5Solver.setPriority(Thread.NORM_PRIORITY+1);
+		//stage5Solver.setPriority(Thread.NORM_PRIORITY+1);
 
 		stage1Solver.start();
 		stage2Solver.start();

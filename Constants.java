@@ -7,7 +7,7 @@ public final class Constants{
 
 	public static final String datafiles_path = "./fivestage444/";
 	public static final boolean USE_FULL_PRUNING_STAGE3 = false;
-	public static final boolean USE_FULL_PRUNING_STAGE5 = true;
+	public static final boolean USE_FULL_PRUNING_STAGE5 = false;
 
 	public static final int N_SYM_ALL = 96; // With inverse.
 	public static final int N_SYM = 48;
@@ -38,10 +38,10 @@ public final class Constants{
 	public static final int N_STAGE4_SYMEDGE_CONFIGS = 5968;
 	public static final int N_STAGE4_CORNER_CONFIGS = 420;	//8!/96
 
-	public static final int N_SQS_EDGE_PERM = 96*96*96;
-	public static final int N_SQS_SYMEDGE_PERM = 21908;
-	public static final int N_SQS_CENTER_PERM = 12*12*12;
-	public static final int N_SQS_CORNER_PERM = 96;
+	public static final int N_STAGE5_EDGE_PERM = 96*96*96;
+	public static final int N_STAGE5_SYMEDGE_PERM = 21908;
+	public static final int N_STAGE5_CENTER_PERM = 12*12*12;
+	public static final int N_STAGE5_CORNER_PERM = 96;
 
 //slice rotate codes
 	public static final int Uf  = 0;	//Up "face" (top slice) clockwise wrt top
@@ -175,7 +175,7 @@ public final class Constants{
 	-1, -1, 14, -1, -1, 15
 	};
 
-	public static final int N_SQMOVES = 12;
+	public static final int N_STAGE5_MOVES = 12;
 	public static final byte stage5_slice_moves[] = { Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2 };
 	public static final byte stage5_inv_slice_moves[] = {
 	-1, -1, 0, -1, -1, 1,

@@ -1,6 +1,6 @@
 package fivestage444;
 
-public final class CubeSqsCoord {
+public final class CubeStage5 {
 
 	public int m_sym_ep96x96x96; // (1051584)
 	public short m_cen12x12x12; // (1728)
@@ -11,27 +11,27 @@ public final class CubeSqsCoord {
 	public static PruningStage5 prune_table;
 
 	public int get_dist_edgcen (){
-		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_SQS_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48];
+		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48];
 		return prune_table_edgcen.get_dist_packed(idx);
 	}
 
 	public int new_dist_edgcen (int dist){
-		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_SQS_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48];
+		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48];
 		return prune_table_edgcen.new_dist(idx, dist);
 	}
 
 	public int get_dist_edgcor (){
-		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_SQS_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
+		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
 		return prune_table_edgcor.get_dist_packed(idx);
 	}
 
 	public int new_dist_edgcor (int dist){
-		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_SQS_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
+		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
 		return prune_table_edgcor.new_dist(idx, dist);
 	}
 
 	public int get_dist (){
-		long idx = (long)(( m_sym_ep96x96x96 / 48 ) * Constants.N_SQS_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48])* Constants.N_SQS_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
+		long idx = (long)(( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48])* Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
 		return prune_table.get_dist_packed(idx);
 	}
 
@@ -134,7 +134,12 @@ public final class CubeSqsCoord {
 		int cen1 = m_cen12x12x12 % 12;
 		int cen2 = (m_cen12x12x12/12) % 12;
 		int cen3 = m_cen12x12x12/(12*12);
-		squares_unpack_centers (cen1, cen2, cen3, old_m_cen);
+		int x = (Tables.squares_cen_map[cen1] << 16) | (Tables.squares_cen_map[cen2] << 8) | Tables.squares_cen_map[cen3];
+		int b = 0x800000;
+		for (i = 0; i < 24; ++i) {
+			old_m_cen[i] = (byte) (2*(i/8) + ((x & b) == 0 ? 0 : 1));
+			b >>= 1;
+		}
 
 		//We must convert between "standard"-style cubie numbering and the "square"-style
 		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
@@ -143,6 +148,7 @@ public final class CubeSqsCoord {
 		}
 	}
 
+	/*
 	public void squares_unpack_centers (int cen1, int cen2, int cen3, byte[] cen){
 		int i;
 		int x = (Tables.squares_cen_map[cen1] << 16) | (Tables.squares_cen_map[cen2] << 8) | Tables.squares_cen_map[cen3];
@@ -152,5 +158,6 @@ public final class CubeSqsCoord {
 			b >>= 1;
 		}
 	}
+	*/
 }
 

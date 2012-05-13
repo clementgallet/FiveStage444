@@ -17,7 +17,7 @@ public final class Stage5Solver extends StageSolver{
 
 	private static int sqs_stm_next_ms[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
 
-	private CubeSqsCoord cube = new CubeSqsCoord();
+	private CubeStage5 cube = new CubeStage5();
 
 	Stage5Solver( PipedInputStream pipeIn, PipedOutputStream pipeOut ) throws java.io.IOException{
 		super( pipeIn, pipeOut );
@@ -25,7 +25,7 @@ public final class Stage5Solver extends StageSolver{
 	}
 
 	void importState(){
-		ss.cube.convert_to_squares (cube);
+		ss.cube.convert_to_stage5 (cube);
 	}
 
 	int id;
@@ -64,8 +64,8 @@ public final class Stage5Solver extends StageSolver{
 	}
 
 	public int getDistanceEdgCen (){
-		CubeSqsCoord cube1 = new CubeSqsCoord();
-		CubeSqsCoord cube2 = new CubeSqsCoord();
+		CubeStage5 cube1 = new CubeStage5();
+		CubeStage5 cube2 = new CubeStage5();
 		int mov_idx, mc, j, dist1, dist2;
 		int nDist = 0;
 		
@@ -76,7 +76,7 @@ public final class Stage5Solver extends StageSolver{
 		while (! cube1.edges_centers_solved()) {
 
 			boolean noMoves=true;
-			for (mov_idx = 0; mov_idx < N_SQMOVES; ++mov_idx) {
+			for (mov_idx = 0; mov_idx < N_STAGE5_MOVES; ++mov_idx) {
 				cube2.m_cen12x12x12 = cube1.m_cen12x12x12;
 				cube2.m_sym_ep96x96x96 = cube1.m_sym_ep96x96x96;
 				cube2.do_move (mov_idx);
@@ -99,8 +99,8 @@ public final class Stage5Solver extends StageSolver{
 	}
 
 	public int getDistanceEdgCor (){
-		CubeSqsCoord cube1 = new CubeSqsCoord();
-		CubeSqsCoord cube2 = new CubeSqsCoord();
+		CubeStage5 cube1 = new CubeStage5();
+		CubeStage5 cube2 = new CubeStage5();
 		int mov_idx, mc, j, dist1, dist2;
 		int nDist = 0;
 		
@@ -111,7 +111,7 @@ public final class Stage5Solver extends StageSolver{
 		while (! cube1.edges_corners_solved()) {
 
 			boolean noMoves=true;
-			for (mov_idx = 0; mov_idx < N_SQMOVES; ++mov_idx) {
+			for (mov_idx = 0; mov_idx < N_STAGE5_MOVES; ++mov_idx) {
 				cube2.m_cp96 = cube1.m_cp96;
 				cube2.m_sym_ep96x96x96 = cube1.m_sym_ep96x96x96;
 				cube2.do_move (mov_idx);
@@ -134,9 +134,9 @@ public final class Stage5Solver extends StageSolver{
 		return nDist;
 	}
 
-	public boolean treeSearch (CubeSqsCoord cube1, int depth, int moves_done, int move_state, int distEdgCen, int distEdgCor){
+	public boolean treeSearch (CubeStage5 cube1, int depth, int moves_done, int move_state, int distEdgCen, int distEdgCor){
 		//Statistics.addNode(5, depth);
-		CubeSqsCoord cube2 = new CubeSqsCoord();
+		CubeStage5 cube2 = new CubeStage5();
 		int mov_idx, j;
 		int next_ms = 0;
 		if (depth == 0) {
@@ -147,7 +147,7 @@ public final class Stage5Solver extends StageSolver{
 			Statistics.addLeaf(5, goal);
 			return true; // true: take the first solution, false: take all solutions.
 		}
-		for (mov_idx = 0; mov_idx < N_SQMOVES; ++mov_idx) {
+		for (mov_idx = 0; mov_idx < N_STAGE5_MOVES; ++mov_idx) {
 			cube2.m_cen12x12x12 = cube1.m_cen12x12x12;
 			cube2.m_cp96 = cube1.m_cp96;
 			cube2.m_sym_ep96x96x96 = cube1.m_sym_ep96x96x96;
@@ -165,9 +165,9 @@ public final class Stage5Solver extends StageSolver{
 		return false;
 	}
 
-	public boolean solve (CubeSqsCoord cube1, int moves_done, int move_state, int dist){
+	public boolean solve (CubeStage5 cube1, int moves_done, int move_state, int dist){
 		//Statistics.addNode(5, depth);
-		CubeSqsCoord cube2 = new CubeSqsCoord();
+		CubeStage5 cube2 = new CubeStage5();
 		int mov_idx, j, dist2;
 		int next_ms = 0;
 		if (dist == 0) {
@@ -180,7 +180,7 @@ public final class Stage5Solver extends StageSolver{
 			}
 		}
 		if( ss.move_count + moves_done + 1 >= best ) return false;
-		for (mov_idx = 0; mov_idx < N_SQMOVES; ++mov_idx) {
+		for (mov_idx = 0; mov_idx < N_STAGE5_MOVES; ++mov_idx) {
 			cube2.m_cen12x12x12 = cube1.m_cen12x12x12;
 			cube2.m_cp96 = cube1.m_cp96;
 			cube2.m_sym_ep96x96x96 = cube1.m_sym_ep96x96x96;
