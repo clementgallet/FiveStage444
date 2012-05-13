@@ -29,7 +29,7 @@ public final class Stage1Solver extends StageSolver{
 			int cubeDist = getDistance();
 			for (goal = cubeDist; goal < cubeDist + 5; ++goal) {
 				treeSearch (cube, goal, 0, N_BASIC_MOVES, cubeDist);
-				if( StageController.currentStage != 12 ) break;
+				if( StageController.currentStage[ss.id] != 12 ) break;
 			}
 		}
 
@@ -81,7 +81,7 @@ public final class Stage1Solver extends StageSolver{
 				return false;
 			}
 			Statistics.addLeaf(1, goal);
-			if( StageController.currentStage == 12 ) {
+			if( StageController.currentStage[ss.id] == 12 ) {
 				pushState();
 				return false; // true: take the first solution, false: take all solutions
 			}

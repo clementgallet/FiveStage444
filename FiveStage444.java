@@ -115,7 +115,9 @@ public final class FiveStage444 {
 
 	public static void main(String[] args){
 
-		int random_count = 1;
+		int random_count = 2;
+
+		StageController.init(random_count);
 
 		Symmetry.initSymTables();
 		Symmetry.initInvSymIdx();

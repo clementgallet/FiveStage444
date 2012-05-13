@@ -37,18 +37,18 @@ public final class Stage3Solver extends StageSolver{
 	public void run (){
 		while(pullState()) {
 
-			if( StageController.currentStage != 23 ) continue;
+			if( StageController.currentStage[ss.id] != 23 ) continue;
 
 			int cubeDistCen = getDistanceCen();
 			int cubeDistEdg = getDistanceEdg();
 			int cubeDist = Math.max(cubeDistCen, cubeDistEdg);
 
-			if( cubeDist + ss.move_count > StageController.currentBest ) continue;
+			if( cubeDist + ss.move_count > StageController.currentBest[ss.id] ) continue;
 
 			foundSol = false;
-			for (goal = cubeDist; goal < StageController.currentBest - ss.move_count; ++goal) {
+			for (goal = cubeDist; goal < StageController.currentBest[ss.id] - ss.move_count; ++goal) {
 				if( treeSearch (cube, goal, 0, 0, cubeDistCen, cubeDistEdg )){
-					StageController.updateBest( ss.move_count + goal );
+					StageController.updateBest( ss.id, ss.move_count + goal );
 					System.out.print ("Stage 1+2");
 					print_move_list( ss.move_count, ss.move_list);
 					System.out.print ("Stage 3");
@@ -62,12 +62,12 @@ public final class Stage3Solver extends StageSolver{
 
 			/* Go to stage 3-4 */
 
-			StageController.nextStage();
+			StageController.nextStage(ss.id);
 			cubeDist = goal;
 
 			for (goal = cubeDist; goal < cubeDist + 5; ++goal) {
 				treeSearch (cube, goal, 0, 0, cubeDistCen, cubeDistEdg);
-				if( StageController.currentStage != 34 ) break;
+				if( StageController.currentStage[ss.id] != 34 ) break;
 			}
 		}
 
@@ -152,7 +152,7 @@ public final class Stage3Solver extends StageSolver{
 				return false;
 			}
 			Statistics.addLeaf(3, goal);
-			if( StageController.currentStage == 34 ) {
+			if( StageController.currentStage[ss.id] == 34 ) {
 				pushState();
 				return false;
 			}

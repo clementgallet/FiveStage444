@@ -28,13 +28,10 @@ public final class Stage5Solver extends StageSolver{
 		ss.cube.convert_to_stage5 (cube);
 	}
 
-	int id;
-	int best;
-
 	public void run (){
 		while(pullState()) {
 
-			if( StageController.currentStage != 45 ) continue;
+			if( StageController.currentStage[ss.id] != 45 ) continue;
 
 			/* Stage 4-5 */
 
@@ -48,12 +45,12 @@ public final class Stage5Solver extends StageSolver{
 			int cubeDistEdgCor = getDistanceEdgCor();
 			int cubeDist = Math.max(cubeDistEdgCen, cubeDistEdgCor);
 
-			if( cubeDist + ss.move_count > StageController.currentBest ) continue;
+			if( cubeDist + ss.move_count > StageController.currentBest[ss.id] ) continue;
 
 			foundSol = false;
-			for (goal = cubeDist; goal < StageController.currentBest - ss.move_count; ++goal) {
+			for (goal = cubeDist; goal < StageController.currentBest[ss.id] - ss.move_count; ++goal) {
 				if( treeSearch (cube, goal, 0, 12, cubeDistEdgCen, cubeDistEdgCor )){
-					StageController.updateBest( ss.move_count + goal );
+					StageController.updateBest( ss.id, ss.move_count + goal );
 					System.out.print ("Stage 1+2+3+4");
 					print_move_list( ss.move_count, ss.move_list);
 					System.out.print ("Stage 5");
@@ -63,11 +60,13 @@ public final class Stage5Solver extends StageSolver{
 				}
 			}
 
-			if( goal + ss.move_count > StageController.goalStage12 ) continue;
 
+			if( goal + ss.move_count > StageController.goalStage12345 ) continue;
+
+			System.out.println( "Finished !" );
 			/* Finished ! Get the solution */
 
-			StageController.nextStage();
+			StageController.nextStage(ss.id);
 			treeSearch (cube, goal, 0, 12, cubeDistEdgCen, cubeDistEdgCor);
 
 		}
@@ -157,7 +156,7 @@ public final class Stage5Solver extends StageSolver{
 				return false;
 			}
 			Statistics.addLeaf(5, goal);
-			if( StageController.currentStage == 56 ) {
+			if( StageController.currentStage[ss.id] == 56 ) {
 				pushState();
 				return true;
 			}
@@ -189,13 +188,11 @@ public final class Stage5Solver extends StageSolver{
 		if (dist == 0) {
 			if (cube1.is_solved ()) {
 				goal = moves_done;
-				best = ss.move_count + goal;
 				pushState();
 				Statistics.addLeaf(5, goal);
 				return true; // true: take the first solution, false: take all solutions.
 			}
 		}
-		if( ss.move_count + moves_done + 1 >= best ) return false;
 		for (mov_idx = 0; mov_idx < N_STAGE5_MOVES; ++mov_idx) {
 			cube2.m_cen12x12x12 = cube1.m_cen12x12x12;
 			cube2.m_cp96 = cube1.m_cp96;
