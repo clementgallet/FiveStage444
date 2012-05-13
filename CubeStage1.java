@@ -7,9 +7,16 @@ public final class CubeStage1 {
 
 	public static PruningStage1 prune_table;
 
+	private int get_idx (){
+		return Constants.N_CORNER_ORIENT * (m_sym_edge_ud_combo8 >> 6 ) + Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 & 0x3F];
+	}
+
 	public int get_dist (){
-		int idx = Constants.N_CORNER_ORIENT * (m_sym_edge_ud_combo8 >> 6 ) + Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 & 0x3F];
-		return prune_table.get_dist_packed(idx);
+		return prune_table.get_dist_packed(get_idx());
+	}
+
+	public int new_dist (int dist){
+		return prune_table.new_dist(get_idx(), dist);
 	}
 
 	public void do_move (int move_code){

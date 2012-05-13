@@ -25,34 +25,77 @@ public final class Stage1Solver extends StageSolver{
 
 	public void run (){
 		while (pullState()) {
-			solve (cube, 0, N_BASIC_MOVES, cube.get_dist());
+
+			int cubeDist = getDistance();
+			for (goal = cubeDist; goal < cubeDist + 5; ++goal) {
+				treeSearch (cube, goal, 0, N_BASIC_MOVES, cubeDist);
+				if( StageController.currentStage != 12 ) break;
+			}
 		}
 
 		pushStopSignal();
 		closePipes();
 	}
 
-	private boolean solve (CubeStage1 cube1, int moves_done, int move_state, int dist){
-		//Statistics.addNode(1, depth);
+	private int getDistance (){
+		CubeStage1 cube1 = new CubeStage1();
 		CubeStage1 cube2 = new CubeStage1();
-		int mov_idx, j, dist2;
-		if (dist == 0){
-			if (cube1.is_solved ()) {
-				goal = moves_done;
-				pushState();
-				Statistics.addLeaf(1, goal);
-				return true; // true: take the first solution, false: take all solutions
-			}
-		}
-		for (mov_idx = 0; mov_idx < N_BASIC_MOVES; ++mov_idx) {
-			cube2.m_co = cube1.m_co;
-			cube2.m_sym_edge_ud_combo8 = cube1.m_sym_edge_ud_combo8;
-			if ((stage1_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
+		int mov_idx, j, dist1, dist2;
+		int nDist = 0;
+
+		cube1.m_co = cube.m_co;
+		cube1.m_sym_edge_ud_combo8 = cube.m_sym_edge_ud_combo8;
+		dist1 = cube1.get_dist();
+
+		while( ! cube1.is_solved ()) {
+
+			boolean noMoves=true;
+			for (mov_idx = 0; mov_idx < N_BASIC_MOVES; ++mov_idx) {
+				cube2.m_co = cube1.m_co;
+				cube2.m_sym_edge_ud_combo8 = cube1.m_sym_edge_ud_combo8;
 				cube2.do_move (mov_idx);
 				dist2 = cube2.get_dist();
-				if (((dist2+1) % 3) != dist) continue; // If distance is not lowered by 1, continue.
+				if (((dist2+1) % 3) != dist1) continue; // If distance is not lowered by 1, continue.
+				cube1.m_co = cube2.m_co;
+				cube1.m_sym_edge_ud_combo8 = cube2.m_sym_edge_ud_combo8;
+				nDist++;
+				dist1 = dist2;
+				noMoves=false;
+				break;
+			}
+			if( noMoves){
+				System.out.println("Could not find a move that lowers the distance !!");
+				break;
+
+			}
+		}
+		return nDist;
+	}
+
+	private boolean treeSearch (CubeStage1 cube1, int depth, int moves_done, int move_state, int dist){
+		//Statistics.addNode(1, depth);
+		CubeStage1 cube2 = new CubeStage1();
+		int mov_idx, j;
+		if (depth == 0){
+			if (! cube1.is_solved ()) {
+				return false;
+			}
+			Statistics.addLeaf(1, goal);
+			if( StageController.currentStage == 12 ) {
+				pushState();
+				return false; // true: take the first solution, false: take all solutions
+			}
+			return true;
+		}
+		for (mov_idx = 0; mov_idx < N_BASIC_MOVES; ++mov_idx) {
+			if ((stage1_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
+				cube2.m_co = cube1.m_co;
+				cube2.m_sym_edge_ud_combo8 = cube1.m_sym_edge_ud_combo8;
+				cube2.do_move (mov_idx);
+				int newDist = cube2.new_dist(dist);
+				if (newDist > depth-1) continue;
 				move_list[moves_done] = (byte)mov_idx;
-				if (solve (cube2, moves_done + 1, mov_idx, dist2)) return true;
+				if (treeSearch (cube2, depth - 1, moves_done + 1, mov_idx, newDist)) return true;
 			}
 		}
 		return false;

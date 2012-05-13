@@ -36,15 +36,38 @@ public final class Stage2Solver extends StageSolver{
 	public void run (){
 		while(pullState()) {
 
+			if( StageController.currentStage != 12 ) continue;
+
+			/* Stage 1-2 */
+
 			int cubeDistCenF = getDistanceEdgCen(true);
 			int cubeDistCenB = getDistanceEdgCen(false);
+			int cubeDist = Math.max(cubeDistCenF, cubeDistCenB);
 
-			foundSol = false;
-			for (goal = Math.max(cubeDistCenF, cubeDistCenB); goal < 30; ++goal) {
-				treeSearch (cube, goal, 0, 0, cubeDistCenF, cubeDistCenB);
-				if (foundSol){
+			if( cubeDist + ss.move_count > StageController.currentBest ) continue;
+
+			for (goal = cubeDist; goal < StageController.currentBest - ss.move_count; ++goal) {
+				if( treeSearch (cube, goal, 0, 0, cubeDistCenF, cubeDistCenB )){
+					StageController.updateBest( ss.move_count + goal );
+					System.out.print ("Stage 1");
+					print_move_list( ss.move_count, ss.move_list);
+					System.out.print ("Stage 2");
+					print_move_list( goal, move_list);
+					System.out.println( "" );
 					break;
 				}
+			}
+
+			if( goal + ss.move_count > StageController.goalStage12 ) continue;
+
+			/* Go to stage 2-3 */
+
+			StageController.nextStage();
+			cubeDist = goal;
+
+			for (goal = cubeDist; goal < cubeDist + 5; ++goal) {
+				treeSearch (cube, goal, 0, 0, cubeDistCenF, cubeDistCenB);
+				if( StageController.currentStage != 23 ) break;
 			}
 		}
 
@@ -99,8 +122,12 @@ public final class Stage2Solver extends StageSolver{
 			if (! cube1.is_solved ()) {
 				return false;
 			}
-			pushState();
+			foundSol = true;
 			Statistics.addLeaf(2, goal);
+			if( StageController.currentStage == 23 ) { 
+				pushState();
+				return false;
+			}
 			return true; // true: take the first solution, false: take all solutions.
 		}
 		for (mov_idx = 0; mov_idx < N_STAGE2_SLICE_MOVES; ++mov_idx) {

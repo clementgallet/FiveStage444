@@ -10,9 +10,16 @@ public final class CubeStage4 {
 
 	public static PruningStage4 prune_table;
 
+	public int get_idx (){
+		return (((( m_sym_edge >> 4 ) * Constants.N_STAGE4_CORNER_CONFIGS ) + Tables.move_table_corner_conjSTAGE4[m_corner][m_sym_edge & 0xF] ) * Constants.N_STAGE4_CENTER_CONFIGS ) + Tables.move_table_cen_conjSTAGE4[m_centerUD][m_sym_edge & 0xF];
+	}
+
 	public int get_dist (){
-		int idx = (((( m_sym_edge >> 4 ) * Constants.N_STAGE4_CORNER_CONFIGS ) + Tables.move_table_corner_conjSTAGE4[m_corner][m_sym_edge & 0xF] ) * Constants.N_STAGE4_CENTER_CONFIGS ) + Tables.move_table_cen_conjSTAGE4[m_centerUD][m_sym_edge & 0xF];
-		return prune_table.get_dist_packed(idx);
+		return prune_table.get_dist_packed(get_idx());
+	}
+
+	public int new_dist (int dist){
+		return prune_table.new_dist(get_idx(), dist);
 	}
 
 	public void do_move (int move_code){

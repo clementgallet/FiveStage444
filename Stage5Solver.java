@@ -32,31 +32,44 @@ public final class Stage5Solver extends StageSolver{
 	int best;
 
 	public void run (){
-		id = 0;
-
 		while(pullState()) {
-			if( id != ss.id ){
-				id = ss.id;
-				best = 100;
-			}
 
+			if( StageController.currentStage != 45 ) continue;
+
+			/* Stage 4-5 */
+
+			/*
 			if( USE_FULL_PRUNING_STAGE5 ){
 				solve( cube, 0, 12, cube.get_dist());
 			}
+			*/
 
-			else{
-				int distEdgCen = getDistanceEdgCen();
-				int distEdgCor = getDistanceEdgCor();
-				if( Math.max(distEdgCen, distEdgCor) > ( best - ss.move_count ))
-					continue;
+			int cubeDistEdgCen = getDistanceEdgCen();
+			int cubeDistEdgCor = getDistanceEdgCor();
+			int cubeDist = Math.max(cubeDistEdgCen, cubeDistEdgCor);
 
-				for (goal = Math.max(distEdgCen, distEdgCor); goal < best - ss.move_count; ++goal) {
-					if (treeSearch (cube, goal, 0, 12, distEdgCen, distEdgCor)) {
-						best = ss.move_count + goal;
-						break;
-					}
+			if( cubeDist + ss.move_count > StageController.currentBest ) continue;
+
+			foundSol = false;
+			for (goal = cubeDist; goal < StageController.currentBest - ss.move_count; ++goal) {
+				if( treeSearch (cube, goal, 0, 12, cubeDistEdgCen, cubeDistEdgCor )){
+					StageController.updateBest( ss.move_count + goal );
+					System.out.print ("Stage 1+2+3+4");
+					print_move_list( ss.move_count, ss.move_list);
+					System.out.print ("Stage 5");
+					print_move_list( goal, move_list);
+					System.out.println( "" );
+					break;
 				}
 			}
+
+			if( goal + ss.move_count > StageController.goalStage12 ) continue;
+
+			/* Finished ! Get the solution */
+
+			StageController.nextStage();
+			treeSearch (cube, goal, 0, 12, cubeDistEdgCen, cubeDistEdgCor);
+
 		}
 
 		pushStopSignal();
@@ -143,8 +156,11 @@ public final class Stage5Solver extends StageSolver{
 			if (! cube1.is_solved ()) {
 				return false;
 			}
-			pushState();
 			Statistics.addLeaf(5, goal);
+			if( StageController.currentStage == 56 ) {
+				pushState();
+				return true;
+			}
 			return true; // true: take the first solution, false: take all solutions.
 		}
 		for (mov_idx = 0; mov_idx < N_STAGE5_MOVES; ++mov_idx) {

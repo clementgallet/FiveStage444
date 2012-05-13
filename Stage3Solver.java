@@ -7,7 +7,7 @@ import static fivestage444.Constants.*;
 
 public final class Stage3Solver extends StageSolver{
 
-	private static int stage3_stm_next_ms[] = 	{ SL_MS_U,SL_MS_U,SL_MS_U,SL_MS_u,SL_MS_D,SL_MS_D,SL_MS_D,SL_MS_d,SL_MS_L,SL_MS_l,SL_MS_R,SL_MS_r,SL_MS_F,SL_MS_f,SL_MS_f,SL_MS_f,SL_MS_B,SL_MS_b,SL_MS_b,SL_MS_b };
+	private static int stage3_stm_next_ms[] = { SL_MS_U,SL_MS_U,SL_MS_U,SL_MS_u,SL_MS_D,SL_MS_D,SL_MS_D,SL_MS_d,SL_MS_L,SL_MS_l,SL_MS_R,SL_MS_r,SL_MS_F,SL_MS_f,SL_MS_f,SL_MS_f,SL_MS_B,SL_MS_b,SL_MS_b,SL_MS_b };
 
 	private static int stage3_slice_moves_to_try [] = {
 	0xFFFFF,
@@ -37,14 +37,37 @@ public final class Stage3Solver extends StageSolver{
 	public void run (){
 		while(pullState()) {
 
+			if( StageController.currentStage != 23 ) continue;
+
 			int cubeDistCen = getDistanceCen();
 			int cubeDistEdg = getDistanceEdg();
+			int cubeDist = Math.max(cubeDistCen, cubeDistEdg);
+
+			if( cubeDist + ss.move_count > StageController.currentBest ) continue;
+
 			foundSol = false;
-			for (goal = Math.max(cubeDistCen, cubeDistEdg); goal < 30; ++goal) {
-				treeSearch (cube, goal, 0, 0, cubeDistCen, cubeDistEdg);
-				if (foundSol){
+			for (goal = cubeDist; goal < StageController.currentBest - ss.move_count; ++goal) {
+				if( treeSearch (cube, goal, 0, 0, cubeDistCen, cubeDistEdg )){
+					StageController.updateBest( ss.move_count + goal );
+					System.out.print ("Stage 1+2");
+					print_move_list( ss.move_count, ss.move_list);
+					System.out.print ("Stage 3");
+					print_move_list( goal, move_list);
+					System.out.println( "" );
 					break;
 				}
+			}
+
+			if( goal + ss.move_count > StageController.goalStage123 ) continue;
+
+			/* Go to stage 3-4 */
+
+			StageController.nextStage();
+			cubeDist = goal;
+
+			for (goal = cubeDist; goal < cubeDist + 5; ++goal) {
+				treeSearch (cube, goal, 0, 0, cubeDistCen, cubeDistEdg);
+				if( StageController.currentStage != 34 ) break;
 			}
 		}
 
@@ -128,8 +151,11 @@ public final class Stage3Solver extends StageSolver{
 			if (! cube1.is_solved ()) {
 				return false;
 			}
-			pushState();
 			Statistics.addLeaf(3, goal);
+			if( StageController.currentStage == 34 ) {
+				pushState();
+				return false;
+			}
 			return true; // true: take the first solution, false: take all solutions
 		}
 		for (mov_idx = 0; mov_idx < N_STAGE3_SLICE_MOVES; ++mov_idx) {

@@ -35,37 +35,109 @@ public final class Stage4Solver extends StageSolver{
 
 	public void run (){
 		while (pullState()) {
-			solve (cube, 0, 0, cube.get_dist());
+
+			if( StageController.currentStage != 34 ) continue;
+
+			/* Stage 3-4 */
+
+			int cubeDist = getDistance();
+
+			if( cubeDist + ss.move_count > StageController.currentBest ) continue;
+
+			foundSol = false;
+			for (goal = cubeDist; goal < StageController.currentBest - ss.move_count; ++goal) {
+				if( treeSearch (cube, goal, 0, 0, cubeDist)){
+					StageController.updateBest( ss.move_count + goal );
+					System.out.print ("Stage 1+2+3");
+					print_move_list( ss.move_count, ss.move_list);
+					System.out.print ("Stage 4");
+					print_move_list( goal, move_list);
+					System.out.println( "" );
+					break;
+				}
+			}
+
+			if( goal + ss.move_count > StageController.goalStage1234 ) continue;
+
+			/* Go to stage 4-5 */
+
+			StageController.nextStage();
+			cubeDist = goal;
+
+			for (goal = cubeDist; goal < cubeDist + 5; ++goal) {
+				treeSearch (cube, goal, 0, 0, cubeDist);
+				if ( StageController.currentStage != 45 ) break;
+			}
 		}
 
 		pushStopSignal();
 		closePipes();
 	}
 
-	public boolean solve (CubeStage4 cube1, int moves_done, int move_state, int dist){
-		//Statistics.addNode(4, depth);
+	public int getDistance (){
+		CubeStage4 cube1 = new CubeStage4();
 		CubeStage4 cube2 = new CubeStage4();
-		int mov_idx, j, dist2;
-		int next_ms = 0;
-		if (dist == 0) {
-			if (cube1.is_solved ()) {
-				goal = moves_done;
-				pushState();
-				Statistics.addLeaf(4, goal);
-				return true; // true: take the first solution, false: take all solutions.
+		int mov_idx, j, dist1, dist2;
+		int nDist = 0;
+
+		cube1.m_sym_edge = cube.m_sym_edge;
+		cube1.m_corner = cube.m_corner;
+		cube1.m_centerUD = cube.m_centerUD; // TODO: use a copy method
+		dist1 = cube1.get_dist();
+
+		while( ! cube1.is_solved ()) {
+
+			boolean noMoves = true;
+			for (mov_idx = 0; mov_idx < N_STAGE4_SLICE_MOVES; ++mov_idx) {
+				cube2.m_sym_edge = cube1.m_sym_edge;
+				cube2.m_corner = cube1.m_corner;
+				cube2.m_centerUD = cube1.m_centerUD; // TODO: use a copy method
+				cube2.do_move (mov_idx);
+				dist2 = cube2.get_dist();
+				if (((dist2+1) % 3) != dist1) continue;
+				cube1.m_sym_edge = cube2.m_sym_edge;
+				cube1.m_corner = cube2.m_corner;
+				cube1.m_centerUD = cube2.m_centerUD; // TODO: use a copy method
+				nDist++;
+				dist1 = dist2;
+				noMoves = false;
+				break;
+			}
+			if( noMoves){
+				System.out.println("Could not find a move that lowers the distance !!");
+				break;
 			}
 		}
+		return nDist;
+	}
+
+	public boolean treeSearch (CubeStage4 cube1, int depth, int moves_done, int move_state, int dist){
+		//Statistics.addNode(4, depth);
+		CubeStage4 cube2 = new CubeStage4();
+		int mov_idx, j;
+		int next_ms = 0;
+		if (depth == 0) {
+			if (! cube1.is_solved ()) {
+				return false;
+			}
+			Statistics.addLeaf(4, goal);
+			if( StageController.currentStage == 45 ) {
+				pushState();
+				return false; // true: take the first solution, false: take all solutions.
+			}
+			return true;
+		}
 		for (mov_idx = 0; mov_idx < N_STAGE4_SLICE_MOVES; ++mov_idx) {
-			cube2.m_sym_edge = cube1.m_sym_edge;
-			cube2.m_corner = cube1.m_corner;
-			cube2.m_centerUD = cube1.m_centerUD; // TODO: use a copy method
 			if ((stage4_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
+				cube2.m_sym_edge = cube1.m_sym_edge;
+				cube2.m_corner = cube1.m_corner;
+				cube2.m_centerUD = cube1.m_centerUD; // TODO: use a copy method
 				cube2.do_move (mov_idx);
 				next_ms = stage4_stm_next_ms[mov_idx];
-				dist2 = cube2.get_dist();
-				if (((dist2+1) % 3) != dist) continue;
+				int newDist = cube2.new_dist(dist);
+				if (newDist > depth-1) continue;
 				move_list[moves_done] = (byte)mov_idx;
-				if (solve (cube2, moves_done + 1, next_ms, dist2)) return true;
+				if (treeSearch (cube2, depth - 1, moves_done + 1, next_ms, newDist)) return true;
 			}
 		}
 		return false;
