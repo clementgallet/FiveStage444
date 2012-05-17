@@ -2,26 +2,16 @@ package fivestage444;
 
 public final class CubeStage2 {
 
-	//public short m_centerFB; //
-	public short m_centerF; //
-	public short m_centerB; //
-	public short m_edge; //edge coordinate (420)
+	public short m_centerF;
+	public short m_centerB;
+	public short m_edge;
 
 	public static PruningStage2EdgCen prune_table_edgcen;
 
-	private int get_idx(boolean front){
-		short cen;
-		if (front) cen = m_centerF;
-		else cen = m_centerB;
-		return Constants.N_STAGE2_EDGE_CONFIGS * (cen >> 4 ) + Tables.move_table_edge_conjSTAGE2[m_edge][cen & 0xF];
-	}
-
-	public int get_dist_edgcen (boolean front){
-		return prune_table_edgcen.get_dist_packed(get_idx(front));
-	}
-
-	public int new_dist_edgcen (boolean front, int dist){
-		return prune_table_edgcen.new_dist(get_idx(front), dist);
+	public void copyTo (CubeStage2 cube1){
+		cube1.m_edge = m_edge;
+		cube1.m_centerF = m_centerF;
+		cube1.m_centerB = m_centerB;
 	}
 
 	public boolean edges_center_solved (boolean front){
@@ -76,6 +66,8 @@ public final class CubeStage2 {
 		m_edge = Tables.move_table_edgeSTAGE2[m_edge][move_code];
 	}
 
+	/* Convert functions */
+
 	public void convert_centers_to_std_cube (int u, CubeState result_cube){
 		int i;
 		int cbmb = Tables.cloc_to_bm[u];
@@ -106,5 +98,58 @@ public final class CubeStage2 {
 				result_cube.m_edge[16 + i] = f++;
 			}
 		}
+	}
+
+	/* Pruning functions */
+
+	private int get_idx(boolean front){
+		short cen;
+		if (front) cen = m_centerF;
+		else cen = m_centerB;
+		return Constants.N_STAGE2_EDGE_CONFIGS * (cen >> 4 ) + Tables.move_table_edge_conjSTAGE2[m_edge][cen & 0xF];
+	}
+
+	public int get_dist_edgcen (boolean front){
+		return prune_table_edgcen.get_dist_packed(get_idx(front));
+	}
+
+	public int new_dist_edgcen (boolean front, int dist){
+		return prune_table_edgcen.new_dist(get_idx(front), dist);
+	}
+
+	public int getDistance (boolean front){
+		return Math.max(getDistanceEdgCen(false), getDistanceEdgCen(true));
+	}
+
+	public int getDistanceEdgCen (boolean front){
+		CubeStage2 cube1 = new CubeStage2();
+		CubeStage2 cube2 = new CubeStage2();
+		int mov_idx, mc, j, dist1, dist2;
+		int nDist = 0;
+
+		copyTo (cube1);
+		dist1 = cube1.get_dist_edgcen(front);
+
+		while (! cube1.edges_center_solved(front)) {
+
+			boolean noMoves=true;
+			for (mov_idx = 0; mov_idx < Constants.N_STAGE2_SLICE_MOVES; ++mov_idx) {
+				cube1.copyTo(cube2);
+				cube2.do_move (mov_idx);
+				dist2 = cube2.get_dist_edgcen(front);
+
+				if (((dist2+1) % 3) != dist1) continue;
+				cube2.copyTo(cube1);
+				nDist++;
+				dist1 = dist2;
+				noMoves=false;
+				break;
+			}
+			if( noMoves){
+				System.out.println("Could not find a move that lowers the distance !!");
+				break;
+			}
+		}
+		return nDist;
 	}
 }

@@ -111,18 +111,26 @@ public final class FiveStage444 {
 
 
 	private static String default_datafile_path = "";
-	public static Thread getS;
+	static byte[] move_list_stage1 = new byte[50];
+	static byte[] move_list_stage2 = new byte[50];
+	static byte[] move_list_stage3 = new byte[50];
+	static byte[] move_list_stage4 = new byte[50];
+	static byte[] move_list_stage5 = new byte[50];
+	static int length1, length2, length3, length4, length5;
+	static int rotate, rotate2;
+
+	static CubeState c = new CubeState();
+	static CubeState c1 = new CubeState();
+	static CubeState c2 = new CubeState();
+	static CubeState c3 = new CubeState();
+	static CubeState c4 = new CubeState();
+	static CubeState c5 = new CubeState();
 
 	public static void main(String[] args){
 
-		int random_count = 2;
+		int random_count = 5;
 
-		StageController.init(random_count);
-
-		Symmetry.initSymTables();
-		Symmetry.initInvSymIdx();
-		Symmetry.initSymIdxMultiply();
-		Symmetry.initMoveConjugate();
+		Symmetry.init();
 
 		new Tables().init_all ();
 
@@ -154,174 +162,53 @@ public final class FiveStage444 {
 			CubeStage5.prune_table_edgcor = new PruningStage5EdgCor();
 			CubeStage5.prune_table_edgcor.analyse();
 		}
-		try{
-			initPipes();
-		} catch(java.io.IOException e) { e.printStackTrace(); }
-
-	/*
-	byte switch_list[][] = {
-		{ 17, 19, 20, 22 },
-		{ 17, 19, 21, 23 },
-		{ 17, 18, 21, 22 },
-		{ 17, 18, 20, 23 },
-		{ 18, 19, 22, 23 }
-	};
-		int[] solved_table = new int[24];
-		int i;
-		CubeStage2 stage2_solved = new CubeStage2();
-		CubeStage2 stage2_solved2 = new CubeStage2();
-		CubeState cs1 = new CubeState();
-			cs1.init ();
-			cs1.convert_to_stage2 (stage2_solved);
-			System.out.println("Solved: edge="+stage2_solved.m_edge+"-cenF="+(stage2_solved.m_centerF >> 4)+"-sym:"+(stage2_solved.m_centerF & 0xF)+"-symedge="+Tables.move_table_edge_conjSTAGE2[stage2_solved.m_edge][stage2_solved.m_centerF & 0xF]);
-
-			stage2_solved2.m_centerF = stage2_solved.m_centerF;
-			stage2_solved2.m_edge = stage2_solved.m_edge;
-			stage2_solved2.do_whole_cube_move (1);
-			System.out.println("Solved: edge="+stage2_solved2.m_edge+"-cenF="+(stage2_solved2.m_centerF >> 4)+"-sym:"+(stage2_solved2.m_centerF & 0xF)+"-symedge="+Tables.move_table_edge_conjSTAGE2[stage2_solved2.m_edge][stage2_solved2.m_centerF & 0xF]);
-
-			cs1.init ();
-			cs1.invert_fbcen ();
-			cs1.convert_to_stage2 (stage2_solved2);
-			System.out.println("Solved: edge="+stage2_solved2.m_edge+"-cenF="+(stage2_solved2.m_centerF >> 4)+"-sym:"+(stage2_solved2.m_centerF & 0xF)+"-symedge="+Tables.move_table_edge_conjSTAGE2[stage2_solved2.m_edge][stage2_solved2.m_centerF & 0xF]);
-
-			stage2_solved2.do_whole_cube_move (1);
-			System.out.println("Solved: edge="+stage2_solved2.m_edge+"-cenF="+(stage2_solved2.m_centerF >> 4)+"-sym:"+(stage2_solved2.m_centerF & 0xF)+"-symedge="+Tables.move_table_edge_conjSTAGE2[stage2_solved2.m_edge][stage2_solved2.m_centerF & 0xF]);
-
-			for (i = 0; i < 5; ++i) {
-				int j;
-				cs1.init ();
-				for (j = 0; j < 4; ++j) {
-					cs1.m_cen[switch_list[i][j]] ^= 1;
-				}
-				cs1.convert_to_stage2 (stage2_solved2);
-			System.out.println("Solved: edge="+stage2_solved2.m_edge+"-cenF="+(stage2_solved2.m_centerF >> 4)+"-sym:"+(stage2_solved2.m_centerF & 0xF)+"-symedge="+Tables.move_table_edge_conjSTAGE2[stage2_solved2.m_edge][stage2_solved2.m_centerF & 0xF]);
-
-				stage2_solved2.do_whole_cube_move (1);
-			System.out.println("Solved: edge="+stage2_solved2.m_edge+"-cenF="+(stage2_solved2.m_centerF >> 4)+"-sym:"+(stage2_solved2.m_centerF & 0xF)+"-symedge="+Tables.move_table_edge_conjSTAGE2[stage2_solved2.m_edge][stage2_solved2.m_centerF & 0xF]);
-
-				cs1.invert_fbcen ();
-				cs1.convert_to_stage2 (stage2_solved2);
-			System.out.println("Solved: edge="+stage2_solved2.m_edge+"-cenF="+(stage2_solved2.m_centerF >> 4)+"-sym:"+(stage2_solved2.m_centerF & 0xF)+"-symedge="+Tables.move_table_edge_conjSTAGE2[stage2_solved2.m_edge][stage2_solved2.m_centerF & 0xF]);
-
-				stage2_solved2.do_whole_cube_move (1);
-			System.out.println("Solved: edge="+stage2_solved2.m_edge+"-cenF="+(stage2_solved2.m_centerF >> 4)+"-sym:"+(stage2_solved2.m_centerF & 0xF)+"-symedge="+Tables.move_table_edge_conjSTAGE2[stage2_solved2.m_edge][stage2_solved2.m_centerF & 0xF]);
-			}
-*/
-		/* Get solutions */
-		getS = new Thread(new Runnable() {
-			public void run() {
-				getSolutions();
-			}
-		});
-
-		/* Start getting the solutions */
-		getS.start();
 
 		do_random_cubes (random_count);
-
-		/* Tells the threads that there are no more scrambles */
-		stopThreads();
-
-		/* Wait for the end of every thread */
-		try{
-			getS.join();
-		} catch (java.lang.InterruptedException ie) { ie.getMessage(); }
 
 		/* Print statistics */
 		Statistics.print();
 
-		/* Closing the last pipes */
-		try{
-			pipeStage01out.close();
-			pipeStage50in.close();
-		}
-		catch (java.io.IOException ioe) { ioe.getMessage(); }
 	}
 
 	public static void do_random_cubes (int count) {
-	int i, i1;
-	//Random r = new Random();
-	Random r = new Random(42);
-	byte[] random_list = new byte[160];	//must be >= scramble_len
-	CubeState solveme = new CubeState();
-	int scramble_len = 100;
+		int i, i1;
+		//Random r = new Random();
+		Random r = new Random(42);
+		byte[] random_list = new byte[160];	//must be >= scramble_len
+		CubeState solveme = new CubeState();
+		int scramble_len = 100;
 
-	for (i = 1; i <= count; ++i) {
-		int j;
-		solveme.init ();
-		for (j = 0; j < scramble_len; ++j) {
-			random_list[j] = (byte)r.nextInt(36);
+		for (i = 1; i <= count; ++i) {
+			int j;
+			solveme.init ();
+			for (j = 0; j < scramble_len; ++j) {
+				random_list[j] = (byte)r.nextInt(36);
+			}
+			solveme.scramble(scramble_len, random_list);
+			//System.out.println ("scramble: ");
+			//print_move_list (scramble_len, random_list);
+			solveit4x4x4IDA (i, solveme);
 		}
-		solveme.scramble(scramble_len, random_list);
-		//System.out.println ("scramble: ");
-		//print_move_list (scramble_len, random_list);
-		solveit4x4x4IDA (i, solveme);
-	}
-}
-
-	public static PipedOutputStream pipeStage01out = null;
-	public static PipedInputStream pipeStage01in = null;
-	public static PipedOutputStream pipeStage12out = null;
-	public static PipedInputStream pipeStage12in = null;
-	public static PipedOutputStream pipeStage23out = null;
-	public static PipedInputStream pipeStage23in = null;
-	public static PipedOutputStream pipeStage34out = null;
-	public static PipedInputStream pipeStage34in = null;
-	public static PipedOutputStream pipeStage45out = null;
-	public static PipedInputStream pipeStage45in = null;
-	public static PipedOutputStream pipeStage50out = null;
-	public static PipedInputStream pipeStage50in = null;
-
-	public static Stage1Solver stage1Solver;
-	public static Stage2Solver stage2Solver;
-	public static Stage3Solver stage3Solver;
-	public static Stage4Solver stage4Solver;
-	public static Stage5Solver stage5Solver;
-
-	public static void initPipes () throws java.io.IOException {
-
-		System.out.println("Init pipes");
-
-		int PIPE_SIZE = 4096;
-
-		pipeStage01out = new PipedOutputStream ();
-		pipeStage01in = new PipedInputStream (pipeStage01out, PIPE_SIZE);
-		pipeStage12out = new PipedOutputStream ();
-		pipeStage12in = new PipedInputStream (pipeStage12out, PIPE_SIZE);
-		pipeStage23out = new PipedOutputStream ();
-		pipeStage23in = new PipedInputStream (pipeStage23out, PIPE_SIZE);
-		pipeStage34out = new PipedOutputStream ();
-		pipeStage34in = new PipedInputStream (pipeStage34out, PIPE_SIZE);
-		pipeStage45out = new PipedOutputStream ();
-		pipeStage45in = new PipedInputStream (pipeStage45out, PIPE_SIZE);
-		pipeStage50out = new PipedOutputStream ();
-		pipeStage50in = new PipedInputStream (pipeStage50out, PIPE_SIZE);
-
-		System.out.println("Share pipes");
-
-		stage1Solver = new Stage1Solver(pipeStage01in, pipeStage12out);
-		stage2Solver = new Stage2Solver(pipeStage12in, pipeStage23out);
-		stage3Solver = new Stage3Solver(pipeStage23in, pipeStage34out);
-		stage4Solver = new Stage4Solver(pipeStage34in, pipeStage45out);
-		stage5Solver = new Stage5Solver(pipeStage45in, pipeStage50out);
-		//stage5Solver.setPriority(Thread.NORM_PRIORITY+1);
-
-		stage1Solver.start();
-		stage2Solver.start();
-		stage3Solver.start();
-		stage4Solver.start();
-		stage5Solver.start();
 	}
 
 	public static void solveit4x4x4IDA (int id, CubeState cube) {
 
-		ObjectOutputStream myPipeOut = null;
-		try{
-			myPipeOut = new ObjectOutputStream (pipeStage01out);
-			myPipeOut.writeObject(new SolverState(id, cube, null, 0, 0));
+		cube.copyTo (c);
+		CubeStage1 s1 = new CubeStage1();
+		/*
+		CubeStage1 s2 = new CubeStage1();
+		CubeStage1 s3 = new CubeStage1();
+		*/
+		c.convert_to_stage1 (s1);
+
+		int d1 = s1.getDistance();
+
+		for (length1 = d1; length1 < 100; ++length1) {
+			if( search_stage1 (s1, length1, 0, N_BASIC_MOVES, d1 ))
+				break;
 		}
-		catch (java.io.IOException ioe) { ioe.getMessage(); }
+
+
 		/*
 		cube.do_move (Lf3);
 		cube.do_move (Ls3);
@@ -332,12 +219,7 @@ public final class FiveStage444 {
 		cube.do_move (Ds);
 		cube.do_move (Df);
 
-		myPipeOut = null;
-		try{
-			myPipeOut = new ObjectOutputStream (pipeStage01out);
-			myPipeOut.writeObject(new SolverState(id, cube, null, 0, 0));
-		}
-		catch (java.io.IOException ioe) { ioe.getMessage(); }
+		cube.convert_to_stage1 (s2);		
 
 		cube.do_move (Lf3);
 		cube.do_move (Ls3);
@@ -348,58 +230,312 @@ public final class FiveStage444 {
 		cube.do_move (Ds);
 		cube.do_move (Df);
 
-		myPipeOut = null;
-		try{
-			myPipeOut = new ObjectOutputStream (pipeStage01out);
-			myPipeOut.writeObject(new SolverState(id, cube, null, 0, 0));
-		}
-		catch (java.io.IOException ioe) { ioe.getMessage(); }*/
+		cube.convert_to_stage1 (s3);
+		*/
 	}
 
-	public static void getSolutions () {
-
-		ObjectInputStream myPipeIn = null;
-		SolverState solution;
-		int old_id = 0;
-		int old_move_count = 0;
-		byte[] old_move_list = new byte[120];
-		do {
-			solution = null;
-			while (solution == null) {
-				try{
-					Thread.currentThread().sleep(10);
-					myPipeIn = new ObjectInputStream(pipeStage50in);
-					solution = (SolverState) myPipeIn.readObject();
-				}
-				catch(java.io.IOException e) {
-					e.printStackTrace();
-				}
-				catch(java.lang.ClassNotFoundException e) {
-					e.printStackTrace();
-				}
-				catch(java.lang.InterruptedException e) {
-					e.printStackTrace();
-				}
+	public static boolean search_stage1 (CubeStage1 cube1, int depth, int moves_done, int move_state, int dist){
+		Statistics.addNode(1, depth);
+		CubeStage1 cube2 = new CubeStage1();
+		int mov_idx, j;
+		if (depth == 0){
+			if (! cube1.is_solved ()) {
+				return false;
 			}
-			if(( old_id != 0 ) && ( old_id != solution.id )){
-				//print_move_list (old_move_count, old_move_list);
-				Statistics.addLeaf(0, old_move_count);
-			}
-			print_move_list (solution.move_count, solution.move_list);
-			old_id = solution.id;
-			old_move_count = solution.move_count;
-			System.arraycopy( solution.move_list, 0, old_move_list, 0, old_move_count);
+			Statistics.addLeaf(1, length1);
+			return init_stage2();
 		}
-		while ( solution.id != -1 );
+		for (mov_idx = 0; mov_idx < N_BASIC_MOVES; ++mov_idx) {
+			if (((stage1_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) || ( depth == 1 )) {
+				cube1.copyTo(cube2);
+				cube2.do_move (mov_idx);
+				int newDist = cube2.new_dist(dist);
+				if (newDist > depth-1) continue;
+				move_list_stage1[moves_done] = (byte)mov_idx;
+				if (search_stage1 (cube2, depth - 1, moves_done + 1, mov_idx, newDist)) return true;
+			}
+		}
+		return false;
 	}
 
-	public static void stopThreads () {
-		CubeState cc = new CubeState();
-		ObjectOutputStream myPipeOut = null;
-		try{
-			myPipeOut = new ObjectOutputStream (pipeStage01out);
-			myPipeOut.writeObject(new SolverState(-1, null, null, 0, 0)); // id = -1 -> stop
+	public static boolean init_stage2 (){
+
+		System.out.print ("Stage 1: ");
+		print_move_list (length1, move_list_stage1);
+
+		int i;
+		c.copyTo(c1);
+		c1.scramble( length1, move_list_stage1 );
+
+		int rotate = c1.m_cor[0] >> 3;
+		switch (rotate) {
+		case 0:
+			break;	//no whole cube rotation
+		case 1:
+			c1.do_move (Lf3);
+			c1.do_move (Ls3);
+			c1.do_move (Rs);
+			c1.do_move (Rf);
+			c1.do_move (Uf3);
+			c1.do_move (Us3);
+			c1.do_move (Ds);
+			c1.do_move (Df);
+			break;
+		case 2:
+			c1.do_move (Ff);
+			c1.do_move (Fs);
+			c1.do_move (Bs3);
+			c1.do_move (Bf3);
+			c1.do_move (Uf);
+			c1.do_move (Us);
+			c1.do_move (Ds3);
+			c1.do_move (Df3);
+			break;
+		default:
+			System.out.println ("Invalid cube rotation state.");
 		}
-		catch (java.io.IOException ioe) { ioe.getMessage(); }
+
+		CubeStage2 s1 = new CubeStage2();
+		c1.convert_to_stage2 (s1);
+
+		int cubeDistCenF = s1.getDistanceEdgCen(true);
+		int cubeDistCenB = s1.getDistanceEdgCen(false);
+		int d2 = Math.max(cubeDistCenF, cubeDistCenB);
+
+		for (length2 = d2; length2 < 100; ++length2) {
+			if( search_stage2 (s1, length2, 0, 0, cubeDistCenF, cubeDistCenB ))
+				return false;
+		}
+		return false;
+	}
+
+	public static boolean search_stage2 (CubeStage2 cube1, int depth, int moves_done, int move_state, int distCenF, int distCenB){
+		Statistics.addNode(2, depth);
+		CubeStage2 cube2 = new CubeStage2();
+		int mov_idx, mc, j;
+		int next_ms = 0;
+		if (depth == 0) {
+			if (! cube1.is_solved ()) {
+				return false;
+			}
+			Statistics.addLeaf(2, length2);
+			return init_stage3();
+		}
+		for (mov_idx = 0; mov_idx < N_STAGE2_SLICE_MOVES; ++mov_idx) {
+			if ((stage2_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
+				cube1.copyTo (cube2);
+				cube2.do_move (mov_idx);
+				next_ms = stage2_stm_next_ms[mov_idx];
+
+				int newDistCenF = cube2.new_dist_edgcen(true, distCenF);
+				int newDistCenB = cube2.new_dist_edgcen(false, distCenB);
+				if (newDistCenF > depth-1) continue;
+				if (newDistCenB > depth-1) continue;
+				move_list_stage2[moves_done] = (byte)mov_idx;
+				if (search_stage2 (cube2, depth - 1, moves_done + 1, next_ms, newDistCenF, newDistCenB)) return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean init_stage3 (){
+		System.out.print ("Stage 2: ");
+		print_move_list (length2, move_list_stage2);
+
+		int i;
+		for (i = 0; i < length2; ++i) {
+			move_list_stage2[i] = stage2_slice_moves[move_list_stage2[i]];
+		}
+
+		c1.copyTo(c2);
+		c2.scramble( length2, move_list_stage2 );
+
+		for (i = 0; i < length2; ++i) {
+			move_list_stage2[i] = xlate_r6[move_list_stage2[i]][rotate];
+		}
+
+		rotate2 = rotate;
+
+		if (c2.m_cen[16] < 4) {
+			c2.do_move (Uf);
+			c2.do_move (Us);
+			c2.do_move (Ds3);
+			c2.do_move (Df3);
+			rotate2 += 3;
+		}
+
+		CubeStage3 s1 = new CubeStage3();
+		c2.convert_to_stage3 (s1);
+
+		int cubeDistCen = s1.getDistanceCen();
+		int cubeDistEdg = s1.getDistanceEdg();
+		int d3 = Math.max(cubeDistCen, cubeDistEdg);
+
+		for (length3 = d3; length3 < 100; ++length3) {
+			if( search_stage3 (s1, length3, 0, 0, cubeDistCen, cubeDistEdg ))
+				return false;
+		}
+		return false;
+	}
+
+	public static boolean search_stage3 (CubeStage3 cube1, int depth, int moves_done, int move_state, int distCen, int distEdg){
+		Statistics.addNode(3, depth);
+		CubeStage3 cube2 = new CubeStage3();
+		int mov_idx, j;
+		int next_ms = 0;
+		if (depth == 0) {
+			if (! cube1.is_solved ()) {
+				return false;
+			}
+			Statistics.addLeaf(3, length3);
+			return init_stage4();
+		}
+		for (mov_idx = 0; mov_idx < N_STAGE3_SLICE_MOVES; ++mov_idx) {
+			if ((stage3_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
+				cube1.copyTo (cube2);
+				cube2.do_move (mov_idx);
+				next_ms = stage3_stm_next_ms[mov_idx];
+				int newDistCen = cube2.new_dist_cen(distCen);
+				int newDistEdg = cube2.new_dist_edg(distEdg);
+				if (newDistCen > depth-1) continue;
+				if (newDistEdg > depth-1) continue;
+				move_list_stage3[moves_done] = (byte)mov_idx;
+				if (search_stage3 (cube2, depth - 1, moves_done + 1, next_ms, newDistCen, newDistEdg)) return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean init_stage4 (){
+		System.out.print ("Stage 3: ");
+		print_move_list (length3, move_list_stage3);
+
+		int i;
+		for (i = 0; i < length3; ++i) {
+			move_list_stage3[i] = stage3_slice_moves[move_list_stage3[i]];
+		}
+
+		c2.copyTo(c3);
+		c3.scramble( length3, move_list_stage3 );
+
+		for (i = 0; i < length3; ++i) {
+			move_list_stage3[i] = xlate_r6[move_list_stage3[i]][rotate2];
+		}
+
+		CubeStage4 s1 = new CubeStage4();
+		c3.convert_to_stage4 (s1);
+
+		System.out.println("m_sym_edge"+s1.m_sym_edge);
+		System.out.println("m_centerUD"+s1.m_centerUD);
+		System.out.println("m_corner"+s1.m_corner);
+
+		int d4 = s1.getDistance();
+
+		for (length4 = d4; length4 < 100; ++length4) {
+			if( search_stage4 (s1, length4, 0, 0, d4 ))
+				return false;
+		}
+		return false;
+	}
+
+	public static boolean search_stage4 (CubeStage4 cube1, int depth, int moves_done, int move_state, int dist){
+		Statistics.addNode(4, depth);
+		CubeStage4 cube2 = new CubeStage4();
+		int mov_idx, j;
+		int next_ms = 0;
+		if (depth == 0) {
+			if (! cube1.is_solved ()) {
+				return false;
+			}
+			Statistics.addLeaf(4, length4);
+			init_stage5();
+		}
+		for (mov_idx = 0; mov_idx < N_STAGE4_SLICE_MOVES; ++mov_idx) {
+			if ((stage4_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
+				cube1.copyTo (cube2);
+				cube2.do_move (mov_idx);
+				next_ms = stage4_stm_next_ms[mov_idx];
+				int newDist = cube2.new_dist(dist);
+				if (newDist > depth-1) continue;
+				move_list_stage4[moves_done] = (byte)mov_idx;
+				if (search_stage4 (cube2, depth - 1, moves_done + 1, next_ms, newDist)) return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean init_stage5 (){
+		int i;
+
+		for (i = 0; i < length4; ++i) {
+			move_list_stage4[i] = stage4_slice_moves[move_list_stage4[i]];
+		}
+
+		c3.copyTo(c4);
+		c4.scramble( length4, move_list_stage4 );
+
+		for (i = 0; i < length4; ++i) {
+			move_list_stage4[i] = xlate_r6[move_list_stage4[i]][rotate2];
+		}
+
+		CubeStage5 s1 = new CubeStage5();
+		c4.convert_to_stage5 (s1);
+
+		int cubeDistEdgCen = s1.getDistanceEdgCen();
+		int cubeDistEdgCor = s1.getDistanceEdgCor();
+		int d5 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
+
+		length5 = -1;
+		for (i = d5; i < 100; ++i) {
+			if( search_stage5 (s1, length5, 0, 12, cubeDistEdgCen, cubeDistEdgCor )){
+				length5 = i;
+				return false;
+			}
+		}
+
+		if (length5 != -1){
+			/* Print solution */
+			System.out.print ("Stage 1: ");
+			print_move_list (length1, move_list_stage1);
+			System.out.print ("Stage 2: ");
+			print_move_list (length2, move_list_stage2);
+			System.out.print ("Stage 3: ");
+			print_move_list (length3, move_list_stage3);
+			System.out.print ("Stage 4: ");
+			print_move_list (length4, move_list_stage4);
+			System.out.print ("Stage 5: ");
+			print_move_list (length5, move_list_stage5);
+
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean search_stage5 (CubeStage5 cube1, int depth, int moves_done, int move_state, int distEdgCen, int distEdgCor){
+		Statistics.addNode(5, depth);
+		CubeStage5 cube2 = new CubeStage5();
+		int mov_idx, j;
+		int next_ms = 0;
+		if (depth == 0) {
+			if (! cube1.is_solved ()) {
+				return false;
+			}
+			Statistics.addLeaf(5, length5);
+			return true;
+		}
+		for (mov_idx = 0; mov_idx < N_STAGE5_MOVES; ++mov_idx) {
+			cube1.copyTo (cube2);
+			if ((sqs_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
+				cube2.do_move (mov_idx);
+				next_ms = sqs_stm_next_ms[mov_idx];
+				int newDistEdgCen = cube2.new_dist_edgcen(distEdgCen);
+				int newDistEdgCor = cube2.new_dist_edgcor(distEdgCor);
+				if (newDistEdgCen > depth-1) continue;
+				if (newDistEdgCor > depth-1) continue;
+				move_list_stage5[moves_done] = (byte)mov_idx;
+				if (search_stage5 (cube2, depth - 1, moves_done + 1, next_ms, newDistEdgCen, newDistEdgCor)) return true;
+			}
+		}
+		return false;
 	}
 }

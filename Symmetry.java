@@ -9,6 +9,13 @@ public final class Symmetry {
 	static byte[][] symCornersOrient = new byte[N_SYM_ALL][8];
 	static byte[][] symCenters = new byte[N_SYM_ALL][24];
 
+	static void init (){
+		initSymTables();
+		initInvSymIdx();
+		initSymIdxMultiply();
+		initMoveConjugate();
+	}
+
 	static void initSymTables (){
 
 		System.out.println( "Starting initSymTables..." );

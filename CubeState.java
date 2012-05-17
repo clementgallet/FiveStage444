@@ -4,11 +4,17 @@ import static fivestage444.Constants.*;
 import java.util.Arrays;
 
 //CubeState structure: a cubie-level representation of the cube.
-public final class CubeState implements java.io.Serializable{
+public final class CubeState{
 
 	public byte[] m_edge = new byte[24]; //what's at each edge position
 	public byte[] m_cor = new byte[8]; //what's at each corner position (3*cubie + orientation)
 	public byte[] m_cen = new byte[24]; //what's at each center position
+
+	CubeState(){}
+
+	CubeState(CubeState c){
+		c.copyTo(this);
+	}
 
 	private static int rotateCOR_ft[] = {
 		 0,  3,  2,  1,  0,  3,	//U face

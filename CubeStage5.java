@@ -10,29 +10,10 @@ public final class CubeStage5 {
 	public static PruningStage5EdgCor prune_table_edgcor;
 	public static PruningStage5 prune_table;
 
-	public int get_dist_edgcen (){
-		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48];
-		return prune_table_edgcen.get_dist_packed(idx);
-	}
-
-	public int new_dist_edgcen (int dist){
-		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48];
-		return prune_table_edgcen.new_dist(idx, dist);
-	}
-
-	public int get_dist_edgcor (){
-		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
-		return prune_table_edgcor.get_dist_packed(idx);
-	}
-
-	public int new_dist_edgcor (int dist){
-		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
-		return prune_table_edgcor.new_dist(idx, dist);
-	}
-
-	public int get_dist (){
-		long idx = (long)(( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48])* Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
-		return prune_table.get_dist_packed(idx);
+	public void copyTo (CubeStage5 cube1){
+		cube1.m_cen12x12x12 = m_cen12x12x12;
+		cube1.m_cp96 = m_cp96;
+		cube1.m_sym_ep96x96x96 = m_sym_ep96x96x96;
 	}
 
 	public void do_move (int sqs_move_code){
@@ -80,6 +61,8 @@ public final class CubeStage5 {
 			return true;
 		return false;
 	}
+
+	/* Convert functions */
 
 	public void convert_edges_to_std_cube (int edge, CubeState result_cube){
 		int i;
@@ -148,16 +131,99 @@ public final class CubeStage5 {
 		}
 	}
 
-	/*
-	public void squares_unpack_centers (int cen1, int cen2, int cen3, byte[] cen){
-		int i;
-		int x = (Tables.squares_cen_map[cen1] << 16) | (Tables.squares_cen_map[cen2] << 8) | Tables.squares_cen_map[cen3];
-		int b = 0x800000;
-		for (i = 0; i < 24; ++i) {
-			cen[i] = (byte) (2*(i/8) + ((x & b) == 0 ? 0 : 1));
-			b >>= 1;
-		}
+	/* Pruning functions */
+
+	public int get_dist_edgcen (){
+		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48];
+		return prune_table_edgcen.get_dist_packed(idx);
 	}
-	*/
+
+	public int new_dist_edgcen (int dist){
+		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48];
+		return prune_table_edgcen.new_dist(idx, dist);
+	}
+
+	public int get_dist_edgcor (){
+		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
+		return prune_table_edgcor.get_dist_packed(idx);
+	}
+
+	public int new_dist_edgcor (int dist){
+		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
+		return prune_table_edgcor.new_dist(idx, dist);
+	}
+
+	public int get_dist (){
+		long idx = (long)(( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48])* Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
+		return prune_table.get_dist_packed(idx);
+	}
+
+	public int getDistance (){
+		return Math.max (getDistanceEdgCen (), getDistanceEdgCor ());
+	}
+
+	public int getDistanceEdgCen (){
+		CubeStage5 cube1 = new CubeStage5();
+		CubeStage5 cube2 = new CubeStage5();
+		int mov_idx, mc, j, dist1, dist2;
+		int nDist = 0;
+		
+		copyTo (cube1);
+		dist1 = cube1.get_dist_edgcen();
+
+		while (! cube1.edges_centers_solved()) {
+
+			boolean noMoves=true;
+			for (mov_idx = 0; mov_idx < Constants.N_STAGE5_MOVES; ++mov_idx) {
+				cube1.copyTo (cube2);
+				cube2.do_move (mov_idx);
+				dist2 = cube2.get_dist_edgcen();
+
+				if (((dist2+1) % 3) != dist1) continue;
+				cube2.copyTo (cube1);
+				nDist++;
+				dist1 = dist2;
+				noMoves=false;
+				break;
+			}
+			if( noMoves){
+				System.out.println("Could not find a move that lowers the distance !!");
+				break;
+			}
+		}
+		return nDist;
+	}
+
+	public int getDistanceEdgCor (){
+		CubeStage5 cube1 = new CubeStage5();
+		CubeStage5 cube2 = new CubeStage5();
+		int mov_idx, mc, j, dist1, dist2;
+		int nDist = 0;
+		
+		copyTo (cube1);
+		dist1 = cube1.get_dist_edgcor();
+
+		while (! cube1.edges_corners_solved()) {
+
+			boolean noMoves=true;
+			for (mov_idx = 0; mov_idx < Constants.N_STAGE5_MOVES; ++mov_idx) {
+				cube1.copyTo (cube2);
+				cube2.do_move (mov_idx);
+				dist2 = cube2.get_dist_edgcor();
+
+				if (((dist2+1) % 3) != dist1) continue;
+				cube2.copyTo (cube1);
+				nDist++;
+				dist1 = dist2;
+				noMoves=false;
+				break;
+			}
+			if( noMoves){
+				System.out.println("Could not find a move that lowers the distance !!");
+				break;
+			}
+		}
+		return nDist;
+	}
 }
 

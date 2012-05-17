@@ -10,32 +10,10 @@ public final class CubeStage3 {
 	public static PruningStage3Edg prune_table_edg;
 	public static PruningStage3 prune_table;
 
-	public int get_dist_cen (){
-		int idx = m_sym_centerLR >> 3;
-		return prune_table_cen.get_dist_packed(idx);
-	}
-
-	public int new_dist_cen (int dist){
-		int idx = m_sym_centerLR >> 3;
-		return prune_table_cen.new_dist(idx, dist);
-	}
-
-	public int get_dist_edg (){
-		int idx = (m_edge << 1);
-		if( m_edge_odd ) idx++;
-		return prune_table_edg.get_dist_packed(idx);
-	}
-
-	public int new_dist_edg (int dist){
-		int idx = (m_edge << 1);
-		if( m_edge_odd ) idx++;
-		return prune_table_edg.new_dist(idx, dist);
-	}
-
-	public int get_dist (){
-		long idx = (((long)(m_sym_centerLR >> 3))*Constants.N_STAGE3_EDGE_CONFIGS + Tables.move_table_edge_conjSTAGE3[m_edge][m_sym_centerLR & 0x7])<<1;
-		if (m_edge_odd) idx++;
-		return prune_table.get_dist_packed(idx);
+	public void copyTo (CubeStage3 cube1){
+		cube1.m_sym_centerLR = m_sym_centerLR;
+		cube1.m_edge = m_edge;
+		cube1.m_edge_odd = m_edge_odd;
 	}
 
 	public void do_move (int move_code){
@@ -83,6 +61,8 @@ public final class CubeStage3 {
 		return false;
 	}
 
+	/* Convert functions */
+
 	public void convert_centers_to_std_cube (int center, CubeState result_cube){
 		int i;
 		int cenbm = Tables.eloc2e16bm[center/70];
@@ -124,5 +104,100 @@ public final class CubeStage3 {
 			result_cube.m_edge[i] = (byte)i;
 		}
 	}
-}
 
+	/* Pruning functions */
+
+	public int get_dist_cen (){
+		int idx = m_sym_centerLR >> 3;
+		return prune_table_cen.get_dist_packed(idx);
+	}
+
+	public int new_dist_cen (int dist){
+		int idx = m_sym_centerLR >> 3;
+		return prune_table_cen.new_dist(idx, dist);
+	}
+
+	public int get_dist_edg (){
+		int idx = (m_edge << 1);
+		if( m_edge_odd ) idx++;
+		return prune_table_edg.get_dist_packed(idx);
+	}
+
+	public int new_dist_edg (int dist){
+		int idx = (m_edge << 1);
+		if( m_edge_odd ) idx++;
+		return prune_table_edg.new_dist(idx, dist);
+	}
+
+	/*
+	public int get_dist (){
+		long idx = (((long)(m_sym_centerLR >> 3))*Constants.N_STAGE3_EDGE_CONFIGS + Tables.move_table_edge_conjSTAGE3[m_edge][m_sym_centerLR & 0x7])<<1;
+		if (m_edge_odd) idx++;
+		return prune_table.get_dist_packed(idx);
+	}
+	*/
+
+	public int getDistanceCen (){
+		CubeStage3 cube1 = new CubeStage3();
+		CubeStage3 cube2 = new CubeStage3();
+		int mov_idx, mc, j, dist1, dist2;
+		int nDist = 0;
+		
+		copyTo (cube1);
+		dist1 = cube1.get_dist_cen();
+
+		while (! cube1.centers_solved()) {
+
+			boolean noMoves=true;
+
+			for (mov_idx = 0; mov_idx < Constants.N_STAGE3_SLICE_MOVES; ++mov_idx) {
+				cube1.copyTo (cube2);
+				cube2.do_move (mov_idx);
+				dist2 = cube2.get_dist_cen();
+				if (((dist2+1) % 3) != dist1) continue;
+				cube2.copyTo (cube1);
+				nDist++;
+				dist1 = dist2;
+				noMoves=false;
+				break;
+			}
+			if( noMoves){
+				System.out.println("Could not find a move that lowers the distance !!");
+				break;
+			}
+		}
+		return nDist;
+	}
+
+	public int getDistanceEdg (){
+		CubeStage3 cube1 = new CubeStage3();
+		CubeStage3 cube2 = new CubeStage3();
+		int mov_idx, mc, j, dist1, dist2;
+		int nDist = 0;
+		
+		copyTo (cube1);
+		dist1 = cube1.get_dist_edg();
+
+		while (! cube1.edges_solved()) {
+
+			boolean noMoves=true;
+
+			for (mov_idx = 0; mov_idx < Constants.N_STAGE3_SLICE_MOVES; ++mov_idx) {
+				cube1.copyTo (cube2);
+				cube2.do_move (mov_idx);
+				dist2 = cube2.get_dist_edg();
+				if (((dist2+1) % 3) != dist1) continue;
+				cube2.copyTo (cube1);
+				nDist++;
+				dist1 = dist2;
+				noMoves=false;
+				break;
+			}
+			if( noMoves){
+				System.out.println("Could not find a move that lowers the distance !!");
+				break;
+			}
+		}
+		return nDist;
+	}
+}

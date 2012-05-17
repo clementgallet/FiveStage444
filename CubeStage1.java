@@ -7,16 +7,9 @@ public final class CubeStage1 {
 
 	public static PruningStage1 prune_table;
 
-	private int get_idx (){
-		return Constants.N_CORNER_ORIENT * (m_sym_edge_ud_combo8 >> 6 ) + Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 & 0x3F];
-	}
-
-	public int get_dist (){
-		return prune_table.get_dist_packed(get_idx());
-	}
-
-	public int new_dist (int dist){
-		return prune_table.new_dist(get_idx(), dist);
+	public void copyTo (CubeStage1 cube1){
+		cube1.m_co = m_co;
+		cube1.m_sym_edge_ud_combo8 = m_sym_edge_ud_combo8;
 	}
 
 	public void do_move (int move_code){
@@ -41,6 +34,8 @@ public final class CubeStage1 {
 			return true;
 		return false;
 	}
+
+	/* Convert functions */
 
 	public void convert_edges_to_std_cube (int edge, CubeState result_cube)
 	{
@@ -71,5 +66,51 @@ public final class CubeStage1 {
 			orientc /= 3;
 		}
 		result_cube.m_cor[7] = (byte)(7 + (((24 - orientcmod3) % 3) << 3));
+	}
+
+	/* Pruning functions */
+
+	private int get_idx (){
+		return Constants.N_CORNER_ORIENT * (m_sym_edge_ud_combo8 >> 6 ) + Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 & 0x3F];
+	}
+
+	public int get_dist (){
+		return prune_table.get_dist_packed(get_idx());
+	}
+
+	public int new_dist (int dist){
+		return prune_table.new_dist(get_idx(), dist);
+	}
+
+	public int getDistance (){
+		CubeStage1 cube1 = new CubeStage1();
+		CubeStage1 cube2 = new CubeStage1();
+		int mov_idx, j, dist1, dist2;
+		int nDist = 0;
+
+		copyTo (cube1);
+		dist1 = cube1.get_dist();
+
+		while( ! cube1.is_solved ()) {
+
+			boolean noMoves=true;
+			for (mov_idx = 0; mov_idx < Constants.N_BASIC_MOVES; ++mov_idx) {
+				cube1.copyTo (cube2);
+				cube2.do_move (mov_idx);
+				dist2 = cube2.get_dist();
+				if (((dist2+1) % 3) != dist1) continue; // If distance is not lowered by 1, continue.
+				cube2.copyTo (cube1);
+				nDist++;
+				dist1 = dist2;
+				noMoves=false;
+				break;
+			}
+			if( noMoves){
+				System.out.println("Could not find a move that lowers the distance !!");
+				break;
+
+			}
+		}
+		return nDist;
 	}
 }

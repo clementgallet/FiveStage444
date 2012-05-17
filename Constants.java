@@ -116,8 +116,14 @@ public final class Constants{
 	12, 13, 14, -1, -1, -1, 15, 16, 17, -1, -1, -1
 	};
 
+	public static final long stage1_slice_moves_to_try [] = {
+	0xFFFFFFFF8L, 0xFFFFFFFF8L, 0xFFFFFFFF8L, 0xFFFFFFB40L, 0xFFFFFFD80L, 0xFFFFFF6C0L, 0xFFFFFFC00L, 0xFFFFFFA00L, 0xFFFFFF600L, 0xFFFFFF000L, 0xFFFFFF000L, 0xFFFFFF000L,
+	0xFFFFF8FFFL, 0xFFFFF8FFFL, 0xFFFFF8FFFL, 0xFFFB40FFFL, 0xFFFD80FFFL, 0xFFF6C0FFFL, 0xFFFC00FFFL, 0xFFFA00FFFL, 0xFFF600FFFL, 0xFFF000FFFL, 0xFFF000FFFL, 0xFFF000FFFL,
+	0xFF8FFFFFFL, 0xFF8FFFFFFL, 0xFF8FFFFFFL, 0xB40FFFFFFL, 0xD80FFFFFFL, 0x6C0FFFFFFL, 0xC00FFFFFFL, 0xA00FFFFFFL, 0x600FFFFFFL, 0x000FFFFFFL, 0x000FFFFFFL, 0x000FFFFFFL,
+	0xFFFFFFFFFL};
+
 	public static final int N_STAGE2_SLICE_MOVES = 28;
-	public static final int stage2_slice_moves[] = {
+	public static final byte stage2_slice_moves[] = {
 	Uf, Uf3, Uf2, Us, Us3, Us2,
 	Df, Df3, Df2, Ds, Ds3, Ds2,
 	Lf2, Ls, Ls3, Ls2, Rf2, Rs, Rs3, Rs2,
@@ -133,8 +139,17 @@ public final class Constants{
 	-1, -1, 24, 25, 26, 27
 	};
 
+	public static final int stage2_slice_moves_to_try [] = {
+	0xFFFFFFF,
+	0xFFFFFF8, 0xFFFFFC0, 0xFFFF1C0, 0xFFFF000,
+	0xFF60FFF, 0xFFF1FFF, 0xFF10FFF, 0xFF00FFF,
+	0x60FFFFF, 0xF1FFFFF, 0x10FFFFF, 0x00FFFFF
+	};
+
+	public static final int stage2_stm_next_ms[] = 	{ SL_MS_U,SL_MS_U,SL_MS_U,SL_MS_u,SL_MS_u,SL_MS_u,SL_MS_D,SL_MS_D,SL_MS_D,SL_MS_d,SL_MS_d,SL_MS_d,SL_MS_L,SL_MS_l,SL_MS_l,SL_MS_l,SL_MS_R,SL_MS_r,SL_MS_r,SL_MS_r,SL_MS_F,SL_MS_f,SL_MS_f,SL_MS_f,SL_MS_B,SL_MS_b,SL_MS_b,SL_MS_b };
+
 	public static final int N_STAGE3_SLICE_MOVES = 20;
-	public static final int stage3_slice_moves[] = {
+	public static final byte stage3_slice_moves[] = {
 	Uf, Uf3, Uf2, Us2,
 	Df, Df3, Df2, Ds2,
 	Lf2, Ls2, Rf2, Rs2,
@@ -158,8 +173,17 @@ public final class Constants{
 		false, true,  true,  false
 	};
 
+	public static final int stage3_stm_next_ms[] = { SL_MS_U,SL_MS_U,SL_MS_U,SL_MS_u,SL_MS_D,SL_MS_D,SL_MS_D,SL_MS_d,SL_MS_L,SL_MS_l,SL_MS_R,SL_MS_r,SL_MS_F,SL_MS_f,SL_MS_f,SL_MS_f,SL_MS_B,SL_MS_b,SL_MS_b,SL_MS_b };
+
+	public static final int stage3_slice_moves_to_try [] = {
+	0xFFFFF,
+	0xFFFF8, 0xFFF30, 0xFFF30, 0xFFF00,
+	0xFFEFF, 0xFF0FF, 0xFF0FF, 0xFF0FF,
+	0x60FFF, 0xF1FFF, 0x10FFF, 0x00FFF
+	};
+
 	public static final int N_STAGE4_SLICE_MOVES = 16;
-	public static final int stage4_slice_moves[] = {
+	public static final byte stage4_slice_moves[] = {
 	Uf, Uf3, Uf2, Us2,
 	Df, Df3, Df2, Ds2,
 	Lf2, Ls2, Rf2, Rs2,
@@ -175,6 +199,15 @@ public final class Constants{
 	-1, -1, 14, -1, -1, 15
 	};
 
+	public static final int stage4_stm_next_ms[] = 	{ SL_MS_U,SL_MS_U,SL_MS_U,SL_MS_u,SL_MS_D,SL_MS_D,SL_MS_D,SL_MS_d,SL_MS_L,SL_MS_l,SL_MS_R,SL_MS_r,SL_MS_F,SL_MS_f,SL_MS_B,SL_MS_b };
+
+	public static final int stage4_slice_moves_to_try [] = {
+	0xFFFF,
+	0xFFF8, 0xFF30, 0xFF30, 0xFF00,
+	0xFEFF, 0xF0FF, 0xF0FF, 0xF0FF,
+	0xEFFF, 0x0FFF, 0x0FFF, 0x0FFF
+	};
+
 	public static final int N_STAGE5_MOVES = 12;
 	public static final byte stage5_slice_moves[] = { Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2 };
 	public static final byte stage5_inv_slice_moves[] = {
@@ -185,6 +218,15 @@ public final class Constants{
 	-1, -1, 8, -1, -1, 9,
 	-1, -1, 10, -1, -1, 11
 	};
+
+	public static final int sqs_slice_moves_to_try [] = {
+	0xFFE, 0xFF0, 0xFF0, 0xFF0,
+	0xFEF, 0xF0F, 0xF0F, 0xF0F,
+	0xEFF, 0x0FF, 0x0FF, 0x0FF,
+	0xFFF
+};
+
+	public static final int sqs_stm_next_ms[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
 
 	public static byte xlate_r6[][] = {
 	{ 0, 24, 12,  0, 24, 12}, { 1, 25, 13,  1, 25, 13}, { 2, 26, 14,  2, 26, 14},

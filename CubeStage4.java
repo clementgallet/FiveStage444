@@ -10,16 +10,10 @@ public final class CubeStage4 {
 
 	public static PruningStage4 prune_table;
 
-	public int get_idx (){
-		return (((( m_sym_edge >> 4 ) * Constants.N_STAGE4_CORNER_CONFIGS ) + Tables.move_table_corner_conjSTAGE4[m_corner][m_sym_edge & 0xF] ) * Constants.N_STAGE4_CENTER_CONFIGS ) + Tables.move_table_cen_conjSTAGE4[m_centerUD][m_sym_edge & 0xF];
-	}
-
-	public int get_dist (){
-		return prune_table.get_dist_packed(get_idx());
-	}
-
-	public int new_dist (int dist){
-		return prune_table.new_dist(get_idx(), dist);
+	public void copyTo (CubeStage4 cube1){
+		cube1.m_sym_edge = m_sym_edge;
+		cube1.m_corner = m_corner;
+		cube1.m_centerUD = m_centerUD;
 	}
 
 	public void do_move (int move_code){
@@ -53,6 +47,8 @@ public final class CubeStage4 {
 
 		return false;
 	}
+
+	/* Convert functions */
 
 	public void convert_corners_to_std_cube (CubeState result_cube){
 		int i;
@@ -90,5 +86,50 @@ public final class CubeStage4 {
 		for (i = 8; i < 24; ++i) {
 			result_cube.m_cen[i] = (byte)(i/4);
 		}
+	}
+
+	/* Pruning functions */
+
+	public int get_idx (){
+		return (((( m_sym_edge >> 4 ) * Constants.N_STAGE4_CORNER_CONFIGS ) + Tables.move_table_corner_conjSTAGE4[m_corner][m_sym_edge & 0xF] ) * Constants.N_STAGE4_CENTER_CONFIGS ) + Tables.move_table_cen_conjSTAGE4[m_centerUD][m_sym_edge & 0xF];
+	}
+
+	public int get_dist (){
+		return prune_table.get_dist_packed(get_idx());
+	}
+
+	public int new_dist (int dist){
+		return prune_table.new_dist(get_idx(), dist);
+	}
+
+	public int getDistance (){
+		CubeStage4 cube1 = new CubeStage4();
+		CubeStage4 cube2 = new CubeStage4();
+		int mov_idx, j, dist1, dist2;
+		int nDist = 0;
+
+		copyTo(cube1);
+		dist1 = cube1.get_dist();
+
+		while( ! cube1.is_solved ()) {
+
+			boolean noMoves = true;
+			for (mov_idx = 0; mov_idx < Constants.N_STAGE4_SLICE_MOVES; ++mov_idx) {
+				cube1.copyTo(cube2);
+				cube2.do_move (mov_idx);
+				dist2 = cube2.get_dist();
+				if (((dist2+1) % 3) != dist1) continue;
+				cube2.copyTo(cube1);
+				nDist++;
+				dist1 = dist2;
+				noMoves = false;
+				break;
+			}
+			if( noMoves){
+				System.out.println("Could not find a move that lowers the distance !!");
+				break;
+			}
+		}
+		return nDist;
 	}
 }
