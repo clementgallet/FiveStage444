@@ -10,12 +10,6 @@ public final class CubeState{
 	public byte[] m_cor = new byte[8]; //what's at each corner position (3*cubie + orientation)
 	public byte[] m_cen = new byte[24]; //what's at each center position
 
-	CubeState(){}
-
-	CubeState(CubeState c){
-		c.copyTo(this);
-	}
-
 	private static int rotateCOR_ft[] = {
 		 0,  3,  2,  1,  0,  3,	//U face
 		 4,  5,  6,  7,  4,  5,	//D face
@@ -515,6 +509,7 @@ public final class CubeState{
 	public void convert_to_stage3 (CubeStage3 result_cube){
 		result_cube.m_sym_centerLR = convert_symcenters_to_stage3 ();
 		result_cube.m_edge = convert_edges_to_stage3 ();
+		result_cube.m_edge_odd = edgeUD_parity_odd ();
 	}
 
 	private static byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
@@ -527,7 +522,6 @@ public final class CubeState{
 			copyTo (cube);
 			cube.conjugateEdges(sym);
 			int u2 = Tables.lrfb_get_edge_rep(cube.cube_state_to_lrfb ());
-
 			if( u2 < minEdge){
 				minEdge = u2;
 				minSym = sym;
@@ -691,8 +685,14 @@ public final class CubeState{
 	public void scramble (int move_count, byte[] move_arr){
 		int i;
 		for (i = 0; i < move_count; ++i) {
-			byte mc = move_arr[i];
-			do_move (mc);
+			do_move (move_arr[i]);
+		}
+	}
+
+	public void scramble (int move_count, byte[] move_arr, byte[] move_trans){
+		int i;
+		for (i = 0; i < move_count; ++i) {
+			do_move (move_trans[move_arr[i]]);
 		}
 	}
 

@@ -1048,11 +1048,11 @@ public final class Tables {
 		cs2.init ();
 
 		int repcount = 0;
-		//int n = 40320*40320; // 952222297
+		//int n = 40320*40320;
 		int n = 952222297+1; // TODO: Use a byte array like for the other stages. Reduce size by using big gaps in the array.
 		for (u1 = 0; u1 < n; ++u1) {
 			if ((u1 << 22 ) == 0) { // Throughly u1 % 1000 == 0
-				if (repcount == 5958 && u1 < 104700000 ) { // Obtained though execution
+				if (repcount == 5958 && u1 < 304700000 ) { // Obtained though execution
 					u1 = 952220735; // big gap !!
 				}
 				if (repcount == N_STAGE4_SYMEDGE_CONFIGS) {

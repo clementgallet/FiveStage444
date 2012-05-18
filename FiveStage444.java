@@ -124,7 +124,6 @@ public final class FiveStage444 {
 	static CubeState c2 = new CubeState();
 	static CubeState c3 = new CubeState();
 	static CubeState c4 = new CubeState();
-	static CubeState c5 = new CubeState();
 
 	public static void main(String[] args){
 
@@ -176,7 +175,7 @@ public final class FiveStage444 {
 		Random r = new Random(42);
 		byte[] random_list = new byte[160];	//must be >= scramble_len
 		CubeState solveme = new CubeState();
-		int scramble_len = 100;
+		int scramble_len = 40;
 
 		for (i = 1; i <= count; ++i) {
 			int j;
@@ -185,8 +184,8 @@ public final class FiveStage444 {
 				random_list[j] = (byte)r.nextInt(36);
 			}
 			solveme.scramble(scramble_len, random_list);
-			//System.out.println ("scramble: ");
-			//print_move_list (scramble_len, random_list);
+			System.out.println ("scramble: ");
+			print_move_list (scramble_len, random_list);
 			solveit4x4x4IDA (i, solveme);
 		}
 	}
@@ -260,14 +259,11 @@ public final class FiveStage444 {
 
 	public static boolean init_stage2 (){
 
-		System.out.print ("Stage 1: ");
-		print_move_list (length1, move_list_stage1);
-
 		int i;
 		c.copyTo(c1);
 		c1.scramble( length1, move_list_stage1 );
 
-		int rotate = c1.m_cor[0] >> 3;
+		rotate = c1.m_cor[0] >> 3;
 		switch (rotate) {
 		case 0:
 			break;	//no whole cube rotation
@@ -328,8 +324,8 @@ public final class FiveStage444 {
 				next_ms = stage2_stm_next_ms[mov_idx];
 
 				int newDistCenF = cube2.new_dist_edgcen(true, distCenF);
-				int newDistCenB = cube2.new_dist_edgcen(false, distCenB);
 				if (newDistCenF > depth-1) continue;
+				int newDistCenB = cube2.new_dist_edgcen(false, distCenB);
 				if (newDistCenB > depth-1) continue;
 				move_list_stage2[moves_done] = (byte)mov_idx;
 				if (search_stage2 (cube2, depth - 1, moves_done + 1, next_ms, newDistCenF, newDistCenB)) return true;
@@ -339,20 +335,11 @@ public final class FiveStage444 {
 	}
 
 	public static boolean init_stage3 (){
-		System.out.print ("Stage 2: ");
-		print_move_list (length2, move_list_stage2);
 
 		int i;
-		for (i = 0; i < length2; ++i) {
-			move_list_stage2[i] = stage2_slice_moves[move_list_stage2[i]];
-		}
 
 		c1.copyTo(c2);
-		c2.scramble( length2, move_list_stage2 );
-
-		for (i = 0; i < length2; ++i) {
-			move_list_stage2[i] = xlate_r6[move_list_stage2[i]][rotate];
-		}
+		c2.scramble( length2, move_list_stage2, stage2_slice_moves );
 
 		rotate2 = rotate;
 
@@ -396,8 +383,8 @@ public final class FiveStage444 {
 				cube2.do_move (mov_idx);
 				next_ms = stage3_stm_next_ms[mov_idx];
 				int newDistCen = cube2.new_dist_cen(distCen);
-				int newDistEdg = cube2.new_dist_edg(distEdg);
 				if (newDistCen > depth-1) continue;
+				int newDistEdg = cube2.new_dist_edg(distEdg);
 				if (newDistEdg > depth-1) continue;
 				move_list_stage3[moves_done] = (byte)mov_idx;
 				if (search_stage3 (cube2, depth - 1, moves_done + 1, next_ms, newDistCen, newDistEdg)) return true;
@@ -407,27 +394,13 @@ public final class FiveStage444 {
 	}
 
 	public static boolean init_stage4 (){
-		System.out.print ("Stage 3: ");
-		print_move_list (length3, move_list_stage3);
-
 		int i;
-		for (i = 0; i < length3; ++i) {
-			move_list_stage3[i] = stage3_slice_moves[move_list_stage3[i]];
-		}
 
 		c2.copyTo(c3);
-		c3.scramble( length3, move_list_stage3 );
-
-		for (i = 0; i < length3; ++i) {
-			move_list_stage3[i] = xlate_r6[move_list_stage3[i]][rotate2];
-		}
+		c3.scramble( length3, move_list_stage3, stage3_slice_moves );
 
 		CubeStage4 s1 = new CubeStage4();
 		c3.convert_to_stage4 (s1);
-
-		System.out.println("m_sym_edge"+s1.m_sym_edge);
-		System.out.println("m_centerUD"+s1.m_centerUD);
-		System.out.println("m_corner"+s1.m_corner);
 
 		int d4 = s1.getDistance();
 
@@ -467,16 +440,8 @@ public final class FiveStage444 {
 	public static boolean init_stage5 (){
 		int i;
 
-		for (i = 0; i < length4; ++i) {
-			move_list_stage4[i] = stage4_slice_moves[move_list_stage4[i]];
-		}
-
 		c3.copyTo(c4);
-		c4.scramble( length4, move_list_stage4 );
-
-		for (i = 0; i < length4; ++i) {
-			move_list_stage4[i] = xlate_r6[move_list_stage4[i]][rotate2];
-		}
+		c4.scramble( length4, move_list_stage4, stage4_slice_moves );
 
 		CubeStage5 s1 = new CubeStage5();
 		c4.convert_to_stage5 (s1);
@@ -485,27 +450,41 @@ public final class FiveStage444 {
 		int cubeDistEdgCor = s1.getDistanceEdgCor();
 		int d5 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
 
-		length5 = -1;
-		for (i = d5; i < 100; ++i) {
+		int l = -1;
+		for (length5 = d5; length5 < 100; ++length5) {
 			if( search_stage5 (s1, length5, 0, 12, cubeDistEdgCen, cubeDistEdgCor )){
-				length5 = i;
-				return false;
+				l = length5;
+				break;
 			}
 		}
 
-		if (length5 != -1){
+		if (l != -1){
 			/* Print solution */
+			byte[] sol_move_list = new byte[100];
+/*
 			System.out.print ("Stage 1: ");
 			print_move_list (length1, move_list_stage1);
-			System.out.print ("Stage 2: ");
-			print_move_list (length2, move_list_stage2);
-			System.out.print ("Stage 3: ");
-			print_move_list (length3, move_list_stage3);
-			System.out.print ("Stage 4: ");
-			print_move_list (length4, move_list_stage4);
-			System.out.print ("Stage 5: ");
-			print_move_list (length5, move_list_stage5);
 
+			System.out.print ("Stage 2: ");
+			for (i = 0; i < length2; ++i)
+				sol_move_list[i] = xlate_r6[stage2_slice_moves[move_list_stage2[i]]][rotate];
+			print_move_list (length2, sol_move_list);
+
+			System.out.print ("Stage 3: ");
+			for (i = 0; i < length3; ++i)
+				sol_move_list[i] = xlate_r6[stage3_slice_moves[move_list_stage3[i]]][rotate2];
+			print_move_list (length3, sol_move_list);
+
+			System.out.print ("Stage 4: ");
+			for (i = 0; i < length4; ++i)
+				sol_move_list[i] = xlate_r6[stage4_slice_moves[move_list_stage4[i]]][rotate2];
+			print_move_list (length4, sol_move_list);
+
+			System.out.print ("Stage 5: ");
+			for (i = 0; i < length5; ++i)
+				sol_move_list[i] = xlate_r6[stage5_slice_moves[move_list_stage5[i]]][rotate2];
+			print_move_list (length5, sol_move_list);
+*/
 			return true;
 		}
 		return false;
@@ -529,8 +508,8 @@ public final class FiveStage444 {
 				cube2.do_move (mov_idx);
 				next_ms = sqs_stm_next_ms[mov_idx];
 				int newDistEdgCen = cube2.new_dist_edgcen(distEdgCen);
-				int newDistEdgCor = cube2.new_dist_edgcor(distEdgCor);
 				if (newDistEdgCen > depth-1) continue;
+				int newDistEdgCor = cube2.new_dist_edgcor(distEdgCor);
 				if (newDistEdgCor > depth-1) continue;
 				move_list_stage5[moves_done] = (byte)mov_idx;
 				if (search_stage5 (cube2, depth - 1, moves_done + 1, next_ms, newDistEdgCen, newDistEdgCor)) return true;
