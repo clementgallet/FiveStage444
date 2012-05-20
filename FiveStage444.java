@@ -118,12 +118,28 @@ public final class FiveStage444 {
 	static byte[] move_list_stage5 = new byte[50];
 	static int length1, length2, length3, length4, length5;
 	static int rotate, rotate2;
+	static int total_length;
+	static long endtime;
+
+	static byte[] move_list_sub_stage1 = new byte[50];
+	static byte[] move_list_sub_stage2 = new byte[50];
+	static byte[] move_list_sub_stage3 = new byte[50];
+	static byte[] move_list_sub_stage4 = new byte[50];
+	static byte[] move_list_sub_stage5 = new byte[50];
+	static int length1_sub, length2_sub, length3_sub, length4_sub, length5_sub;
+	static int r1_sub, r2_sub, r3_sub, r4_sub, r5_sub;
+	static boolean found1, found2, found3, found4;
 
 	static CubeState c = new CubeState();
+	static CubeState cr = new CubeState();
+	static CubeState cr2 = new CubeState();
 	static CubeState c1 = new CubeState();
+	static CubeState c1r = new CubeState();
 	static CubeState c2 = new CubeState();
 	static CubeState c3 = new CubeState();
 	static CubeState c4 = new CubeState();
+
+	static int time_per_stage = 1000;
 
 	public static void main(String[] args){
 
@@ -186,18 +202,672 @@ public final class FiveStage444 {
 			solveme.scramble(scramble_len, random_list);
 			System.out.println ("scramble: ");
 			print_move_list (scramble_len, random_list);
-			solveit4x4x4IDA (i, solveme);
+			//solveit4x4x4IDA (solveme);
+			solve_suboptimal (solveme);
 		}
 	}
 
-	public static void solveit4x4x4IDA (int id, CubeState cube) {
+	public static void solve_suboptimal (CubeState cube) {
+		solve_stage12_suboptimal (cube);
+		switch (r1_sub) {
+		case 0:
+			break;	//no whole cube rotation
+		case 1:
+			cube.do_move (Lf3);
+			cube.do_move (Ls3);
+			cube.do_move (Rs);
+			cube.do_move (Rf);
+			cube.do_move (Uf3);
+			cube.do_move (Us3);
+			cube.do_move (Ds);
+			cube.do_move (Df);
+			break;
+		case 2:
+			cube.do_move (Ff);
+			cube.do_move (Fs);
+			cube.do_move (Bs3);
+			cube.do_move (Bf3);
+			cube.do_move (Uf);
+			cube.do_move (Us);
+			cube.do_move (Ds3);
+			cube.do_move (Df3);
+			break;
+		default:
+			System.out.println ("Invalid cube rotation state.");
+		}
 
+		cube.scramble( length1_sub, move_list_sub_stage1 );
+
+		rotate = cube.m_cor[0] >> 3;
+		switch (rotate) {
+		case 0:
+			break;	//no whole cube rotation
+		case 1:
+			cube.do_move (Lf3);
+			cube.do_move (Ls3);
+			cube.do_move (Rs);
+			cube.do_move (Rf);
+			cube.do_move (Uf3);
+			cube.do_move (Us3);
+			cube.do_move (Ds);
+			cube.do_move (Df);
+			break;
+		case 2:
+			cube.do_move (Ff);
+			cube.do_move (Fs);
+			cube.do_move (Bs3);
+			cube.do_move (Bf3);
+			cube.do_move (Uf);
+			cube.do_move (Us);
+			cube.do_move (Ds3);
+			cube.do_move (Df3);
+			break;
+		default:
+			System.out.println ("Invalid cube rotation state.");
+		}
+
+		solve_stage23_suboptimal (cube);
+
+		switch (r2_sub) {
+		case 0:
+			break;	//no whole cube rotation
+		case 1:
+			cube.do_move (Uf);
+			cube.do_move (Us);
+			cube.do_move (Ds3);
+			cube.do_move (Df3);
+			break;
+		default:
+			System.out.println ("Invalid cube rotation state.");
+		}
+
+		cube.scramble( length2_sub, move_list_sub_stage2, stage2_slice_moves );
+
+		rotate2 = rotate;
+
+		if (cube.m_cen[16] < 4) {
+			cube.do_move (Uf);
+			cube.do_move (Us);
+			cube.do_move (Ds3);
+			cube.do_move (Df3);
+			rotate2 += 3;
+		}
+
+		solve_stage34_suboptimal (cube);
+
+		cube.scramble( length3_sub, move_list_sub_stage3, stage3_slice_moves );
+
+		solve_stage45_suboptimal (cube);
+	}
+
+	public static void solve_stage12_suboptimal (CubeState cube) {
 		cube.copyTo (c);
 		CubeStage1 s1 = new CubeStage1();
-		/*
 		CubeStage1 s2 = new CubeStage1();
 		CubeStage1 s3 = new CubeStage1();
-		*/
+		c.convert_to_stage1 (s1);
+
+		c.copyTo (cr);
+		cr.do_move (Lf3);
+		cr.do_move (Ls3);
+		cr.do_move (Rs);
+		cr.do_move (Rf);
+		cr.do_move (Uf3);
+		cr.do_move (Us3);
+		cr.do_move (Ds);
+		cr.do_move (Df);
+		cr.convert_to_stage1 (s2);		
+
+		c.copyTo (cr2);
+		cr2.do_move (Ff);
+		cr2.do_move (Fs);
+		cr2.do_move (Bs3);
+		cr2.do_move (Bf3);
+		cr2.do_move (Uf);
+		cr2.do_move (Us);
+		cr2.do_move (Ds3);
+		cr2.do_move (Df3);
+		cr2.convert_to_stage1 (s3);
+
+		int d1 = s1.getDistance();
+		int d2 = s2.getDistance();
+		int d3 = s3.getDistance();
+
+		int d = Math.min(d1, Math.min(d2, d3));
+
+		endtime = System.currentTimeMillis() + time_per_stage;
+
+		total_length = 100;
+		found1 = false;
+		//System.out.println( "Search suboptimal solution for stage 1+2" );
+		for (length1 = d; length1 < total_length; ++length1) {
+			if( search_stage1_sub12 (s1, length1, 0, N_BASIC_MOVES, d1, 0 ) ||
+			    search_stage1_sub12 (s2, length1, 0, N_BASIC_MOVES, d2, 1 ) ||
+			    search_stage1_sub12 (s3, length1, 0, N_BASIC_MOVES, d3, 2 )) {
+				break;
+			}
+		}
+
+		byte[] sol_move_list = new byte[100];
+
+		System.out.print ("Stage 1: ");
+		print_move_list (length1_sub, move_list_sub_stage1);
+		//System.out.println ("Total length : "+total_length);
+		
+
+	}
+
+	public static boolean search_stage1_sub12 (CubeStage1 cube1, int depth, int moves_done, int move_state, int dist, int r){
+		Statistics.addNode(1, depth);
+		CubeStage1 cube2 = new CubeStage1();
+		int mov_idx, j;
+		if (depth == 0){
+			if (! cube1.is_solved ()) {
+				return false;
+			}
+			Statistics.addLeaf(1, length1);
+			return init_stage2_sub12(r);
+		}
+		for (mov_idx = 0; mov_idx < N_BASIC_MOVES; ++mov_idx) {
+			if (((stage1_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) || ( depth == 1 )) {
+				cube1.copyTo(cube2);
+				cube2.do_move (mov_idx);
+				int newDist = cube2.new_dist(dist);
+				if (newDist > depth-1) continue;
+				move_list_stage1[moves_done] = (byte)mov_idx;
+				if (search_stage1_sub12 (cube2, depth - 1, moves_done + 1, mov_idx, newDist, r)) return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean init_stage2_sub12 (int r){
+
+		if (( endtime < System.currentTimeMillis()) && found1 ) return true;
+		int i;
+		switch (r) {
+		case 0:
+			c.copyTo(c1);	
+			break;	//no whole cube rotation
+		case 1:
+			cr.copyTo(c1);	
+			break;	//no whole cube rotation
+		case 2:
+			cr2.copyTo(c1);	
+			break;	//no whole cube rotation
+		default:
+			System.out.println ("Invalid cube rotation state.");
+		}
+
+		c1.scramble( length1, move_list_stage1 );
+
+		rotate = c1.m_cor[0] >> 3;
+		switch (rotate) {
+		case 0:
+			break;	//no whole cube rotation
+		case 1:
+			c1.do_move (Lf3);
+			c1.do_move (Ls3);
+			c1.do_move (Rs);
+			c1.do_move (Rf);
+			c1.do_move (Uf3);
+			c1.do_move (Us3);
+			c1.do_move (Ds);
+			c1.do_move (Df);
+			break;
+		case 2:
+			c1.do_move (Ff);
+			c1.do_move (Fs);
+			c1.do_move (Bs3);
+			c1.do_move (Bf3);
+			c1.do_move (Uf);
+			c1.do_move (Us);
+			c1.do_move (Ds3);
+			c1.do_move (Df3);
+			break;
+		default:
+			System.out.println ("Invalid cube rotation state.");
+		}
+
+		CubeStage2 s1 = new CubeStage2();
+		CubeStage2 s2 = new CubeStage2();
+		c1.convert_to_stage2 (s1);
+		c1.copyTo (c1r);
+		c1r.do_move (Uf);
+		c1r.do_move (Us);
+		c1r.do_move (Ds3);
+		c1r.do_move (Df3);
+		c1r.convert_to_stage2 (s2);
+
+		int cubeDistCenF1 = s1.getDistanceEdgCen(true);
+		int cubeDistCenB1 = s1.getDistanceEdgCen(false);
+		int d21 = Math.max(cubeDistCenF1, cubeDistCenB1);
+		int cubeDistCenF2 = s2.getDistanceEdgCen(true);
+		int cubeDistCenB2 = s2.getDistanceEdgCen(false);
+		int d22 = Math.max(cubeDistCenF2, cubeDistCenB2);
+
+		for (length2 = Math.min(d21, d22); length2 < total_length-length1; ++length2) {
+			if( search_stage2_sub12 (s1, length2, 0, 0, cubeDistCenF1, cubeDistCenB1 ) ||
+			    search_stage2_sub12 (s2, length2, 0, 0, cubeDistCenF2, cubeDistCenB2 )){
+				total_length = length1+length2;
+				/* Save current solution */
+				found1 = true;
+				r1_sub = r;
+				System.arraycopy(move_list_stage1, 0, move_list_sub_stage1, 0, length1);
+				length1_sub = length1;
+				return false;
+			}
+		}
+		return false;
+	}
+
+	public static boolean search_stage2_sub12 (CubeStage2 cube1, int depth, int moves_done, int move_state, int distCenF, int distCenB){
+		Statistics.addNode(2, depth);
+		CubeStage2 cube2 = new CubeStage2();
+		int mov_idx, mc, j;
+		int next_ms = 0;
+		if (depth == 0) {
+			if (! cube1.is_solved ()) {
+				return false;
+			}
+			Statistics.addLeaf(2, length2);
+			return true;
+		}
+		for (mov_idx = 0; mov_idx < N_STAGE2_SLICE_MOVES; ++mov_idx) {
+			if ((stage2_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0){
+				cube1.copyTo (cube2);
+				cube2.do_move (mov_idx);
+				next_ms = stage2_stm_next_ms[mov_idx];
+
+				int newDistCenF = cube2.new_dist_edgcen(true, distCenF);
+				if (newDistCenF > depth-1) continue;
+				int newDistCenB = cube2.new_dist_edgcen(false, distCenB);
+				if (newDistCenB > depth-1) continue;
+				move_list_stage2[moves_done] = (byte)mov_idx;
+				if (search_stage2_sub12 (cube2, depth - 1, moves_done + 1, next_ms, newDistCenF, newDistCenB)) return true;
+			}
+		}
+		return false;
+	}
+
+	public static void solve_stage23_suboptimal (CubeState cube) {
+
+		cube.copyTo (c1);
+		CubeStage2 s1 = new CubeStage2();
+		CubeStage2 s2 = new CubeStage2();
+		c1.convert_to_stage2 (s1);
+		c1.copyTo (c1r);
+		c1r.do_move (Uf);
+		c1r.do_move (Us);
+		c1r.do_move (Ds3);
+		c1r.do_move (Df3);
+		c1r.convert_to_stage2 (s2);
+
+		int cubeDistCenF1 = s1.getDistanceEdgCen(true);
+		int cubeDistCenB1 = s1.getDistanceEdgCen(false);
+		int d21 = Math.max(cubeDistCenF1, cubeDistCenB1);
+		int cubeDistCenF2 = s2.getDistanceEdgCen(true);
+		int cubeDistCenB2 = s2.getDistanceEdgCen(false);
+		int d22 = Math.max(cubeDistCenF2, cubeDistCenB2);
+
+		endtime = System.currentTimeMillis() + time_per_stage;
+		total_length = 100;
+		found2 = false;
+		//System.out.println( "Search suboptimal solution for stage 2+3" );
+
+		for (length2 = Math.min(d21, d22); length2 < total_length; ++length2) {
+			if( search_stage2_sub23 (s1, length2, 0, 0, cubeDistCenF1, cubeDistCenB1, 0 ) ||
+			    search_stage2_sub23 (s2, length2, 0, 0, cubeDistCenF2, cubeDistCenB2, 1 )){
+				break;
+			}
+		}
+
+		byte[] sol_move_list = new byte[100];
+		int i;
+		System.out.print ("Stage 2: ");
+		for (i = 0; i < length2_sub; ++i)
+			sol_move_list[i] = xlate_r6[stage2_slice_moves[move_list_sub_stage2[i]]][rotate];
+		print_move_list (length2_sub, sol_move_list);
+
+		//System.out.println ("Total length : "+total_length);
+		
+
+	}
+
+	public static boolean search_stage2_sub23 (CubeStage2 cube1, int depth, int moves_done, int move_state, int distCenF, int distCenB, int r){
+		Statistics.addNode(2, depth);
+		CubeStage2 cube2 = new CubeStage2();
+		int mov_idx, mc, j;
+		int next_ms = 0;
+		if (depth == 0) {
+			if (! cube1.is_solved ()) {
+				return false;
+			}
+			Statistics.addLeaf(2, length2);
+			return init_stage3_sub23 (r);
+		}
+		for (mov_idx = 0; mov_idx < N_STAGE2_SLICE_MOVES; ++mov_idx) {
+			if (((stage2_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) || ( depth == 1 )){
+				cube1.copyTo (cube2);
+				cube2.do_move (mov_idx);
+				next_ms = stage2_stm_next_ms[mov_idx];
+
+				int newDistCenF = cube2.new_dist_edgcen(true, distCenF);
+				if (newDistCenF > depth-1) continue;
+				int newDistCenB = cube2.new_dist_edgcen(false, distCenB);
+				if (newDistCenB > depth-1) continue;
+				move_list_stage2[moves_done] = (byte)mov_idx;
+				if (search_stage2_sub23 (cube2, depth - 1, moves_done + 1, next_ms, newDistCenF, newDistCenB, r)) return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean init_stage3_sub23 (int r){
+		if (( endtime < System.currentTimeMillis()) && found2 ) return true;
+		int i;
+		switch (r) {
+		case 0:
+			c1.copyTo(c2);	
+			break;	//no whole cube rotation
+		case 1:
+			c1r.copyTo(c2);	
+			break;	//no whole cube rotation
+		default:
+			System.out.println ("Invalid cube rotation state.");
+		}
+
+		c2.scramble( length2, move_list_stage2, stage2_slice_moves );
+
+		rotate2 = rotate;
+
+		if (c2.m_cen[16] < 4) {
+			c2.do_move (Uf);
+			c2.do_move (Us);
+			c2.do_move (Ds3);
+			c2.do_move (Df3);
+			rotate2 += 3;
+		}
+
+		CubeStage3 s1 = new CubeStage3();
+		c2.convert_to_stage3 (s1);
+
+		int cubeDistCen = s1.getDistanceCen();
+		int cubeDistEdg = s1.getDistanceEdg();
+		int d3 = Math.max(cubeDistCen, cubeDistEdg);
+
+		for (length3 = d3; length3 < total_length-length2; ++length3) {
+			if( search_stage3_sub23 (s1, length3, 0, 0, cubeDistCen, cubeDistEdg )){
+				total_length = length2+length3;
+				/* Save current solution */
+				found2 = true;
+				r2_sub = r;
+				System.arraycopy(move_list_stage2, 0, move_list_sub_stage2, 0, length2);
+				length2_sub = length2;
+				return false;
+			}
+		}
+		return false;
+	}
+
+	public static boolean search_stage3_sub23 (CubeStage3 cube1, int depth, int moves_done, int move_state, int distCen, int distEdg){
+		Statistics.addNode(3, depth);
+		CubeStage3 cube2 = new CubeStage3();
+		int mov_idx, j;
+		int next_ms = 0;
+		if (depth == 0) {
+			if (! cube1.is_solved ()) {
+				return false;
+			}
+			Statistics.addLeaf(3, length3);
+			return true;
+		}
+		for (mov_idx = 0; mov_idx < N_STAGE3_SLICE_MOVES; ++mov_idx) {
+			if ((stage3_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
+				cube1.copyTo (cube2);
+				cube2.do_move (mov_idx);
+				next_ms = stage3_stm_next_ms[mov_idx];
+				int newDistCen = cube2.new_dist_cen(distCen);
+				if (newDistCen > depth-1) continue;
+				int newDistEdg = cube2.new_dist_edg(distEdg);
+				if (newDistEdg > depth-1) continue;
+				move_list_stage3[moves_done] = (byte)mov_idx;
+				if (search_stage3_sub23 (cube2, depth - 1, moves_done + 1, next_ms, newDistCen, newDistEdg)) return true;
+			}
+		}
+		return false;
+	}
+
+	public static void solve_stage34_suboptimal (CubeState cube) {
+		int i;
+		cube.copyTo(c2);
+
+		CubeStage3 s1 = new CubeStage3();
+		c2.convert_to_stage3 (s1);
+
+		int cubeDistCen = s1.getDistanceCen();
+		int cubeDistEdg = s1.getDistanceEdg();
+		int d3 = Math.max(cubeDistCen, cubeDistEdg);
+
+		endtime = System.currentTimeMillis() + time_per_stage;
+		total_length = 100;
+		found3 = false;
+		//System.out.println( "Search suboptimal solution for stage 3+4" );
+
+		for (length3 = d3; length3 < total_length; ++length3) {
+			if( search_stage3_sub34 (s1, length3, 0, 0, cubeDistCen, cubeDistEdg )){
+				break;
+			}
+		}
+
+		byte[] sol_move_list = new byte[100];
+		System.out.print ("Stage 3: ");
+		for (i = 0; i < length3_sub; ++i)
+			sol_move_list[i] = xlate_r6[stage3_slice_moves[move_list_sub_stage3[i]]][rotate];
+		print_move_list (length3_sub, sol_move_list);
+
+		//System.out.println ("Total length : "+total_length);
+	}
+
+	public static boolean search_stage3_sub34 (CubeStage3 cube1, int depth, int moves_done, int move_state, int distCen, int distEdg){
+		Statistics.addNode(3, depth);
+		CubeStage3 cube2 = new CubeStage3();
+		int mov_idx, j;
+		int next_ms = 0;
+		if (depth == 0) {
+			if (! cube1.is_solved ()) {
+				return false;
+			}
+			Statistics.addLeaf(3, length3);
+			return init_stage4_sub34();
+		}
+		for (mov_idx = 0; mov_idx < N_STAGE3_SLICE_MOVES; ++mov_idx) {
+			if (((stage3_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) || ( depth == 1 )) {
+				cube1.copyTo (cube2);
+				cube2.do_move (mov_idx);
+				next_ms = stage3_stm_next_ms[mov_idx];
+				int newDistCen = cube2.new_dist_cen(distCen);
+				if (newDistCen > depth-1) continue;
+				int newDistEdg = cube2.new_dist_edg(distEdg);
+				if (newDistEdg > depth-1) continue;
+				move_list_stage3[moves_done] = (byte)mov_idx;
+				if (search_stage3_sub34 (cube2, depth - 1, moves_done + 1, next_ms, newDistCen, newDistEdg)) return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean init_stage4_sub34 (){
+		int i;
+		if (( endtime < System.currentTimeMillis()) && found3 ) return true;
+
+		c2.copyTo(c3);
+		c3.scramble( length3, move_list_stage3, stage3_slice_moves );
+
+		CubeStage4 s1 = new CubeStage4();
+		c3.convert_to_stage4 (s1);
+
+		int d4 = s1.getDistance();
+
+		for (length4 = d4; length4 < total_length - length3; ++length4) {
+			if( search_stage4_sub34 (s1, length4, 0, 0, d4 )) {
+				total_length = length3+length4;
+				/* Save current solution */
+				found3 = true;
+				System.arraycopy(move_list_stage3, 0, move_list_sub_stage3, 0, length3);
+				length3_sub = length3;
+				return false;
+			}
+		}
+		return false;
+	}
+
+	public static boolean search_stage4_sub34 (CubeStage4 cube1, int depth, int moves_done, int move_state, int dist){
+		Statistics.addNode(4, depth);
+		CubeStage4 cube2 = new CubeStage4();
+		int mov_idx, j;
+		int next_ms = 0;
+		if (depth == 0) {
+			if (! cube1.is_solved ()) {
+				return false;
+			}
+			Statistics.addLeaf(4, length4);
+			return true;
+		}
+		for (mov_idx = 0; mov_idx < N_STAGE4_SLICE_MOVES; ++mov_idx) {
+			if ((stage4_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
+				cube1.copyTo (cube2);
+				cube2.do_move (mov_idx);
+				next_ms = stage4_stm_next_ms[mov_idx];
+				int newDist = cube2.new_dist(dist);
+				if (newDist > depth-1) continue;
+				move_list_stage4[moves_done] = (byte)mov_idx;
+				if (search_stage4_sub34 (cube2, depth - 1, moves_done + 1, next_ms, newDist)) return true;
+			}
+		}
+		return false;
+	}
+
+	public static void solve_stage45_suboptimal (CubeState cube) {
+		int i;
+		cube.copyTo(c3);
+
+		CubeStage4 s1 = new CubeStage4();
+		c3.convert_to_stage4 (s1);
+
+		int d4 = s1.getDistance();
+
+		endtime = System.currentTimeMillis() + time_per_stage;
+		total_length = 100;
+		found4 = false;
+		//System.out.println( "Search suboptimal solution for stage 4+5" );
+
+		for (length4 = d4; length4 < total_length; ++length4) {
+			if( search_stage4_sub45 (s1, length4, 0, 0, d4 )){
+				break;
+			}
+		}
+
+		byte[] sol_move_list = new byte[100];
+		System.out.print ("Stage 4: ");
+		for (i = 0; i < length4_sub; ++i)
+			sol_move_list[i] = xlate_r6[stage4_slice_moves[move_list_sub_stage4[i]]][rotate];
+		print_move_list (length4_sub, sol_move_list);
+
+		System.out.print ("Stage 5: ");
+		for (i = 0; i < length5_sub; ++i)
+			sol_move_list[i] = xlate_r6[stage5_slice_moves[move_list_sub_stage5[i]]][rotate];
+		print_move_list (length5_sub, sol_move_list);
+	}
+
+	public static boolean search_stage4_sub45 (CubeStage4 cube1, int depth, int moves_done, int move_state, int dist){
+		Statistics.addNode(4, depth);
+		CubeStage4 cube2 = new CubeStage4();
+		int mov_idx, j;
+		int next_ms = 0;
+		if (depth == 0) {
+			if (! cube1.is_solved ()) {
+				return false;
+			}
+			Statistics.addLeaf(4, length4);
+			return init_stage5_sub45();
+		}
+		for (mov_idx = 0; mov_idx < N_STAGE4_SLICE_MOVES; ++mov_idx) {
+			if (((stage4_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) || ( depth == 1 )){
+				cube1.copyTo (cube2);
+				cube2.do_move (mov_idx);
+				next_ms = stage4_stm_next_ms[mov_idx];
+				int newDist = cube2.new_dist(dist);
+				if (newDist > depth-1) continue;
+				move_list_stage4[moves_done] = (byte)mov_idx;
+				if (search_stage4_sub45 (cube2, depth - 1, moves_done + 1, next_ms, newDist)) return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean init_stage5_sub45 (){
+		int i;
+		if (( endtime < System.currentTimeMillis()) && found4 ) return true;
+
+		c3.copyTo(c4);
+		c4.scramble( length4, move_list_stage4, stage4_slice_moves );
+
+		CubeStage5 s1 = new CubeStage5();
+		c4.convert_to_stage5 (s1);
+
+		int cubeDistEdgCen = s1.getDistanceEdgCen();
+		int cubeDistEdgCor = s1.getDistanceEdgCor();
+		int d5 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
+
+		for (length5 = d5; length5 < total_length-length4; ++length5) {
+			if( search_stage5_sub45 (s1, length5, 0, 12, cubeDistEdgCen, cubeDistEdgCor )){
+				total_length = length4+length5;
+				/* Save current solution */
+				found4 = true;
+				System.arraycopy(move_list_stage4, 0, move_list_sub_stage4, 0, length4);
+				System.arraycopy(move_list_stage5, 0, move_list_sub_stage5, 0, length5);
+				length4_sub = length4;
+				length5_sub = length5;
+				return false;
+			}
+		}
+		return false;
+	}
+
+	public static boolean search_stage5_sub45 (CubeStage5 cube1, int depth, int moves_done, int move_state, int distEdgCen, int distEdgCor){
+		Statistics.addNode(5, depth);
+		CubeStage5 cube2 = new CubeStage5();
+		int mov_idx, j;
+		int next_ms = 0;
+		if (depth == 0) {
+			if (! cube1.is_solved ()) {
+				return false;
+			}
+			Statistics.addLeaf(5, length5);
+			return true;
+		}
+		for (mov_idx = 0; mov_idx < N_STAGE5_MOVES; ++mov_idx) {
+			cube1.copyTo (cube2);
+			if ((sqs_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
+				cube2.do_move (mov_idx);
+				next_ms = sqs_stm_next_ms[mov_idx];
+				int newDistEdgCen = cube2.new_dist_edgcen(distEdgCen);
+				if (newDistEdgCen > depth-1) continue;
+				int newDistEdgCor = cube2.new_dist_edgcor(distEdgCor);
+				if (newDistEdgCor > depth-1) continue;
+				move_list_stage5[moves_done] = (byte)mov_idx;
+				if (search_stage5_sub45 (cube2, depth - 1, moves_done + 1, next_ms, newDistEdgCen, newDistEdgCor)) return true;
+			}
+		}
+		return false;
+	}
+
+	public static void solveit4x4x4IDA (CubeState cube) {
+
+		total_length = 100;
+		cube.copyTo (c);
+		CubeStage1 s1 = new CubeStage1();
 		c.convert_to_stage1 (s1);
 
 		int d1 = s1.getDistance();
@@ -206,31 +876,6 @@ public final class FiveStage444 {
 			if( search_stage1 (s1, length1, 0, N_BASIC_MOVES, d1 ))
 				break;
 		}
-
-
-		/*
-		cube.do_move (Lf3);
-		cube.do_move (Ls3);
-		cube.do_move (Rs);
-		cube.do_move (Rf);
-		cube.do_move (Uf3);
-		cube.do_move (Us3);
-		cube.do_move (Ds);
-		cube.do_move (Df);
-
-		cube.convert_to_stage1 (s2);		
-
-		cube.do_move (Lf3);
-		cube.do_move (Ls3);
-		cube.do_move (Rs);
-		cube.do_move (Rf);
-		cube.do_move (Uf3);
-		cube.do_move (Us3);
-		cube.do_move (Ds);
-		cube.do_move (Df);
-
-		cube.convert_to_stage1 (s3);
-		*/
 	}
 
 	public static boolean search_stage1 (CubeStage1 cube1, int depth, int moves_done, int move_state, int dist){
@@ -451,7 +1096,7 @@ public final class FiveStage444 {
 		int d5 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
 
 		int l = -1;
-		for (length5 = d5; length5 < 100; ++length5) {
+		for (length5 = d5; length5 < total_length-length1-length2-length3-length4; ++length5) {
 			if( search_stage5 (s1, length5, 0, 12, cubeDistEdgCen, cubeDistEdgCor )){
 				l = length5;
 				break;
@@ -459,9 +1104,10 @@ public final class FiveStage444 {
 		}
 
 		if (l != -1){
+			total_length = length1+length2+length3+length4+length5;
 			/* Print solution */
 			byte[] sol_move_list = new byte[100];
-/*
+
 			System.out.print ("Stage 1: ");
 			print_move_list (length1, move_list_stage1);
 
@@ -484,7 +1130,7 @@ public final class FiveStage444 {
 			for (i = 0; i < length5; ++i)
 				sol_move_list[i] = xlate_r6[stage5_slice_moves[move_list_stage5[i]]][rotate2];
 			print_move_list (length5, sol_move_list);
-*/
+
 			return true;
 		}
 		return false;
