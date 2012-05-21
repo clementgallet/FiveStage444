@@ -127,7 +127,8 @@ public final class FiveStage444 {
 	static byte[] move_list_sub_stage4 = new byte[50];
 	static byte[] move_list_sub_stage5 = new byte[50];
 	static int length1_sub, length2_sub, length3_sub, length4_sub, length5_sub;
-	static int r1_sub, r2_sub, r3_sub, r4_sub, r5_sub;
+	static int r1, r2;
+	static int r1_sub, r2_sub;
 	static boolean found1, found2, found3, found4;
 
 	static int solver_mode;
@@ -149,7 +150,7 @@ public final class FiveStage444 {
 	static CubeState c3 = new CubeState();
 	static CubeState c4 = new CubeState();
 
-	static int time_per_stage = 1000;
+	static int time_per_stage = 10000;
 
 	public static void main(String[] args){
 
@@ -222,8 +223,8 @@ public final class FiveStage444 {
 		byte[] sol_move_list = new byte[100];
 		cube.copyTo (c);
 
-		/* Stage 1+2 */
-		solver_mode = SUB_12;
+		//solver_mode = SUB_12;
+		solver_mode = SUB_123;
 		init_stage1 ();
 
 		/* Print */
@@ -234,8 +235,8 @@ public final class FiveStage444 {
 		System.arraycopy(move_list_sub_stage1, 0, move_list_stage1, 0, length1_sub);
 		length1 = length1_sub;
 
-		/* Stage 2+3 */
-		solver_mode = SUB_23;
+		//solver_mode = SUB_23;
+		solver_mode = SUB_234;
 		init_stage2 ( r1_sub );
 
 		/* Print */
@@ -248,32 +249,33 @@ public final class FiveStage444 {
 		System.arraycopy(move_list_sub_stage2, 0, move_list_stage2, 0, length2_sub);
 		length2 = length2_sub;
 
-		/* Stage 3+4 */
-		solver_mode = SUB_34;
+		//solver_mode = SUB_34;
+		solver_mode = SUB_345;
 		init_stage3 ( r2_sub );
 
 		/* Print */
 		System.out.print ("Stage 3: ");
 		for (i = 0; i < length3_sub; ++i)
-			sol_move_list[i] = xlate_r6[stage3_slice_moves[move_list_sub_stage3[i]]][rotate];
+			sol_move_list[i] = xlate_r6[stage3_slice_moves[move_list_sub_stage3[i]]][rotate2];
 		print_move_list (length3_sub, sol_move_list);
 
-		/* Prepare for next step */
-		System.arraycopy(move_list_sub_stage3, 0, move_list_stage3, 0, length3_sub);
-		length3 = length3_sub;
+		if( solver_mode == SUB_34 ){
+			/* Prepare for next step */
+			System.arraycopy(move_list_sub_stage3, 0, move_list_stage3, 0, length3_sub);
+			length3 = length3_sub;
 
-		/* Stage 4+5 */
-		solver_mode = SUB_45;
-		init_stage4 ();
+			solver_mode = SUB_45;
+			init_stage4 ();
+		}
 
 		/* Print */
 		System.out.print ("Stage 4: ");
 		for (i = 0; i < length4_sub; ++i)
-			sol_move_list[i] = xlate_r6[stage4_slice_moves[move_list_sub_stage4[i]]][rotate];
+			sol_move_list[i] = xlate_r6[stage4_slice_moves[move_list_sub_stage4[i]]][rotate2];
 		print_move_list (length4_sub, sol_move_list);
 		System.out.print ("Stage 5: ");
 		for (i = 0; i < length5_sub; ++i)
-			sol_move_list[i] = xlate_r6[stage5_slice_moves[move_list_sub_stage5[i]]][rotate];
+			sol_move_list[i] = xlate_r6[stage5_slice_moves[move_list_sub_stage5[i]]][rotate2];
 		print_move_list (length5_sub, sol_move_list);
 
 	}
@@ -316,6 +318,7 @@ public final class FiveStage444 {
 
 		total_length = 100;
 		found1 = false;
+		found2 = false;
 		//System.out.println( "Search suboptimal solution for stage 1+2" );
 		for (length1 = d; length1 < total_length; ++length1) {
 			if( search_stage1 (s1, length1, 0, N_BASIC_MOVES, d1, 0 ) ||
@@ -335,7 +338,7 @@ public final class FiveStage444 {
 				return false;
 			}
 			Statistics.addLeaf(1, length1);
-			if( solver_mode == SUB_12 )
+			if(( solver_mode == SUB_12 ) || ( solver_mode == SUB_123 ))
 				return init_stage2 (r);
 		}
 		for (mov_idx = 0; mov_idx < N_BASIC_MOVES; ++mov_idx) {
@@ -353,10 +356,11 @@ public final class FiveStage444 {
 
 	public static boolean init_stage2 (int r){
 
-		if( solver_mode == SUB_12 )
-			if (( endtime < System.currentTimeMillis()) && found1 ) return true;
+		if(( solver_mode == SUB_12 ) || ( solver_mode == SUB_123 ))
+			if (( endtime < System.currentTimeMillis() ) && found1 ) return true;
 		int i;
-		switch (r) {
+		r1 = r;
+		switch (r1) {
 		case 0:
 			c.copyTo(c1);	
 			break;	//no whole cube rotation
@@ -417,10 +421,11 @@ public final class FiveStage444 {
 		int cubeDistCenB2 = s2.getDistanceEdgCen(false);
 		int d22 = Math.max(cubeDistCenF2, cubeDistCenB2);
 
-		if( solver_mode == SUB_23 ){
+		if(( solver_mode == SUB_23 ) || ( solver_mode == SUB_234 )){
 			endtime = System.currentTimeMillis() + time_per_stage;
 			total_length = 100;
 			found2 = false;
+			found3 = false;
 			length1 = 0;
 		}
 
@@ -453,7 +458,7 @@ public final class FiveStage444 {
 			Statistics.addLeaf(2, length2);
 			if( solver_mode == SUB_12 )
 				return true;
-			if( solver_mode == SUB_23 )
+			if(( solver_mode == SUB_23 ) || ( solver_mode == SUB_123 ) || ( solver_mode == SUB_234 ))
 				return init_stage3 (r);
 		}
 		for (mov_idx = 0; mov_idx < N_STAGE2_SLICE_MOVES; ++mov_idx) {
@@ -474,15 +479,17 @@ public final class FiveStage444 {
 	}
 
 	public static boolean init_stage3 (int r){
-		if( solver_mode == SUB_23 )
-			if (( endtime < System.currentTimeMillis()) && found2 ) return true;
 		int i;
+		if(( solver_mode == SUB_23 ) || ( solver_mode == SUB_123 ) || ( solver_mode == SUB_234 ))
+			if (( endtime < System.currentTimeMillis()) && found2 ) return true;
+
+		r2 = r;
 		switch (r) {
 		case 0:
-			c1.copyTo(c2);	
+			c1.copyTo(c2);
 			break;	//no whole cube rotation
 		case 1:
-			c1r.copyTo(c2);	
+			c1r.copyTo(c2);
 			break;	//no whole cube rotation
 		default:
 			System.out.println ("Invalid cube rotation state.");
@@ -507,22 +514,31 @@ public final class FiveStage444 {
 		int cubeDistEdg = s1.getDistanceEdg();
 		int d3 = Math.max(cubeDistCen, cubeDistEdg);
 
-		if( solver_mode == SUB_34 ){
+		if(( solver_mode == SUB_34 ) || ( solver_mode == SUB_345 )){
 			endtime = System.currentTimeMillis() + time_per_stage;
 			total_length = 100;
 			found3 = false;
+			found4 = false;
+			length1 = 0;
 			length2 = 0;
 		}
 
-		for (length3 = d3; length3 < total_length-length2; ++length3) {
+		for (length3 = d3; length3 < total_length-length2-length1; ++length3) {
 			if( search_stage3 (s1, length3, 0, 0, cubeDistCen, cubeDistEdg )){
-				if( solver_mode == SUB_23 ){
-					total_length = length2+length3;
+				if(( solver_mode == SUB_23 ) || ( solver_mode == SUB_123 )){
+					total_length = length1+length2+length3;
 					/* Save current solution */
 					found2 = true;
-					r2_sub = r;
+					r2_sub = r2;
 					System.arraycopy(move_list_stage2, 0, move_list_sub_stage2, 0, length2);
 					length2_sub = length2;
+				}
+				if( solver_mode == SUB_123 ){
+					/* Save current solution */
+					found1 = true;
+					r1_sub = r1;
+					System.arraycopy(move_list_stage1, 0, move_list_sub_stage1, 0, length1);
+					length1_sub = length1;
 				}
 				return false;
 			}
@@ -540,9 +556,9 @@ public final class FiveStage444 {
 				return false;
 			}
 			Statistics.addLeaf(3, length3);
-			if( solver_mode == SUB_23 )
+			if(( solver_mode == SUB_23 ) || ( solver_mode == SUB_123 ))
 				return true;
-			if( solver_mode == SUB_34 )
+			if(( solver_mode == SUB_34 ) || ( solver_mode == SUB_234 ) || ( solver_mode == SUB_345 ))
 				return init_stage4 ();
 		}
 		for (mov_idx = 0; mov_idx < N_STAGE3_SLICE_MOVES; ++mov_idx) {
@@ -563,7 +579,7 @@ public final class FiveStage444 {
 
 	public static boolean init_stage4 (){
 		int i;
-		if( solver_mode == SUB_34 )
+		if(( solver_mode == SUB_34 ) || ( solver_mode == SUB_234 ) || ( solver_mode == SUB_345 ))
 			if (( endtime < System.currentTimeMillis()) && found3 ) return true;
 
 		c2.copyTo(c3);
@@ -581,14 +597,20 @@ public final class FiveStage444 {
 			length3 = 0;
 		}
 
-		for (length4 = d4; length4 < total_length - length3; ++length4) {
+		for (length4 = d4; length4 < total_length - length3 - length2; ++length4) {
 			if( search_stage4 (s1, length4, 0, 0, d4 )) {
-				if( solver_mode == SUB_34 ){
-					total_length = length3+length4;
+				if(( solver_mode == SUB_34 ) || ( solver_mode == SUB_234 )){
+					total_length = length2+length3+length4;
 					/* Save current solution */
 					found3 = true;
 					System.arraycopy(move_list_stage3, 0, move_list_sub_stage3, 0, length3);
 					length3_sub = length3;
+				}
+				if( solver_mode == SUB_234 ){
+					/* Save current solution */
+					found2 = true;
+					System.arraycopy(move_list_stage2, 0, move_list_sub_stage2, 0, length2);
+					length2_sub = length2;
 				}
 				return false;
 			}
@@ -606,9 +628,9 @@ public final class FiveStage444 {
 				return false;
 			}
 			Statistics.addLeaf(4, length4);
-			if( solver_mode == SUB_34 )
+			if(( solver_mode == SUB_34 ) || ( solver_mode == SUB_234 ))
 				return true;
-			if( solver_mode == SUB_45 )
+			if(( solver_mode == SUB_45 ) || ( solver_mode == SUB_345 ))
 				return init_stage5 ();
 		}
 		for (mov_idx = 0; mov_idx < N_STAGE4_SLICE_MOVES; ++mov_idx) {
@@ -639,15 +661,20 @@ public final class FiveStage444 {
 		int cubeDistEdgCor = s1.getDistanceEdgCor();
 		int d5 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
 
-		for (length5 = d5; length5 < total_length-length4; ++length5) {
+		for (length5 = d5; length5 < total_length-length4-length3; ++length5) {
 			if( search_stage5 (s1, length5, 0, 12, cubeDistEdgCen, cubeDistEdgCor )){
-				total_length = length4+length5;
+				total_length = length3+length4+length5;
 				/* Save current solution */
 				found4 = true;
 				System.arraycopy(move_list_stage4, 0, move_list_sub_stage4, 0, length4);
 				System.arraycopy(move_list_stage5, 0, move_list_sub_stage5, 0, length5);
 				length4_sub = length4;
 				length5_sub = length5;
+				if( solver_mode == SUB_345 ){
+					found3 = true;
+					System.arraycopy(move_list_stage3, 0, move_list_sub_stage3, 0, length3);
+					length3_sub = length3;
+				}
 				return false;
 			}
 		}
