@@ -141,6 +141,10 @@ public final class FiveStage444 {
 	static int SUB_345 = 6;
 	static int SUB_12345 = 7;
 
+	static int MAX_STAGE2 = 12;
+	static int MAX_STAGE3 = 12;
+	static int MAX_STAGE4 = 12;
+
 	static CubeState c = new CubeState();
 	static CubeState cr = new CubeState();
 	static CubeState cr2 = new CubeState();
@@ -429,7 +433,7 @@ public final class FiveStage444 {
 			length1 = 0;
 		}
 
-		for (length2 = Math.min(d21, d22); length2 < total_length-length1; ++length2) {
+		for (length2 = Math.min(d21, d22); length2 < Math.min( MAX_STAGE2, total_length-length1); ++length2) {
 			if( search_stage2 (s1, length2, 0, 0, cubeDistCenF1, cubeDistCenB1, 0 ) ||
 			    search_stage2 (s2, length2, 0, 0, cubeDistCenF2, cubeDistCenB2, 1 )){
 				if( solver_mode == SUB_12 ){
@@ -523,7 +527,7 @@ public final class FiveStage444 {
 			length2 = 0;
 		}
 
-		for (length3 = d3; length3 < total_length-length2-length1; ++length3) {
+		for (length3 = d3; length3 < Math.min(MAX_STAGE3, total_length-length2-length1); ++length3) {
 			if( search_stage3 (s1, length3, 0, 0, cubeDistCen, cubeDistEdg )){
 				if(( solver_mode == SUB_23 ) || ( solver_mode == SUB_123 )){
 					total_length = length1+length2+length3;
@@ -597,7 +601,7 @@ public final class FiveStage444 {
 			length3 = 0;
 		}
 
-		for (length4 = d4; length4 < total_length - length3 - length2; ++length4) {
+		for (length4 = d4; length4 < Math.min( MAX_STAGE4, total_length - length3 - length2); ++length4) {
 			if( search_stage4 (s1, length4, 0, 0, d4 )) {
 				if(( solver_mode == SUB_34 ) || ( solver_mode == SUB_234 )){
 					total_length = length2+length3+length4;
