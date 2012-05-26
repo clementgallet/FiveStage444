@@ -141,14 +141,14 @@ public final class FiveStage444 {
 	static final int SUB_345 = 6;
 	static final int SUB_12345 = 7;
 
-	static int MAX_STAGE2 = 8;
-	static int MIN_STAGE3 = 6;
+	static int MAX_STAGE2 = 7;
+	static int MIN_STAGE3 = 7;
 
-	static int MAX_STAGE3 = 10;
-	static int MIN_STAGE4 = 6;
+	static int MAX_STAGE3 = 9;
+	static int MIN_STAGE4 = 8;
 
-	static int MAX_STAGE4 = 11;
-	static int MIN_STAGE5 = 7;
+	static int MAX_STAGE4 = 10;
+	static int MIN_STAGE5 = 8;
 
 	static CubeState c = new CubeState();
 	static CubeState cr = new CubeState();
@@ -159,13 +159,16 @@ public final class FiveStage444 {
 	static CubeState c3 = new CubeState();
 	static CubeState c4 = new CubeState();
 
-	static int time_per_stage = 1000;
+	static CubeStage1[] list1 = new CubeStage1[20];
+	static CubeStage2[] list2 = new CubeStage2[20];
+
+	static int time_per_stage = 500;
 
 	static int DEBUG_LEVEL = 0;
 
 	public static void main(String[] args){
 
-		int random_count = 30;
+		int random_count = 10;
 
 		Symmetry.init();
 
@@ -200,11 +203,13 @@ public final class FiveStage444 {
 			CubeStage5.prune_table_edgcor.analyse();
 		}
 
+		int i;
+		for( i=0; i<20; i++ ){
+			list1[i] = new CubeStage1();
+			list2[i] = new CubeStage2();
+		}
+
 		do_random_cubes (random_count);
-
-		/* Print statistics */
-		//Statistics.print();
-
 	}
 
 	public static void do_random_cubes (int count) {
@@ -268,7 +273,9 @@ public final class FiveStage444 {
 		//solver_mode = SUB_34;
 		solver_mode = SUB_345;
 		init_stage3 ( r2_sub );
-		System.out.println(length1_sub+length2_sub+length3_sub+length4_sub+length5_sub);
+		//System.out.println(total_length + "-" + length4_sub + "-" + (total_length-length4_sub-length3_sub) );
+		System.out.println(length1_sub + length2_sub + length4_sub + length5_sub + length3_sub );
+		//System.out.println(total_length );
 		if(true)return;
 		/* Print */
 		System.out.print ("Stage 3: ");
@@ -332,6 +339,7 @@ public final class FiveStage444 {
 		int d = Math.min(d1, Math.min(d2, d3));
 
 		endtime = System.currentTimeMillis() + time_per_stage;
+		//endtime = System.currentTimeMillis();
 
 		total_length = 100;
 		found1 = false;
@@ -348,25 +356,23 @@ public final class FiveStage444 {
 	}
 
 	public static boolean search_stage1 (CubeStage1 cube1, int depth, int moves_done, int move_state, int dist, int r){
-		Statistics.addNode(1, depth);
-		CubeStage1 cube2 = new CubeStage1();
+		//CubeStage1 cube2 = new CubeStage1();
 		int mov_idx, j;
 		if (depth == 0){
 			if (! cube1.is_solved ()) {
 				return false;
 			}
-			Statistics.addLeaf(1, length1);
 			if(( solver_mode == SUB_12 ) || ( solver_mode == SUB_123 ))
 				return init_stage2 (r);
 		}
 		for (mov_idx = 0; mov_idx < N_BASIC_MOVES; ++mov_idx) {
 			if (((stage1_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) || ( depth == -1 )) {
-				cube1.copyTo(cube2);
-				cube2.do_move (mov_idx);
-				int newDist = cube2.new_dist(dist);
+				cube1.copyTo(list1[depth]);
+				list1[depth].do_move (mov_idx);
+				int newDist = list1[depth].new_dist(dist);
 				if (newDist > depth-1) continue;
 				move_list_stage1[moves_done] = (byte)mov_idx;
-				if (search_stage1 (cube2, depth - 1, moves_done + 1, mov_idx, newDist, r)) return true;
+				if (search_stage1 (list1[depth], depth - 1, moves_done + 1, mov_idx, newDist, r)) return true;
 			}
 		}
 		return false;
@@ -387,13 +393,13 @@ public final class FiveStage444 {
 		switch (r1) {
 		case 0:
 			c.copyTo(c1);	
-			break;	//no whole cube rotation
+			break;
 		case 1:
 			cr.copyTo(c1);	
-			break;	//no whole cube rotation
+			break;
 		case 2:
 			cr2.copyTo(c1);	
-			break;	//no whole cube rotation
+			break;
 		default:
 			System.out.println ("Invalid cube rotation state.");
 		}
@@ -451,7 +457,7 @@ public final class FiveStage444 {
 		int min2;
 		switch( solver_mode ){
 			case SUB_123:
-				min2 = Math.min( MAX_STAGE2, total_length - length1 - MIN_STAGE3);
+				min2 = Math.min( MAX_STAGE2 + 1, total_length - length1 - MIN_STAGE3);
 				break;
 			case SUB_12:
 				min2 = total_length - length1;
@@ -459,6 +465,7 @@ public final class FiveStage444 {
 			default:
 				min2 = 999;
 		}
+
 		cubeDistCenF1 = s1.getDistanceEdgCen(true);
 		if( cubeDistCenF1 < min2 ){
 			cubeDistCenB1 = s1.getDistanceEdgCen(false);
@@ -495,15 +502,13 @@ public final class FiveStage444 {
 	}
 
 	public static boolean search_stage2 (CubeStage2 cube1, int depth, int moves_done, int move_state, int distCenF, int distCenB, int r ){
-		Statistics.addNode(2, depth);
-		CubeStage2 cube2 = new CubeStage2();
+		//CubeStage2 cube2 = new CubeStage2();
 		int mov_idx, mc, j;
 		int next_ms = 0;
 		if (depth == 0) {
 			if (! cube1.is_solved ()) {
 				return false;
 			}
-			Statistics.addLeaf(2, length2);
 			if( solver_mode == SUB_12 )
 				return true;
 			if(( solver_mode == SUB_23 ) || ( solver_mode == SUB_123 ) || ( solver_mode == SUB_234 ))
@@ -511,16 +516,16 @@ public final class FiveStage444 {
 		}
 		for (mov_idx = 0; mov_idx < N_STAGE2_SLICE_MOVES; ++mov_idx) {
 			if ((stage2_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0){
-				cube1.copyTo (cube2);
-				cube2.do_move (mov_idx);
+				cube1.copyTo (list2[depth]);
+				list2[depth].do_move (mov_idx);
 				next_ms = stage2_stm_next_ms[mov_idx];
 
-				int newDistCenF = cube2.new_dist_edgcen(true, distCenF);
+				int newDistCenF = list2[depth].new_dist_edgcen(true, distCenF);
 				if (newDistCenF > depth-1) continue;
-				int newDistCenB = cube2.new_dist_edgcen(false, distCenB);
+				int newDistCenB = list2[depth].new_dist_edgcen(false, distCenB);
 				if (newDistCenB > depth-1) continue;
 				move_list_stage2[moves_done] = (byte)mov_idx;
-				if (search_stage2 (cube2, depth - 1, moves_done + 1, next_ms, newDistCenF, newDistCenB, r)) return true;
+				if (search_stage2 (list2[depth], depth - 1, moves_done + 1, next_ms, newDistCenF, newDistCenB, r)) return true;
 			}
 		}
 		return false;
@@ -570,13 +575,13 @@ public final class FiveStage444 {
 		int min3;
 		switch( solver_mode ){
 			case SUB_234: 
-				min3 = Math.min( MAX_STAGE3, total_length - length1 - length2 - MIN_STAGE4 );
+				min3 = Math.min( MAX_STAGE3 + 1, total_length - length2 - MIN_STAGE4 );
 				break;
 			case SUB_123:
 				min3 = total_length - length2 - length1;
 				break;
 			case SUB_23:
-				min3 = total_length - length2 - length1;
+				min3 = total_length - length2;
 				break;
 			default:
 				min3 = 999;
@@ -613,7 +618,6 @@ public final class FiveStage444 {
 	}
 
 	public static boolean search_stage3 (CubeStage3 cube1, int depth, int moves_done, int move_state, int distCen, int distEdg){
-		Statistics.addNode(3, depth);
 		CubeStage3 cube2 = new CubeStage3();
 		int mov_idx, j;
 		int next_ms = 0;
@@ -621,7 +625,6 @@ public final class FiveStage444 {
 			if (! cube1.is_solved ()) {
 				return false;
 			}
-			Statistics.addLeaf(3, length3);
 			if(( solver_mode == SUB_23 ) || ( solver_mode == SUB_123 ))
 				return true;
 			if(( solver_mode == SUB_34 ) || ( solver_mode == SUB_234 ) || ( solver_mode == SUB_345 ))
@@ -665,9 +668,9 @@ public final class FiveStage444 {
 
 		int min4;
 		if( solver_mode == SUB_345 )
-			min4 = Math.min( MAX_STAGE4, total_length - length3 - MIN_STAGE5 );
+			min4 = Math.min( MAX_STAGE4 + 1, total_length - length3 - MIN_STAGE5 );
 		else
-			min4 = Math.min( MAX_STAGE4, total_length - length3 - length2 );
+			min4 = Math.min( MAX_STAGE4 + 1, total_length - length3 - length2 );
 
 		for (length4 = d4; length4 < min4; ++length4) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "      Stage 4 - length "+length4 );
@@ -692,7 +695,6 @@ public final class FiveStage444 {
 	}
 
 	public static boolean search_stage4 (CubeStage4 cube1, int depth, int moves_done, int move_state, int dist){
-		Statistics.addNode(4, depth);
 		CubeStage4 cube2 = new CubeStage4();
 		int mov_idx, j;
 		int next_ms = 0;
@@ -700,7 +702,6 @@ public final class FiveStage444 {
 			if (! cube1.is_solved ()) {
 				return false;
 			}
-			Statistics.addLeaf(4, length4);
 			if(( solver_mode == SUB_34 ) || ( solver_mode == SUB_234 ))
 				return true;
 			if(( solver_mode == SUB_45 ) || ( solver_mode == SUB_345 ))
@@ -759,7 +760,6 @@ public final class FiveStage444 {
 	}
 
 	public static boolean search_stage5 (CubeStage5 cube1, int depth, int moves_done, int move_state, int distEdgCen, int distEdgCor){
-		Statistics.addNode(5, depth);
 		CubeStage5 cube2 = new CubeStage5();
 		int mov_idx, j;
 		int next_ms = 0;
@@ -767,7 +767,6 @@ public final class FiveStage444 {
 			if (! cube1.is_solved ()) {
 				return false;
 			}
-			Statistics.addLeaf(5, length5);
 			return true;
 		}
 		for (mov_idx = 0; mov_idx < N_STAGE5_MOVES; ++mov_idx) {

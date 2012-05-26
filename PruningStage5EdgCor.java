@@ -30,8 +30,8 @@ public final class PruningStage5EdgCor extends Pruning {
 		int edge = (int)(idx / Constants.N_STAGE5_CORNER_PERM);
 
 		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][move];
-		int sym = newEdge % 48;
-		int edgeRep = newEdge / 48;
+		int sym = newEdge & 0x3F;
+		int edgeRep = newEdge >> 6;
 
 		cor = Tables.move_table_cornerSTAGE5[cor][move];
 		cor = Tables.move_table_corner_conjSTAGE5[cor][sym];

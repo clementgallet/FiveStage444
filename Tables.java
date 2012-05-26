@@ -460,7 +460,7 @@ public final class Tables {
 		cube2.init ();
 		CubeStage1 s1 = new CubeStage1();
 		for (u = 0; u < N_CORNER_ORIENT; ++u) {
-			s1.m_co = (short)u;
+			s1.corner = u;
 			s1.convert_corners_to_std_cube (cube1);
 			for (mc = 0; mc < N_BASIC_MOVES; ++mc) {
 				int fmc = basic_to_face[mc];
@@ -502,7 +502,7 @@ public final class Tables {
 		cube2.init ();
 		CubeStage1 s1 = new CubeStage1();
 		for (u = 0; u < N_CORNER_ORIENT; ++u) {
-			s1.m_co = (short)u;
+			s1.corner = u;
 			s1.convert_corners_to_std_cube (cube1);
 			for (sym = 0; sym < N_SYM_STAGE1; ++sym) {
 				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
@@ -540,7 +540,7 @@ public final class Tables {
 		CubeState cube2 = new CubeState();
 		CubeStage2 s1 = new CubeStage2();
 		for (u = 0; u < N_STAGE2_EDGE_CONFIGS; ++u) {
-			s1.m_edge = u;
+			s1.edge = u;
 			s1.convert_edges_to_std_cube(cube1);
 			for (mc = 0; mc < N_STAGE2_SLICE_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
@@ -579,7 +579,7 @@ public final class Tables {
 		cube2.init ();
 		CubeStage2 s2 = new CubeStage2();
 		for (u = 0; u < N_STAGE2_EDGE_CONFIGS; ++u) {
-			s2.m_edge = (short)u;
+			s2.edge = u;
 			s2.convert_edges_to_std_cube (cube1);
 			for (sym = 0; sym < N_SYM_STAGE2; ++sym) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
@@ -824,7 +824,7 @@ public final class Tables {
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		for (u = 0; u < N_STAGE3_EDGE_CONFIGS; ++u) {
-			s3.m_edge = (short)u;
+			s3.edge = u;
 			s3.convert_edges_to_std_cube(cube1);
 			for (mc = 0; mc < N_STAGE3_SLICE_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
@@ -862,7 +862,7 @@ public final class Tables {
 		cube2.init ();
 		CubeStage3 s1 = new CubeStage3();
 		for (u = 0; u < N_STAGE3_EDGE_CONFIGS; ++u) {
-			s1.m_edge = (short)u;
+			s1.edge = u;
 			s1.convert_edges_to_std_cube (cube1);
 			for (sym = 0; sym < N_SYM_STAGE3; ++sym) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
@@ -1147,7 +1147,7 @@ public final class Tables {
 		CubeState cs2 = new CubeState();
 		cs1.init ();
 		for (u = 0; u < N_STAGE4_CORNER_CONFIGS; ++u) {
-			s4.m_corner = (short)u;
+			s4.corner = u;
 			s4.convert_corners_to_std_cube (cs1);
 			for (mc = 0; mc < N_STAGE4_SLICE_MOVES; ++mc) {
 				System.arraycopy(cs1.m_cor, 0, cs2.m_cor, 0, 8);
@@ -1183,7 +1183,7 @@ public final class Tables {
 		CubeState cs2 = new CubeState();
 		cs1.init ();
 		for (u = 0; u < N_STAGE4_CORNER_CONFIGS; ++u) {
-			s4.m_corner = (short)u;
+			s4.corner = u;
 			s4.convert_corners_to_std_cube (cs1);
 			for (sym = 0; sym < N_SYM_STAGE4; ++sym) {
 				System.arraycopy(cs1.m_cor, 0, cs2.m_cor, 0, 8);
@@ -1219,7 +1219,7 @@ public final class Tables {
 		CubeState cs2 = new CubeState();
 		cs1.init ();
 		for (u = 0; u < N_STAGE4_CENTER_CONFIGS; ++u) {
-			s4.m_centerUD = (byte)u;
+			s4.center = u;
 			s4.convert_centers_to_std_cube (cs1);
 			for (mc = 0; mc < N_STAGE4_SLICE_MOVES; ++mc) {
 				System.arraycopy(cs1.m_cen, 0, cs2.m_cen, 0, 24);
@@ -1255,7 +1255,7 @@ public final class Tables {
 		CubeState cs2 = new CubeState();
 		cs1.init ();
 		for (u = 0; u < N_STAGE4_CENTER_CONFIGS; ++u) {
-			s4.m_centerUD = (byte)u;
+			s4.center = u;
 			s4.convert_centers_to_std_cube (cs1);
 			for (sym = 0; sym < N_SYM_STAGE4; ++sym) {
 				System.arraycopy(cs1.m_cen, 0, cs2.m_cen, 0, 24);
@@ -1543,7 +1543,7 @@ public final class Tables {
 		cube2.init ();
 		CubeStage5 s1 = new CubeStage5();
 		for (u = 0; u < N_STAGE5_CORNER_PERM; ++u) {
-			s1.m_cp96 = (byte)u;
+			s1.corner = u;
 			s1.convert_corners_to_std_cube (cube1);
 			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
 				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
@@ -1581,7 +1581,7 @@ public final class Tables {
 		cube2.init ();
 		CubeStage5 s1 = new CubeStage5();
 		for (u = 0; u < N_STAGE5_CENTER_PERM; ++u) {
-			s1.m_cen12x12x12 = (short)u;
+			s1.center = u;
 			s1.convert_centers_to_std_cube (cube1);
 			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);

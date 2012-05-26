@@ -2,74 +2,70 @@ package fivestage444;
 
 public final class CubeStage5 {
 
-	public int m_sym_ep96x96x96; // (1051584)
-	public short m_cen12x12x12; // (1728)
-	public byte m_cp96; // (96)
+	public int edge; // (1051584)
+	public int sym; // (1051584)
+	public int center; // (1728)
+	public int corner; // (96)
 
 	public static PruningStage5EdgCen prune_table_edgcen;
 	public static PruningStage5EdgCor prune_table_edgcor;
 	public static PruningStage5 prune_table;
 
-	public void copyTo (CubeStage5 cube1){
-		cube1.m_cen12x12x12 = m_cen12x12x12;
-		cube1.m_cp96 = m_cp96;
-		cube1.m_sym_ep96x96x96 = m_sym_ep96x96x96;
+	public final void copyTo (CubeStage5 cube1){
+		cube1.center = center;
+		cube1.corner = corner;
+		cube1.edge = edge;
+		cube1.sym = sym;
 	}
 
-	public void do_move (int sqs_move_code){
-		m_cen12x12x12 = Tables.move_table_cenSTAGE5[m_cen12x12x12][sqs_move_code];
-		m_cp96 = Tables.move_table_cornerSTAGE5[m_cp96][sqs_move_code];
+	public final void do_move (int sqs_move_code){
+		center = Tables.move_table_cenSTAGE5[center][sqs_move_code];
+		corner = Tables.move_table_cornerSTAGE5[corner][sqs_move_code];
 
-		int sym = m_sym_ep96x96x96 % 48;
-		int rep = m_sym_ep96x96x96 / 48;
+		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][Symmetry.moveConjugate5[sqs_move_code][sym]];
 
-		int moveConj = Constants.stage5_inv_slice_moves[Symmetry.moveConjugate[Constants.stage5_slice_moves[sqs_move_code]][sym]];
-		int newEdge = Tables.move_table_symEdgeSTAGE5[rep][moveConj];
-
-		int newSym = newEdge % 48;
-		int newRep = newEdge / 48;
-
-		m_sym_ep96x96x96 = ( newRep * 48 ) + Symmetry.symIdxMultiply[newSym][sym];
+		sym = Symmetry.symIdxMultiply[newEdge & 0x3F][sym];
+		edge = newEdge >> 6;
 	}
 
 	public boolean is_solved (){
 
-		if (m_cen12x12x12 == 0 && m_cp96 == 0 && ( m_sym_ep96x96x96 / 48 ) == 0) {
+		if (center == 0 && corner == 0 && edge == 0) {
 			return true;
 		}
-		if (m_sym_ep96x96x96 / 48 == 21616 && Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48] == 66 && Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48] == 143)
+		if (edge == 21616 && Tables.move_table_corner_conjSTAGE5[corner][sym] == 66 && Tables.move_table_cen_conjSTAGE5[center][sym] == 143)
 			return true;
 		return false;
 	}
 
 	public boolean edges_corners_solved (){
 
-		if (m_cp96 == 0 && ( m_sym_ep96x96x96 / 48 ) == 0) {
+		if (corner == 0 && edge == 0) {
 			return true;
 		}
-		if (m_sym_ep96x96x96 / 48 == 21616 && Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48] == 66)
+		if (edge == 21616 && Tables.move_table_corner_conjSTAGE5[corner][sym] == 66)
 			return true;
 		return false;
 	}
 
 	public boolean edges_centers_solved (){
 
-		if (m_cen12x12x12 == 0 && ( m_sym_ep96x96x96 / 48 ) == 0) {
+		if (center == 0 && edge == 0) {
 			return true;
 		}
-		if (m_sym_ep96x96x96 / 48 == 21616 && Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48] == 143)
+		if (edge == 21616 && Tables.move_table_cen_conjSTAGE5[center][sym] == 143)
 			return true;
 		return false;
 	}
 
 	/* Convert functions */
 
-	public void convert_edges_to_std_cube (int edge, CubeState result_cube){
+	public void convert_edges_to_std_cube (int edge2, CubeState result_cube){
 		int i;
 
-		int ep1 = edge % 96;
-		int ep2 = (edge/96) % 96;
-		int ep3 = edge/(96*96);
+		int ep1 = edge2 % 96;
+		int ep2 = (edge2/96) % 96;
+		int ep3 = edge2/(96*96);
 		int rep = Tables.sqs_perm_to_rep[ep1/4];
 		Constants.perm_n_unpack (4, ep1/4, result_cube.m_edge, 0);
 		Constants.perm_n_unpack (4, Tables.sqs_rep_to_perm[rep][ep1 % 4], result_cube.m_edge, 4);
@@ -90,9 +86,9 @@ public final class CubeStage5 {
 		int i;
 		byte[] old_m_cor = new byte[8];
 
-		int rep = Tables.sqs_perm_to_rep[m_cp96/4];
-		Constants.perm_n_unpack (4, m_cp96/4, old_m_cor, 0);
-		Constants.perm_n_unpack (4, Tables.sqs_rep_to_perm[rep][m_cp96 % 4], old_m_cor, 4);
+		int rep = Tables.sqs_perm_to_rep[corner/4];
+		Constants.perm_n_unpack (4, corner/4, old_m_cor, 0);
+		Constants.perm_n_unpack (4, Tables.sqs_rep_to_perm[rep][corner % 4], old_m_cor, 4);
 		for (i = 0; i < 8; ++i) {
 			old_m_cor[i] += (byte)(4*(i/4));
 		}
@@ -114,9 +110,9 @@ public final class CubeStage5 {
 		int i;
 		byte[] old_m_cen = new byte[24];
 
-		int cen1 = m_cen12x12x12 % 12;
-		int cen2 = (m_cen12x12x12/12) % 12;
-		int cen3 = m_cen12x12x12/(12*12);
+		int cen1 = center % 12;
+		int cen2 = (center/12) % 12;
+		int cen3 = center/(12*12);
 		int x = (Tables.squares_cen_map[cen1] << 16) | (Tables.squares_cen_map[cen2] << 8) | Tables.squares_cen_map[cen3];
 		int b = 0x800000;
 		for (i = 0; i < 24; ++i) {
@@ -133,33 +129,29 @@ public final class CubeStage5 {
 
 	/* Pruning functions */
 
-	public int get_dist_edgcen (){
-		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48];
+	public final int get_dist_edgcen (){
+		int idx = edge * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[center][sym];
 		return prune_table_edgcen.get_dist_packed(idx);
 	}
 
-	public int new_dist_edgcen (int dist){
-		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48];
+	public final int new_dist_edgcen (int dist){
+		int idx = edge * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[center][sym];
 		return prune_table_edgcen.new_dist(idx, dist);
 	}
 
-	public int get_dist_edgcor (){
-		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
+	public final int get_dist_edgcor (){
+		int idx = edge * Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[corner][sym];
 		return prune_table_edgcor.get_dist_packed(idx);
 	}
 
-	public int new_dist_edgcor (int dist){
-		int idx = ( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
+	public final int new_dist_edgcor (int dist){
+		int idx = edge * Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[corner][sym];
 		return prune_table_edgcor.new_dist(idx, dist);
 	}
 
-	public int get_dist (){
-		long idx = (long)(( m_sym_ep96x96x96 / 48 ) * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[m_cen12x12x12][m_sym_ep96x96x96 % 48])* Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[m_cp96][m_sym_ep96x96x96 % 48];
+	public final int get_dist (){
+		long idx = (long)(edge * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[center][sym])* Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[corner][sym];
 		return prune_table.get_dist_packed(idx);
-	}
-
-	public int getDistance (){
-		return Math.max (getDistanceEdgCen (), getDistanceEdgCor ());
 	}
 
 	public int getDistanceEdgCen (){

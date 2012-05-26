@@ -2,46 +2,42 @@ package fivestage444;
 
 public final class CubeStage1 {
 
-	public short m_co; // corner orientation (2187)
-	public int m_sym_edge_ud_combo8; // (46371)
+	public int corner;
+	public int edge;
+	public int sym;
 
 	public static PruningStage1 prune_table;
 
-	public void copyTo (CubeStage1 cube1){
-		cube1.m_co = m_co;
-		cube1.m_sym_edge_ud_combo8 = m_sym_edge_ud_combo8;
+	public final void copyTo (CubeStage1 cube1){
+		cube1.corner = corner;
+		cube1.edge = edge;
+		cube1.sym = sym;
 	}
 
-	public void do_move (int move_code){
+	public final void do_move (int move_code){
 		int fmc = Constants.basic_to_face[move_code];
 		if (fmc >= 0)
-			m_co = Tables.move_table_co[m_co][fmc];
+			corner = Tables.move_table_co[corner][fmc];
 
-		int sym = m_sym_edge_ud_combo8 & 0x3F;
-		int rep = m_sym_edge_ud_combo8 >> 6;
+		int newEdge = Tables.move_table_symEdgeSTAGE1[edge][Symmetry.moveConjugate[move_code][sym]];
 
-		int moveConj = Symmetry.moveConjugate[move_code][sym];
-		int newEdge = Tables.move_table_symEdgeSTAGE1[rep][moveConj];
-
-		int newSym = newEdge & 0x3F;
-		int newRep = newEdge >> 6;
-
-		m_sym_edge_ud_combo8 = ( newRep << 6 ) + Symmetry.symIdxMultiply[newSym][sym];
+		sym = Symmetry.symIdxMultiply[newEdge & 0x3F][sym];
+		edge = newEdge >> 6 ;
 	}
 
 	public boolean is_solved (){
-		if (( m_sym_edge_ud_combo8 >> 6 ) == 0 && Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 & 0x3F] == 1906)
+		if (( edge == 0 ) && Tables.move_table_co_conj[corner][sym] == 1906)
 			return true;
 		return false;
 	}
 
 	/* Convert functions */
 
-	public void convert_edges_to_std_cube (int edge, CubeState result_cube)
+	public void convert_edges_to_std_cube (int edge2, CubeState result_cube)
 	{
 		int i;
 
-		int ebm = Tables.eloc2ebm[edge];
+		int ebm = Tables.eloc2ebm[edge2];
 		byte lrfb = 0;
 		byte ud = 16;
 		for (i = 0; i < 24; ++i) {
@@ -57,7 +53,7 @@ public final class CubeStage1 {
 	{
 		int i;
 
-		int orientc = m_co;
+		int orientc = corner;
 		int orientcmod3 = 0;
 		for (i = 6; i >= 0; --i) {	//don't want 8th edge orientation
 			byte fo = (byte)(orientc % 3);
@@ -70,15 +66,15 @@ public final class CubeStage1 {
 
 	/* Pruning functions */
 
-	private int get_idx (){
-		return Constants.N_CORNER_ORIENT * (m_sym_edge_ud_combo8 >> 6 ) + Tables.move_table_co_conj[m_co][m_sym_edge_ud_combo8 & 0x3F];
+	private final int get_idx (){
+		return Constants.N_CORNER_ORIENT * edge + Tables.move_table_co_conj[corner][sym];
 	}
 
-	public int get_dist (){
+	public final int get_dist (){
 		return prune_table.get_dist_packed(get_idx());
 	}
 
-	public int new_dist (int dist){
+	public final int new_dist (int dist){
 		return prune_table.new_dist(get_idx(), dist);
 	}
 

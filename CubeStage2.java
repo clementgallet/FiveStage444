@@ -2,28 +2,33 @@ package fivestage444;
 
 public final class CubeStage2 {
 
-	public short m_centerF;
-	public short m_centerB;
-	public short m_edge;
+	public int centerF;
+	public int symF;
+	public int centerB;
+	public int symB;
+	public int edge;
 
 	public static PruningStage2EdgCen prune_table_edgcen;
 
-	public void copyTo (CubeStage2 cube1){
-		cube1.m_edge = m_edge;
-		cube1.m_centerF = m_centerF;
-		cube1.m_centerB = m_centerB;
+	public final void copyTo (CubeStage2 cube1){
+		cube1.edge = edge;
+		cube1.centerF = centerF;
+		cube1.symF = symF;
+		cube1.centerB = centerB;
+		cube1.symB = symB;
 	}
 
 	public boolean edges_center_solved (boolean front){
 		int i;
-		short cen;
-		if (front) cen = m_centerF;
-		else cen = m_centerB;
+		int cen;
 
-		if (( m_edge != 0 ) && ( m_edge != 414 ))
+		if (( edge != 0 ) && ( edge != 414 ))
 			return false;
+
+		if (front) cen = centerF;
+		else cen = centerB;
 		for (i=0; i < Constants.STAGE2_NUM_SOLVED_SYMCENTER_CONFIGS; i++)
-			if ((cen>>4) == Constants.stage2_solved_symcenters[i])
+			if (cen == Constants.stage2_solved_symcenters[i])
 				return true;
 
 		return false;
@@ -32,38 +37,29 @@ public final class CubeStage2 {
 	public boolean is_solved (){
 		int i;
 
-		if (( m_edge != 0 ) && ( m_edge != 414 ))
+		if (( edge != 0 ) && ( edge != 414 ))
 			return false;
 
 		for (i=0; i < Constants.STAGE2_NUM_SOLVED_SYMCENTER_CONFIGS; i++)
-			if (((m_centerF>>4) == Constants.stage2_solved_symcenters[i]) && ((m_centerB>>4) == Constants.stage2_solved_symcenters[i]) && ((m_centerF&0x8) == (m_centerB&0x8)) && ( ((m_centerF&0x8) == 0 && ( m_edge == 414 )) || ((m_centerF&0x8) != 0 && ( m_edge == 0 )) ))
+			if ((centerF == centerB) && (centerB == Constants.stage2_solved_symcenters[i]) && (( symF & 0x8 ) == ( symB & 0x8 )) && ( ((( symF & 0x8 ) == 0 ) && ( edge == 414 )) || ((( symF & 0x8 ) != 0 ) && ( edge == 0 )) ))
 				return true;
 
 		return false;
 	}
 
-	public void do_move (int move_code){
+	public final void do_move (int move_code){
 
-		int sym, moveConj, newSym, newRep;
-		short rep, newCen;
+		int newCen;
 
-		sym = m_centerF & 0xF;
-		rep = (short)(m_centerF >> 4);
-		moveConj = Constants.stage2_inv_slice_moves[Symmetry.moveConjugate[Constants.stage2_slice_moves[move_code]][sym]];
-		newCen = Tables.move_table_symCenterSTAGE2[rep][moveConj];
-		newSym = newCen & 0xF;
-		newRep = newCen >> 4;
-		m_centerF = (short)(( newRep << 4 ) + Symmetry.symIdxMultiply[newSym][sym]);
+		newCen = Tables.move_table_symCenterSTAGE2[centerF][Symmetry.moveConjugate2[move_code][symF]];
+		symF = Symmetry.symIdxMultiply[newCen & 0xF][symF];
+		centerF = newCen >> 4;
 
-		sym = m_centerB & 0xF;
-		rep = (short)(m_centerB >> 4);
-		moveConj = Constants.stage2_inv_slice_moves[Symmetry.moveConjugate[Constants.stage2_slice_moves[move_code]][sym]];
-		newCen = Tables.move_table_symCenterSTAGE2[rep][moveConj];
-		newSym = newCen & 0xF;
-		newRep = newCen >> 4;
-		m_centerB = (short)(( newRep << 4 ) + Symmetry.symIdxMultiply[newSym][sym]);
+		newCen = Tables.move_table_symCenterSTAGE2[centerB][Symmetry.moveConjugate2[move_code][symB]];
+		symB = Symmetry.symIdxMultiply[newCen & 0xF][symB];
+		centerB = newCen >> 4;
 
-		m_edge = Tables.move_table_edgeSTAGE2[m_edge][move_code];
+		edge = Tables.move_table_edgeSTAGE2[edge][move_code];
 	}
 
 	/* Convert functions */
@@ -84,8 +80,8 @@ public final class CubeStage2 {
 	public void convert_edges_to_std_cube (CubeState result_cube){
 		int i;
 		byte[] t6 = new byte[4];
-		int edgeFbm = Tables.bm4of8[m_edge / 6];
-		Constants.perm_n_unpack (4, m_edge % 6, t6, 0);
+		int edgeFbm = Tables.bm4of8[edge / 6];
+		Constants.perm_n_unpack (4, edge % 6, t6, 0);
 		for (i = 0; i < 16; ++i)
 			result_cube.m_edge[i] = (byte)i;
 
@@ -102,23 +98,19 @@ public final class CubeStage2 {
 
 	/* Pruning functions */
 
-	private int get_idx(boolean front){
-		short cen;
-		if (front) cen = m_centerF;
-		else cen = m_centerB;
-		return Constants.N_STAGE2_EDGE_CONFIGS * (cen >> 4 ) + Tables.move_table_edge_conjSTAGE2[m_edge][cen & 0xF];
+	private final int get_idx(boolean front){
+		if (front)
+			return Constants.N_STAGE2_EDGE_CONFIGS * centerF + Tables.move_table_edge_conjSTAGE2[edge][symF];
+		else
+			return Constants.N_STAGE2_EDGE_CONFIGS * centerB + Tables.move_table_edge_conjSTAGE2[edge][symB];
 	}
 
-	public int get_dist_edgcen (boolean front){
+	public final int get_dist_edgcen (boolean front){
 		return prune_table_edgcen.get_dist_packed(get_idx(front));
 	}
 
-	public int new_dist_edgcen (boolean front, int dist){
+	public final int new_dist_edgcen (boolean front, int dist){
 		return prune_table_edgcen.new_dist(get_idx(front), dist);
-	}
-
-	public int getDistance (boolean front){
-		return Math.max(getDistanceEdgCen(false), getDistanceEdgCen(true));
 	}
 
 	public int getDistanceEdgCen (boolean front){

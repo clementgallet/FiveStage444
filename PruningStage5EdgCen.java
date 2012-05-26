@@ -30,12 +30,11 @@ public final class PruningStage5EdgCen extends Pruning {
 		int edge = (int)(idx / Constants.N_STAGE5_CENTER_PERM);
 
 		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][move];
-		int sym = newEdge % 48;
-		int edgeRep = newEdge / 48;
+		int sym = newEdge & 0x3F;
+		int edgeRep = newEdge >> 6;
 
 		cen = Tables.move_table_cenSTAGE5[cen][move];
 		cen = Tables.move_table_cen_conjSTAGE5[cen][sym];
-		//if( idx == 20626457 ) System.out.println("Edge:"+edgeRep+"Idx:"+(edgeRep*Constants.N_SQS_CENTER_PERM + cen)+" - move:"+move);
 		return edgeRep*Constants.N_STAGE5_CENTER_PERM + cen;
 	}
 
