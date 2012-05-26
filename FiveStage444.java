@@ -132,18 +132,23 @@ public final class FiveStage444 {
 	static boolean found1, found2, found3, found4;
 
 	static int solver_mode;
-	static int SUB_12 = 0;
-	static int SUB_23 = 1;
-	static int SUB_34 = 2;
-	static int SUB_45 = 3;
-	static int SUB_123 = 4;
-	static int SUB_234 = 5;
-	static int SUB_345 = 6;
-	static int SUB_12345 = 7;
+	static final int SUB_12 = 0;
+	static final int SUB_23 = 1;
+	static final int SUB_34 = 2;
+	static final int SUB_45 = 3;
+	static final int SUB_123 = 4;
+	static final int SUB_234 = 5;
+	static final int SUB_345 = 6;
+	static final int SUB_12345 = 7;
 
-	static int MAX_STAGE2 = 30;
-	static int MAX_STAGE3 = 30;
-	static int MAX_STAGE4 = 30;
+	static int MAX_STAGE2 = 8;
+	static int MIN_STAGE3 = 6;
+
+	static int MAX_STAGE3 = 10;
+	static int MIN_STAGE4 = 6;
+
+	static int MAX_STAGE4 = 11;
+	static int MIN_STAGE5 = 7;
 
 	static CubeState c = new CubeState();
 	static CubeState cr = new CubeState();
@@ -154,13 +159,13 @@ public final class FiveStage444 {
 	static CubeState c3 = new CubeState();
 	static CubeState c4 = new CubeState();
 
-	static int time_per_stage = 10000;
+	static int time_per_stage = 1000;
 
 	static int DEBUG_LEVEL = 0;
 
 	public static void main(String[] args){
 
-		int random_count = 5;
+		int random_count = 30;
 
 		Symmetry.init();
 
@@ -198,7 +203,7 @@ public final class FiveStage444 {
 		do_random_cubes (random_count);
 
 		/* Print statistics */
-		Statistics.print();
+		//Statistics.print();
 
 	}
 
@@ -208,7 +213,7 @@ public final class FiveStage444 {
 		Random r = new Random(42);
 		byte[] random_list = new byte[160];	//must be >= scramble_len
 		CubeState solveme = new CubeState();
-		int scramble_len = 40;
+		int scramble_len = 100;
 
 		for (i = 1; i <= count; ++i) {
 			int j;
@@ -217,8 +222,8 @@ public final class FiveStage444 {
 				random_list[j] = (byte)r.nextInt(36);
 			}
 			solveme.scramble(scramble_len, random_list);
-			System.out.println ("scramble: ");
-			print_move_list (scramble_len, random_list);
+			//System.out.println ("scramble: ");
+			//print_move_list (scramble_len, random_list);
 			//solveit4x4x4IDA (solveme);
 			solve_suboptimal (solveme);
 		}
@@ -234,23 +239,27 @@ public final class FiveStage444 {
 		init_stage1 ();
 
 		/* Print */
+		/*
 		System.out.print ("Stage 1: ");
 		print_move_list (length1_sub, move_list_sub_stage1);
+		*/
 
 		/* Prepare for next step */
 		System.arraycopy(move_list_sub_stage1, 0, move_list_stage1, 0, length1_sub);
 		length1 = length1_sub;
 
 		//solver_mode = SUB_23;
-		//solver_mode = SUB_234;
-		solver_mode = SUB_345;
+		solver_mode = SUB_234;
+		//solver_mode = SUB_345;
 		init_stage2 ( r1_sub );
 
 		/* Print */
+		/*
 		System.out.print ("Stage 2: ");
 		for (i = 0; i < length2_sub; ++i)
 			sol_move_list[i] = xlate_r6[stage2_slice_moves[move_list_sub_stage2[i]]][rotate];
 		print_move_list (length2_sub, sol_move_list);
+		*/
 
 		/* Prepare for next step */
 		System.arraycopy(move_list_sub_stage2, 0, move_list_stage2, 0, length2_sub);
@@ -259,7 +268,8 @@ public final class FiveStage444 {
 		//solver_mode = SUB_34;
 		solver_mode = SUB_345;
 		init_stage3 ( r2_sub );
-
+		System.out.println(length1_sub+length2_sub+length3_sub+length4_sub+length5_sub);
+		if(true)return;
 		/* Print */
 		System.out.print ("Stage 3: ");
 		for (i = 0; i < length3_sub; ++i)
@@ -350,7 +360,7 @@ public final class FiveStage444 {
 				return init_stage2 (r);
 		}
 		for (mov_idx = 0; mov_idx < N_BASIC_MOVES; ++mov_idx) {
-			if (((stage1_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) || ( depth == 1 )) {
+			if (((stage1_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) || ( depth == -1 )) {
 				cube1.copyTo(cube2);
 				cube2.do_move (mov_idx);
 				int newDist = cube2.new_dist(dist);
@@ -372,7 +382,7 @@ public final class FiveStage444 {
 		int d22 = 999;
 
 		if(( solver_mode == SUB_12 ) || ( solver_mode == SUB_123 ))
-			if (( endtime < System.currentTimeMillis() ) && found1 ) return true;
+			if ( found1 && ( endtime < System.currentTimeMillis() )) return true;
 		r1 = r;
 		switch (r1) {
 		case 0:
@@ -438,9 +448,17 @@ public final class FiveStage444 {
 			length1 = 0;
 		}
 
-		//int min2 = Math.min( MAX_STAGE2, total_length-length1);
-		int min2 = Math.min( 9, total_length-length1-11);
-
+		int min2;
+		switch( solver_mode ){
+			case SUB_123:
+				min2 = Math.min( MAX_STAGE2, total_length - length1 - MIN_STAGE3);
+				break;
+			case SUB_12:
+				min2 = total_length - length1;
+				break;
+			default:
+				min2 = 999;
+		}
 		cubeDistCenF1 = s1.getDistanceEdgCen(true);
 		if( cubeDistCenF1 < min2 ){
 			cubeDistCenB1 = s1.getDistanceEdgCen(false);
@@ -550,10 +568,19 @@ public final class FiveStage444 {
 		}
 
 		int min3;
-		if( solver_mode == SUB_234 )
-			min3 = Math.min( 9, total_length-length1-length2-11);
-		else
-			min3 = Math.min(MAX_STAGE3, total_length-length2-length1);
+		switch( solver_mode ){
+			case SUB_234: 
+				min3 = Math.min( MAX_STAGE3, total_length - length1 - length2 - MIN_STAGE4 );
+				break;
+			case SUB_123:
+				min3 = total_length - length2 - length1;
+				break;
+			case SUB_23:
+				min3 = total_length - length2 - length1;
+				break;
+			default:
+				min3 = 999;
+		}
 
 		int cubeDistCen = s1.getDistanceCen();
 		if( cubeDistCen >= min3 ) return false;
@@ -638,9 +665,9 @@ public final class FiveStage444 {
 
 		int min4;
 		if( solver_mode == SUB_345 )
-			min4 = Math.min( 12, total_length-length3-6);
+			min4 = Math.min( MAX_STAGE4, total_length - length3 - MIN_STAGE5 );
 		else
-			min4 = Math.min(MAX_STAGE4, total_length-length3-length2);
+			min4 = Math.min( MAX_STAGE4, total_length - length3 - length2 );
 
 		for (length4 = d4; length4 < min4; ++length4) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "      Stage 4 - length "+length4 );
@@ -695,7 +722,7 @@ public final class FiveStage444 {
 
 	public static boolean init_stage5 (){
 		int i;
-		if (( endtime < System.currentTimeMillis()) && found4 ) return true;
+		if ( found4 && ( endtime < System.currentTimeMillis()) ) return true;
 
 		c3.copyTo(c4);
 		c4.scramble( length4, move_list_stage4, stage4_slice_moves );

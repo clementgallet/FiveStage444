@@ -168,7 +168,7 @@ abstract class Pruning {
 		System.gc();
 	}
 
-	public int get_dist_packed(long idx) {
+	public final int get_dist_packed(long idx) {
 		if (idx < n_packed*4L) {
 			int data = ptable_packed[(int)(idx >>> 2)]&0x0FF;
 			return get_packed[(data<<3) | (int)(idx & 3)];
@@ -178,7 +178,7 @@ abstract class Pruning {
 		}
 	}
 
-	public int new_dist(long idx, int dist) {
+	public final int new_dist(long idx, int dist) {
 		return nd[(dist << 2) | get_dist_packed(idx)];
 	}
 }
