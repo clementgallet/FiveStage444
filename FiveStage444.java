@@ -141,9 +141,9 @@ public final class FiveStage444 {
 	static int SUB_345 = 6;
 	static int SUB_12345 = 7;
 
-	static int MAX_STAGE2 = 12;
-	static int MAX_STAGE3 = 12;
-	static int MAX_STAGE4 = 12;
+	static int MAX_STAGE2 = 30;
+	static int MAX_STAGE3 = 30;
+	static int MAX_STAGE4 = 30;
 
 	static CubeState c = new CubeState();
 	static CubeState cr = new CubeState();
@@ -155,6 +155,8 @@ public final class FiveStage444 {
 	static CubeState c4 = new CubeState();
 
 	static int time_per_stage = 10000;
+
+	static int DEBUG_LEVEL = 0;
 
 	public static void main(String[] args){
 
@@ -240,7 +242,8 @@ public final class FiveStage444 {
 		length1 = length1_sub;
 
 		//solver_mode = SUB_23;
-		solver_mode = SUB_234;
+		//solver_mode = SUB_234;
+		solver_mode = SUB_345;
 		init_stage2 ( r1_sub );
 
 		/* Print */
@@ -325,6 +328,7 @@ public final class FiveStage444 {
 		found2 = false;
 		//System.out.println( "Search suboptimal solution for stage 1+2" );
 		for (length1 = d; length1 < total_length; ++length1) {
+			if( DEBUG_LEVEL >= 1 ) System.out.println( "Stage 1 - length "+length1 );
 			if( search_stage1 (s1, length1, 0, N_BASIC_MOVES, d1, 0 ) ||
 			    search_stage1 (s2, length1, 0, N_BASIC_MOVES, d2, 1 ) ||
 			    search_stage1 (s3, length1, 0, N_BASIC_MOVES, d3, 2 )) {
@@ -359,10 +363,16 @@ public final class FiveStage444 {
 	}
 
 	public static boolean init_stage2 (int r){
+		int i;
+		int cubeDistCenF1 = 0;
+		int cubeDistCenB1 = 0;
+		int d21 = 999;
+		int cubeDistCenF2 = 0;
+		int cubeDistCenB2 = 0;
+		int d22 = 999;
 
 		if(( solver_mode == SUB_12 ) || ( solver_mode == SUB_123 ))
 			if (( endtime < System.currentTimeMillis() ) && found1 ) return true;
-		int i;
 		r1 = r;
 		switch (r1) {
 		case 0:
@@ -418,12 +428,7 @@ public final class FiveStage444 {
 		c1r.do_move (Df3);
 		c1r.convert_to_stage2 (s2);
 
-		int cubeDistCenF1 = s1.getDistanceEdgCen(true);
-		int cubeDistCenB1 = s1.getDistanceEdgCen(false);
-		int d21 = Math.max(cubeDistCenF1, cubeDistCenB1);
-		int cubeDistCenF2 = s2.getDistanceEdgCen(true);
-		int cubeDistCenB2 = s2.getDistanceEdgCen(false);
-		int d22 = Math.max(cubeDistCenF2, cubeDistCenB2);
+		if( solver_mode == SUB_345 ) return true;
 
 		if(( solver_mode == SUB_23 ) || ( solver_mode == SUB_234 )){
 			endtime = System.currentTimeMillis() + time_per_stage;
@@ -433,10 +438,31 @@ public final class FiveStage444 {
 			length1 = 0;
 		}
 
-		for (length2 = Math.min(d21, d22); length2 < Math.min( MAX_STAGE2, total_length-length1); ++length2) {
-			if( search_stage2 (s1, length2, 0, 0, cubeDistCenF1, cubeDistCenB1, 0 ) ||
-			    search_stage2 (s2, length2, 0, 0, cubeDistCenF2, cubeDistCenB2, 1 )){
+		//int min2 = Math.min( MAX_STAGE2, total_length-length1);
+		int min2 = Math.min( 9, total_length-length1-11);
+
+		cubeDistCenF1 = s1.getDistanceEdgCen(true);
+		if( cubeDistCenF1 < min2 ){
+			cubeDistCenB1 = s1.getDistanceEdgCen(false);
+			if( cubeDistCenB1 < min2 ){
+				d21 = Math.max(cubeDistCenF1, cubeDistCenB1);
+			}
+		}
+
+		cubeDistCenF2 = s2.getDistanceEdgCen(true);
+		if( cubeDistCenF2 < min2 ){
+			cubeDistCenB2 = s2.getDistanceEdgCen(false);
+			if( cubeDistCenB2 < min2 ){
+				d22 = Math.max(cubeDistCenF2, cubeDistCenB2);
+			}
+		}
+
+		for (length2 = Math.min(d21, d22); length2 < min2; ++length2) {
+			if(( DEBUG_LEVEL >= 1 ) && ( solver_mode != SUB_12 )) System.out.println( "  Stage 2 - length "+length2 );
+			if((( length2 >= d21 ) && search_stage2 (s1, length2, 0, 0, cubeDistCenF1, cubeDistCenB1, 0 )) ||
+			   (( length2 >= d22 ) && search_stage2 (s2, length2, 0, 0, cubeDistCenF2, cubeDistCenB2, 1 ))){
 				if( solver_mode == SUB_12 ){
+					if( DEBUG_LEVEL >= 1 ) System.out.println( "  Stage 2 - length "+length2 );
 					total_length = length1+length2;
 					/* Save current solution */
 					found1 = true;
@@ -485,7 +511,7 @@ public final class FiveStage444 {
 	public static boolean init_stage3 (int r){
 		int i;
 		if(( solver_mode == SUB_23 ) || ( solver_mode == SUB_123 ) || ( solver_mode == SUB_234 ))
-			if (( endtime < System.currentTimeMillis()) && found2 ) return true;
+			if ( found2 && ( endtime < System.currentTimeMillis()) ) return true;
 
 		r2 = r;
 		switch (r) {
@@ -514,10 +540,6 @@ public final class FiveStage444 {
 		CubeStage3 s1 = new CubeStage3();
 		c2.convert_to_stage3 (s1);
 
-		int cubeDistCen = s1.getDistanceCen();
-		int cubeDistEdg = s1.getDistanceEdg();
-		int d3 = Math.max(cubeDistCen, cubeDistEdg);
-
 		if(( solver_mode == SUB_34 ) || ( solver_mode == SUB_345 )){
 			endtime = System.currentTimeMillis() + time_per_stage;
 			total_length = 100;
@@ -527,9 +549,22 @@ public final class FiveStage444 {
 			length2 = 0;
 		}
 
-		for (length3 = d3; length3 < Math.min(MAX_STAGE3, total_length-length2-length1); ++length3) {
+		int min3;
+		if( solver_mode == SUB_234 )
+			min3 = Math.min( 9, total_length-length1-length2-11);
+		else
+			min3 = Math.min(MAX_STAGE3, total_length-length2-length1);
+
+		int cubeDistCen = s1.getDistanceCen();
+		if( cubeDistCen >= min3 ) return false;
+		int cubeDistEdg = s1.getDistanceEdg();
+		int d3 = Math.max(cubeDistCen, cubeDistEdg);
+
+		for (length3 = d3; length3 < min3; ++length3) {
+			if(( DEBUG_LEVEL >= 1 ) && ( solver_mode != SUB_23 ) && ( solver_mode != SUB_123 )) System.out.println( "    Stage 3 - length "+length3 );
 			if( search_stage3 (s1, length3, 0, 0, cubeDistCen, cubeDistEdg )){
 				if(( solver_mode == SUB_23 ) || ( solver_mode == SUB_123 )){
+					if( DEBUG_LEVEL >= 1 ) System.out.println( "    Stage 3 - length "+length3 );
 					total_length = length1+length2+length3;
 					/* Save current solution */
 					found2 = true;
@@ -601,7 +636,14 @@ public final class FiveStage444 {
 			length3 = 0;
 		}
 
-		for (length4 = d4; length4 < Math.min( MAX_STAGE4, total_length - length3 - length2); ++length4) {
+		int min4;
+		if( solver_mode == SUB_345 )
+			min4 = Math.min( 12, total_length-length3-6);
+		else
+			min4 = Math.min(MAX_STAGE4, total_length-length3-length2);
+
+		for (length4 = d4; length4 < min4; ++length4) {
+			if( DEBUG_LEVEL >= 1 ) System.out.println( "      Stage 4 - length "+length4 );
 			if( search_stage4 (s1, length4, 0, 0, d4 )) {
 				if(( solver_mode == SUB_34 ) || ( solver_mode == SUB_234 )){
 					total_length = length2+length3+length4;
@@ -661,12 +703,16 @@ public final class FiveStage444 {
 		CubeStage5 s1 = new CubeStage5();
 		c4.convert_to_stage5 (s1);
 
+		int min5 = total_length-length4-length3;
+
 		int cubeDistEdgCen = s1.getDistanceEdgCen();
+		if( cubeDistEdgCen >= min5 ) return false;
 		int cubeDistEdgCor = s1.getDistanceEdgCor();
 		int d5 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
 
-		for (length5 = d5; length5 < total_length-length4-length3; ++length5) {
+		for (length5 = d5; length5 < min5; ++length5) {
 			if( search_stage5 (s1, length5, 0, 12, cubeDistEdgCen, cubeDistEdgCor )){
+				if( DEBUG_LEVEL >= 1 ) System.out.println( "        Stage 5 - length "+length5 );
 				total_length = length3+length4+length5;
 				/* Save current solution */
 				found4 = true;
