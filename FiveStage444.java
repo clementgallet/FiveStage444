@@ -162,13 +162,13 @@ public final class FiveStage444 {
 	static CubeStage1[] list1 = new CubeStage1[20];
 	static CubeStage2[] list2 = new CubeStage2[20];
 
-	static int time_per_stage = 500;
+	static int time_per_stage = 1000;
 
 	static int DEBUG_LEVEL = 0;
 
 	public static void main(String[] args){
 
-		int random_count = 10;
+		int random_count = 100;
 
 		Symmetry.init();
 
@@ -214,8 +214,8 @@ public final class FiveStage444 {
 
 	public static void do_random_cubes (int count) {
 		int i, i1;
-		//Random r = new Random();
-		Random r = new Random(42);
+		Random r = new Random();
+		//Random r = new Random(42);
 		byte[] random_list = new byte[160];	//must be >= scramble_len
 		CubeState solveme = new CubeState();
 		int scramble_len = 100;
@@ -466,17 +466,17 @@ public final class FiveStage444 {
 				min2 = 999;
 		}
 
-		cubeDistCenF1 = s1.getDistanceEdgCen(true);
+		cubeDistCenF1 = get_dist_4bit(N_STAGE2_EDGE_CONFIGS * s1.centerF + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symF], s1.prune_table_edgcen.ptable);
 		if( cubeDistCenF1 < min2 ){
-			cubeDistCenB1 = s1.getDistanceEdgCen(false);
+			cubeDistCenB1 = get_dist_4bit(N_STAGE2_EDGE_CONFIGS * s1.centerB + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symB], s1.prune_table_edgcen.ptable);
 			if( cubeDistCenB1 < min2 ){
 				d21 = Math.max(cubeDistCenF1, cubeDistCenB1);
 			}
 		}
 
-		cubeDistCenF2 = s2.getDistanceEdgCen(true);
+		cubeDistCenF2 = get_dist_4bit(N_STAGE2_EDGE_CONFIGS * s2.centerF + Tables.move_table_edge_conjSTAGE2[s2.edge][s2.symF], s2.prune_table_edgcen.ptable);
 		if( cubeDistCenF2 < min2 ){
-			cubeDistCenB2 = s2.getDistanceEdgCen(false);
+			cubeDistCenB2 = get_dist_4bit(N_STAGE2_EDGE_CONFIGS * s2.centerB + Tables.move_table_edge_conjSTAGE2[s2.edge][s2.symB], s2.prune_table_edgcen.ptable);
 			if( cubeDistCenB2 < min2 ){
 				d22 = Math.max(cubeDistCenF2, cubeDistCenB2);
 			}
@@ -484,8 +484,8 @@ public final class FiveStage444 {
 
 		for (length2 = Math.min(d21, d22); length2 < min2; ++length2) {
 			if(( DEBUG_LEVEL >= 1 ) && ( solver_mode != SUB_12 )) System.out.println( "  Stage 2 - length "+length2 );
-			if((( length2 >= d21 ) && search_stage2 (s1, length2, 0, 0, cubeDistCenF1, cubeDistCenB1, 0 )) ||
-			   (( length2 >= d22 ) && search_stage2 (s2, length2, 0, 0, cubeDistCenF2, cubeDistCenB2, 1 ))){
+			if((( length2 >= d21 ) && search_stage2 (s1, length2, 0, 0, 0 )) ||
+			   (( length2 >= d22 ) && search_stage2 (s2, length2, 0, 0, 1 ))){
 				if( solver_mode == SUB_12 ){
 					if( DEBUG_LEVEL >= 1 ) System.out.println( "  Stage 2 - length "+length2 );
 					total_length = length1+length2;
@@ -501,7 +501,7 @@ public final class FiveStage444 {
 		return false;
 	}
 
-	public static boolean search_stage2 (CubeStage2 cube1, int depth, int moves_done, int move_state, int distCenF, int distCenB, int r ){
+	public static boolean search_stage2 (CubeStage2 cube1, int depth, int moves_done, int move_state, int r ){
 		//CubeStage2 cube2 = new CubeStage2();
 		int mov_idx, mc, j;
 		int next_ms = 0;
@@ -520,12 +520,12 @@ public final class FiveStage444 {
 				list2[depth].do_move (mov_idx);
 				next_ms = stage2_stm_next_ms[mov_idx];
 
-				int newDistCenF = list2[depth].new_dist_edgcen(true, distCenF);
+				int newDistCenF = get_dist_4bit(N_STAGE2_EDGE_CONFIGS * list2[depth].centerF + Tables.move_table_edge_conjSTAGE2[list2[depth].edge][list2[depth].symF], list2[depth].prune_table_edgcen.ptable);
 				if (newDistCenF > depth-1) continue;
-				int newDistCenB = list2[depth].new_dist_edgcen(false, distCenB);
+				int newDistCenB = get_dist_4bit(N_STAGE2_EDGE_CONFIGS * list2[depth].centerB + Tables.move_table_edge_conjSTAGE2[list2[depth].edge][list2[depth].symB], list2[depth].prune_table_edgcen.ptable);
 				if (newDistCenB > depth-1) continue;
 				move_list_stage2[moves_done] = (byte)mov_idx;
-				if (search_stage2 (list2[depth], depth - 1, moves_done + 1, next_ms, newDistCenF, newDistCenB, r)) return true;
+				if (search_stage2 (list2[depth], depth - 1, moves_done + 1, next_ms, r)) return true;
 			}
 		}
 		return false;
@@ -587,14 +587,14 @@ public final class FiveStage444 {
 				min3 = 999;
 		}
 
-		int cubeDistCen = s1.getDistanceCen();
+		int cubeDistCen = get_dist_4bit(s1.center, s1.prune_table_cen.ptable);
 		if( cubeDistCen >= min3 ) return false;
-		int cubeDistEdg = s1.getDistanceEdg();
+		int cubeDistEdg = get_dist_4bit(( s1.edge<<1 ) + (s1.edge_odd?1:0), s1.prune_table_edg.ptable);
 		int d3 = Math.max(cubeDistCen, cubeDistEdg);
 
 		for (length3 = d3; length3 < min3; ++length3) {
 			if(( DEBUG_LEVEL >= 1 ) && ( solver_mode != SUB_23 ) && ( solver_mode != SUB_123 )) System.out.println( "    Stage 3 - length "+length3 );
-			if( search_stage3 (s1, length3, 0, 0, cubeDistCen, cubeDistEdg )){
+			if( search_stage3 (s1, length3, 0, 0 )){
 				if(( solver_mode == SUB_23 ) || ( solver_mode == SUB_123 )){
 					if( DEBUG_LEVEL >= 1 ) System.out.println( "    Stage 3 - length "+length3 );
 					total_length = length1+length2+length3;
@@ -617,7 +617,7 @@ public final class FiveStage444 {
 		return false;
 	}
 
-	public static boolean search_stage3 (CubeStage3 cube1, int depth, int moves_done, int move_state, int distCen, int distEdg){
+	public static boolean search_stage3 (CubeStage3 cube1, int depth, int moves_done, int move_state){
 		CubeStage3 cube2 = new CubeStage3();
 		int mov_idx, j;
 		int next_ms = 0;
@@ -635,12 +635,12 @@ public final class FiveStage444 {
 				cube1.copyTo (cube2);
 				cube2.do_move (mov_idx);
 				next_ms = stage3_stm_next_ms[mov_idx];
-				int newDistCen = cube2.new_dist_cen(distCen);
+				int newDistCen = get_dist_4bit(cube2.center, cube2.prune_table_cen.ptable);
 				if (newDistCen > depth-1) continue;
-				int newDistEdg = cube2.new_dist_edg(distEdg);
+				int newDistEdg = get_dist_4bit(( cube2.edge<<1 ) + (cube2.edge_odd?1:0), cube2.prune_table_edg.ptable);
 				if (newDistEdg > depth-1) continue;
 				move_list_stage3[moves_done] = (byte)mov_idx;
-				if (search_stage3 (cube2, depth - 1, moves_done + 1, next_ms, newDistCen, newDistEdg)) return true;
+				if (search_stage3 (cube2, depth - 1, moves_done + 1, next_ms)) return true;
 			}
 		}
 		return false;
@@ -733,13 +733,13 @@ public final class FiveStage444 {
 
 		int min5 = total_length-length4-length3;
 
+		int cubeDistEdgCor = get_dist_4bit((s1.edge * N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[s1.corner][s1.sym]), s1.prune_table_edgcor.ptable);
+		if( cubeDistEdgCor >= min5 ) return false;
 		int cubeDistEdgCen = s1.getDistanceEdgCen();
-		if( cubeDistEdgCen >= min5 ) return false;
-		int cubeDistEdgCor = s1.getDistanceEdgCor();
 		int d5 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
 
 		for (length5 = d5; length5 < min5; ++length5) {
-			if( search_stage5 (s1, length5, 0, 12, cubeDistEdgCen, cubeDistEdgCor )){
+			if( search_stage5 (s1, length5, 0, 12, cubeDistEdgCen)){
 				if( DEBUG_LEVEL >= 1 ) System.out.println( "        Stage 5 - length "+length5 );
 				total_length = length3+length4+length5;
 				/* Save current solution */
@@ -759,7 +759,7 @@ public final class FiveStage444 {
 		return false;
 	}
 
-	public static boolean search_stage5 (CubeStage5 cube1, int depth, int moves_done, int move_state, int distEdgCen, int distEdgCor){
+	public static boolean search_stage5 (CubeStage5 cube1, int depth, int moves_done, int move_state, int distEdgCen){
 		CubeStage5 cube2 = new CubeStage5();
 		int mov_idx, j;
 		int next_ms = 0;
@@ -774,12 +774,12 @@ public final class FiveStage444 {
 			if ((sqs_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
 				cube2.do_move (mov_idx);
 				next_ms = sqs_stm_next_ms[mov_idx];
+				int newDistEdgCor = get_dist_4bit((cube2.edge * N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[cube2.corner][cube2.sym]), cube2.prune_table_edgcor.ptable);
+				if (newDistEdgCor > depth-1) continue;
 				int newDistEdgCen = cube2.new_dist_edgcen(distEdgCen);
 				if (newDistEdgCen > depth-1) continue;
-				int newDistEdgCor = cube2.new_dist_edgcor(distEdgCor);
-				if (newDistEdgCor > depth-1) continue;
 				move_list_stage5[moves_done] = (byte)mov_idx;
-				if (search_stage5 (cube2, depth - 1, moves_done + 1, next_ms, newDistEdgCen, newDistEdgCor)) return true;
+				if (search_stage5 (cube2, depth - 1, moves_done + 1, next_ms, newDistEdgCen)) return true;
 			}
 		}
 		return false;

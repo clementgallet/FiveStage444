@@ -278,6 +278,34 @@ public final class Constants{
 	}
 
 	/**
+	 * Extract an element from a table that stores two numbers per byte.
+	 * @param x	table index
+	 * @param p	table
+	 * @return	extracted value
+	 */
+	public static final int get_dist_4bit (int x, byte[] p)
+	{
+		if(( x & 0x1 ) == 1)
+			return (p[x>>1] >> 4) & 0xF;
+		else
+			return p[x>>1] & 0xF;
+	}
+
+	/**
+	 * Write a value into a table that stores two numbers per byte.
+	 * @param x	table index
+	 * @param v	value
+	 * @param p	table
+	 */
+	public static final void set_dist_4bit (int x, int v, byte[] p)
+	{
+		if(( x & 0x1 ) == 1)
+			p[x>>1] &= (byte)(( v << 4 ) | 0x0F);
+		else
+			p[x>>1] &= (byte)( v | 0xF0);
+	}
+
+	/**
 	 * Converts an array of integers from 0 to n-1 into a corresponding number from 0 to n!-1.
 	 * @param n		cardinal of the permutation
 	 * @param array_in	permutation

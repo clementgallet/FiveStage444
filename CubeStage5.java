@@ -139,16 +139,6 @@ public final class CubeStage5 {
 		return prune_table_edgcen.new_dist(idx, dist);
 	}
 
-	public final int get_dist_edgcor (){
-		int idx = edge * Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[corner][sym];
-		return prune_table_edgcor.get_dist_packed(idx);
-	}
-
-	public final int new_dist_edgcor (int dist){
-		int idx = edge * Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[corner][sym];
-		return prune_table_edgcor.new_dist(idx, dist);
-	}
-
 	public final int get_dist (){
 		long idx = (long)(edge * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[center][sym])* Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[corner][sym];
 		return prune_table.get_dist_packed(idx);
@@ -185,37 +175,4 @@ public final class CubeStage5 {
 		}
 		return nDist;
 	}
-
-	public int getDistanceEdgCor (){
-		CubeStage5 cube1 = new CubeStage5();
-		CubeStage5 cube2 = new CubeStage5();
-		int mov_idx, mc, j, dist1, dist2;
-		int nDist = 0;
-		
-		copyTo (cube1);
-		dist1 = cube1.get_dist_edgcor();
-
-		while (! cube1.edges_corners_solved()) {
-
-			boolean noMoves=true;
-			for (mov_idx = 0; mov_idx < Constants.N_STAGE5_MOVES; ++mov_idx) {
-				cube1.copyTo (cube2);
-				cube2.do_move (mov_idx);
-				dist2 = cube2.get_dist_edgcor();
-
-				if (((dist2+1) % 3) != dist1) continue;
-				cube2.copyTo (cube1);
-				nDist++;
-				dist1 = dist2;
-				noMoves=false;
-				break;
-			}
-			if( noMoves){
-				System.out.println("Could not find a move that lowers the distance !!");
-				break;
-			}
-		}
-		return nDist;
-	}
 }
-
