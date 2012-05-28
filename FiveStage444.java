@@ -517,8 +517,30 @@ public final class FiveStage444 {
 		}
 		for (mov_idx = 0; mov_idx < N_STAGE2_SLICE_MOVES; ++mov_idx) {
 			if ((stage2_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0){
-				cube1.copyTo (list2[depth]);
-				list2[depth].do_move (mov_idx);
+
+				/* Copy cube1 to list2[depth] */
+				//cube1.copyTo (list2[depth]);
+				list2[depth].edge = cube1.edge;
+				list2[depth].centerF = cube1.centerF;
+				list2[depth].symF = cube1.symF;
+				list2[depth].centerB = cube1.centerB;
+				list2[depth].symB = cube1.symB;
+
+				/* Move list2[depth] */
+				//list2[depth].do_move (mov_idx);
+
+				int newCen;
+
+				newCen = Tables.move_table_symCenterSTAGE2[list2[depth].centerF][Symmetry.moveConjugate2[mov_idx][list2[depth].symF]];
+				list2[depth].symF = Symmetry.symIdxMultiply[newCen & 0xF][list2[depth].symF];
+				list2[depth].centerF = newCen >> 4;
+
+				newCen = Tables.move_table_symCenterSTAGE2[list2[depth].centerB][Symmetry.moveConjugate2[mov_idx][list2[depth].symB]];
+				list2[depth].symB = Symmetry.symIdxMultiply[newCen & 0xF][list2[depth].symB];
+				list2[depth].centerB = newCen >> 4;
+
+				list2[depth].edge = Tables.move_table_edgeSTAGE2[list2[depth].edge][mov_idx];
+
 				next_ms = stage2_stm_next_ms[mov_idx];
 
 				int newDistCenF = list2[depth].prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * list2[depth].centerF + Tables.move_table_edge_conjSTAGE2[list2[depth].edge][list2[depth].symF]];
@@ -633,8 +655,26 @@ public final class FiveStage444 {
 		}
 		for (mov_idx = 0; mov_idx < N_STAGE3_SLICE_MOVES; ++mov_idx) {
 			if ((stage3_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
-				cube1.copyTo (cube2);
-				cube2.do_move (mov_idx);
+
+				/* Copy cube1 to cube2 */
+				//cube1.copyTo (cube2);
+				cube2.center = cube1.center;
+				cube2.sym = cube1.sym;
+				cube2.edge = cube1.edge;
+				cube2.edge_odd = cube1.edge_odd;
+
+				/* Move cube2 (copy from cube2.do_move) */
+				//cube2.do_move (mov_idx);
+				cube2.edge = Tables.move_table_edgeSTAGE3[cube2.edge][mov_idx];
+				if (Constants.stage3_move_parity[mov_idx]) {
+					cube2.edge_odd = ! cube2.edge_odd;
+				}
+
+				int newCen = Tables.move_table_symCenterSTAGE3[cube2.center][Symmetry.moveConjugate3[mov_idx][cube2.sym]];
+
+				cube2.sym = Symmetry.symIdxMultiply[newCen & 0x7][cube2.sym];
+				cube2.center = newCen >> 3;
+
 				next_ms = stage3_stm_next_ms[mov_idx];
 				int newDistCen = cube2.prune_table_cen.ptable[cube2.center];
 				if (newDistCen > depth-1) continue;
