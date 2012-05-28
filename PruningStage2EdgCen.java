@@ -15,17 +15,16 @@ public final class PruningStage2EdgCen extends PruningFull {
 
 		// Creation of the pruning table.
 		num_positions = N_SYMCENTER_COMBO4*N_STAGE2_EDGE_CONFIGS;
-		n_ptable = num_positions/2 + 1;
-		ptable = new byte[n_ptable];
-		for (i = 0; i < n_ptable; ++i) {
-			ptable[i] = (byte)0xFF;
+		ptable = new byte[num_positions];
+		for (i = 0; i < num_positions; ++i) {
+			ptable[i] = -1;
 		}
 
 		// Fill the (almost) solved states.
 		for (i=0; i < STAGE2_NUM_SOLVED_SYMCENTER_CONFIGS; i++){
-			set_dist_4bit(stage2_solved_symcenters[i]*N_STAGE2_EDGE_CONFIGS + 414, 0, ptable);
+			ptable[stage2_solved_symcenters[i]*N_STAGE2_EDGE_CONFIGS + 414] = 0;
 			count++;
-			set_dist_4bit(stage2_solved_symcenters[i]*N_STAGE2_EDGE_CONFIGS + 0  , 0, ptable);
+			ptable[stage2_solved_symcenters[i]*N_STAGE2_EDGE_CONFIGS + 0  ] = 0;
 			count++;
 			unique_count++;
 		}
@@ -46,7 +45,7 @@ public final class PruningStage2EdgCen extends PruningFull {
 	}
 
 	void saveIdxAndSyms (int idx, int dist){
-		set_dist_4bit (idx, dist, ptable);
+		ptable[idx] = (byte)dist;
 		count++;
 		short edge = (short)(idx % N_STAGE2_EDGE_CONFIGS);
 		short cen = (short)(idx / N_STAGE2_EDGE_CONFIGS);
@@ -55,7 +54,7 @@ public final class PruningStage2EdgCen extends PruningFull {
 		while (syms != 0){
 			if(( syms & 0x1 ) == 1 ){
 				short edge2 = Tables.move_table_edge_conjSTAGE2[edge][symI];
-				set_dist_4bit (cen*N_STAGE2_EDGE_CONFIGS + edge2, dist, ptable);
+				ptable[cen*N_STAGE2_EDGE_CONFIGS + edge2] = (byte)dist;
 				count++;
 			}
 			symI++;

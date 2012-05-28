@@ -15,14 +15,13 @@ public final class PruningStage3Edg extends PruningFull {
 
 		// Creation of the pruning table.
 		num_positions = N_STAGE3_EDGE_CONFIGS*N_STAGE3_EDGE_PAR;
-		n_ptable = num_positions/2 + 1;
-		ptable = new byte[n_ptable];
-		for (i = 0; i < n_ptable; ++i) {
-			ptable[i] = (byte)0xFF;
+		ptable = new byte[num_positions];
+		for (i = 0; i < num_positions; ++i) {
+			ptable[i] = -1;
 		}
 
 		// Fill the solved states.
-		set_dist_4bit( 494 << 1, 0, ptable);
+		ptable[494 << 1] = 0;
 		count++;
 		back_dist = 7;
 	}
@@ -38,6 +37,7 @@ public final class PruningStage3Edg extends PruningFull {
 	}
 
 	void saveIdxAndSyms (int idx, int dist){
-		set_dist_4bit (idx, dist, ptable);
+		ptable[idx] = (byte)dist;
+		count++;
 	}
 }

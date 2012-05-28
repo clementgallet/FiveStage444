@@ -467,17 +467,17 @@ public final class FiveStage444 {
 				min2 = 999;
 		}
 
-		cubeDistCenF1 = get_dist_4bit(N_STAGE2_EDGE_CONFIGS * s1.centerF + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symF], s1.prune_table_edgcen.ptable);
+		cubeDistCenF1 = s1.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s1.centerF + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symF]];
 		if( cubeDistCenF1 < min2 ){
-			cubeDistCenB1 = get_dist_4bit(N_STAGE2_EDGE_CONFIGS * s1.centerB + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symB], s1.prune_table_edgcen.ptable);
+			cubeDistCenB1 = s1.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s1.centerB + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symB]];
 			if( cubeDistCenB1 < min2 ){
 				d21 = Math.max(cubeDistCenF1, cubeDistCenB1);
 			}
 		}
 
-		cubeDistCenF2 = get_dist_4bit(N_STAGE2_EDGE_CONFIGS * s2.centerF + Tables.move_table_edge_conjSTAGE2[s2.edge][s2.symF], s2.prune_table_edgcen.ptable);
+		cubeDistCenF2 = s2.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s2.centerF + Tables.move_table_edge_conjSTAGE2[s2.edge][s2.symF]];
 		if( cubeDistCenF2 < min2 ){
-			cubeDistCenB2 = get_dist_4bit(N_STAGE2_EDGE_CONFIGS * s2.centerB + Tables.move_table_edge_conjSTAGE2[s2.edge][s2.symB], s2.prune_table_edgcen.ptable);
+			cubeDistCenB2 = s2.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s2.centerB + Tables.move_table_edge_conjSTAGE2[s2.edge][s2.symB]];
 			if( cubeDistCenB2 < min2 ){
 				d22 = Math.max(cubeDistCenF2, cubeDistCenB2);
 			}
@@ -521,9 +521,9 @@ public final class FiveStage444 {
 				list2[depth].do_move (mov_idx);
 				next_ms = stage2_stm_next_ms[mov_idx];
 
-				int newDistCenF = get_dist_4bit(N_STAGE2_EDGE_CONFIGS * list2[depth].centerF + Tables.move_table_edge_conjSTAGE2[list2[depth].edge][list2[depth].symF], list2[depth].prune_table_edgcen.ptable);
+				int newDistCenF = list2[depth].prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * list2[depth].centerF + Tables.move_table_edge_conjSTAGE2[list2[depth].edge][list2[depth].symF]];
 				if (newDistCenF > depth-1) continue;
-				int newDistCenB = get_dist_4bit(N_STAGE2_EDGE_CONFIGS * list2[depth].centerB + Tables.move_table_edge_conjSTAGE2[list2[depth].edge][list2[depth].symB], list2[depth].prune_table_edgcen.ptable);
+				int newDistCenB = list2[depth].prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * list2[depth].centerB + Tables.move_table_edge_conjSTAGE2[list2[depth].edge][list2[depth].symB]];
 				if (newDistCenB > depth-1) continue;
 				move_list_stage2[moves_done] = (byte)mov_idx;
 				if (search_stage2 (list2[depth], depth - 1, moves_done + 1, next_ms, r)) return true;
@@ -588,9 +588,9 @@ public final class FiveStage444 {
 				min3 = 999;
 		}
 
-		int cubeDistCen = get_dist_4bit(s1.center, s1.prune_table_cen.ptable);
+		int cubeDistCen = s1.prune_table_cen.ptable[s1.center];
 		if( cubeDistCen >= min3 ) return false;
-		int cubeDistEdg = get_dist_4bit(( s1.edge<<1 ) + (s1.edge_odd?1:0), s1.prune_table_edg.ptable);
+		int cubeDistEdg = s1.prune_table_edg.ptable[( s1.edge<<1 ) + (s1.edge_odd?1:0)];
 		int d3 = Math.max(cubeDistCen, cubeDistEdg);
 
 		for (length3 = d3; length3 < min3; ++length3) {
@@ -636,9 +636,9 @@ public final class FiveStage444 {
 				cube1.copyTo (cube2);
 				cube2.do_move (mov_idx);
 				next_ms = stage3_stm_next_ms[mov_idx];
-				int newDistCen = get_dist_4bit(cube2.center, cube2.prune_table_cen.ptable);
+				int newDistCen = cube2.prune_table_cen.ptable[cube2.center];
 				if (newDistCen > depth-1) continue;
-				int newDistEdg = get_dist_4bit(( cube2.edge<<1 ) + (cube2.edge_odd?1:0), cube2.prune_table_edg.ptable);
+				int newDistEdg = cube2.prune_table_edg.ptable[( cube2.edge<<1 ) + (cube2.edge_odd?1:0)];
 				if (newDistEdg > depth-1) continue;
 				move_list_stage3[moves_done] = (byte)mov_idx;
 				if (search_stage3 (cube2, depth - 1, moves_done + 1, next_ms)) return true;
@@ -734,7 +734,7 @@ public final class FiveStage444 {
 
 		int min5 = total_length-length4-length3;
 
-		int cubeDistEdgCor = get_dist_4bit((s1.edge * N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[s1.corner][s1.sym]), s1.prune_table_edgcor.ptable);
+		int cubeDistEdgCor = s1.prune_table_edgcor.ptable[s1.edge * N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[s1.corner][s1.sym]];
 		if( cubeDistEdgCor >= min5 ) return false;
 		int cubeDistEdgCen = s1.getDistanceEdgCen();
 		int d5 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
@@ -775,7 +775,7 @@ public final class FiveStage444 {
 			if ((sqs_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
 				cube2.do_move (mov_idx);
 				next_ms = sqs_stm_next_ms[mov_idx];
-				int newDistEdgCor = get_dist_4bit((cube2.edge * N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[cube2.corner][cube2.sym]), cube2.prune_table_edgcor.ptable);
+				int newDistEdgCor = cube2.prune_table_edgcor.ptable[cube2.edge * N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[cube2.corner][cube2.sym]];
 				if (newDistEdgCor > depth-1) continue;
 				int newDistEdgCen = cube2.new_dist_edgcen(distEdgCen);
 				if (newDistEdgCen > depth-1) continue;

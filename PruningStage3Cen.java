@@ -15,15 +15,14 @@ public final class PruningStage3Cen extends PruningFull {
 
 		// Creation of the pruning table.
 		num_positions = N_STAGE3_SYMCENTER_CONFIGS;
-		n_ptable = num_positions/2 + 1;
-		ptable = new byte[n_ptable];
-		for (i = 0; i < n_ptable; ++i) {
-			ptable[i] = (byte)0xFF;
+		ptable = new byte[num_positions];
+		for (i = 0; i < num_positions; ++i) {
+			ptable[i] = -1;
 		}
 
 		// Fill the solved states.
 		for (i = 0; i < STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS; ++i) {
-			set_dist_4bit( stage3_solved_sym_centers[i], 0, ptable);
+			ptable[stage3_solved_sym_centers[i]] = 0;
 			count++;
 		}
 		back_dist = 7;
@@ -37,7 +36,7 @@ public final class PruningStage3Cen extends PruningFull {
 	}
 
 	void saveIdxAndSyms (int idx, int dist){
-		set_dist_4bit (idx, dist, ptable);
+		ptable[idx] = (byte)dist;
 		count++;
 	}
 

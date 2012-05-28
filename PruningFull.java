@@ -11,7 +11,6 @@ import java.io.BufferedInputStream;
 abstract class PruningFull {
 
 	protected int num_positions;
-	protected int n_ptable;
 	public byte[] ptable;
 	protected int num_moves;
 	protected int count = 0;
@@ -25,7 +24,7 @@ abstract class PruningFull {
 			BufferedOutputStream output = new BufferedOutputStream(fos);
 
 			System.out.println ("Creating pruning table file '"+fname.getName()+"'.");
-			output.write( ptable, 0, n_ptable);
+			output.write( ptable, 0, num_positions);
 			output.flush();
 			output.close();
 			}
@@ -41,7 +40,7 @@ abstract class PruningFull {
 		try {
 			FileInputStream fis = new FileInputStream (fname);
 			BufferedInputStream input = new BufferedInputStream(fis);
-			input.read (ptable, 0, n_ptable);
+			input.read (ptable, 0, num_positions);
 			input.close();
 		}
 		catch(java.io.FileNotFoundException e)
@@ -78,8 +77,8 @@ abstract class PruningFull {
 			System.out.println(" dist "+dist+": "+new_count+" positions.");
 			old_count = count;
 			for (idx = 0; idx < num_positions; ++idx) {
-				if (get_dist_4bit(idx, ptable) == dist){
-					generate (idx, 0xF, dist + 1);
+				if (ptable[idx] == dist){
+					generate (idx, -1, dist + 1);
 				}
 			}
 			new_count = count - old_count;
@@ -89,7 +88,7 @@ abstract class PruningFull {
 			System.out.println(" dist "+dist+": "+new_count+" positions.");
 			old_count = count;
 			for (idx = 0; idx < num_positions; ++idx) {
-				if (get_dist_4bit(idx, ptable) == 0xF){
+				if (ptable[idx] == -1){
 					generate (idx, dist, dist + 1);
 				}
 			}
@@ -106,9 +105,9 @@ abstract class PruningFull {
 
 		for (i = 0; i < num_moves; ++i) {
 			int idx2 = do_move (idx, i);
-			if (get_dist_4bit(idx2, ptable) == dist){
+			if (ptable[idx2] == dist){
 				unique_count++;
-				if ( dist == 0xF )
+				if ( dist == -1 )
 					saveIdxAndSyms( idx2, new_dist );
 				else {
 					saveIdxAndSyms( idx, new_dist );

@@ -15,16 +15,15 @@ public final class PruningStage5EdgCor extends PruningFull {
 
 		// Creation of the pruning table.
 		num_positions = N_STAGE5_SYMEDGE_PERM*N_STAGE5_CORNER_PERM;
-		n_ptable = num_positions/2 + 1;
-		ptable = new byte[n_ptable];
-		for (i = 0; i < n_ptable; ++i) {
-			ptable[i] = (byte)0xFF;
+		ptable = new byte[num_positions];
+		for (i = 0; i < num_positions; ++i) {
+			ptable[i] = -1;
 		}
 
 		// Fill the solved states.
-		set_dist_4bit(0, 0, ptable);
+		ptable[0] = 0;
 		count++;
-		set_dist_4bit(21616*Constants.N_STAGE5_CORNER_PERM+66, 0, ptable);
+		ptable[21616*Constants.N_STAGE5_CORNER_PERM+66] = 0;
 		count++;
 		back_dist = 11;
 	}
@@ -43,7 +42,7 @@ public final class PruningStage5EdgCor extends PruningFull {
 	}
 
 	void saveIdxAndSyms (int idx, int dist){
-		set_dist_4bit (idx, dist, ptable);
+		ptable[idx] = (byte)dist;
 		count++;
 
 		byte cor = (byte)(idx % N_STAGE5_CORNER_PERM);
@@ -53,7 +52,7 @@ public final class PruningStage5EdgCor extends PruningFull {
 		while (syms != 0){
 			if(( syms & 0x1L ) == 1 ){
 				byte cor2 = Tables.move_table_corner_conjSTAGE5[cor][symI];
-				set_dist_4bit (edge*N_STAGE5_CORNER_PERM + cor2, dist, ptable);
+				ptable[edge*N_STAGE5_CORNER_PERM + cor2] = (byte)dist;
 				count++;
 			}
 			symI++;
