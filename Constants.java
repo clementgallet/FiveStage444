@@ -1,5 +1,12 @@
 package fivestage444;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+
+
 /**
  * Class containing all the constants used in the program, and some useful functions.
  */
@@ -428,4 +435,49 @@ public final class Constants{
 		System.out.println (" ");
 	}
 
+	public static void writeObject(Object o, File f) {
+                System.out.println("Write file "+f.getName());
+		ObjectOutputStream out = null;
+		try {
+			out = new ObjectOutputStream(new FileOutputStream(f));
+			out.writeObject(o);
+			out.close();
+		}
+		catch(java.io.FileNotFoundException e)
+		{
+			System.out.println("File not found" + e);
+			System.out.println("Error writing pruning table file '"+f+"'");
+		}
+		catch(java.io.IOException ioe){
+			System.out.print("Erreur : ");
+			ioe.printStackTrace();
+			System.out.println("Error writing pruning table file '"+f+"'");
+		}
+	}
+
+	public static Object readObject(File f){
+		System.out.println("Read file "+f.getName());
+		Object o = new Object();
+		try {
+			ObjectInputStream input = new ObjectInputStream(new FileInputStream (f));
+			o = input.readObject ();
+			input.close();
+		}
+		catch(java.lang.ClassNotFoundException c)
+		{
+			System.out.println("File not found" + c);
+			System.out.println("Error reading pruning table file '"+f+"'");
+		}
+		catch(java.io.FileNotFoundException e)
+		{
+			System.out.println("File not found" + e);
+			System.out.println("Error reading pruning table file '"+f+"'");
+		}
+		catch(java.io.IOException ioe){
+			System.out.print("Erreur : ");
+			ioe.printStackTrace();
+			System.out.println("Error reading pruning table file '"+f+"'");
+		}
+		return o;
+	}
 }

@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.io.PipedOutputStream;
 import java.io.PipedInputStream;
+import java.io.File;
 
 public final class FiveStage444 {
 
@@ -242,6 +243,8 @@ public final class FiveStage444 {
 		//solver_mode = SUB_12;
 		solver_mode = SUB_123;
 		init_stage1 ();
+		System.out.println(total_length );
+		if(true)return;
 
 		/* Print */
 		/*
@@ -275,8 +278,6 @@ public final class FiveStage444 {
 		init_stage3 ( r2_sub );
 		//System.out.println(total_length + "-" + length4_sub + "-" + (total_length-length4_sub-length3_sub) );
 		System.out.println(length1_sub + length2_sub + length4_sub + length5_sub + length3_sub );
-		//System.out.println(total_length );
-		if(true)return;
 		/* Print */
 		System.out.print ("Stage 3: ");
 		for (i = 0; i < length3_sub; ++i)

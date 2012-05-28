@@ -3,87 +3,262 @@ package fivestage444;
 import static fivestage444.Constants.*;
 import java.lang.Thread;
 import java.util.Arrays;
+import java.io.File;
 
 public final class Tables {
 
 	public final void init_all (){
-		threadInit4Of8.start();
-		threadInitParityTable.start();
-		threadInitEbmEloc.start();
-		threadInitMap96.start();
-		threadInitCloc.start();
-		threadInitPerm420.start();
-		threadInitSymEdgeToEdgeStage1.start();
-		threadInitSymEdgeStage1.start();
-		threadInitCornerStage1.start();
-		threadInitCornerConjStage1.start();
-		threadInitEdgeStage2.start();
-		threadInitEdgeConjStage2.start();
-		threadInitSymCenterToCenterStage2.start();
-		threadInitSymCenterStage2.start();
-		threadInitE16Bm.start();
-		threadInitSymCenterToCenterStage3.start();
-		threadInitSymCenterStage3.start();
-		threadInitEdgeStage3.start();
-		threadInitEdgeConjStage3.start();
-		threadInitEdgeBStage4.start();
-		threadInitEdgeAStage4.start();
-		threadInitEdgeRepStage4.start();
-		threadInitSymEdgeStage4.start();
-		threadInitCornerStage4.start();
-		threadInitCornerConjStage4.start();
-		threadInitCenterStage4.start();
-		threadInitCenterConjStage4.start();
-		threadInitSquares2nd.start();
-		threadInitSquaresMovemap.start();
-		threadInitSquaresCenterMap.start();
-		threadInitSymEdgeToEdgeStage5.start();
-		threadInitSymEdgeStage5.start();
-		threadInitCornerConjStage5.start();
-		threadInitCenterConjStage5.start();
 
-		waitAllThreads();
-	}
+		File f, f2;
 
-	public final void waitAllThreads (){
-		try{
-		threadInit4Of8.join();
-		threadInitParityTable.join();
-		threadInitEbmEloc.join();
-		threadInitMap96.join();
-		threadInitCloc.join();
-		threadInitPerm420.join();
-		threadInitSymEdgeToEdgeStage1.join();
-		threadInitSymEdgeStage1.join();
-		threadInitCornerStage1.join();
-		threadInitCornerConjStage1.join();
-		threadInitEdgeStage2.join();
-		threadInitEdgeConjStage2.join();
-		threadInitSymCenterToCenterStage2.join();
-		threadInitSymCenterStage2.join();
-		threadInitE16Bm.join();
-		threadInitSymCenterToCenterStage3.join();
-		threadInitSymCenterStage3.join();
-		threadInitEdgeStage3.join();
-		threadInitEdgeConjStage3.join();
-		threadInitEdgeBStage4.join();
-		threadInitEdgeAStage4.join();
-		threadInitEdgeRepStage4.join();
-		threadInitSymEdgeStage4.join();
-		threadInitCornerStage4.join();
-		threadInitCornerConjStage4.join();
-		threadInitCenterStage4.join();
-		threadInitCenterConjStage4.join();
-		threadInitSquares2nd.join();
-		threadInitSquaresMovemap.join();
-		threadInitSquaresCenterMap.join();
-		threadInitSymEdgeToEdgeStage5.join();
-		threadInitSymEdgeStage5.join();
-		threadInitCornerConjStage5.join();
-		threadInitCenterConjStage5.join();
+		init4Of8();
+		initEbmEloc();
+		initMap96();
+		initCloc();
+		initPerm420();
+
+		f = new File(Constants.datafiles_path, "table_symedge1.rbk");
+		if( f.exists() ){
+			symEdgeToEdgeSTAGE1 = (int[]) readObject(f);
 		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
+		else{
+			initSymEdgeToEdgeStage1();
+			writeObject( (Object)symEdgeToEdgeSTAGE1, f);
+		}
+
+		f = new File(Constants.datafiles_path, "move_symedge1.rbk");
+		if( f.exists() ){
+			move_table_symEdgeSTAGE1 = (int[][]) readObject(f);
+		}
+		else{
+			initSymEdgeStage1();
+			writeObject( (Object)move_table_symEdgeSTAGE1, f);
+		}
+
+		f = new File(Constants.datafiles_path, "move_corner1.rbk");
+		if( f.exists() ){
+			move_table_co = (short[][]) readObject(f);
+		}
+		else{
+			initCornerStage1();
+			writeObject( (Object)move_table_co, f);
+		}
+
+		f = new File(Constants.datafiles_path, "conj_corner1.rbk");
+		if( f.exists() ){
+			move_table_co_conj = (short[][]) readObject(f);
+		}
+		else{
+			initCornerConjStage1();
+			writeObject( (Object)move_table_co_conj, f);
+		}
+
+		f = new File(Constants.datafiles_path, "move_edge2.rbk");
+		if( f.exists() ){
+			move_table_edgeSTAGE2 = (short[][]) readObject(f);
+		}
+		else{
+			initEdgeStage2();
+			writeObject( (Object)move_table_edgeSTAGE2, f);
+		}
+
+		f = new File(Constants.datafiles_path, "conj_edge2.rbk");
+		if( f.exists() ){
+			move_table_edge_conjSTAGE2 = (short[][]) readObject(f);
+		}
+		else{
+			initEdgeConjStage2();
+			writeObject( (Object)move_table_edge_conjSTAGE2, f);
+		}
+
+		f = new File(Constants.datafiles_path, "table_center2.rbk");
+		if( f.exists() ){
+			symCenterToCenterSTAGE2 = (short[]) readObject(f);
+		}
+		else{
+			initSymCenterToCenterStage2();
+			writeObject( (Object)symCenterToCenterSTAGE2, f);
+		}
+
+		f = new File(Constants.datafiles_path, "move_center2.rbk");
+		if( f.exists() ){
+			move_table_symCenterSTAGE2 = (short[][]) readObject(f);
+		}
+		else{
+			initSymCenterStage2();
+			writeObject( (Object)move_table_symCenterSTAGE2, f);
+		}
+
+		initE16Bm();
+
+		f = new File(Constants.datafiles_path, "table_center3.rbk");
+		if( f.exists() ){
+			symCenterToCenterSTAGE3 = (int[]) readObject(f);
+		}
+		else{
+			initSymCenterToCenterStage3();
+			writeObject( (Object)symCenterToCenterSTAGE3, f);
+		}
+
+		f = new File(Constants.datafiles_path, "move_center3.rbk");
+		if( f.exists() ){
+			move_table_symCenterSTAGE3 = (int[][]) readObject(f);
+		}
+		else{
+			initSymCenterStage3();
+			writeObject( (Object)move_table_symCenterSTAGE3, f);
+		}
+
+		f = new File(Constants.datafiles_path, "move_edge3.rbk");
+		if( f.exists() ){
+			move_table_edgeSTAGE3 = (short[][]) readObject(f);
+		}
+		else{
+			initEdgeStage3();
+			writeObject( (Object)move_table_edgeSTAGE3, f);
+		}
+
+		f = new File(Constants.datafiles_path, "conj_edge3.rbk");
+		if( f.exists() ){
+			move_table_edge_conjSTAGE3 = (short[][]) readObject(f);
+		}
+		else{
+			initEdgeConjStage3();
+			writeObject( (Object)move_table_edge_conjSTAGE3, f);
+		}
+
+		f = new File(Constants.datafiles_path, "table_edgehB4.rbk");
+		f2 = new File(Constants.datafiles_path, "table_edgehgB4.rbk");
+		if( f.exists() && f2.exists() ){
+			stage4_edge_hB = (int[]) readObject(f);
+			stage4_edge_hgB = (int[]) readObject(f2);
+		}
+		else{
+			initEdgeBStage4();
+			writeObject( (Object)stage4_edge_hB, f);
+			writeObject( (Object)stage4_edge_hgB, f2);
+		}
+
+		f = new File(Constants.datafiles_path, "table_edgehgA4.rbk");
+		if( f.exists() ){
+			stage4_edge_hgA = (int[][]) readObject(f);
+		}
+		else{
+			initEdgeAStage4();
+			writeObject( (Object)stage4_edge_hgA, f);
+		}
+
+		f = new File(Constants.datafiles_path, "table_symedge4.rbk");
+		if( f.exists() ){
+			symEdgeToEdgeSTAGE4 = (int[]) readObject(f);
+		}
+		else{
+			initParityTable();
+			initEdgeRepStage4();
+			writeObject( (Object)symEdgeToEdgeSTAGE4, f);
+		}
+
+		f = new File(Constants.datafiles_path, "move_symedge4.rbk");
+		if( f.exists() ){
+			move_table_symEdgeSTAGE4 = (int[][]) readObject(f);
+		}
+		else{
+			initSymEdgeStage4();
+			writeObject( (Object)move_table_symEdgeSTAGE4, f);
+		}
+
+		f = new File(Constants.datafiles_path, "move_corner4.rbk");
+		if( f.exists() ){
+			move_table_cornerSTAGE4 = (short[][]) readObject(f);
+		}
+		else{
+			initCornerStage4();
+			writeObject( (Object)move_table_cornerSTAGE4, f);
+		}
+
+		f = new File(Constants.datafiles_path, "conj_corner4.rbk");
+		if( f.exists() ){
+			move_table_corner_conjSTAGE4 = (short[][]) readObject(f);
+		}
+		else{
+			initCornerConjStage4();
+			writeObject( (Object)move_table_corner_conjSTAGE4, f);
+		}
+
+		f = new File(Constants.datafiles_path, "move_center4.rbk");
+		if( f.exists() ){
+			move_table_cenSTAGE4 = (byte[][]) readObject(f);
+		}
+		else{
+			initCenterStage4();
+			writeObject( (Object)move_table_cenSTAGE4, f);
+		}
+
+		f = new File(Constants.datafiles_path, "conj_center4.rbk");
+		if( f.exists() ){
+			move_table_cen_conjSTAGE4 = (byte[][]) readObject(f);
+		}
+		else{
+			initCenterConjStage4();
+			writeObject( (Object)move_table_cen_conjSTAGE4, f);
+		}
+
+
+		f = new File(Constants.datafiles_path, "move_corner5.rbk");
+		if( f.exists() ){
+			move_table_cornerSTAGE5 = (byte[][]) readObject(f);
+		}
+		else{
+			initSquares2nd();
+			initSquaresMovemap();
+			writeObject( (Object)move_table_cornerSTAGE5, f);
+		}
+
+		f = new File(Constants.datafiles_path, "conj_corner5.rbk");
+		if( f.exists() ){
+			move_table_corner_conjSTAGE5 = (byte[][]) readObject(f);
+		}
+		else{
+			initCornerConjStage5();
+			writeObject( (Object)move_table_corner_conjSTAGE5, f);
+		}
+
+		initSquaresCenterMap();
+
+		f = new File(Constants.datafiles_path, "move_center5.rbk");
+		if( f.exists() ){
+			move_table_cenSTAGE5 = (short[][]) readObject(f);
+		}
+		else{
+			initCenterStage5();
+			writeObject( (Object)move_table_cenSTAGE5, f);
+		}
+
+		f = new File(Constants.datafiles_path, "conj_center5.rbk");
+		if( f.exists() ){
+			move_table_cen_conjSTAGE5 = (short[][]) readObject(f);
+		}
+		else{
+			initCenterConjStage5();
+			writeObject( (Object)move_table_cen_conjSTAGE5, f);
+		}
+
+		f = new File(Constants.datafiles_path, "table_symedge5.rbk");
+		if( f.exists() ){
+			symEdgeToEdgeSTAGE5 = (int[]) readObject(f);
+		}
+		else{
+			initSymEdgeToEdgeStage5();
+			writeObject( (Object)symEdgeToEdgeSTAGE5, f);
+		}
+
+		f = new File(Constants.datafiles_path, "move_symedge5.rbk");
+		if( f.exists() ){
+			move_table_symEdgeSTAGE5 = (int[][]) readObject(f);
+		}
+		else{
+			initSymEdgeStage5();
+			writeObject( (Object)move_table_symEdgeSTAGE5, f);
 		}
 	}
 
@@ -91,9 +266,7 @@ public final class Tables {
 	public static final byte[] bm4of8_to_70 = new byte[256];
 	public static final short[] bm4of8 = new short[70]; // (256). Was 'byte', now 'short' :(
 
-	private class Init4Of8 extends Thread {
-
-	public void run (){
+	public void init4Of8 (){
 		System.out.println( "Starting init4of8..." );
 		int a1, a2, a3, a4;
 		int i;
@@ -111,10 +284,6 @@ public final class Tables {
 		}
 		System.out.println( "Finishing init4of8..." );
 	}
-
-	}
-
-	private Init4Of8 threadInit4Of8 = new Init4Of8();
 
 	/*** init_parity_table ***/
 	private static final boolean[] parity_perm8_table = new boolean[40320];
@@ -140,9 +309,7 @@ public final class Tables {
 		return parity;
 	}
 
-	private class InitParityTable extends Thread {
-
-	public void run (){
+	public void initParityTable (){
 		System.out.println( "Starting parity table..." );
 		int x;
 
@@ -151,9 +318,6 @@ public final class Tables {
 		}
 		System.out.println( "Finishing parity table..." );
 	}
-	}
-
-	private InitParityTable threadInitParityTable = new InitParityTable();
 
 	/*** init_eloc ***/
 	public static final int[] ebm2eloc = new int[4096*4096];
@@ -161,9 +325,7 @@ public final class Tables {
 
 	private static int POW2_24 = 4096*4096;
 
-	private class InitEbmEloc extends Thread {
-
-	public void run (){
+	private void initEbmEloc (){
 		System.out.println( "Starting ebm eloc..." );
 		int a1, a2, a3, a4, a5, a6, a7, a8;
 		int count = 0;
@@ -191,16 +353,11 @@ public final class Tables {
 		}
 		System.out.println( "Finishing ebm eloc..." );
 	}
-	}
-
-	private InitEbmEloc threadInitEbmEloc = new InitEbmEloc();
 
 	/*** init map96 ***/
 	private static final byte[][] map96 = new byte[96][8];
 
-	private class InitMap96 extends Thread {
-
-	public void run (){
+	private void initMap96 (){
 		System.out.println( "Starting map 96..." );
 		int a1, i;
 		byte[] t = new byte[8];
@@ -231,9 +388,6 @@ public final class Tables {
 		}
 		System.out.println( "Finishing map 96..." );
 	}
-	}
-
-	private InitMap96 threadInitMap96 = new InitMap96();
 
 	public static final int swapbits (int x, int b){
 		int x2 = x & b;
@@ -243,14 +397,11 @@ public final class Tables {
 		return x ^ b;
 	}
 
-
 	/*** init_cloc ***/
 	public static final int[] c4_to_cloc = new int[24*24*24*24];
 	public static final int[] cloc_to_bm = new int[N_CENTER_COMBO4];
 
-	private class InitCloc extends Thread {
-
-	public void run (){
+	private void initCloc (){
 		System.out.println( "Starting cloc..." );
 		int a1, a2, a3, a4; //, a5, a6, a7, a8;
 		int count = 0;
@@ -295,25 +446,11 @@ public final class Tables {
 		}
 		System.out.println( "Finishing cloc..." );
 	}
-	}
-
-	private InitCloc threadInitCloc = new InitCloc();
 
 	/*** init_perm_to_420 ***/
 	public static final short[] perm_to_420 = new short[40320]; // (420)
 
-	private class InitPerm420 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInit4Of8.join();
-		threadInitMap96.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
-
+	public void initPerm420 (){
 		System.out.println( "Starting perm 420..." );
 		int i;
 		int u, v, w, u2;
@@ -348,25 +485,12 @@ public final class Tables {
 		}
 		System.out.println( "Finshing perm 420..." );
 	}
-	}
-
-	private InitPerm420 threadInitPerm420 = new InitPerm420();
 
 	/*** init stage 1 symEdgeToEdge ***/
-	public static final int[] symEdgeToEdgeSTAGE1 = new int[N_SYMEDGE_COMBO8];
+	public static int[] symEdgeToEdgeSTAGE1 = new int[N_SYMEDGE_COMBO8];
 	public static final long[] hasSymEdgeSTAGE1 = new long[N_SYMEDGE_COMBO8];
 
-	private class InitSymEdgeToEdgeStage1 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInitEbmEloc.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
-
+	private void initSymEdgeToEdgeStage1 (){
 		System.out.println( "Starting symEdgeToEdge stage 1..." );
 		int i, sym;
 		int u, repIdx = 0;
@@ -393,24 +517,11 @@ public final class Tables {
 		}
 		System.out.println( "Finishing symEdgeToEdge stage 1... generated "+repIdx+" reps." );
 	}
-	}
-
-	private InitSymEdgeToEdgeStage1 threadInitSymEdgeToEdgeStage1 = new InitSymEdgeToEdgeStage1();
 
 	/*** init stage 1 symEdges ***/
-	public static final int[][] move_table_symEdgeSTAGE1 = new int[N_SYMEDGE_COMBO8][N_BASIC_MOVES]; // (15582*64) 15582*36 = 560952
+	public static int[][] move_table_symEdgeSTAGE1 = new int[N_SYMEDGE_COMBO8][N_BASIC_MOVES]; // (15582*64) 15582*36 = 560952
 
-	private class InitSymEdgeStage1 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInitEbmEloc.join();
-		threadInitSymEdgeToEdgeStage1.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	private void initSymEdgeStage1 (){
 
 		System.out.println( "Starting symEdge stage 1..." );
 		int i, mc;
@@ -431,25 +542,11 @@ public final class Tables {
 		}
 		System.out.println( "Finishing symEdge stage 1..." );
 	}
-	}
-
-	private InitSymEdgeStage1 threadInitSymEdgeStage1 = new InitSymEdgeStage1();
 
 	/*** init stage 1 corners ***/
-	public static final short[][] move_table_co = new short[N_CORNER_ORIENT][N_FACE_MOVES]; // (2187) 2187*18
+	public static short[][] move_table_co = new short[N_CORNER_ORIENT][N_FACE_MOVES]; // (2187) 2187*18
 
-	private class InitCornerStage1 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInitEbmEloc.join();
-		threadInit4Of8.join();
-		threadInitPerm420.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initCornerStage1 (){
 
 		System.out.println( "Starting corner stage 1..." );
 		int i, mc;
@@ -473,25 +570,11 @@ public final class Tables {
 		}
 		System.out.println( "Finishing corner stage 1..." );
 	}
-	}
-
-	private InitCornerStage1 threadInitCornerStage1 = new InitCornerStage1();
 
 	/*** init stage 1 corner conjugate ***/
-	public static final short[][] move_table_co_conj = new short[N_CORNER_ORIENT][N_SYM_STAGE1]; // (2187) 2187*48
+	public static short[][] move_table_co_conj = new short[N_CORNER_ORIENT][N_SYM_STAGE1]; // (2187) 2187*48
 
-	private class InitCornerConjStage1 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInitEbmEloc.join();
-		threadInit4Of8.join();
-		threadInitPerm420.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initCornerConjStage1 (){
 
 		System.out.println( "Starting corner conjugate stage 1..." );
 		int i, sym;
@@ -513,25 +596,11 @@ public final class Tables {
 		}
 		System.out.println( "Finishing corner conjugate stage 1..." );
 	}
-	}
-
-	private InitCornerConjStage1 threadInitCornerConjStage1 = new InitCornerConjStage1();
 
 	/*** init stage 2 edges ***/
-	public static final short[][] move_table_edgeSTAGE2 = new short[N_STAGE2_EDGE_CONFIGS][N_STAGE2_SLICE_MOVES]; // 420*28
+	public static short[][] move_table_edgeSTAGE2 = new short[N_STAGE2_EDGE_CONFIGS][N_STAGE2_SLICE_MOVES]; // 420*28
 
-	private class InitEdgeStage2 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInitEbmEloc.join();
-		threadInit4Of8.join();
-		threadInitPerm420.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initEdgeStage2 (){
 
 		System.out.println( "Starting edge stage 2..." );
 		short u;
@@ -550,25 +619,11 @@ public final class Tables {
 		}
 		System.out.println( "Finishing edge stage 2..." );
 	}
-	}
-
-	private InitEdgeStage2 threadInitEdgeStage2 = new InitEdgeStage2();
 
 	/*** init stage 2 edge conjugate ***/
-	public static final short[][] move_table_edge_conjSTAGE2 = new short[N_STAGE2_EDGE_CONFIGS][N_SYM_STAGE2]; // (420) 420*16
+	public static short[][] move_table_edge_conjSTAGE2 = new short[N_STAGE2_EDGE_CONFIGS][N_SYM_STAGE2]; // (420) 420*16
 
-	private class InitEdgeConjStage2 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInitEbmEloc.join();
-		threadInit4Of8.join();
-		threadInitPerm420.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initEdgeConjStage2 (){
 
 		System.out.println( "Starting edge conjugate stage 2..." );
 		int i, sym;
@@ -590,24 +645,12 @@ public final class Tables {
 		}
 		System.out.println( "Finishing edge conjugate stage 2..." );
 	}
-	}
-
-	private InitEdgeConjStage2 threadInitEdgeConjStage2 = new InitEdgeConjStage2();
 
 	/*** init stage 2 symCenterToCenter ***/
-	public static final short[] symCenterToCenterSTAGE2 = new short[N_SYMCENTER_COMBO4];
-	public static final int[] hasSymCenterSTAGE2 = new int[N_SYMCENTER_COMBO4];
+	public static short[] symCenterToCenterSTAGE2 = new short[N_SYMCENTER_COMBO4];
+	public static int[] hasSymCenterSTAGE2 = new int[N_SYMCENTER_COMBO4];
 
-	private class InitSymCenterToCenterStage2 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInitCloc.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initSymCenterToCenterStage2 (){
 
 		System.out.println( "Starting symCenterToCenter stage 2..." );
 		int i, sym;
@@ -637,23 +680,11 @@ public final class Tables {
 		}
 		System.out.println( "Finishing symCenterToCenter stage 2... generated "+repIdx+" reps." );
 	}
-	}
-
-	private InitSymCenterToCenterStage2 threadInitSymCenterToCenterStage2 = new InitSymCenterToCenterStage2();
 
 	/*** init stage 2 symCenters ***/
-	public static final short[][] move_table_symCenterSTAGE2 = new short[N_SYMCENTER_COMBO4][N_STAGE2_SLICE_MOVES]; // (716*16) 716*28
+	public static short[][] move_table_symCenterSTAGE2 = new short[N_SYMCENTER_COMBO4][N_STAGE2_SLICE_MOVES]; // (716*16) 716*28
 
-	private class InitSymCenterStage2 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInitSymCenterToCenterStage2.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initSymCenterStage2 (){
 
 		System.out.println( "Starting symCenter stage 2..." );
 		int i, mc;
@@ -673,9 +704,6 @@ public final class Tables {
 		}
 		System.out.println( "Finishing symCenter stage 2..." );
 	}
-	}
-
-	private InitSymCenterStage2 threadInitSymCenterStage2 = new InitSymCenterStage2();
 
 	/*** init_stage3 ***/
 	public static final int[] e16bm2eloc = new int[256*256];
@@ -683,9 +711,7 @@ public final class Tables {
 
 	private static int POW2_16 = 256*256;
 
-	private class InitE16Bm extends Thread {
-
-	public void run (){
+	public void initE16Bm (){
 		System.out.println( "Starting e16bm..." );
 		int a1, a2, a3, a4, a5, a6, a7, a8;
 
@@ -714,25 +740,12 @@ public final class Tables {
 		}
 		System.out.println( "Finishing e16bm..." );
 	}
-	}
-
-	private InitE16Bm threadInitE16Bm = new InitE16Bm();
 
 	/*** init stage 3 symCenterToCenter ***/
-	public static final int[] symCenterToCenterSTAGE3 = new int[N_STAGE3_SYMCENTER_CONFIGS];
-	public static final int[] hasSymCenterSTAGE3 = new int[N_STAGE3_SYMCENTER_CONFIGS]; // Could use less than int. Problem with (byte)1 << 7 and sign...
+	public static int[] symCenterToCenterSTAGE3 = new int[N_STAGE3_SYMCENTER_CONFIGS];
+	public static int[] hasSymCenterSTAGE3 = new int[N_STAGE3_SYMCENTER_CONFIGS]; // Could use less than int. Problem with (byte)1 << 7 and sign...
 
-	private class InitSymCenterToCenterStage3 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInitE16Bm.join();
-		threadInit4Of8.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initSymCenterToCenterStage3 (){
 
 		System.out.println( "Starting symCenterToCenter stage 3..." );
 		int i, sym;
@@ -760,23 +773,11 @@ public final class Tables {
 		}
 		System.out.println( "Finishing symCenterToCenter stage 3... generated "+repIdx+" reps." );
 	}
-	}
-
-	private InitSymCenterToCenterStage3 threadInitSymCenterToCenterStage3 = new InitSymCenterToCenterStage3();
 
 	/*** init stage 3 symCenters ***/
-	public static final int[][] move_table_symCenterSTAGE3 = new int[N_STAGE3_SYMCENTER_CONFIGS][N_STAGE3_SLICE_MOVES]; // (906640) 113330*20=9MB
+	public static int[][] move_table_symCenterSTAGE3 = new int[N_STAGE3_SYMCENTER_CONFIGS][N_STAGE3_SLICE_MOVES]; // (906640) 113330*20=9MB
 
-	private class InitSymCenterStage3 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInitSymCenterToCenterStage3.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initSymCenterStage3 (){
 
 		System.out.println( "Starting symCenters stage 3..." );
 		int i, mc;
@@ -798,24 +799,11 @@ public final class Tables {
 		}
 		System.out.println( "Finishing symCenter stage 3..." );
 	}
-	}
-
-	private InitSymCenterStage3 threadInitSymCenterStage3 = new InitSymCenterStage3();
 
 	/*** init stage 3 edges ***/
-	public static final short[][] move_table_edgeSTAGE3 = new short[N_STAGE3_EDGE_CONFIGS][N_STAGE3_SLICE_MOVES]; // (12870) 12870*20
+	public static short[][] move_table_edgeSTAGE3 = new short[N_STAGE3_EDGE_CONFIGS][N_STAGE3_SLICE_MOVES]; // (12870) 12870*20
 
-	private class InitEdgeStage3 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInitE16Bm.join();
-		threadInit4Of8.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initEdgeStage3 (){
 
 		System.out.println( "Starting edge stage 3..." );
 		int mc;
@@ -834,24 +822,11 @@ public final class Tables {
 		}
 		System.out.println( "Finishing edge stage 3..." );
 	}
-	}
-
-	private InitEdgeStage3 threadInitEdgeStage3 = new InitEdgeStage3();
 
 	/*** init stage 3 edge conjugate ***/
-	public static final short[][] move_table_edge_conjSTAGE3 = new short[N_STAGE3_EDGE_CONFIGS][N_SYM_STAGE3]; // (2187) 2187*48
+	public static short[][] move_table_edge_conjSTAGE3 = new short[N_STAGE3_EDGE_CONFIGS][N_SYM_STAGE3]; // (2187) 2187*48
 
-	private class InitEdgeConjStage3 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInitE16Bm.join();
-		threadInit4Of8.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initEdgeConjStage3 (){
 
 		System.out.println( "Starting edge conjugate stage 3..." );
 		int i, sym;
@@ -872,10 +847,6 @@ public final class Tables {
 		}
 		System.out.println( "Finishing edge conjugate stage 3..." );
 	}
-	}
-
-	private InitEdgeConjStage3 threadInitEdgeConjStage3 = new InitEdgeConjStage3();
-
 
 	/*** init_stage4 ***/
 	public static final int sqs_rep_to_perm[][] = {
@@ -921,12 +892,10 @@ public final class Tables {
 	}
 
 	
-	private static final int[] stage4_edge_hB = new int[40320]; // (40320 ?). Change from short to int then :(
-	private static final int[] stage4_edge_hgB = new int[40320]; // (40320 ?). Change from short to int then :(
+	private static int[] stage4_edge_hB = new int[40320]; // (40320 ?). Change from short to int then :(
+	private static int[] stage4_edge_hgB = new int[40320]; // (40320 ?). Change from short to int then :(
 
-	private class InitEdgeBStage4 extends Thread {
-
-	public void run (){
+	public void initEdgeBStage4 (){
 		System.out.println( "Starting edge B stage 4..." );
 		byte i;
 		int u;
@@ -973,15 +942,10 @@ public final class Tables {
 		}
 		System.out.println( "Finishing edge B stage 4..." );
 	}
-	}
 
-	private InitEdgeBStage4 threadInitEdgeBStage4 = new InitEdgeBStage4();
+	private static int[][] stage4_edge_hgA = new int[40320][36]; // (40320 ?). Change from short to int then :(
 
-	private static final int[][] stage4_edge_hgA = new int[40320][36]; // (40320 ?). Change from short to int then :(
-
-	private class InitEdgeAStage4 extends Thread {
-
-	public void run (){
+	public void initEdgeAStage4 (){
 		System.out.println( "Starting edge A stage 4..." );
 		int i;
 		int u, h1, h2;
@@ -1015,9 +979,6 @@ public final class Tables {
 		}
 		System.out.println( "Finishing edge A stage 4..." );
 	}
-	}
-
-	private InitEdgeAStage4 threadInitEdgeAStage4 = new InitEdgeAStage4();
 
 	public static final int lrfb_get_edge_rep (int u){
 		int reph = stage4_edge_hgB[u/40320];
@@ -1025,20 +986,10 @@ public final class Tables {
 		return 40320*reph + repl;
 	}
 
-	public static final int[] symEdgeToEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS]; // 5968
-	public static final int[] hasSymEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS]; // 5968
+	public static int[] symEdgeToEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS]; // 5968
+	public static int[] hasSymEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS]; // 5968
 
-	private class InitEdgeRepStage4 extends Thread {
-	public void run (){
-
-		try{
-		threadInitEdgeBStage4.join();
-		threadInitEdgeAStage4.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
-		
+	public void initEdgeRepStage4 (){
 
 		System.out.println( "Starting edge rep stage 4..." );
 		int u1, sym;
@@ -1088,22 +1039,10 @@ public final class Tables {
 		}
 		System.out.println( "Finishing edge rep stage 4, found "+repcount+" reps, last reped is "+symEdgeToEdgeSTAGE4[repcount-1]+"..." );
 	}
-	}
 
-	private InitEdgeRepStage4 threadInitEdgeRepStage4 = new InitEdgeRepStage4();
+	public static int[][] move_table_symEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS][N_STAGE4_SLICE_MOVES]; // (5968*16) 5968*16.
 
-	public static final int[][] move_table_symEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS][N_STAGE4_SLICE_MOVES]; // (5968*16) 5968*16.
-
-	private class InitSymEdgeStage4 extends Thread {
-	public void run (){
-
-		try{
-		threadInit4Of8.join();
-		threadInitEdgeRepStage4.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initSymEdgeStage4 (){
 
 		System.out.println( "Starting sym edge stage 4..." );
 		int mc;
@@ -1121,23 +1060,10 @@ public final class Tables {
 		}
 		System.out.println( "Finishing sym edge stage 4..." );
 	}
-	}
 
-	private InitSymEdgeStage4 threadInitSymEdgeStage4 = new InitSymEdgeStage4();
+	public static short[][] move_table_cornerSTAGE4 = new short[N_STAGE4_CORNER_CONFIGS][N_STAGE4_SLICE_MOVES]; // (420) 420*16.
 
-	public static final short[][] move_table_cornerSTAGE4 = new short[N_STAGE4_CORNER_CONFIGS][N_STAGE4_SLICE_MOVES]; // (420) 420*16.
-
-	private class InitCornerStage4 extends Thread {
-	public void run (){
-
-		try{
-		threadInit4Of8.join();
-		threadInitPerm420.join();
-		threadInitEdgeRepStage4.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initCornerStage4 (){
 
 		System.out.println( "Starting corner stage 4..." );
 		int mc;
@@ -1157,23 +1083,10 @@ public final class Tables {
 		}
 		System.out.println( "Finishing corner stage 4..." );
 	}
-	}
 
-	private InitCornerStage4 threadInitCornerStage4 = new InitCornerStage4();
+	public static short[][] move_table_corner_conjSTAGE4 = new short[N_STAGE4_CORNER_CONFIGS][N_SYM_STAGE4]; // (420) 420*16.
 
-	public static final short[][] move_table_corner_conjSTAGE4 = new short[N_STAGE4_CORNER_CONFIGS][N_SYM_STAGE4]; // (420) 420*16.
-
-	private class InitCornerConjStage4 extends Thread {
-	public void run (){
-
-		try{
-		threadInit4Of8.join();
-		threadInitPerm420.join();
-		threadInitEdgeRepStage4.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initCornerConjStage4 (){
 
 		System.out.println( "Starting corner conj stage 4..." );
 		int sym;
@@ -1193,23 +1106,10 @@ public final class Tables {
 		}
 		System.out.println( "Finishing corner conj stage 4..." );
 	}
-	}
 
-	private InitCornerConjStage4 threadInitCornerConjStage4 = new InitCornerConjStage4();
+	public static byte[][] move_table_cenSTAGE4 = new byte[N_STAGE4_CENTER_CONFIGS][N_STAGE4_SLICE_MOVES]; // (70) 70*16.
 
-	public static final byte[][] move_table_cenSTAGE4 = new byte[N_STAGE4_CENTER_CONFIGS][N_STAGE4_SLICE_MOVES]; // (70) 70*16.
-
-	private class InitCenterStage4 extends Thread {
-	public void run (){
-
-		try{
-		threadInit4Of8.join();
-		threadInitPerm420.join();
-		threadInitEdgeRepStage4.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initCenterStage4 (){
 
 		System.out.println( "Starting center stage 4..." );
 		int mc;
@@ -1229,23 +1129,10 @@ public final class Tables {
 		}
 		System.out.println( "Finishing center stage 4..." );
 	}
-	}
 
-	private InitCenterStage4 threadInitCenterStage4 = new InitCenterStage4();
+	public static byte[][] move_table_cen_conjSTAGE4 = new byte[N_STAGE4_CENTER_CONFIGS][N_SYM_STAGE4]; // (70) 70*16.
 
-	public static final byte[][] move_table_cen_conjSTAGE4 = new byte[N_STAGE4_CENTER_CONFIGS][N_SYM_STAGE4]; // (70) 70*16.
-
-	private class InitCenterConjStage4 extends Thread {
-	public void run (){
-
-		try{
-		threadInit4Of8.join();
-		threadInitPerm420.join();
-		threadInitEdgeRepStage4.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initCenterConjStage4 (){
 
 		System.out.println( "Starting center stage 4..." );
 		int sym;
@@ -1265,9 +1152,6 @@ public final class Tables {
 		}
 		System.out.println( "Finishing center conj stage 4..." );
 	}
-	}
-
-	private InitCenterConjStage4 threadInitCenterConjStage4 = new InitCenterConjStage4();
 
 	/*** init_stage5 ***/
 	//map a "squares" move code to one of six "canonical" move codes,
@@ -1299,8 +1183,7 @@ public final class Tables {
 
 	private static final int[][] squares_2nd_perm = new int[24][4];
 
-	private class InitSquares2nd extends Thread {
-	public void run (){
+	public void initSquares2nd (){
 		System.out.println( "Starting squares 2nd perm..." );
 		int i;
 		for (i = 0; i < 24; ++i) {
@@ -1345,21 +1228,10 @@ public final class Tables {
 		}
 		System.out.println( "Finishing squares 2nd perm..." );
 	}
-	}
 
-	private InitSquares2nd threadInitSquares2nd = new InitSquares2nd();
+	public static byte[][] move_table_cornerSTAGE5 = new byte[N_STAGE5_CORNER_PERM][N_STAGE5_MOVES]; // TODO: (96) 96*12
 
-	public static final byte[][] move_table_cornerSTAGE5 = new byte[N_STAGE5_CORNER_PERM][N_STAGE5_MOVES]; // TODO: (96) 96*12
-
-	private class InitSquaresMovemap extends Thread { // TODO: Update the name ?
-	public void run (){
-
-		try{
-		threadInitSquares2nd.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initSquaresMovemap (){
 
 		System.out.println( "Starting squares movemap..." );
 		int i, j, k, first_perm = 0, second_perm;
@@ -1387,16 +1259,11 @@ public final class Tables {
 		}
 		System.out.println( "Finishing squares movemap..." );
 	}
-	}
-
-	private InitSquaresMovemap threadInitSquaresMovemap = new InitSquaresMovemap();
 
 	public static final byte[] squares_cen_revmap = new byte[256]; // (12)
 	public static final byte[][] squares_cen_movemap = new byte[12][6]; // (12)
-	public static final short[][] move_table_cenSTAGE5 = new short[N_STAGE5_CENTER_PERM][N_STAGE5_MOVES]; // TODO: (1728) 1728*12 = 20736
 
-	private class InitSquaresCenterMap extends Thread {
-	public void run (){
+	public void initSquaresCenterMap (){
 
 		System.out.println( "Starting squares center map..." );
 		int i, j;
@@ -1414,6 +1281,15 @@ public final class Tables {
 				squares_cen_movemap[i][j] = squares_cen_revmap[x2];
 			}
 		}
+		System.out.println( "Finishing squares center map..." );
+	}
+
+	public static short[][] move_table_cenSTAGE5 = new short[N_STAGE5_CENTER_PERM][N_STAGE5_MOVES]; // TODO: (1728) 1728*12 = 20736
+
+	public void initCenterStage5 (){
+
+		System.out.println( "Starting squares center map..." );
+		int i, j;
 		for (i = 0; i < 12*12*12; ++i) {
 			for (int m = 0; m < 12; ++m) {
 				int pos = 1;
@@ -1435,17 +1311,12 @@ public final class Tables {
 		}
 		System.out.println( "Finishing squares center map..." );
 	}
-	}
-
-	private InitSquaresCenterMap threadInitSquaresCenterMap = new InitSquaresCenterMap();
 
 	/*** init stage 5 symEdgeToEdge ***/
-	public static final int[] symEdgeToEdgeSTAGE5 = new int[N_STAGE5_SYMEDGE_PERM];
-	public static final long[] hasSymEdgeSTAGE5 = new long[N_STAGE5_SYMEDGE_PERM];
+	public static int[] symEdgeToEdgeSTAGE5 = new int[N_STAGE5_SYMEDGE_PERM];
+	public static long[] hasSymEdgeSTAGE5 = new long[N_STAGE5_SYMEDGE_PERM];
 
-	private class InitSymEdgeToEdgeStage5 extends Thread {
-
-	public void run (){
+	public void initSymEdgeToEdgeStage5 (){
 
 		System.out.println( "Starting symEdgeToEdge stage 5..." );
 		int i, sym;
@@ -1478,24 +1349,11 @@ public final class Tables {
 		}
 		System.out.println( "Finishing symEdgeToEdge stage 5... generated "+repIdx+" reps." );
 	}
-	}
-
-	private InitSymEdgeToEdgeStage5 threadInitSymEdgeToEdgeStage5 = new InitSymEdgeToEdgeStage5();
 
 	/*** init stage 5 symEdges ***/
-	public static final int[][] move_table_symEdgeSTAGE5 = new int[N_STAGE5_SYMEDGE_PERM][N_STAGE5_MOVES]; // (21908*48) 21908*12 = 6677424
+	public static int[][] move_table_symEdgeSTAGE5 = new int[N_STAGE5_SYMEDGE_PERM][N_STAGE5_MOVES]; // (21908*48) 21908*12 = 6677424
 
-	private class InitSymEdgeStage5 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInitSymEdgeToEdgeStage5.join();
-		threadInitSquaresMovemap.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initSymEdgeStage5 (){
 
 		System.out.println( "Starting symEdge stage 5..." );
 		int i, mc;
@@ -1516,23 +1374,11 @@ public final class Tables {
 		}
 		System.out.println( "Finishing symEdge stage 5..." );
 	}
-	}
-
-	private InitSymEdgeStage5 threadInitSymEdgeStage5 = new InitSymEdgeStage5();
 
 	/*** init stage 5 corner conjugate ***/
-	public static final byte[][] move_table_corner_conjSTAGE5 = new byte[N_STAGE5_CORNER_PERM][N_SYM_STAGE5]; // (96) 96*48
-	private class InitCornerConjStage5 extends Thread {
+	public static byte[][] move_table_corner_conjSTAGE5 = new byte[N_STAGE5_CORNER_PERM][N_SYM_STAGE5]; // (96) 96*48
 
-	public void run (){
-
-		try{
-		threadInitSquaresMovemap.join();
-		threadInitSquaresCenterMap.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initCornerConjStage5 (){
 
 		System.out.println( "Starting corner conjugate stage 5..." );
 		int i, sym;
@@ -1553,24 +1399,11 @@ public final class Tables {
 		}
 		System.out.println( "Finishing corner conjugate stage 5..." );
 	}
-	}
-
-	private InitCornerConjStage5 threadInitCornerConjStage5 = new InitCornerConjStage5();
 
 	/*** init stage 5 center conjugate ***/
-	public static final short[][] move_table_cen_conjSTAGE5 = new short[N_STAGE5_CENTER_PERM][N_SYM_STAGE5]; // (1728) 1728*48
+	public static short[][] move_table_cen_conjSTAGE5 = new short[N_STAGE5_CENTER_PERM][N_SYM_STAGE5]; // (1728) 1728*48
 
-	private class InitCenterConjStage5 extends Thread {
-
-	public void run (){
-
-		try{
-		threadInitSquaresMovemap.join();
-		threadInitSquaresCenterMap.join();
-		}
-		catch(InterruptedException ie){
-			ie.printStackTrace();
-		}
+	public void initCenterConjStage5 (){
 
 		System.out.println( "Starting center conjugate stage 5..." );
 		int i, sym;
@@ -1591,8 +1424,5 @@ public final class Tables {
 		}
 		System.out.println( "Finishing center conjugate stage 5..." );
 	}
-	}
-
-	private InitCenterConjStage5 threadInitCenterConjStage5 = new InitCenterConjStage5();
 }
 
