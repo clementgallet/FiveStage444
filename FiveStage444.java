@@ -169,7 +169,7 @@ public final class FiveStage444 {
 
 	public static void main(String[] args){
 
-		int random_count = 100;
+		int random_count = 30;
 
 		Symmetry.init();
 
@@ -215,8 +215,8 @@ public final class FiveStage444 {
 
 	public static void do_random_cubes (int count) {
 		int i, i1;
-		Random r = new Random();
-		//Random r = new Random(42);
+		//Random r = new Random();
+		Random r = new Random(42);
 		byte[] random_list = new byte[160];	//must be >= scramble_len
 		CubeState solveme = new CubeState();
 		int scramble_len = 100;
@@ -243,8 +243,9 @@ public final class FiveStage444 {
 		//solver_mode = SUB_12;
 		solver_mode = SUB_123;
 		init_stage1 ();
-		System.out.println(total_length );
-		if(true)return;
+		//System.out.println(total_length );
+		//System.out.println(total_length + " " + length2_sub + " " + (total_length-length2_sub-length1_sub) );
+		//if(true)return;
 
 		/* Print */
 		/*
@@ -278,6 +279,7 @@ public final class FiveStage444 {
 		init_stage3 ( r2_sub );
 		//System.out.println(total_length + "-" + length4_sub + "-" + (total_length-length4_sub-length3_sub) );
 		System.out.println(length1_sub + length2_sub + length4_sub + length5_sub + length3_sub );
+		if(true)return;
 		/* Print */
 		System.out.print ("Stage 3: ");
 		for (i = 0; i < length3_sub; ++i)
@@ -369,19 +371,16 @@ public final class FiveStage444 {
 		for (mov_idx = 0; mov_idx < N_BASIC_MOVES; ++mov_idx) {
 			if (((stage1_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) || ( depth == -1 )) {
 
-				/* Copy cube1 to list1[depth] */
-				//cube1.copyTo(list1[depth]);
-				list1[depth].corner = cube1.corner;
-				list1[depth].edge = cube1.edge;
-				list1[depth].sym = cube1.sym;
-
-				/* Move list1[depth] */
-				//list1[depth].do_move (mov_idx);
+				/* Move cube1 to list1[depth] */
+				//cube1.copyTo(cube2);
+				//cube2.do_move (mov_idx);
 				int fmc = basic_to_face[mov_idx];
 				if (fmc >= 0)
-					list1[depth].corner = Tables.move_table_co[list1[depth].corner][fmc];
-				int newEdge = Tables.move_table_symEdgeSTAGE1[list1[depth].edge][Symmetry.moveConjugate[mov_idx][list1[depth].sym]];
-				list1[depth].sym = Symmetry.symIdxMultiply[newEdge & 0x3F][list1[depth].sym];
+					list1[depth].corner = Tables.move_table_co[cube1.corner][fmc];
+				else
+					list1[depth].corner = cube1.corner;
+				int newEdge = Tables.move_table_symEdgeSTAGE1[cube1.edge][Symmetry.moveConjugate[mov_idx][cube1.sym]];
+				list1[depth].sym = Symmetry.symIdxMultiply[newEdge & 0x3F][cube1.sym];
 				list1[depth].edge = newEdge >> 6 ;
 
 				/* Compute new distance */
@@ -402,7 +401,6 @@ public final class FiveStage444 {
 		int cubeDistCenF2 = 0;
 		int cubeDistCenB2 = 0;
 		int d22 = 999;
-
 		if(( solver_mode == SUB_12 ) || ( solver_mode == SUB_123 ))
 			if ( found1 && ( endtime < System.currentTimeMillis() )) return true;
 		r1 = r;
@@ -533,28 +531,15 @@ public final class FiveStage444 {
 		for (mov_idx = 0; mov_idx < N_STAGE2_SLICE_MOVES; ++mov_idx) {
 			if ((stage2_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0){
 
-				/* Copy cube1 to list2[depth] */
-				//cube1.copyTo (list2[depth]);
-				list2[depth].edge = cube1.edge;
-				list2[depth].centerF = cube1.centerF;
-				list2[depth].symF = cube1.symF;
-				list2[depth].centerB = cube1.centerB;
-				list2[depth].symB = cube1.symB;
-
-				/* Move list2[depth] */
-				//list2[depth].do_move (mov_idx);
-
+				/* Move cube1 to list2[depth] */
 				int newCen;
-
-				newCen = Tables.move_table_symCenterSTAGE2[list2[depth].centerF][Symmetry.moveConjugate2[mov_idx][list2[depth].symF]];
-				list2[depth].symF = Symmetry.symIdxMultiply[newCen & 0xF][list2[depth].symF];
+				newCen = Tables.move_table_symCenterSTAGE2[cube1.centerF][Symmetry.moveConjugate2[mov_idx][cube1.symF]];
+				list2[depth].symF = Symmetry.symIdxMultiply[newCen & 0xF][cube1.symF];
 				list2[depth].centerF = newCen >> 4;
-
-				newCen = Tables.move_table_symCenterSTAGE2[list2[depth].centerB][Symmetry.moveConjugate2[mov_idx][list2[depth].symB]];
-				list2[depth].symB = Symmetry.symIdxMultiply[newCen & 0xF][list2[depth].symB];
+				newCen = Tables.move_table_symCenterSTAGE2[cube1.centerB][Symmetry.moveConjugate2[mov_idx][cube1.symB]];
+				list2[depth].symB = Symmetry.symIdxMultiply[newCen & 0xF][cube1.symB];
 				list2[depth].centerB = newCen >> 4;
-
-				list2[depth].edge = Tables.move_table_edgeSTAGE2[list2[depth].edge][mov_idx];
+				list2[depth].edge = Tables.move_table_edgeSTAGE2[cube1.edge][mov_idx];
 
 				next_ms = stage2_stm_next_ms[mov_idx];
 
@@ -671,23 +656,12 @@ public final class FiveStage444 {
 		for (mov_idx = 0; mov_idx < N_STAGE3_SLICE_MOVES; ++mov_idx) {
 			if ((stage3_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
 
-				/* Copy cube1 to cube2 */
-				//cube1.copyTo (cube2);
-				cube2.center = cube1.center;
-				cube2.sym = cube1.sym;
-				cube2.edge = cube1.edge;
-				cube2.edge_odd = cube1.edge_odd;
-
-				/* Move cube2 (copy from cube2.do_move) */
+				/* Move cube1 to cube2 */
 				//cube2.do_move (mov_idx);
-				cube2.edge = Tables.move_table_edgeSTAGE3[cube2.edge][mov_idx];
-				if (Constants.stage3_move_parity[mov_idx]) {
-					cube2.edge_odd = ! cube2.edge_odd;
-				}
-
-				int newCen = Tables.move_table_symCenterSTAGE3[cube2.center][Symmetry.moveConjugate3[mov_idx][cube2.sym]];
-
-				cube2.sym = Symmetry.symIdxMultiply[newCen & 0x7][cube2.sym];
+				cube2.edge = Tables.move_table_edgeSTAGE3[cube1.edge][mov_idx];
+				cube2.edge_odd = cube1.edge_odd ^ stage3_move_parity[mov_idx];
+				int newCen = Tables.move_table_symCenterSTAGE3[cube1.center][Symmetry.moveConjugate3[mov_idx][cube1.sym]];
+				cube2.sym = Symmetry.symIdxMultiply[newCen & 0x7][cube1.sym];
 				cube2.center = newCen >> 3;
 
 				next_ms = stage3_stm_next_ms[mov_idx];
@@ -765,10 +739,17 @@ public final class FiveStage444 {
 		}
 		for (mov_idx = 0; mov_idx < N_STAGE4_SLICE_MOVES; ++mov_idx) {
 			if ((stage4_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
-				cube1.copyTo (cube2);
-				cube2.do_move (mov_idx);
+
+				/* Move to cube2 */
+				cube2.center = Tables.move_table_cenSTAGE4[cube1.center][mov_idx];
+				cube2.corner = Tables.move_table_cornerSTAGE4[cube1.corner][mov_idx];
+				int newEdge = Tables.move_table_symEdgeSTAGE4[cube1.edge][Symmetry.moveConjugate4[mov_idx][cube1.sym]];
+				cube2.sym = Symmetry.symIdxMultiply[newEdge & 0xF][cube1.sym];
+				cube2.edge = newEdge >> 4;
 				next_ms = stage4_stm_next_ms[mov_idx];
-				int newDist = cube2.new_dist(dist);
+
+				/* Compute new distance */
+				int newDist = cube2.prune_table.new_dist((( cube2.edge * N_STAGE4_CORNER_CONFIGS + Tables.move_table_corner_conjSTAGE4[cube2.corner][cube2.sym] ) * N_STAGE4_CENTER_CONFIGS ) + Tables.move_table_cen_conjSTAGE4[cube2.center][cube2.sym], dist);
 				if (newDist > depth-1) continue;
 				move_list_stage4[moves_done] = (byte)mov_idx;
 				if (search_stage4 (cube2, depth - 1, moves_done + 1, next_ms, newDist)) return true;
@@ -826,9 +807,15 @@ public final class FiveStage444 {
 			return true;
 		}
 		for (mov_idx = 0; mov_idx < N_STAGE5_MOVES; ++mov_idx) {
-			cube1.copyTo (cube2);
 			if ((sqs_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) {
-				cube2.do_move (mov_idx);
+
+				/* Move cube1 to cube2 */
+				cube2.center = Tables.move_table_cenSTAGE5[cube1.center][mov_idx];
+				cube2.corner = Tables.move_table_cornerSTAGE5[cube1.corner][mov_idx];
+				int newEdge = Tables.move_table_symEdgeSTAGE5[cube1.edge][Symmetry.moveConjugate5[mov_idx][cube1.sym]];
+				cube2.sym = Symmetry.symIdxMultiply[newEdge & 0x3F][cube1.sym];
+				cube2.edge = newEdge >> 6;
+
 				next_ms = sqs_stm_next_ms[mov_idx];
 				int newDistEdgCor = cube2.prune_table_edgcor.ptable[cube2.edge * N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[cube2.corner][cube2.sym]];
 				if (newDistEdgCor > depth-1) continue;
