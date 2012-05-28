@@ -368,9 +368,24 @@ public final class FiveStage444 {
 		}
 		for (mov_idx = 0; mov_idx < N_BASIC_MOVES; ++mov_idx) {
 			if (((stage1_slice_moves_to_try[move_state] & (1 << mov_idx)) != 0) || ( depth == -1 )) {
-				cube1.copyTo(list1[depth]);
-				list1[depth].do_move (mov_idx);
-				int newDist = list1[depth].new_dist(dist);
+
+				/* Copy cube1 to list1[depth] */
+				//cube1.copyTo(list1[depth]);
+				list1[depth].corner = cube1.corner;
+				list1[depth].edge = cube1.edge;
+				list1[depth].sym = cube1.sym;
+
+				/* Move list1[depth] */
+				//list1[depth].do_move (mov_idx);
+				int fmc = basic_to_face[mov_idx];
+				if (fmc >= 0)
+					list1[depth].corner = Tables.move_table_co[list1[depth].corner][fmc];
+				int newEdge = Tables.move_table_symEdgeSTAGE1[list1[depth].edge][Symmetry.moveConjugate[mov_idx][list1[depth].sym]];
+				list1[depth].sym = Symmetry.symIdxMultiply[newEdge & 0x3F][list1[depth].sym];
+				list1[depth].edge = newEdge >> 6 ;
+
+				/* Compute new distance */
+				int newDist = list1[depth].prune_table.new_dist(N_CORNER_ORIENT * list1[depth].edge + Tables.move_table_co_conj[list1[depth].corner][list1[depth].sym], dist);
 				if (newDist > depth-1) continue;
 				move_list_stage1[moves_done] = (byte)mov_idx;
 				if (search_stage1 (list1[depth], depth - 1, moves_done + 1, mov_idx, newDist, r)) return true;
