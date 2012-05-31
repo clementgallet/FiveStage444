@@ -8,7 +8,7 @@ public final class PruningStage2EdgCen extends PruningFull {
 
 	void init (){
 		int i;
-		fname = new File( datafiles_path, "stage2_edgcen_stm_prune.rbk" );
+		fname = new File( tables_path, "stage2_edgcen_"+METRIC_STR+"_prune.rbk" );
 
 		// Definition of the allowed moves.
 		num_moves = N_STAGE2_SLICE_MOVES;

@@ -8,7 +8,7 @@ public final class PruningStage3Edg extends PruningFull {
 
 	void init (){
 		int i;
-		fname = new File( datafiles_path, "stage3_edg_stm_prune.rbk" );
+		fname = new File( tables_path, "stage3_edg_"+METRIC_STR+"_prune.rbk" );
 
 		// Definition of the allowed moves.
 		num_moves = N_STAGE3_SLICE_MOVES;

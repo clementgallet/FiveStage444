@@ -310,7 +310,10 @@ public final class CubeState{
 	public void rotate_sliceCORNER (int move_code){
 		int i;
 		if (move_code % 6 >= 3) {
-			return;		//inner slice turn, no corners affected
+			if( METRIC == STM ) 
+				return;		//inner slice turn, no corners affected
+			if( METRIC == FTM )
+				move_code -= 3; //only do the inner slice
 		}
 		int mc6 = move_code/6;
 		int mc = 3*mc6 + move_code % 3;
@@ -337,22 +340,16 @@ public final class CubeState{
 
 	public void rotate_sliceEDGE (int move_code){
 		byte[] old_m_edge = new byte[24];
-		int i;
+		int i, j;
 		System.arraycopy(m_edge, 0, old_m_edge, 0, 24);
 		int mc3 = move_code/3;
 		int movdir = move_code % 3;
 		int mcx = 3*(mc3/2);
-		if ((mc3 & 0x1) != 0) {	//slice move?
-			mcx += 2;
-		}
-		int fidx = rotateEDGE_fidx[3*mcx + movdir];
-		int tidx = rotateEDGE_tidx[3*mcx + movdir];
-		for (i = 0; i < 4; ++i) {
-			m_edge[rotateEDGE_ft[tidx + i]] = old_m_edge[rotateEDGE_ft[fidx + i]];
-		}
-		if ((mc3 & 0x1) == 0) {	//face move? have a 2nd set of edges to cycle
-			fidx = rotateEDGE_fidx[3*(mcx+1) + movdir];
-			tidx = rotateEDGE_tidx[3*(mcx+1) + movdir];
+		for (j = 0; j < 3; ++j) { // j = 0, 1: face turn. j = 2: slice turn
+			if((( METRIC == STM ) && ( ( (mc3 & 0x1) != 0 ) ^ ( j == 2 ) )) || (( METRIC == FTM ) && ( (mc3 & 0x1) == 0 ) && ( j == 2 )))
+				continue;
+			int fidx = rotateEDGE_fidx[3*(mcx+j) + movdir];
+			int tidx = rotateEDGE_tidx[3*(mcx+j) + movdir];
 			for (i = 0; i < 4; ++i) {
 				m_edge[rotateEDGE_ft[tidx + i]] = old_m_edge[rotateEDGE_ft[fidx + i]];
 			}
@@ -361,19 +358,16 @@ public final class CubeState{
 
 	public void rotate_sliceCENTER (int move_code){
 		byte[] old_m_cen = new byte[24];
-		int i;
+		int i, j;
 		System.arraycopy(m_cen, 0, old_m_cen, 0, 24);
 		int mc3 = move_code/3;
 		int movdir = move_code % 3;
-		int mcx = 3*(mc3/2) + (mc3 & 0x1);
-		int fidx = rotateEDGE_fidx[3*mcx + movdir]; // rotateCEN_fidx = rotateEDGE_fidx
-		int tidx = rotateEDGE_tidx[3*mcx + movdir]; // rotateCEN_tidx = rotateEDGE_tidx
-		for (i = 0; i < 4; ++i) {
-			m_cen[rotateCEN_ft[tidx + i]] = old_m_cen[rotateCEN_ft[fidx + i]];
-		}
-		if ((mc3 & 0x1) == 1) {	//slice move? have a 2nd set of centers to cycle
-			fidx = rotateEDGE_fidx[3*(mcx+1) + movdir]; // idem
-			tidx = rotateEDGE_tidx[3*(mcx+1) + movdir]; // idem
+		int mcx = 3*(mc3/2);
+		for (j = 0; j < 3; ++j) { // j = 0: face turn. j = 1, 2: slice turn
+			if((( METRIC == STM ) && ( ( (mc3 & 0x1) != 0 ) ^ ( j > 0 ) )) || (( METRIC == FTM ) && ( (mc3 & 0x1) == 0 ) && ( j > 0 )))
+				continue;
+			int fidx = rotateEDGE_fidx[3*(mcx+j) + movdir]; // rotateCEN_fidx = rotateEDGE_fidx
+			int tidx = rotateEDGE_tidx[3*(mcx+j) + movdir]; // rotateCEN_tidx = rotateEDGE_tidx
 			for (i = 0; i < 4; ++i) {
 				m_cen[rotateCEN_ft[tidx + i]] = old_m_cen[rotateCEN_ft[fidx + i]];
 			}
@@ -652,11 +646,6 @@ public final class CubeState{
 			new_m_cen[std_to_sqs_cen[i]] = (byte)(std_to_sqs_cen[4*m_cen[i]]/4);
 		}
 
-		return squares_pack_centers (new_m_cen);
-	}
-
-	public short squares_pack_centers (byte[] new_m_cen){
-		int i;
 		int x = 0;
 		int b = 0x800000;
 		for (i = 0; i < 24; ++i) {
@@ -669,7 +658,6 @@ public final class CubeState{
 		short cen2 = (short)Tables.squares_cen_revmap[(x >> 8) & 0xFF];
 		short cen3 = (short)Tables.squares_cen_revmap[x & 0xFF];
 		short cen = (short)(cen1 + 12*cen2 + 12*12*cen3);
-		if (cen >= 12*12*12) System.out.println("Error: not a CubeStage5 !");
 		return cen;
 	}
 

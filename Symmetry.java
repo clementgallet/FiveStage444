@@ -55,29 +55,39 @@ public final class Symmetry {
 							}
 							idx += 2;
 
-							cube.do_move (Uf2);
 							cube.do_move (Us2);
 							cube.do_move (Ds2);
-							cube.do_move (Df2);
+							if( METRIC == STM ){
+								cube.do_move (Uf2);
+								cube.do_move (Df2);
+							}
 						}
-						cube.do_move (Ff2);
 						cube.do_move (Fs2);
 						cube.do_move (Bs2);
-						cube.do_move (Bf2);
+						if( METRIC == STM ){
+							cube.do_move (Ff2);
+							cube.do_move (Bf2);
+						}
 					}
-					cube.do_move (Uf);
 					cube.do_move (Us);
 					cube.do_move (Ds3);
-					cube.do_move (Df3);
+					if( METRIC == STM ){
+						cube.do_move (Uf);
+						cube.do_move (Df3);
+					}
 				}
-				cube.do_move (Uf3);
 				cube.do_move (Us3);
 				cube.do_move (Ds);
-				cube.do_move (Df);
-				cube.do_move (Rf3);
+				if( METRIC == STM ){
+					cube.do_move (Uf3);
+					cube.do_move (Df);
+				}
 				cube.do_move (Rs3);
 				cube.do_move (Ls);
-				cube.do_move (Lf);
+				if( METRIC == STM ){
+					cube.do_move (Rf3);
+					cube.do_move (Lf);
+				}
 			}
 			cube.inverse();
 		}

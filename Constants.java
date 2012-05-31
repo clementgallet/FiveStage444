@@ -13,6 +13,11 @@ import java.io.ObjectInputStream;
 public final class Constants{
 
 	public static final String datafiles_path = "./fivestage444/";
+	public static final String tables_path = "./fivestage444/tables";
+	public static final int STM = 0;
+	public static final int FTM = 1;
+	public static final int METRIC = FTM;
+	public static final String METRIC_STR = "ftm";
 	public static final boolean USE_FULL_PRUNING_STAGE3 = false;
 	public static final boolean USE_FULL_PRUNING_STAGE5 = false;
 

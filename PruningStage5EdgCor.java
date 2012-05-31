@@ -8,7 +8,7 @@ public final class PruningStage5EdgCor extends PruningFull {
 
 	void init (){
 		int i;
-		fname = new File( datafiles_path, "stage5_edgcor_stm_prune.rbk" );
+		fname = new File( tables_path, "stage5_edgcor_"+METRIC_STR+"_prune.rbk" );
 
 		// Definition of the allowed moves.
 		num_moves = N_STAGE5_MOVES;

@@ -17,7 +17,7 @@ public final class Tables {
 		initCloc();
 		initPerm420();
 
-		f = new File(Constants.datafiles_path, "table_symedge1.rbk");
+		f = new File(tables_path, "table_"+METRIC_STR+"_symedge1.rbk");
 		if( f.exists() ){
 			symEdgeToEdgeSTAGE1 = (int[]) readObject(f);
 		}
@@ -26,7 +26,7 @@ public final class Tables {
 			writeObject( (Object)symEdgeToEdgeSTAGE1, f);
 		}
 
-		f = new File(Constants.datafiles_path, "move_symedge1.rbk");
+		f = new File(tables_path, "move_"+METRIC_STR+"_symedge1.rbk");
 		if( f.exists() ){
 			move_table_symEdgeSTAGE1 = (int[][]) readObject(f);
 		}
@@ -35,7 +35,7 @@ public final class Tables {
 			writeObject( (Object)move_table_symEdgeSTAGE1, f);
 		}
 
-		f = new File(Constants.datafiles_path, "move_corner1.rbk");
+		f = new File(tables_path, "move_"+METRIC_STR+"_corner1.rbk");
 		if( f.exists() ){
 			move_table_co = (short[][]) readObject(f);
 		}
@@ -44,7 +44,7 @@ public final class Tables {
 			writeObject( (Object)move_table_co, f);
 		}
 
-		f = new File(Constants.datafiles_path, "conj_corner1.rbk");
+		f = new File(tables_path, "conj_"+METRIC_STR+"_corner1.rbk");
 		if( f.exists() ){
 			move_table_co_conj = (short[][]) readObject(f);
 		}
@@ -53,7 +53,7 @@ public final class Tables {
 			writeObject( (Object)move_table_co_conj, f);
 		}
 
-		f = new File(Constants.datafiles_path, "move_edge2.rbk");
+		f = new File(tables_path, "move_"+METRIC_STR+"_edge2.rbk");
 		if( f.exists() ){
 			move_table_edgeSTAGE2 = (short[][]) readObject(f);
 		}
@@ -62,7 +62,7 @@ public final class Tables {
 			writeObject( (Object)move_table_edgeSTAGE2, f);
 		}
 
-		f = new File(Constants.datafiles_path, "conj_edge2.rbk");
+		f = new File(tables_path, "conj_"+METRIC_STR+"_edge2.rbk");
 		if( f.exists() ){
 			move_table_edge_conjSTAGE2 = (short[][]) readObject(f);
 		}
@@ -71,7 +71,7 @@ public final class Tables {
 			writeObject( (Object)move_table_edge_conjSTAGE2, f);
 		}
 
-		f = new File(Constants.datafiles_path, "table_center2.rbk");
+		f = new File(tables_path, "table_"+METRIC_STR+"_center2.rbk");
 		if( f.exists() ){
 			symCenterToCenterSTAGE2 = (short[]) readObject(f);
 		}
@@ -80,7 +80,7 @@ public final class Tables {
 			writeObject( (Object)symCenterToCenterSTAGE2, f);
 		}
 
-		f = new File(Constants.datafiles_path, "move_center2.rbk");
+		f = new File(tables_path, "move_"+METRIC_STR+"_center2.rbk");
 		if( f.exists() ){
 			move_table_symCenterSTAGE2 = (short[][]) readObject(f);
 		}
@@ -91,7 +91,7 @@ public final class Tables {
 
 		initE16Bm();
 
-		f = new File(Constants.datafiles_path, "table_center3.rbk");
+		f = new File(tables_path, "table_"+METRIC_STR+"_center3.rbk");
 		if( f.exists() ){
 			symCenterToCenterSTAGE3 = (int[]) readObject(f);
 		}
@@ -100,7 +100,7 @@ public final class Tables {
 			writeObject( (Object)symCenterToCenterSTAGE3, f);
 		}
 
-		f = new File(Constants.datafiles_path, "move_center3.rbk");
+		f = new File(tables_path, "move_"+METRIC_STR+"_center3.rbk");
 		if( f.exists() ){
 			move_table_symCenterSTAGE3 = (int[][]) readObject(f);
 		}
@@ -109,7 +109,7 @@ public final class Tables {
 			writeObject( (Object)move_table_symCenterSTAGE3, f);
 		}
 
-		f = new File(Constants.datafiles_path, "move_edge3.rbk");
+		f = new File(tables_path, "move_"+METRIC_STR+"_edge3.rbk");
 		if( f.exists() ){
 			move_table_edgeSTAGE3 = (short[][]) readObject(f);
 		}
@@ -118,7 +118,7 @@ public final class Tables {
 			writeObject( (Object)move_table_edgeSTAGE3, f);
 		}
 
-		f = new File(Constants.datafiles_path, "conj_edge3.rbk");
+		f = new File(tables_path, "conj_"+METRIC_STR+"_edge3.rbk");
 		if( f.exists() ){
 			move_table_edge_conjSTAGE3 = (short[][]) readObject(f);
 		}
@@ -127,8 +127,8 @@ public final class Tables {
 			writeObject( (Object)move_table_edge_conjSTAGE3, f);
 		}
 
-		f = new File(Constants.datafiles_path, "table_edgehB4.rbk");
-		f2 = new File(Constants.datafiles_path, "table_edgehgB4.rbk");
+		f = new File(tables_path, "table_"+METRIC_STR+"_edgehB4.rbk");
+		f2 = new File(tables_path, "table_"+METRIC_STR+"_edgehgB4.rbk");
 		if( f.exists() && f2.exists() ){
 			stage4_edge_hB = (int[]) readObject(f);
 			stage4_edge_hgB = (int[]) readObject(f2);
@@ -139,7 +139,7 @@ public final class Tables {
 			writeObject( (Object)stage4_edge_hgB, f2);
 		}
 
-		f = new File(Constants.datafiles_path, "table_edgehgA4.rbk");
+		f = new File(tables_path, "table_"+METRIC_STR+"_edgehgA4.rbk");
 		if( f.exists() ){
 			stage4_edge_hgA = (int[][]) readObject(f);
 		}
@@ -148,7 +148,7 @@ public final class Tables {
 			writeObject( (Object)stage4_edge_hgA, f);
 		}
 
-		f = new File(Constants.datafiles_path, "table_symedge4.rbk");
+		f = new File(tables_path, "table_"+METRIC_STR+"_symedge4.rbk");
 		if( f.exists() ){
 			symEdgeToEdgeSTAGE4 = (int[]) readObject(f);
 		}
@@ -158,7 +158,7 @@ public final class Tables {
 			writeObject( (Object)symEdgeToEdgeSTAGE4, f);
 		}
 
-		f = new File(Constants.datafiles_path, "move_symedge4.rbk");
+		f = new File(tables_path, "move_"+METRIC_STR+"_symedge4.rbk");
 		if( f.exists() ){
 			move_table_symEdgeSTAGE4 = (int[][]) readObject(f);
 		}
@@ -167,7 +167,7 @@ public final class Tables {
 			writeObject( (Object)move_table_symEdgeSTAGE4, f);
 		}
 
-		f = new File(Constants.datafiles_path, "move_corner4.rbk");
+		f = new File(tables_path, "move_"+METRIC_STR+"_corner4.rbk");
 		if( f.exists() ){
 			move_table_cornerSTAGE4 = (short[][]) readObject(f);
 		}
@@ -176,7 +176,7 @@ public final class Tables {
 			writeObject( (Object)move_table_cornerSTAGE4, f);
 		}
 
-		f = new File(Constants.datafiles_path, "conj_corner4.rbk");
+		f = new File(tables_path, "conj_"+METRIC_STR+"_corner4.rbk");
 		if( f.exists() ){
 			move_table_corner_conjSTAGE4 = (short[][]) readObject(f);
 		}
@@ -185,7 +185,7 @@ public final class Tables {
 			writeObject( (Object)move_table_corner_conjSTAGE4, f);
 		}
 
-		f = new File(Constants.datafiles_path, "move_center4.rbk");
+		f = new File(tables_path, "move_"+METRIC_STR+"_center4.rbk");
 		if( f.exists() ){
 			move_table_cenSTAGE4 = (byte[][]) readObject(f);
 		}
@@ -194,7 +194,7 @@ public final class Tables {
 			writeObject( (Object)move_table_cenSTAGE4, f);
 		}
 
-		f = new File(Constants.datafiles_path, "conj_center4.rbk");
+		f = new File(tables_path, "conj_"+METRIC_STR+"_center4.rbk");
 		if( f.exists() ){
 			move_table_cen_conjSTAGE4 = (byte[][]) readObject(f);
 		}
@@ -204,17 +204,17 @@ public final class Tables {
 		}
 
 
-		f = new File(Constants.datafiles_path, "move_corner5.rbk");
+		f = new File(tables_path, "move_"+METRIC_STR+"_corner5.rbk");
 		if( f.exists() ){
 			move_table_cornerSTAGE5 = (byte[][]) readObject(f);
 		}
 		else{
-			initSquares2nd();
+			//initSquares2nd();
 			initSquaresMovemap();
 			writeObject( (Object)move_table_cornerSTAGE5, f);
 		}
 
-		f = new File(Constants.datafiles_path, "conj_corner5.rbk");
+		f = new File(tables_path, "conj_"+METRIC_STR+"_corner5.rbk");
 		if( f.exists() ){
 			move_table_corner_conjSTAGE5 = (byte[][]) readObject(f);
 		}
@@ -225,7 +225,7 @@ public final class Tables {
 
 		initSquaresCenterMap();
 
-		f = new File(Constants.datafiles_path, "move_center5.rbk");
+		f = new File(tables_path, "move_"+METRIC_STR+"_center5.rbk");
 		if( f.exists() ){
 			move_table_cenSTAGE5 = (short[][]) readObject(f);
 		}
@@ -234,7 +234,7 @@ public final class Tables {
 			writeObject( (Object)move_table_cenSTAGE5, f);
 		}
 
-		f = new File(Constants.datafiles_path, "conj_center5.rbk");
+		f = new File(tables_path, "conj_"+METRIC_STR+"_center5.rbk");
 		if( f.exists() ){
 			move_table_cen_conjSTAGE5 = (short[][]) readObject(f);
 		}
@@ -243,7 +243,7 @@ public final class Tables {
 			writeObject( (Object)move_table_cen_conjSTAGE5, f);
 		}
 
-		f = new File(Constants.datafiles_path, "table_symedge5.rbk");
+		f = new File(tables_path, "table_"+METRIC_STR+"_symedge5.rbk");
 		if( f.exists() ){
 			symEdgeToEdgeSTAGE5 = (int[]) readObject(f);
 		}
@@ -252,7 +252,7 @@ public final class Tables {
 			writeObject( (Object)symEdgeToEdgeSTAGE5, f);
 		}
 
-		f = new File(Constants.datafiles_path, "move_symedge5.rbk");
+		f = new File(tables_path, "move_"+METRIC_STR+"_symedge5.rbk");
 		if( f.exists() ){
 			move_table_symEdgeSTAGE5 = (int[][]) readObject(f);
 		}
@@ -389,13 +389,14 @@ public final class Tables {
 		System.out.println( "Finishing map 96..." );
 	}
 
+	/*
 	public static final int swapbits (int x, int b){
 		int x2 = x & b;
 		if (x2 == 0 || x2 == b) {
 			return x;
 		}
 		return x ^ b;
-	}
+	}*/
 
 	/*** init_cloc ***/
 	public static final int[] c4_to_cloc = new int[24*24*24*24];
@@ -639,7 +640,6 @@ public final class Tables {
 			for (sym = 0; sym < N_SYM_STAGE2; ++sym) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
 				cube2.rightMultEdges (Symmetry.invSymIdx[sym]);
-				//if (u==0) System.out.println("sym:"+sym+"-edge"+cube2.convert_edges_to_stage2 ());
 				move_table_edge_conjSTAGE2[u][sym] = cube2.convert_edges_to_stage2 ();
 			}
 		}
@@ -673,7 +673,6 @@ public final class Tables {
 				set_1_1bit( cen, isRepTable); // not a rep.
 				if( cen == u ){
 					hasSymCenterSTAGE2[repIdx] |= (1 << sym);
-					//if (repIdx == 664) System.out.println("664 sym:"+sym);
 				}
 			}
 			symCenterToCenterSTAGE2[repIdx++] = (short)u;
@@ -1156,11 +1155,13 @@ public final class Tables {
 	/*** init_stage5 ***/
 	//map a "squares" move code to one of six "canonical" move codes,
 	//or -1 for moves that don't affect the corresponding pieces.
+	/*
 	public static final int squares_map[][] = {
 		{  0, -1,  1, -1, -1,  2, -1,  3, -1,  4, -1,  5 },		//UD centers
 		{ -1,  4, -1,  5,  0, -1,  1, -1, -1,  2, -1,  3 },		//LR centers
 		{ -1,  2, -1,  3, -1,  4, -1,  5,  0, -1,  1, -1 }		//FB centers
 	};
+	*/
 
 	public static final short squares_cen_map[] = { 0x0F, 0x33, 0x3C, 0x55, 0x5A, 0x66, 0x99, 0xA5, 0xAA, 0xC3, 0xCC, 0xF0 };
 
@@ -1171,6 +1172,7 @@ public final class Tables {
 		5, 4, 3, 2, 1, 0
 	};
 
+	/*
 	private static int mov_lst[] = { Uf2, Df2, Ls2, Rs2, Ff2, Bf2 };
 	private static short cen_swapbits_map[] = {
 		0x90, 0x60, //Uf2
@@ -1180,7 +1182,9 @@ public final class Tables {
 		0x84, 0x48, //Fs2
 		0x21, 0x12  //Bs2
 	};
+	*/
 
+	/*
 	private static final int[][] squares_2nd_perm = new int[24][4];
 
 	public void initSquares2nd (){
@@ -1228,40 +1232,30 @@ public final class Tables {
 		}
 		System.out.println( "Finishing squares 2nd perm..." );
 	}
-
+	*/
 	public static byte[][] move_table_cornerSTAGE5 = new byte[N_STAGE5_CORNER_PERM][N_STAGE5_MOVES]; // TODO: (96) 96*12
 
 	public void initSquaresMovemap (){
 
-		System.out.println( "Starting squares movemap..." );
-		int i, j, k, first_perm = 0, second_perm;
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
-		cube2.init ();
-		for (i = 0; i < 96; ++i) {
-			if(( i % 4 ) == 0 ){ // Only need to update once every 4 iterations.
-				first_perm = i / 4;
-				perm_n_unpack (4, first_perm, cube1.m_edge, 0);
-			}
-			second_perm = squares_2nd_perm[first_perm][i % 4];
-			perm_n_unpack (4, second_perm, cube1.m_edge, 4);
-			for (j = 4; j < 8; ++j) {
-				cube1.m_edge[j] += 4;
-			}
-			for (j = 0; j < 6; ++j) {
-				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 8);
-				cube2.rotate_sliceEDGE (mov_lst[j]);
-				int x1 = perm_n_pack (4, cube2.m_edge, 0);
-				int x2 = cube2.m_edge[4] - 4;
-				move_table_cornerSTAGE5[i][2*j]= (byte)(4*x1 + x2);
-				move_table_cornerSTAGE5[i][2*j+1]= (byte)(i);
+		System.out.println( "Starting corner stage 5..." );
+		int i, m;
+		CubeStage5 s5 = new CubeStage5();
+		CubeState cs1 = new CubeState();
+		CubeState cs2 = new CubeState();
+		for (i = 0; i < N_STAGE5_CORNER_PERM; ++i) {
+			s5.corner = i;
+			s5.convert_corners_to_std_cube (cs1);
+			for (m = 0; m < N_STAGE5_MOVES; ++m) {
+				System.arraycopy(cs1.m_cor, 0, cs2.m_cor, 0, 8);
+				cs2.rotate_sliceCORNER (stage5_slice_moves[m]);
+				move_table_cornerSTAGE5[i][m] = cs2.convert_corners_to_stage5();
 			}
 		}
-		System.out.println( "Finishing squares movemap..." );
+		System.out.println( "Finishing corner stage 5..." );
 	}
 
 	public static final byte[] squares_cen_revmap = new byte[256]; // (12)
-	public static final byte[][] squares_cen_movemap = new byte[12][6]; // (12)
+	//public static final byte[][] squares_cen_movemap = new byte[12][6]; // (12)
 
 	public void initSquaresCenterMap (){
 
@@ -1273,6 +1267,7 @@ public final class Tables {
 		for (i = 0; i < 12; ++i) {
 			squares_cen_revmap[squares_cen_map[i]] = (byte)i;
 		}
+		/*
 		for (i = 0; i < 12; ++i) {
 			int x = squares_cen_map[i];
 			for (j = 0; j < 6; ++j) {
@@ -1281,6 +1276,7 @@ public final class Tables {
 				squares_cen_movemap[i][j] = squares_cen_revmap[x2];
 			}
 		}
+		*/
 		System.out.println( "Finishing squares center map..." );
 	}
 
@@ -1288,28 +1284,21 @@ public final class Tables {
 
 	public void initCenterStage5 (){
 
-		System.out.println( "Starting squares center map..." );
-		int i, j;
-		for (i = 0; i < 12*12*12; ++i) {
-			for (int m = 0; m < 12; ++m) {
-				int pos = 1;
-				int res = 0;
-				int cen = i;
-				for (int k=0; k <= 2; k++) {
-					int cenk = cen % 12;
-					int move_code6 = Tables.squares_map[k][m];
-					if (move_code6 < 0)
-						res += pos*cenk;
-					else
-						res += pos*squares_cen_movemap[cenk][move_code6];
-					pos *= 12;
-					cen /= 12;
-				}
-
-				move_table_cenSTAGE5[i][m]= (short) res;
+		System.out.println( "Starting center stage5..." );
+		int i, m;
+		CubeStage5 s5 = new CubeStage5();
+		CubeState cs1 = new CubeState();
+		CubeState cs2 = new CubeState();
+		for (i = 0; i < N_STAGE5_CENTER_PERM; ++i) {
+			s5.center = i;
+			s5.convert_centers_to_std_cube (cs1);
+			for (m = 0; m < N_STAGE5_MOVES; ++m) {
+				System.arraycopy(cs1.m_cen, 0, cs2.m_cen, 0, 24);
+				cs2.rotate_sliceCENTER (stage5_slice_moves[m]);
+				move_table_cenSTAGE5[i][m]= cs2.convert_centers_to_stage5();
 			}
 		}
-		System.out.println( "Finishing squares center map..." );
+		System.out.println( "Finishing center stage5..." );
 	}
 
 	/*** init stage 5 symEdgeToEdge ***/
