@@ -129,7 +129,7 @@ public final class CubeState{
 		byte m;
 		for (i = 0; i < move_count; ++i) {
 			m = move_trans[move_arr[i]];
-			do_move (m, ( m > metric_switch ) ? STM : METRIC);
+			do_move (m, (( m > metric_switch ) && (( m % 3 ) < 2 )) ? STM : METRIC);
 		}
 	}
 
@@ -367,6 +367,13 @@ public final class CubeState{
 		}
 	}
 
+	public void rotate_sliceEDGE (int move_code, int metric, int metric_switch){
+		if(( move_code > metric_switch ) && ( move_code % 3 < 2 ))
+			rotate_sliceEDGE ( move_code, STM );
+		else
+			rotate_sliceEDGE ( move_code, metric );
+	}
+
 	public void rotate_sliceEDGE (int move_code, int metric){
 		byte[] old_m_edge = new byte[24];
 		int i, j;
@@ -383,6 +390,13 @@ public final class CubeState{
 				m_edge[rotateEDGE_ft[tidx + i]] = old_m_edge[rotateEDGE_ft[fidx + i]];
 			}
 		}
+	}
+
+	public void rotate_sliceCENTER (int move_code, int metric, int metric_switch){
+		if(( move_code > metric_switch ) && ( move_code % 3 < 2 ))
+			rotate_sliceCENTER ( move_code, STM );
+		else
+			rotate_sliceCENTER ( move_code, metric );
 	}
 
 	public void rotate_sliceCENTER (int move_code, int metric){

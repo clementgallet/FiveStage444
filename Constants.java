@@ -121,6 +121,28 @@ public final class Constants{
 				stage1_slice_moves_to_try[i][j] = (i/3 == j/3) || ((i/12 == j/12) && (i>j));
 			}
 			stage1_slice_moves_to_try[N_BASIC_MOVES][i] = false;
+			if( METRIC == FTM ){
+				stage1_slice_moves_to_try[i][Ds] = true;
+				stage1_slice_moves_to_try[i][Ds3] = true;
+				stage1_slice_moves_to_try[i][Ds2] = true;
+				stage1_slice_moves_to_try[i][Ls] = true;
+				stage1_slice_moves_to_try[i][Ls3] = true;
+				stage1_slice_moves_to_try[i][Ls2] = true;
+				stage1_slice_moves_to_try[i][Bs] = true;
+				stage1_slice_moves_to_try[i][Bs3] = true;
+				stage1_slice_moves_to_try[i][Bs2] = true;
+			}
+		}
+		if( METRIC == FTM ){
+			stage1_slice_moves_to_try[N_BASIC_MOVES][Ds] = true;
+			stage1_slice_moves_to_try[N_BASIC_MOVES][Ds3] = true;
+			stage1_slice_moves_to_try[N_BASIC_MOVES][Ds2] = true;
+			stage1_slice_moves_to_try[N_BASIC_MOVES][Ls] = true;
+			stage1_slice_moves_to_try[N_BASIC_MOVES][Ls3] = true;
+			stage1_slice_moves_to_try[N_BASIC_MOVES][Ls2] = true;
+			stage1_slice_moves_to_try[N_BASIC_MOVES][Bs] = true;
+			stage1_slice_moves_to_try[N_BASIC_MOVES][Bs3] = true;
+			stage1_slice_moves_to_try[N_BASIC_MOVES][Bs2] = true;
 		}
 	}
 
@@ -146,6 +168,19 @@ public final class Constants{
 				stage2_slice_moves_to_try[i][j] = stage1_slice_moves_to_try[stage2_slice_moves[i]][stage2_slice_moves[j]];
 			}
 			stage2_slice_moves_to_try[N_STAGE2_SLICE_MOVES][i] = false;
+			if( METRIC == FTM ){
+				stage2_slice_moves_to_try[i][13] = false; // Ls
+				stage2_slice_moves_to_try[i][14] = false; // Ls3
+				stage2_slice_moves_to_try[i][25] = false; // Bs
+				stage2_slice_moves_to_try[i][26] = false; // Bs3
+			}
+		}
+		if( METRIC == FTM ){
+			stage2_slice_moves_to_try[N_STAGE2_SLICE_MOVES][9] = true; // Ds
+			stage2_slice_moves_to_try[N_STAGE2_SLICE_MOVES][10] = true; // Ds3
+			stage2_slice_moves_to_try[N_STAGE2_SLICE_MOVES][11] = true; // Ds2
+			stage2_slice_moves_to_try[N_STAGE2_SLICE_MOVES][15] = true; // Ls2
+			stage2_slice_moves_to_try[N_STAGE2_SLICE_MOVES][27] = true; // Bs2
 		}
 	}
 
@@ -171,6 +206,15 @@ public final class Constants{
 				stage3_slice_moves_to_try[i][j] = stage1_slice_moves_to_try[stage3_slice_moves[i]][stage3_slice_moves[j]];
 			}
 			stage3_slice_moves_to_try[N_STAGE3_SLICE_MOVES][i] = false;
+			if( METRIC == FTM ){
+				stage3_slice_moves_to_try[i][17] = false; // Bs
+				stage3_slice_moves_to_try[i][18] = false; // Bs3
+			}
+		}
+		if( METRIC == FTM ){
+			stage3_slice_moves_to_try[N_STAGE3_SLICE_MOVES][7] = true; // Ds2
+			stage3_slice_moves_to_try[N_STAGE3_SLICE_MOVES][9] = true; // Ls2
+			stage3_slice_moves_to_try[N_STAGE3_SLICE_MOVES][19] = true; // Bs2
 		}
 	}
 
@@ -205,6 +249,11 @@ public final class Constants{
 			}
 			stage4_slice_moves_to_try[N_STAGE4_SLICE_MOVES][i] = false;
 		}
+		if( METRIC == FTM ){
+			stage4_slice_moves_to_try[N_STAGE4_SLICE_MOVES][7] = true; // Ds2
+			stage4_slice_moves_to_try[N_STAGE4_SLICE_MOVES][9] = true; // Ls2
+			stage4_slice_moves_to_try[N_STAGE4_SLICE_MOVES][15] = true; // Bs2
+		}
 	}
 
 	public static final int N_STAGE5_MOVES = 12;
@@ -225,6 +274,11 @@ public final class Constants{
 				sqs_slice_moves_to_try[i][j] = stage1_slice_moves_to_try[stage5_slice_moves[i]][stage5_slice_moves[j]];
 			}
 			sqs_slice_moves_to_try[N_STAGE5_MOVES][i] = false;
+		}
+		if( METRIC == FTM ){
+			sqs_slice_moves_to_try[N_STAGE5_MOVES][3] = true; // Ds2
+			sqs_slice_moves_to_try[N_STAGE5_MOVES][5] = true; // Ls2
+			sqs_slice_moves_to_try[N_STAGE5_MOVES][11] = true; // Bs2
 		}
 	}
 
@@ -390,15 +444,15 @@ public final class Constants{
 	private static boolean rotate_move_stage23[][] = {
 		// Stage 2
 		{ true, false, false }, // no rotation
-		{ false, true, false }, // [rd]
-		{ false, false, true }, // [fu]
+		{ false, false, true }, // [rd]
+		{ false, true, false }, // [fu]
 		// Stage 3
 		{ true, true, false }, // no rotation
-		{ false, true, true }, // [rd]
-		{ true, false, true }, // [fu]
+		{ true, false, true }, // [rd]
+		{ false, true, true }, // [fu]
 		{ true, false, true }, // [u]
-		{ false, true, true }, // [rdu]
-		{ true, true, false } // [fuu]
+		{ true, true, false }, // [rdu]
+		{ false, true, true } // [fuu]
 	};
 
 	public static void print_move_list (int count, byte[] move_list){
@@ -423,7 +477,7 @@ public final class Constants{
 			System.out.print ("[" + count + "] ");
 			for (j = 0; j < count; ++j) {
 				m = move_list[j];
-				if(( METRIC == FTM ) && rotate_move_stage23[rotate][m/12] )
+				if(( METRIC == FTM ) && (( m % 3 == 2 ) || rotate_move_stage23[rotate][m/12] ))
 					m += 36;
 				System.out.print (" " + move_strings[m]);
 			}

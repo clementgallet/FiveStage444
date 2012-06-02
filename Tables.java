@@ -604,7 +604,7 @@ public final class Tables {
 			s1.convert_edges_to_std_cube(cube1);
 			for (mc = 0; mc < N_STAGE2_SLICE_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.rotate_sliceEDGE (stage2_slice_moves[mc], ( stage2_slice_moves[mc] > Lf ) ? STM : METRIC); // For rlx, fbx moves, use STM
+				cube2.rotate_sliceEDGE (stage2_slice_moves[mc], METRIC, Lf ); // For rlx, fbx moves, use STM
 				move_table_edgeSTAGE2[u][mc] = cube2.convert_edges_to_stage2();
 			}
 		}
@@ -687,7 +687,7 @@ public final class Tables {
 			s2.convert_centers_to_std_cube( symCenterToCenterSTAGE2[u], cube1 );
 			for (mc = 0; mc < N_STAGE2_SLICE_MOVES; ++mc) {
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-				cube2.rotate_sliceCENTER (stage2_slice_moves[mc], ( stage2_slice_moves[mc] > Lf ) ? STM : METRIC); // For rlx, fbx moves, use STM
+				cube2.rotate_sliceCENTER (stage2_slice_moves[mc], METRIC, Lf); // For rlx, fbx moves, use STM
 				move_table_symCenterSTAGE2[u][mc] = cube2.convert_symcenters_to_stage2(5);
 			}
 		}
@@ -782,7 +782,7 @@ public final class Tables {
 
 			for (mc = 0; mc < N_STAGE3_SLICE_MOVES; ++mc) {
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-				cube2.rotate_sliceCENTER (stage3_slice_moves[mc], ( stage3_slice_moves[mc] > Ff ) ? STM : METRIC ); // For fbx moves use STM
+				cube2.rotate_sliceCENTER (stage3_slice_moves[mc], METRIC, Ff ); // For fbx moves use STM
 				move_table_symCenterSTAGE3[u][mc] = cube2.convert_symcenters_to_stage3();
 			}
 		}
@@ -805,7 +805,7 @@ public final class Tables {
 			s3.convert_edges_to_std_cube(cube1);
 			for (mc = 0; mc < N_STAGE3_SLICE_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.rotate_sliceEDGE (stage3_slice_moves[mc], ( stage3_slice_moves[mc] > Ff ) ? STM : METRIC ); // For fbx moves use STM
+				cube2.rotate_sliceEDGE (stage3_slice_moves[mc], METRIC, Ff ); // For fbx moves use STM
 				move_table_edgeSTAGE3[u][mc] = cube2.convert_edges_to_stage3();
 			}
 		}
