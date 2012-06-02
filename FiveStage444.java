@@ -410,8 +410,6 @@ public final class FiveStage444 {
 		}
 
 		c1.scramble( length1, move_list_stage1 );
-		c1.print();
-		if (true) return true;
 
 		rotate = c1.m_cor[0] >> 3;
 		switch (rotate) {
@@ -657,10 +655,8 @@ public final class FiveStage444 {
 		if(( solver_mode == SUB_34 ) || ( solver_mode == SUB_234 ) || ( solver_mode == SUB_345 ))
 			if (( endtime < System.currentTimeMillis()) && found3 ) return true;
 
-		c2.print();
 		c2.copyTo(c3);
 		c3.scramble( length3, move_list_stage3, stage3_slice_moves, Ff );
-		c3.print();
 		CubeStage4 s1 = new CubeStage4();
 		c3.convert_to_stage4 (s1);
 
