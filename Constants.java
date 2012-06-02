@@ -379,20 +379,53 @@ public final class Constants{
 	"R", "R'", "R2", "r", "r'", "r2",
 	"F", "F'", "F2", "f", "f'", "f2",
 	"B", "B'", "B2", "b", "b'", "b2",
-	"(Uu)", "(Uu)'", "(Uu)2", "(Dd)", "(Dd)'", "(Dd)2",
-	"(Ll)", "(Ll)'", "(Ll)2", "(Rr)", "(Rr)'", "(Rr)2",
-	"(Ff)", "(Ff)'", "(Ff)2", "(Bb)", "(Bb)'", "(Bb)2",
-	"(ud')", "(u'd)", "(ud')2",
-	"(lr')", "(l'r)", "(lr')2",
-	"(fb')", "(f'b)", "(fb')2"
+	"U", "U'", "U2", "Uw", "Uw'", "Uw2",
+	"D", "D'", "D2", "Dw", "Dw'", "Dw2",
+	"L", "L'", "L2", "Lw", "Lw'", "Lw2",
+	"R", "R'", "R2", "Rw", "Rw'", "Rw2",
+	"F", "F'", "F2", "Fw", "Fw'", "Fw2",
+	"B", "B'", "B2", "Bw", "Bw'", "Bw2"
+	};
+
+	private static boolean rotate_move_stage23[][] = {
+		// Stage 2
+		{ true, false, false }, // no rotation
+		{ false, true, false }, // [rd]
+		{ false, false, true }, // [fu]
+		// Stage 3
+		{ true, true, false }, // no rotation
+		{ false, true, true }, // [rd]
+		{ true, false, true }, // [fu]
+		{ true, false, true }, // [u]
+		{ false, true, true }, // [rdu]
+		{ true, true, false } // [fuu]
 	};
 
 	public static void print_move_list (int count, byte[] move_list){
-		int j;
+		int j, m;
 		if (count >= 0) {
 			System.out.print ("[" + count + "] ");
 			for (j = 0; j < count; ++j) {
-				System.out.print (" " + move_strings[move_list[j]]);
+				m = move_list[j];
+				if( METRIC == FTM )
+					m += 36;
+				System.out.print (" " + move_strings[m]);
+			}
+		} else {
+			System.out.print ("[Did not solve]");
+		}
+		System.out.println (" ");
+	}
+
+	public static void print_move_list (int count, byte[] move_list, int rotate){
+		int j, m;
+		if (count >= 0) {
+			System.out.print ("[" + count + "] ");
+			for (j = 0; j < count; ++j) {
+				m = move_list[j];
+				if(( METRIC == FTM ) && rotate_move_stage23[rotate][m/12] )
+					m += 36;
+				System.out.print (" " + move_strings[m]);
 			}
 		} else {
 			System.out.print ("[Did not solve]");

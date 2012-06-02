@@ -219,7 +219,7 @@ public final class FiveStage444 {
 		Random r = new Random(42);
 		byte[] random_list = new byte[160];	//must be >= scramble_len
 		CubeState solveme = new CubeState();
-		int scramble_len = 100;
+		int scramble_len = 40;
 
 		for (i = 1; i <= count; ++i) {
 			int j;
@@ -228,9 +228,8 @@ public final class FiveStage444 {
 				random_list[j] = (byte)r.nextInt(36);
 			}
 			solveme.scramble(scramble_len, random_list);
-			//System.out.println ("scramble: ");
-			//print_move_list (scramble_len, random_list);
-			//solveit4x4x4IDA (solveme);
+			System.out.println ("scramble: ");
+			print_move_list (scramble_len, random_list);
 			solve_suboptimal (solveme);
 		}
 	}
@@ -248,10 +247,8 @@ public final class FiveStage444 {
 		//if(true)return;
 
 		/* Print */
-		/*
 		System.out.print ("Stage 1: ");
 		print_move_list (length1_sub, move_list_sub_stage1);
-		*/
 
 		/* Prepare for next step */
 		System.arraycopy(move_list_sub_stage1, 0, move_list_stage1, 0, length1_sub);
@@ -263,12 +260,10 @@ public final class FiveStage444 {
 		init_stage2 ( r1_sub );
 
 		/* Print */
-		/*
 		System.out.print ("Stage 2: ");
 		for (i = 0; i < length2_sub; ++i)
 			sol_move_list[i] = xlate_r6[stage2_slice_moves[move_list_sub_stage2[i]]][rotate];
-		print_move_list (length2_sub, sol_move_list);
-		*/
+		print_move_list (length2_sub, sol_move_list, rotate);
 
 		/* Prepare for next step */
 		System.arraycopy(move_list_sub_stage2, 0, move_list_stage2, 0, length2_sub);
@@ -278,13 +273,13 @@ public final class FiveStage444 {
 		solver_mode = SUB_345;
 		init_stage3 ( r2_sub );
 		//System.out.println(total_length + "-" + length4_sub + "-" + (total_length-length4_sub-length3_sub) );
-		System.out.println(length1_sub + length2_sub + length4_sub + length5_sub + length3_sub );
-		if(true)return;
+		//System.out.println(length1_sub + length2_sub + length4_sub + length5_sub + length3_sub );
+		//if(true)return;
 		/* Print */
 		System.out.print ("Stage 3: ");
 		for (i = 0; i < length3_sub; ++i)
 			sol_move_list[i] = xlate_r6[stage3_slice_moves[move_list_sub_stage3[i]]][rotate2];
-		print_move_list (length3_sub, sol_move_list);
+		print_move_list (length3_sub, sol_move_list, rotate2+3);
 
 		if( solver_mode == SUB_34 ){
 			/* Prepare for next step */
