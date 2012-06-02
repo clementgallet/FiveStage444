@@ -109,9 +109,9 @@ public final class Constants{
 	public static final int N_FACE_MOVES = 18;
 
 	public static final int basic_to_face[] = {
-	 0,  1,  2, -1, -1, -1,  3,  4,  5, -1, -1, -1,
-	 6,  7,  8, -1, -1, -1,  9, 10, 11, -1, -1, -1,
-	12, 13, 14, -1, -1, -1, 15, 16, 17, -1, -1, -1
+	 0,  1,  2,  0,  1,  2,  3,  4,  5,  3,  4,  5,
+	 6,  7,  8,  6,  7,  8,  9, 10, 11,  9, 10, 11,
+	12, 13, 14, 12, 13, 14, 15, 16, 17, 15, 16, 17
 	};
 
 	public static final boolean stage1_slice_moves_to_try [][] = new boolean[N_BASIC_MOVES + 1][N_BASIC_MOVES];

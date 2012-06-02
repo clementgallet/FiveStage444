@@ -55,39 +55,19 @@ public final class Symmetry {
 							}
 							idx += 2;
 
-							cube.do_move (Us2);
-							cube.do_move (Ds2);
-							if( METRIC == STM ){
-								cube.do_move (Uf2);
-								cube.do_move (Df2);
-							}
+							cube.do_move (Us2, FTM);
+							cube.do_move (Ds2, FTM);
 						}
-						cube.do_move (Fs2);
-						cube.do_move (Bs2);
-						if( METRIC == STM ){
-							cube.do_move (Ff2);
-							cube.do_move (Bf2);
-						}
+						cube.do_move (Fs2, FTM);
+						cube.do_move (Bs2, FTM);
 					}
-					cube.do_move (Us);
-					cube.do_move (Ds3);
-					if( METRIC == STM ){
-						cube.do_move (Uf);
-						cube.do_move (Df3);
-					}
+					cube.do_move (Us, FTM);
+					cube.do_move (Ds3, FTM);
 				}
-				cube.do_move (Us3);
-				cube.do_move (Ds);
-				if( METRIC == STM ){
-					cube.do_move (Uf3);
-					cube.do_move (Df);
-				}
-				cube.do_move (Rs3);
-				cube.do_move (Ls);
-				if( METRIC == STM ){
-					cube.do_move (Rf3);
-					cube.do_move (Lf);
-				}
+				cube.do_move (Us3, FTM);
+				cube.do_move (Ds, FTM);
+				cube.do_move (Rs3, FTM);
+				cube.do_move (Ls, FTM);
 			}
 			cube.inverse();
 		}

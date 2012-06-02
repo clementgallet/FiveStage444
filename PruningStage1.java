@@ -34,9 +34,8 @@ public final class PruningStage1 extends Pruning {
 		int sym = newEdge & 0x3F;
 		int edgeRep = newEdge >> 6;
 
-		int fmc = basic_to_face[move];
-		if (fmc >= 0)
-			co = Tables.move_table_co[co][fmc];
+		if (( METRIC == FTM ) || ( move % 6 < 3 ))
+			co = Tables.move_table_co[co][basic_to_face[move]];
 		co = Tables.move_table_co_conj[co][sym];
 
 		return (long)(edgeRep*N_CORNER_ORIENT + co);

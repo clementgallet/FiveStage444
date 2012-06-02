@@ -314,25 +314,17 @@ public final class FiveStage444 {
 		c.convert_to_stage1 (s1);
 
 		c.copyTo (cr);
-		cr.do_move (Lf3);
-		cr.do_move (Ls3);
-		cr.do_move (Rs);
-		cr.do_move (Rf);
-		cr.do_move (Uf3);
-		cr.do_move (Us3);
-		cr.do_move (Ds);
-		cr.do_move (Df);
+		cr.do_move (Ls3, FTM);
+		cr.do_move (Rs, FTM);
+		cr.do_move (Us3, FTM);
+		cr.do_move (Ds, FTM);
 		cr.convert_to_stage1 (s2);		
 
 		c.copyTo (cr2);
-		cr2.do_move (Ff);
-		cr2.do_move (Fs);
-		cr2.do_move (Bs3);
-		cr2.do_move (Bf3);
-		cr2.do_move (Uf);
-		cr2.do_move (Us);
-		cr2.do_move (Ds3);
-		cr2.do_move (Df3);
+		cr2.do_move (Fs, FTM);
+		cr2.do_move (Bs3, FTM);
+		cr2.do_move (Us, FTM);
+		cr2.do_move (Ds3, FTM);
 		cr2.convert_to_stage1 (s3);
 
 		int d1 = s1.getDistance();
@@ -375,9 +367,8 @@ public final class FiveStage444 {
 			/* Move cube1 to list1[depth] */
 			//cube1.copyTo(cube2);
 			//cube2.do_move (mov_idx);
-			int fmc = basic_to_face[mov_idx];
-			if (fmc >= 0)
-				list1[depth].corner = Tables.move_table_co[cube1.corner][fmc];
+			if (( METRIC == FTM ) || ( mov_idx % 6 < 3 ))
+				list1[depth].corner = Tables.move_table_co[cube1.corner][basic_to_face[mov_idx]];
 			else
 				list1[depth].corner = cube1.corner;
 			int newEdge = Tables.move_table_symEdgeSTAGE1[cube1.edge][Symmetry.moveConjugate[mov_idx][cube1.sym]];
@@ -419,30 +410,24 @@ public final class FiveStage444 {
 		}
 
 		c1.scramble( length1, move_list_stage1 );
+		c1.print();
+		if (true) return true;
 
 		rotate = c1.m_cor[0] >> 3;
 		switch (rotate) {
 		case 0:
 			break;	//no whole cube rotation
 		case 1:
-			c1.do_move (Lf3);
-			c1.do_move (Ls3);
-			c1.do_move (Rs);
-			c1.do_move (Rf);
-			c1.do_move (Uf3);
-			c1.do_move (Us3);
-			c1.do_move (Ds);
-			c1.do_move (Df);
+			c1.do_move (Ls3, FTM);
+			c1.do_move (Rs, FTM);
+			c1.do_move (Us3, FTM);
+			c1.do_move (Ds, FTM);
 			break;
 		case 2:
-			c1.do_move (Ff);
-			c1.do_move (Fs);
-			c1.do_move (Bs3);
-			c1.do_move (Bf3);
-			c1.do_move (Uf);
-			c1.do_move (Us);
-			c1.do_move (Ds3);
-			c1.do_move (Df3);
+			c1.do_move (Fs, FTM);
+			c1.do_move (Bs3, FTM);
+			c1.do_move (Us, FTM);
+			c1.do_move (Ds3, FTM);
 			break;
 		default:
 			System.out.println ("Invalid cube rotation state.");
@@ -452,10 +437,8 @@ public final class FiveStage444 {
 		CubeStage2 s2 = new CubeStage2();
 		c1.convert_to_stage2 (s1);
 		c1.copyTo (c1r);
-		c1r.do_move (Uf);
-		c1r.do_move (Us);
-		c1r.do_move (Ds3);
-		c1r.do_move (Df3);
+		c1r.do_move (Us, FTM);
+		c1r.do_move (Ds3, FTM);
 		c1r.convert_to_stage2 (s2);
 
 		if( solver_mode == SUB_345 ) return true;
@@ -568,15 +551,13 @@ public final class FiveStage444 {
 			System.out.println ("Invalid cube rotation state.");
 		}
 
-		c2.scramble( length2, move_list_stage2, stage2_slice_moves );
+		c2.scramble( length2, move_list_stage2, stage2_slice_moves, Lf );
 
 		rotate2 = rotate;
 
 		if (c2.m_cen[16] < 4) {
-			c2.do_move (Uf);
-			c2.do_move (Us);
-			c2.do_move (Ds3);
-			c2.do_move (Df3);
+			c2.do_move (Us, FTM);
+			c2.do_move (Ds3, FTM);
 			rotate2 += 3;
 		}
 
@@ -676,9 +657,10 @@ public final class FiveStage444 {
 		if(( solver_mode == SUB_34 ) || ( solver_mode == SUB_234 ) || ( solver_mode == SUB_345 ))
 			if (( endtime < System.currentTimeMillis()) && found3 ) return true;
 
+		c2.print();
 		c2.copyTo(c3);
-		c3.scramble( length3, move_list_stage3, stage3_slice_moves );
-
+		c3.scramble( length3, move_list_stage3, stage3_slice_moves, Ff );
+		c3.print();
 		CubeStage4 s1 = new CubeStage4();
 		c3.convert_to_stage4 (s1);
 
