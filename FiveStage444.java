@@ -243,7 +243,6 @@ public final class FiveStage444 {
 		//solver_mode = SUB_12;
 		solver_mode = SUB_123;
 		init_stage1 ();
-		//System.out.println( "r1_sub "+r1_sub );
 		//System.out.println(total_length );
 		//System.out.println(total_length + " " + length2_sub + " " + (total_length-length2_sub-length1_sub) );
 		//if(true)return;
@@ -312,19 +311,15 @@ public final class FiveStage444 {
 		c.convert_to_stage1 (s1);
 
 		c.copyTo (cr);
-		//cr.leftMultEdges  ( 16 );
-		//cr.leftMultCenters( 16 );
-		//cr.leftMultCorners( 16 );
-		//cr.conjugate  ( 16 );
+		cr.leftMultEdges  ( 16 );
+		cr.leftMultCenters( 16 );
+		cr.leftMultCorners( 16 );
 		cr.convert_to_stage1 (s2);		
-		//System.out.println (s2.corner);
 		c.copyTo (cr2);
-		//cr2.leftMultEdges  ( 16 );
-		//cr2.leftMultCenters( 16 );
-		//cr2.leftMultCorners( 16 );
-		//cr2.conjugate  ( 16 );
+		cr2.leftMultEdges  ( 32 );
+		cr2.leftMultCenters( 32 );
+		cr2.leftMultCorners( 32 );
 		cr2.convert_to_stage1 (s3);
-		//System.out.println (s3.corner);
 
 		int d1 = s1.getDistance();
 		int d2 = s2.getDistance();
@@ -435,9 +430,9 @@ public final class FiveStage444 {
 		CubeStage2 s2 = new CubeStage2();
 		c1.convert_to_stage2 (s1);
 		c1.copyTo (c1r);
-		//c1r.leftMultEdges  ( 8 );
-		//c1r.leftMultCenters( 8 );
-		//c1r.leftMultCorners( 8 );
+		c1r.leftMultEdges  ( 8 );
+		c1r.leftMultCenters( 8 );
+		c1r.leftMultCorners( 8 );
 		c1r.convert_to_stage2 (s2);
 
 		if( solver_mode == SUB_345 ) return true;
