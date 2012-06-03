@@ -143,6 +143,7 @@ public final class FiveStage444 {
 	static final int SUB_12345 = 7;
 
 	static int MAX_STAGE2 = 7;
+	//static int MAX_STAGE2 = 6;
 	static int MIN_STAGE3 = 7;
 
 	static int MAX_STAGE3 = 9;
@@ -169,7 +170,7 @@ public final class FiveStage444 {
 
 	public static void main(String[] args){
 
-		int random_count = 30;
+		int random_count = 10;
 
 		Symmetry.init();
 
@@ -242,6 +243,7 @@ public final class FiveStage444 {
 		//solver_mode = SUB_12;
 		solver_mode = SUB_123;
 		init_stage1 ();
+		//System.out.println( "r1_sub "+r1_sub );
 		//System.out.println(total_length );
 		//System.out.println(total_length + " " + length2_sub + " " + (total_length-length2_sub-length1_sub) );
 		//if(true)return;
@@ -249,6 +251,7 @@ public final class FiveStage444 {
 		/* Print */
 		System.out.print ("Stage 1: ");
 		print_move_list (length1_sub, move_list_sub_stage1);
+		//print_move_list (length1_sub, move_list_sub_stage1);
 
 		/* Prepare for next step */
 		System.arraycopy(move_list_sub_stage1, 0, move_list_stage1, 0, length1_sub);
@@ -309,18 +312,19 @@ public final class FiveStage444 {
 		c.convert_to_stage1 (s1);
 
 		c.copyTo (cr);
-		cr.do_move (Ls3, FTM);
-		cr.do_move (Rs, FTM);
-		cr.do_move (Us3, FTM);
-		cr.do_move (Ds, FTM);
+		//cr.leftMultEdges  ( 16 );
+		//cr.leftMultCenters( 16 );
+		//cr.leftMultCorners( 16 );
+		//cr.conjugate  ( 16 );
 		cr.convert_to_stage1 (s2);		
-
+		//System.out.println (s2.corner);
 		c.copyTo (cr2);
-		cr2.do_move (Fs, FTM);
-		cr2.do_move (Bs3, FTM);
-		cr2.do_move (Us, FTM);
-		cr2.do_move (Ds3, FTM);
+		//cr2.leftMultEdges  ( 16 );
+		//cr2.leftMultCenters( 16 );
+		//cr2.leftMultCorners( 16 );
+		//cr2.conjugate  ( 16 );
 		cr2.convert_to_stage1 (s3);
+		//System.out.println (s3.corner);
 
 		int d1 = s1.getDistance();
 		int d2 = s2.getDistance();
@@ -339,6 +343,7 @@ public final class FiveStage444 {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "Stage 1 - length "+length1 );
 			if( search_stage1 (s1, length1, 0, N_BASIC_MOVES, d1, 0 ) ||
 			    search_stage1 (s2, length1, 0, N_BASIC_MOVES, d2, 1 ) ||
+			    //if( search_stage1 (s2, length1, 0, N_BASIC_MOVES, d2, 1 ) ||
 			    search_stage1 (s3, length1, 0, N_BASIC_MOVES, d3, 2 )) {
 				break;
 			}
@@ -362,7 +367,7 @@ public final class FiveStage444 {
 			/* Move cube1 to list1[depth] */
 			//cube1.copyTo(cube2);
 			//cube2.do_move (mov_idx);
-			if (( METRIC == FTM ) || ( mov_idx % 6 < 3 ))
+			if (( METRIC == FTM ) || (( mov_idx % 6 ) < 3 ))
 				list1[depth].corner = Tables.move_table_co[cube1.corner][basic_to_face[mov_idx]];
 			else
 				list1[depth].corner = cube1.corner;
@@ -430,8 +435,9 @@ public final class FiveStage444 {
 		CubeStage2 s2 = new CubeStage2();
 		c1.convert_to_stage2 (s1);
 		c1.copyTo (c1r);
-		c1r.do_move (Us, FTM);
-		c1r.do_move (Ds3, FTM);
+		//c1r.leftMultEdges  ( 8 );
+		//c1r.leftMultCenters( 8 );
+		//c1r.leftMultCorners( 8 );
 		c1r.convert_to_stage2 (s2);
 
 		if( solver_mode == SUB_345 ) return true;

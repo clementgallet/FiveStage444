@@ -551,12 +551,11 @@ public final class Tables {
 			s1.corner = u;
 			s1.convert_corners_to_std_cube (cube1);
 			for (mc = 0; mc < N_BASIC_MOVES; ++mc) {
-				int fmc = basic_to_face[mc];
-				if (fmc >= 0) {
-					System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
-					cube2.rotate_sliceCORNER (mc, METRIC);
-					move_table_co[u][fmc] = cube2.convert_corners_to_stage1();
-				}
+				if(( mc % 6 ) >= 3 )
+					continue;
+				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
+				cube2.rotate_sliceCORNER (mc, METRIC);
+				move_table_co[u][basic_to_face[mc]] = cube2.convert_corners_to_stage1();
 			}
 		}
 		System.out.println( "Finishing corner stage 1..." );

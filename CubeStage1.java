@@ -15,7 +15,7 @@ public final class CubeStage1 {
 	}
 
 	public final void do_move (int move_code){
-		if (( Constants.METRIC == Constants.FTM ) || ( move_code % 6 < 3 ))
+		if (( Constants.METRIC == Constants.FTM ) || (( move_code % 6 ) < 3 ))
 			corner = Tables.move_table_co[corner][Constants.basic_to_face[move_code]];
 
 		int newEdge = Tables.move_table_symEdgeSTAGE1[edge][Symmetry.moveConjugate[move_code][sym]];

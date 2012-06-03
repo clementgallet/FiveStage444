@@ -16,8 +16,8 @@ public final class Constants{
 	public static final String tables_path = "./fivestage444/tables";
 	public static final int STM = 0;
 	public static final int FTM = 1;
-	public static final int METRIC = FTM;
-	public static final String METRIC_STR = "ftm";
+	public static int METRIC = STM;
+	public static String METRIC_STR = (METRIC == STM) ? "stm" : "ftm";
 	public static final boolean USE_FULL_PRUNING_STAGE3 = false;
 	public static final boolean USE_FULL_PRUNING_STAGE5 = false;
 

@@ -479,19 +479,24 @@ public final class CubeState{
 
 	public short convert_symcenters_to_stage2 (int c){
 		CubeState cube = new CubeState();
-		int i;
-		short minCen = 32000;
-		int minSym = 0;
+		//short minCen = 32000;
+		//int minSym = 0;
+		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE2; sym++ ){
 			copyTo (cube);
 			cube.rightMultCenters(Symmetry.invSymIdx[sym]);
-			short cen = cube.convert_centers_to_stage2(c);
+			rep = Arrays.binarySearch(Tables.symCenterToCenterSTAGE2, cube.convert_centers_to_stage2(c));
+			if( rep >= 0 )
+				return (short)(( rep << 4 ) + sym);
+			//short cen = cube.convert_centers_to_stage2(c);
+			/*
 			if( cen < minCen){
 				minCen = cen;
 				minSym = sym;
-			}
+			}*/
 		}
-		return (short)(( Arrays.binarySearch(Tables.symCenterToCenterSTAGE2, minCen) << 4 ) + minSym);
+		return -1;
+		//return (short)(( Arrays.binarySearch(Tables.symCenterToCenterSTAGE2, minCen) << 4 ) + minSym);
 	}
 
 	public void convert_to_stage2 (CubeStage2 result_cube){
@@ -523,19 +528,25 @@ public final class CubeState{
 
 	public int convert_symcenters_to_stage3 (){
 		CubeState cube = new CubeState();
-		int minCen = 99999999;
-		int minSym = 0;
+		//int minCen = 99999999;
+		//int minSym = 0;
+		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE3; sym++ ){
 			System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
 			cube.conjugateCenters(sym);
-			int cen = cube.convert_centers_to_stage3();
+			//int cen = cube.convert_centers_to_stage3();
+			rep = Arrays.binarySearch(Tables.symCenterToCenterSTAGE3, cube.convert_centers_to_stage3());
+			if( rep >= 0 )
+				return ( rep << 3 ) + sym;
+			/*
 			if( cen < minCen){
 				minCen = cen;
 				minSym = sym;
 			}
+			*/
 		}
-
-		return ( Arrays.binarySearch(Tables.symCenterToCenterSTAGE3, minCen) << 3 ) + minSym;
+		return -1;
+		//return ( Arrays.binarySearch(Tables.symCenterToCenterSTAGE3, minCen) << 3 ) + minSym;
 	}
 
 	public short convert_edges_to_stage3 (){
@@ -561,18 +572,24 @@ public final class CubeState{
 
 	public int convert_symedges_to_stage4 (){
 		CubeState cube = new CubeState();
-		int minEdge = 1999999999;
-		int minSym = 0;
+		//int minEdge = 1999999999;
+		//int minSym = 0;
+		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE4; sym++ ){
 			copyTo (cube);
 			cube.conjugateEdges(sym);
+			rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE4, Tables.lrfb_get_edge_rep(cube.cube_state_to_lrfb ()));
+			if( rep >= 0 )
+				return ( rep << 4 ) + sym;
+			/*
 			int u2 = Tables.lrfb_get_edge_rep(cube.cube_state_to_lrfb ());
 			if( u2 < minEdge){
 				minEdge = u2;
 				minSym = sym;
-			}
+			}*/
 		}
-		return ( Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE4, minEdge) << 4 ) + minSym;
+		return -1;
+		//return ( Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE4, minEdge) << 4 ) + minSym;
 	}
 
 	public short convert_corners_to_stage4 (){
@@ -664,19 +681,23 @@ public final class CubeState{
 
 	public int convert_symedges_to_stage5 (){
 		CubeState cube = new CubeState();
-		int minEdge = 99999999;
-		int minSym = 0;
+		//int minEdge = 99999999;
+		//int minSym = 0;
+		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE5; sym++ ){
 			System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
 			cube.conjugateEdges(sym);
-			int edge = cube.convert_edges_to_stage5 ();
+			rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, cube.convert_edges_to_stage5 ());
+			if( rep >= 0 )
+				return ( rep << 6 ) + sym;
+			/*int edge = cube.convert_edges_to_stage5 ();
 			if( edge < minEdge){
 				minEdge = edge;
 				minSym = sym;
-			}
+			}*/
 		}
-		if (Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, minEdge)< 0) System.out.println("minEdge:"+minEdge);
-		return ( Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, minEdge) << 6 ) + minSym;
+		return -1;
+		//return ( Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, minEdge) << 6 ) + minSym;
 	}
 
 	public short convert_centers_to_stage5 (){
