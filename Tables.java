@@ -7,258 +7,44 @@ import java.io.File;
 
 public final class Tables {
 
-	public final void init_all (){
-
-		File f, f2;
-
+	public final void init (){
 		init4Of8();
 		initEbmEloc();
 		initMap96();
 		initCloc();
 		initPerm420();
-
-		f = new File(tables_path, "table_"+METRIC_STR+"_symedge1.rbk");
-		if( f.exists() ){
-			symEdgeToEdgeSTAGE1 = (int[]) readObject(f);
-		}
-		else{
-			initSymEdgeToEdgeStage1();
-			writeObject( (Object)symEdgeToEdgeSTAGE1, f);
-		}
-
-		f = new File(tables_path, "move_"+METRIC_STR+"_symedge1.rbk");
-		if( f.exists() ){
-			move_table_symEdgeSTAGE1 = (int[][]) readObject(f);
-		}
-		else{
-			initSymEdgeStage1();
-			writeObject( (Object)move_table_symEdgeSTAGE1, f);
-		}
-
-		f = new File(tables_path, "move_"+METRIC_STR+"_corner1.rbk");
-		if( f.exists() ){
-			move_table_co = (short[][]) readObject(f);
-		}
-		else{
-			initCornerStage1();
-			writeObject( (Object)move_table_co, f);
-		}
-
-		f = new File(tables_path, "conj_"+METRIC_STR+"_corner1.rbk");
-		if( f.exists() ){
-			move_table_co_conj = (short[][]) readObject(f);
-		}
-		else{
-			initCornerConjStage1();
-			writeObject( (Object)move_table_co_conj, f);
-		}
-
-		f = new File(tables_path, "move_"+METRIC_STR+"_edge2.rbk");
-		if( f.exists() ){
-			move_table_edgeSTAGE2 = (short[][]) readObject(f);
-		}
-		else{
-			initEdgeStage2();
-			writeObject( (Object)move_table_edgeSTAGE2, f);
-		}
-
-		f = new File(tables_path, "conj_"+METRIC_STR+"_edge2.rbk");
-		if( f.exists() ){
-			move_table_edge_conjSTAGE2 = (short[][]) readObject(f);
-		}
-		else{
-			initEdgeConjStage2();
-			writeObject( (Object)move_table_edge_conjSTAGE2, f);
-		}
-
-		f = new File(tables_path, "table_"+METRIC_STR+"_center2.rbk");
-		if( f.exists() ){
-			symCenterToCenterSTAGE2 = (short[]) readObject(f);
-		}
-		else{
-			initSymCenterToCenterStage2();
-			writeObject( (Object)symCenterToCenterSTAGE2, f);
-		}
-
-		f = new File(tables_path, "move_"+METRIC_STR+"_center2.rbk");
-		if( f.exists() ){
-			move_table_symCenterSTAGE2 = (short[][]) readObject(f);
-		}
-		else{
-			initSymCenterStage2();
-			writeObject( (Object)move_table_symCenterSTAGE2, f);
-		}
-
 		initE16Bm();
-
-		f = new File(tables_path, "table_"+METRIC_STR+"_center3.rbk");
-		if( f.exists() ){
-			symCenterToCenterSTAGE3 = (int[]) readObject(f);
-		}
-		else{
-			initSymCenterToCenterStage3();
-			writeObject( (Object)symCenterToCenterSTAGE3, f);
-		}
-
-		f = new File(tables_path, "move_"+METRIC_STR+"_center3.rbk");
-		if( f.exists() ){
-			move_table_symCenterSTAGE3 = (int[][]) readObject(f);
-		}
-		else{
-			initSymCenterStage3();
-			writeObject( (Object)move_table_symCenterSTAGE3, f);
-		}
-
-		f = new File(tables_path, "move_"+METRIC_STR+"_edge3.rbk");
-		if( f.exists() ){
-			move_table_edgeSTAGE3 = (short[][]) readObject(f);
-		}
-		else{
-			initEdgeStage3();
-			writeObject( (Object)move_table_edgeSTAGE3, f);
-		}
-
-		f = new File(tables_path, "conj_"+METRIC_STR+"_edge3.rbk");
-		if( f.exists() ){
-			move_table_edge_conjSTAGE3 = (short[][]) readObject(f);
-		}
-		else{
-			initEdgeConjStage3();
-			writeObject( (Object)move_table_edge_conjSTAGE3, f);
-		}
-
-		f = new File(tables_path, "table_"+METRIC_STR+"_edgehB4.rbk");
-		f2 = new File(tables_path, "table_"+METRIC_STR+"_edgehgB4.rbk");
-		if( f.exists() && f2.exists() ){
-			stage4_edge_hB = (int[]) readObject(f);
-			stage4_edge_hgB = (int[]) readObject(f2);
-		}
-		else{
-			initEdgeBStage4();
-			writeObject( (Object)stage4_edge_hB, f);
-			writeObject( (Object)stage4_edge_hgB, f2);
-		}
-
-		f = new File(tables_path, "table_"+METRIC_STR+"_edgehgA4.rbk");
-		if( f.exists() ){
-			stage4_edge_hgA = (int[][]) readObject(f);
-		}
-		else{
-			initEdgeAStage4();
-			writeObject( (Object)stage4_edge_hgA, f);
-		}
-
-		f = new File(tables_path, "table_"+METRIC_STR+"_symedge4.rbk");
-		if( f.exists() ){
-			symEdgeToEdgeSTAGE4 = (int[]) readObject(f);
-		}
-		else{
-			initParityTable();
-			initEdgeRepStage4();
-			writeObject( (Object)symEdgeToEdgeSTAGE4, f);
-		}
-
-		f = new File(tables_path, "move_"+METRIC_STR+"_symedge4.rbk");
-		if( f.exists() ){
-			move_table_symEdgeSTAGE4 = (int[][]) readObject(f);
-		}
-		else{
-			initSymEdgeStage4();
-			writeObject( (Object)move_table_symEdgeSTAGE4, f);
-		}
-
-		f = new File(tables_path, "move_"+METRIC_STR+"_corner4.rbk");
-		if( f.exists() ){
-			move_table_cornerSTAGE4 = (short[][]) readObject(f);
-		}
-		else{
-			initCornerStage4();
-			writeObject( (Object)move_table_cornerSTAGE4, f);
-		}
-
-		f = new File(tables_path, "conj_"+METRIC_STR+"_corner4.rbk");
-		if( f.exists() ){
-			move_table_corner_conjSTAGE4 = (short[][]) readObject(f);
-		}
-		else{
-			initCornerConjStage4();
-			writeObject( (Object)move_table_corner_conjSTAGE4, f);
-		}
-
-		f = new File(tables_path, "move_"+METRIC_STR+"_center4.rbk");
-		if( f.exists() ){
-			move_table_cenSTAGE4 = (byte[][]) readObject(f);
-		}
-		else{
-			initCenterStage4();
-			writeObject( (Object)move_table_cenSTAGE4, f);
-		}
-
-		f = new File(tables_path, "conj_"+METRIC_STR+"_center4.rbk");
-		if( f.exists() ){
-			move_table_cen_conjSTAGE4 = (byte[][]) readObject(f);
-		}
-		else{
-			initCenterConjStage4();
-			writeObject( (Object)move_table_cen_conjSTAGE4, f);
-		}
-
-
-		f = new File(tables_path, "move_"+METRIC_STR+"_corner5.rbk");
-		if( f.exists() ){
-			move_table_cornerSTAGE5 = (byte[][]) readObject(f);
-		}
-		else{
-			initSquaresMovemap();
-			writeObject( (Object)move_table_cornerSTAGE5, f);
-		}
-
-		f = new File(tables_path, "conj_"+METRIC_STR+"_corner5.rbk");
-		if( f.exists() ){
-			move_table_corner_conjSTAGE5 = (byte[][]) readObject(f);
-		}
-		else{
-			initCornerConjStage5();
-			writeObject( (Object)move_table_corner_conjSTAGE5, f);
-		}
-
 		initSquaresCenterMap();
+	}
 
-		f = new File(tables_path, "move_"+METRIC_STR+"_center5.rbk");
-		if( f.exists() ){
-			move_table_cenSTAGE5 = (short[][]) readObject(f);
-		}
-		else{
-			initCenterStage5();
-			writeObject( (Object)move_table_cenSTAGE5, f);
-		}
-
-		f = new File(tables_path, "conj_"+METRIC_STR+"_center5.rbk");
-		if( f.exists() ){
-			move_table_cen_conjSTAGE5 = (short[][]) readObject(f);
-		}
-		else{
-			initCenterConjStage5();
-			writeObject( (Object)move_table_cen_conjSTAGE5, f);
-		}
-
-		f = new File(tables_path, "table_"+METRIC_STR+"_symedge5.rbk");
-		if( f.exists() ){
-			symEdgeToEdgeSTAGE5 = (int[]) readObject(f);
-		}
-		else{
-			initSymEdgeToEdgeStage5();
-			writeObject( (Object)symEdgeToEdgeSTAGE5, f);
-		}
-
-		f = new File(tables_path, "move_"+METRIC_STR+"_symedge5.rbk");
-		if( f.exists() ){
-			move_table_symEdgeSTAGE5 = (int[][]) readObject(f);
-		}
-		else{
-			initSymEdgeStage5();
-			writeObject( (Object)move_table_symEdgeSTAGE5, f);
-		}
+	public final void init_tables (){
+		initSymEdgeToEdgeStage1();
+		initSymEdgeStage1();
+		initCornerStage1();
+		initCornerConjStage1();
+		initEdgeStage2();
+		initEdgeConjStage2();
+		initSymCenterToCenterStage2();
+		initSymCenterStage2();
+		initSymCenterToCenterStage3();
+		initSymCenterStage3();
+		initEdgeStage3();
+		initEdgeConjStage3();
+		initEdgeBStage4();
+		initEdgeAStage4();
+		initParityTable();
+		initEdgeRepStage4();
+		initSymEdgeStage4();
+		initCornerStage4();
+		initCornerConjStage4();
+		initCenterStage4();
+		initCenterConjStage4();
+		initSquaresMovemap();
+		initCornerConjStage5();
+		initCenterStage5();
+		initCenterConjStage5();
+		initSymEdgeToEdgeStage5();
+		initSymEdgeStage5();
 	}
 
 	/*** init_4of8 ***/

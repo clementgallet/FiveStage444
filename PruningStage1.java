@@ -20,6 +20,8 @@ public final class PruningStage1 extends Pruning {
 		for (i = 0; i < n; ++i) {
 			ptable[i] = 0;
 		}
+		n_packed = (int)(num_positions/5 + 1);
+		ptable_packed = new byte[n_packed];
 
 		// Fill the solved states.
 		set_dist( 0*N_CORNER_ORIENT + 1906, 3);

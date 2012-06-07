@@ -16,7 +16,7 @@ public final class Constants{
 	public static final String tables_path = "./fivestage444/tables";
 	public static final int STM = 0;
 	public static final int FTM = 1;
-	public static int METRIC = STM;
+	public static int METRIC = FTM;
 	public static String METRIC_STR = (METRIC == STM) ? "stm" : "ftm";
 	public static final boolean USE_FULL_PRUNING_STAGE3 = false;
 	public static final boolean USE_FULL_PRUNING_STAGE5 = false;
@@ -119,6 +119,8 @@ public final class Constants{
 		for (int i=0; i<N_BASIC_MOVES; i++) {
 			for (int j=0; j<N_BASIC_MOVES; j++) {
 				stage1_slice_moves_to_try[i][j] = (i/3 == j/3) || ((i/12 == j/12) && (i>j));
+				if( METRIC == STM )
+					stage1_slice_moves_to_try[i][j] |= (i/12 == j/12) && ((i%3) == (j%3)) && ((i%12) >= 3);
 			}
 			stage1_slice_moves_to_try[N_BASIC_MOVES][i] = false;
 			if( METRIC == FTM ){
@@ -455,36 +457,50 @@ public final class Constants{
 		{ false, true, true } // [fuu]
 	};
 
-	public static void print_move_list (int count, byte[] move_list){
+	public static String print_move_list (int count, byte[] move_list, boolean inverse){
 		int j, m;
-		if (count >= 0) {
-			System.out.print ("[" + count + "] ");
+		StringBuffer sb = new StringBuffer();
+		if( inverse ){
+			for (j = count-1; j >= 0; --j) {
+				m = move_list[j];
+				m = m + ((( m + 2 ) % 3 ) - 1); // inverse
+				if( METRIC == FTM )
+					m += 36;
+				sb.append(move_strings[m] + ' ');
+			}
+		}
+		else {
 			for (j = 0; j < count; ++j) {
 				m = move_list[j];
 				if( METRIC == FTM )
 					m += 36;
-				System.out.print (" " + move_strings[m]);
+				sb.append(move_strings[m] + ' ');
 			}
-		} else {
-			System.out.print ("[Did not solve]");
 		}
-		System.out.println (" ");
+		return sb.toString();
 	}
 
-	public static void print_move_list (int count, byte[] move_list, int rotate){
+	public static String print_move_list (int count, byte[] move_list, int rotate, boolean inverse){
 		int j, m;
-		if (count >= 0) {
-			System.out.print ("[" + count + "] ");
+		StringBuffer sb = new StringBuffer();
+		if( inverse ){
+			for (j = count-1; j >= 0; --j) {
+				m = move_list[j];
+				m = m + ((( m + 2 ) % 3 ) - 1); // inverse
+				if(( METRIC == FTM ) && (( m % 3 == 2 ) || rotate_move_stage23[rotate][m/12] ))
+					m += 36;
+				sb.append(move_strings[m] + ' ');
+			}
+		}
+		else {
 			for (j = 0; j < count; ++j) {
 				m = move_list[j];
 				if(( METRIC == FTM ) && (( m % 3 == 2 ) || rotate_move_stage23[rotate][m/12] ))
 					m += 36;
-				System.out.print (" " + move_strings[m]);
+				sb.append(move_strings[m] + ' ');
 			}
-		} else {
-			System.out.print ("[Did not solve]");
 		}
-		System.out.println (" ");
+		return sb.toString();
 	}
 
 	public static void writeObject(Object o, File f) {

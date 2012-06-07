@@ -18,44 +18,6 @@ abstract class PruningFull {
 	protected File fname;
 	protected int back_dist = 16;
 
-	private void writeToFile(){
-		try {
-			FileOutputStream fos = new FileOutputStream (fname);
-			BufferedOutputStream output = new BufferedOutputStream(fos);
-
-			System.out.println ("Creating pruning table file '"+fname.getName()+"'.");
-			output.write( ptable, 0, num_positions);
-			output.flush();
-			output.close();
-			}
-		catch(java.io.IOException ioe){
-			System.out.print("Erreur : ");
-			ioe.printStackTrace();
-			System.out.println ("Warning: Failed to create pruning file " + fname);
-		}
-	}
-
-	private void readFromFile(){
-		System.out.println("Read file "+fname.getName());
-		try {
-			FileInputStream fis = new FileInputStream (fname);
-			BufferedInputStream input = new BufferedInputStream(fis);
-			input.read (ptable, 0, num_positions);
-			input.close();
-		}
-		catch(java.io.FileNotFoundException e)
-		{
-			System.out.println("File not found" + e);
-			System.out.println("Error reading pruning table file '"+fname+"'");
-		}
-		catch(java.io.IOException ioe){
-			System.out.print("Erreur : ");
-			ioe.printStackTrace();
-			System.out.println("Error reading pruning table file '"+fname+"'");
-		}
-	}
-
-
 	abstract void init ();
 
 	abstract int do_move (int idx, int move);
@@ -64,13 +26,6 @@ abstract class PruningFull {
 		int i, dist;
 		int idx, old_count = 0;
 		int max_dist = 16;	//MAX_DISTANCE;
-
-		init ();
-
-		if (fname.exists() ) {
-			readFromFile();
-			return;
-		}
 
 		int new_count = count;
 		for (dist = 0; dist < max_dist && new_count > 0 && dist < back_dist; ++dist) {
@@ -96,8 +51,6 @@ abstract class PruningFull {
 		}
 
 		System.out.println("Generate "+count+" positions and "+unique_count+" unique.");
-
-		writeToFile();
 	}
 
 	protected void generate (int idx, int dist, int new_dist){

@@ -9,7 +9,7 @@ import java.io.PipedOutputStream;
 import java.io.PipedInputStream;
 import java.io.File;
 
-public final class FiveStage444 {
+public final class Search {
 
 // EDGE CONVENTION:
 
@@ -111,28 +111,27 @@ public final class FiveStage444 {
 //             -------------
 
 
-	private static String default_datafile_path = "";
-	static byte[] move_list_stage1 = new byte[50];
-	static byte[] move_list_stage2 = new byte[50];
-	static byte[] move_list_stage3 = new byte[50];
-	static byte[] move_list_stage4 = new byte[50];
-	static byte[] move_list_stage5 = new byte[50];
-	static int length1, length2, length3, length4, length5;
-	static int rotate, rotate2;
-	static int total_length;
-	static long endtime;
+	byte[] move_list_stage1 = new byte[50];
+	byte[] move_list_stage2 = new byte[50];
+	byte[] move_list_stage3 = new byte[50];
+	byte[] move_list_stage4 = new byte[50];
+	byte[] move_list_stage5 = new byte[50];
+	int length1, length2, length3, length4, length5;
+	int rotate, rotate2;
+	int total_length;
+	long endtime;
 
-	static byte[] move_list_sub_stage1 = new byte[50];
-	static byte[] move_list_sub_stage2 = new byte[50];
-	static byte[] move_list_sub_stage3 = new byte[50];
-	static byte[] move_list_sub_stage4 = new byte[50];
-	static byte[] move_list_sub_stage5 = new byte[50];
-	static int length1_sub, length2_sub, length3_sub, length4_sub, length5_sub;
-	static int r1, r2;
-	static int r1_sub, r2_sub;
-	static boolean found1, found2, found3, found4;
+	byte[] move_list_sub_stage1 = new byte[50];
+	byte[] move_list_sub_stage2 = new byte[50];
+	byte[] move_list_sub_stage3 = new byte[50];
+	byte[] move_list_sub_stage4 = new byte[50];
+	byte[] move_list_sub_stage5 = new byte[50];
+	int length1_sub, length2_sub, length3_sub, length4_sub, length5_sub;
+	int r1, r2;
+	int r1_sub, r2_sub;
+	boolean found1, found2, found3, found4;
 
-	static int solver_mode;
+	int solver_mode;
 	static final int SUB_12 = 0;
 	static final int SUB_23 = 1;
 	static final int SUB_34 = 2;
@@ -152,91 +151,34 @@ public final class FiveStage444 {
 	static int MAX_STAGE4 = 10;
 	static int MIN_STAGE5 = 8;
 
-	static CubeState c = new CubeState();
-	static CubeState cr = new CubeState();
-	static CubeState cr2 = new CubeState();
-	static CubeState c1 = new CubeState();
-	static CubeState c1r = new CubeState();
-	static CubeState c2 = new CubeState();
-	static CubeState c3 = new CubeState();
-	static CubeState c4 = new CubeState();
+	CubeState c = new CubeState();
+	CubeState cr = new CubeState();
+	CubeState cr2 = new CubeState();
+	CubeState c1 = new CubeState();
+	CubeState c1r = new CubeState();
+	CubeState c2 = new CubeState();
+	CubeState c3 = new CubeState();
+	CubeState c4 = new CubeState();
 
-	static CubeStage1[] list1 = new CubeStage1[20];
-	static CubeStage2[] list2 = new CubeStage2[20];
+	CubeStage1[] list1 = new CubeStage1[20];
+	CubeStage2[] list2 = new CubeStage2[20];
 
-	static int time_per_stage = 1000;
+	int time_per_stage;
 
 	static int DEBUG_LEVEL = 0;
 
-	public static void main(String[] args){
-
-		int random_count = 10;
-
-		Symmetry.init();
-
-		new Tables().init_all ();
-
-		CubeStage1.prune_table = new PruningStage1();
-		CubeStage1.prune_table.analyse();
-
-		CubeStage2.prune_table_edgcen = new PruningStage2EdgCen();
-		CubeStage2.prune_table_edgcen.analyse();
-
-		if( USE_FULL_PRUNING_STAGE3){
-			CubeStage3.prune_table = new PruningStage3();
-			CubeStage3.prune_table.analyse();
-		}else{
-			CubeStage3.prune_table_cen = new PruningStage3Cen();
-			CubeStage3.prune_table_cen.analyse();
-			CubeStage3.prune_table_edg = new PruningStage3Edg();
-			CubeStage3.prune_table_edg.analyse();
-		}
-
-		CubeStage4.prune_table = new PruningStage4();
-		CubeStage4.prune_table.analyse();
-
-		if( USE_FULL_PRUNING_STAGE5){
-			CubeStage5.prune_table = new PruningStage5();
-			CubeStage5.prune_table.analyse();
-		}else{
-			CubeStage5.prune_table_edgcen = new PruningStage5EdgCen();
-			CubeStage5.prune_table_edgcen.analyse();
-			CubeStage5.prune_table_edgcor = new PruningStage5EdgCor();
-			CubeStage5.prune_table_edgcor.analyse();
-		}
-
+	public String solve (CubeState cube, int timeOut, boolean inverse) {
 		int i;
+
+		Tools.init();
 		for( i=0; i<20; i++ ){
 			list1[i] = new CubeStage1();
 			list2[i] = new CubeStage2();
 		}
 
-		do_random_cubes (random_count);
-	}
+		time_per_stage = timeOut;
 
-	public static void do_random_cubes (int count) {
-		int i, i1;
-		//Random r = new Random();
-		Random r = new Random(42);
-		byte[] random_list = new byte[160];	//must be >= scramble_len
-		CubeState solveme = new CubeState();
-		int scramble_len = 40;
-
-		for (i = 1; i <= count; ++i) {
-			int j;
-			solveme.init ();
-			for (j = 0; j < scramble_len; ++j) {
-				random_list[j] = (byte)r.nextInt(36);
-			}
-			solveme.scramble(scramble_len, random_list);
-			System.out.println ("scramble: ");
-			print_move_list (scramble_len, random_list);
-			solve_suboptimal (solveme);
-		}
-	}
-
-	public static void solve_suboptimal (CubeState cube) {
-		int i;
+		StringBuffer sb = new StringBuffer();
 		byte[] sol_move_list = new byte[100];
 		cube.copyTo (c);
 
@@ -248,9 +190,10 @@ public final class FiveStage444 {
 		//if(true)return;
 
 		/* Print */
+		/*
 		System.out.print ("Stage 1: ");
-		print_move_list (length1_sub, move_list_sub_stage1);
-		//print_move_list (length1_sub, move_list_sub_stage1);
+		*/
+		sb.append(print_move_list (length1_sub, move_list_sub_stage1, inverse));
 
 		/* Prepare for next step */
 		System.arraycopy(move_list_sub_stage1, 0, move_list_stage1, 0, length1_sub);
@@ -262,10 +205,10 @@ public final class FiveStage444 {
 		init_stage2 ( r1_sub );
 
 		/* Print */
-		System.out.print ("Stage 2: ");
+		//System.out.print ("Stage 2: ");
 		for (i = 0; i < length2_sub; ++i)
 			sol_move_list[i] = xlate_r6[stage2_slice_moves[move_list_sub_stage2[i]]][rotate];
-		print_move_list (length2_sub, sol_move_list, rotate);
+		sb.append(print_move_list (length2_sub, sol_move_list, rotate, inverse));
 
 		/* Prepare for next step */
 		System.arraycopy(move_list_sub_stage2, 0, move_list_stage2, 0, length2_sub);
@@ -277,11 +220,12 @@ public final class FiveStage444 {
 		//System.out.println(total_length + "-" + length4_sub + "-" + (total_length-length4_sub-length3_sub) );
 		//System.out.println(length1_sub + length2_sub + length4_sub + length5_sub + length3_sub );
 		//if(true)return;
+
 		/* Print */
-		System.out.print ("Stage 3: ");
+		//System.out.print ("Stage 3: ");
 		for (i = 0; i < length3_sub; ++i)
 			sol_move_list[i] = xlate_r6[stage3_slice_moves[move_list_sub_stage3[i]]][rotate2];
-		print_move_list (length3_sub, sol_move_list, rotate2+3);
+		sb.append(print_move_list (length3_sub, sol_move_list, rotate2+3, inverse));
 
 		if( solver_mode == SUB_34 ){
 			/* Prepare for next step */
@@ -293,15 +237,16 @@ public final class FiveStage444 {
 		}
 
 		/* Print */
-		System.out.print ("Stage 4: ");
+		//System.out.print ("Stage 4: ");
 		for (i = 0; i < length4_sub; ++i)
 			sol_move_list[i] = xlate_r6[stage4_slice_moves[move_list_sub_stage4[i]]][rotate2];
-		print_move_list (length4_sub, sol_move_list);
-		System.out.print ("Stage 5: ");
+		sb.append(print_move_list (length4_sub, sol_move_list, inverse));
+		//System.out.print ("Stage 5: ");
 		for (i = 0; i < length5_sub; ++i)
 			sol_move_list[i] = xlate_r6[stage5_slice_moves[move_list_sub_stage5[i]]][rotate2];
-		print_move_list (length5_sub, sol_move_list);
+		sb.append(print_move_list (length5_sub, sol_move_list, inverse));
 
+		return sb.toString();
 	}
 
 	public static void init_stage1 () {
@@ -430,9 +375,9 @@ public final class FiveStage444 {
 		CubeStage2 s2 = new CubeStage2();
 		c1.convert_to_stage2 (s1);
 		c1.copyTo (c1r);
-		c1r.leftMultEdges  ( 8 );
-		c1r.leftMultCenters( 8 );
-		c1r.leftMultCorners( 8 );
+		//c1r.leftMultEdges  ( 8 );
+		//c1r.leftMultCenters( 8 );
+		//c1r.leftMultCorners( 8 );
 		c1r.convert_to_stage2 (s2);
 
 		if( solver_mode == SUB_345 ) return true;
