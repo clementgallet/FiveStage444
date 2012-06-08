@@ -1,5 +1,7 @@
 package fivestage444;
 
+import static fivestage444.Constants.Cnk;
+
 public final class CubeStage1 {
 
 	public int corner;
@@ -34,16 +36,15 @@ public final class CubeStage1 {
 
 	public void convert_edges_to_std_cube (int edge2, CubeState result_cube)
 	{
-		int i;
-
-		int ebm = Tables.eloc2ebm[edge2];
+		int r = 8;
 		byte lrfb = 0;
 		byte ud = 16;
-		for (i = 0; i < 24; ++i) {
-			if ((ebm & (1 << i)) == 0) {
-				result_cube.m_edge[i] = lrfb++;
-			} else {
+		for (int i=23; i>=0; i--) {
+			if (edge2 >= Cnk[i][r]) {
+				edge2 -= Cnk[i][r--];
 				result_cube.m_edge[i] = ud++;
+			} else {
+				result_cube.m_edge[i] = lrfb++;
 			}
 		}
 	}

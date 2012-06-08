@@ -218,7 +218,7 @@ public final class Search {
 		solver_mode = SUB_345;
 		init_stage3 ( r2_sub );
 		//System.out.println(total_length + "-" + length4_sub + "-" + (total_length-length4_sub-length3_sub) );
-		//System.out.println(length1_sub + length2_sub + length4_sub + length5_sub + length3_sub );
+		System.out.println(length1_sub + length2_sub + length4_sub + length5_sub + length3_sub );
 		//if(true)return;
 
 		/* Print */
