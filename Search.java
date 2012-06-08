@@ -157,6 +157,7 @@ public final class Search {
 
 	CubeStage1[] list1 = new CubeStage1[20];
 	CubeStage2[] list2 = new CubeStage2[20];
+	// TODO: Use it for all stages or don't use it.
 
 	int time_per_stage;
 
@@ -174,34 +175,17 @@ public final class Search {
 		time_per_stage = timeOut;
 
 		StringBuffer sb = new StringBuffer();
-		byte[] sol_move_list = new byte[100];
 		cube.copyTo (c);
 
 		solver_mode = SUB_123;
 		init_stage1 ();
-		//System.out.println(total_length );
-		//System.out.println(total_length + " " + length2_sub + " " + (total_length-length2_sub-length1_sub) );
-		//if(true)return;
-
-		/* Print */
-		/*
-		System.out.print ("Stage 1: ");
-		*/
-		sb.append(print_move_list (length1_sub, move_list_sub_stage1, inverse));
 
 		/* Prepare for next step */
 		System.arraycopy(move_list_sub_stage1, 0, move_list_stage1, 0, length1_sub);
 		length1 = length1_sub;
 
 		solver_mode = SUB_234;
-		//solver_mode = SUB_345;
 		init_stage2 ( r1_sub );
-
-		/* Print */
-		//System.out.print ("Stage 2: ");
-		for (i = 0; i < length2_sub; ++i)
-			sol_move_list[i] = xlate_r6[stage2_slice_moves[move_list_sub_stage2[i]]][rotate];
-		sb.append(print_move_list (length2_sub, sol_move_list, rotate, inverse));
 
 		/* Prepare for next step */
 		System.arraycopy(move_list_sub_stage2, 0, move_list_stage2, 0, length2_sub);
@@ -209,26 +193,33 @@ public final class Search {
 
 		solver_mode = SUB_345;
 		init_stage3 ( r2_sub );
-		//System.out.println(total_length + "-" + length4_sub + "-" + (total_length-length4_sub-length3_sub) );
-		System.out.println(length1_sub + length2_sub + length4_sub + length5_sub + length3_sub );
-		//if(true)return;
 
-		/* Print */
-		//System.out.print ("Stage 3: ");
+		/* Transform rotations before outputing the solution */
+		for (i = 0; i < length2_sub; ++i)
+			move_list_sub_stage2[i] = xlate_r6[stage2_slice_moves[move_list_sub_stage2[i]]][rotate];
 		for (i = 0; i < length3_sub; ++i)
-			sol_move_list[i] = xlate_r6[stage3_slice_moves[move_list_sub_stage3[i]]][rotate2];
-		sb.append(print_move_list (length3_sub, sol_move_list, rotate2+3, inverse));
-
-
-		/* Print */
-		//System.out.print ("Stage 4: ");
+			move_list_sub_stage3[i] = xlate_r6[stage3_slice_moves[move_list_sub_stage3[i]]][rotate2];
 		for (i = 0; i < length4_sub; ++i)
-			sol_move_list[i] = xlate_r6[stage4_slice_moves[move_list_sub_stage4[i]]][rotate2];
-		sb.append(print_move_list (length4_sub, sol_move_list, inverse));
-		//System.out.print ("Stage 5: ");
+			move_list_sub_stage4[i] = xlate_r6[stage4_slice_moves[move_list_sub_stage4[i]]][rotate2];
 		for (i = 0; i < length5_sub; ++i)
-			sol_move_list[i] = xlate_r6[stage5_slice_moves[move_list_sub_stage5[i]]][rotate2];
-		sb.append(print_move_list (length5_sub, sol_move_list, inverse));
+			move_list_sub_stage5[i] = xlate_r6[stage5_slice_moves[move_list_sub_stage5[i]]][rotate2];
+
+		if( inverse ){
+			sb.append(print_move_list (length5_sub, move_list_sub_stage5, inverse));
+			sb.append(print_move_list (length4_sub, move_list_sub_stage4, inverse));
+			sb.append(print_move_list (length3_sub, move_list_sub_stage3, rotate2+3, inverse));
+			sb.append(print_move_list (length2_sub, move_list_sub_stage2, rotate, inverse));
+			sb.append(print_move_list (length1_sub, move_list_sub_stage1, inverse));
+		}
+		else{
+			sb.append(print_move_list (length1_sub, move_list_sub_stage1, inverse));
+			sb.append(print_move_list (length2_sub, move_list_sub_stage2, rotate, inverse));
+			sb.append(print_move_list (length3_sub, move_list_sub_stage3, rotate2+3, inverse));
+			sb.append(print_move_list (length4_sub, move_list_sub_stage4, inverse));
+			sb.append(print_move_list (length5_sub, move_list_sub_stage5, inverse));
+		}
+
+		System.out.println(length1_sub + length2_sub + length3_sub + length4_sub + length5_sub );
 
 		return sb.toString();
 	}
@@ -257,7 +248,6 @@ public final class Search {
 		int d = Math.min(d1, Math.min(d2, d3));
 
 		endtime = System.currentTimeMillis() + time_per_stage;
-		//endtime = System.currentTimeMillis();
 
 		total_length = 100;
 		found1 = false;
