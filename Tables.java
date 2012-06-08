@@ -7,7 +7,6 @@ public final class Tables {
 
 	public static final void init (){
 		init4Of8();
-		initEbmEloc();
 		initMap96();
 		initCloc();
 		initPerm420();
@@ -100,41 +99,6 @@ public final class Tables {
 			parity_perm8_table[x] = (get_parity8 (x) != 0);
 		}
 		System.out.println( "Finishing parity table..." );
-	}
-
-	/*** init_eloc ***/
-	public static final int[] ebm2eloc = new int[4096*4096];
-	public static final int[] eloc2ebm = new int[N_EDGE_COMBO8];
-
-	private static int POW2_24 = 4096*4096;
-
-	private static void initEbmEloc (){
-		System.out.println( "Starting ebm eloc..." );
-		int a1, a2, a3, a4, a5, a6, a7, a8;
-		int count = 0;
-		for (a1 = 0; a1 < POW2_24; ++a1) {
-			ebm2eloc[a1] = 999999;
-		}
-		for (a1 = 0; a1 < 24-7; ++a1) {
-		 for (a2 = a1 + 1; a2 < 24-6; ++a2) {
-		  for (a3 = a2 + 1; a3 < 24-5; ++a3) {
-		   for (a4 = a3 + 1; a4 < 24-4; ++a4) {
-		    for (a5 = a4 + 1; a5 < 24-3; ++a5) {
-		     for (a6 = a5 + 1; a6 < 24-2; ++a6) {
-		      for (a7 = a6 + 1; a7 < 24-1; ++a7) {
-		       for (a8 = a7 + 1; a8 < 24; ++a8) {
-		        eloc2ebm[count] = (1 << a1) | (1 << a2) | (1 << a3) | (1 << a4) |
-		                          (1 << a5) | (1 << a6) | (1 << a7) | (1 << a8);
-		        ebm2eloc[eloc2ebm[count]] = count++;
-		       }
-		      }
-		     }
-		    }
-		   }
-		  }
-		 }
-		}
-		System.out.println( "Finishing ebm eloc..." );
 	}
 
 	/*** init map96 ***/

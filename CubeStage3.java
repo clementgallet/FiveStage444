@@ -9,7 +9,6 @@ public final class CubeStage3 {
 
 	public static PruningStage3Cen prune_table_cen;
 	public static PruningStage3Edg prune_table_edg;
-	public static PruningStage3 prune_table;
 
 	public final void copyTo (CubeStage3 cube1){
 		cube1.center = center;
