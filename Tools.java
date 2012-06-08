@@ -91,9 +91,9 @@ public class Tools {
 
 	static void write(short[][] arr, DataOutput out) throws IOException {
 		final int length = arr.length;
-		for (short i=0; i<length; i++) {
+		for (int i=0; i<length; i++) {
 			final int len = arr[i].length;
-			for (short j=0; j<len; j++) {
+			for (int j=0; j<len; j++) {
 				out.writeShort(arr[i][j]);
 			}
 		}	
@@ -101,9 +101,9 @@ public class Tools {
 	
 	static void write(int[][] arr, DataOutput out) throws IOException {
 		final int length = arr.length;
-		for (short i=0; i<length; i++) {
+		for (int i=0; i<length; i++) {
 			final int len = arr[i].length;
-			for (short j=0; j<len; j++) {
+			for (int j=0; j<len; j++) {
 				out.writeInt(arr[i][j]);
 			}
 		}	
@@ -245,10 +245,11 @@ public class Tools {
 			System.out.println("Please provide 1 argument: the file to store the tables in");
 			System.exit(1);
 		}
+		FileOutputStream out;
 		if(args.length == 1)
-			FileOutputStream out = new FileOutputStream(args[0]);
+			out = new FileOutputStream(args[0]);
 		else
-			FileOutputStream out = new FileOutputStream(new File(Constants.tables_path, "fivephase_tables"));
+			out = new FileOutputStream(Constants.tables_path + "/fivephase_tables");
 		DataOutputStream dataOut = new DataOutputStream(out);
 		initTo(dataOut);
 		dataOut.close();
@@ -269,8 +270,8 @@ public class Tools {
 		CubeState cube = new CubeState();
 
 		cube.init ();
-		for (j = 0; j < scramble_len; ++j) {
-			cube.do_move(j);
+		for (i = 0; i < scramble_len; ++i) {
+			cube.do_move(r.nextInt(36));
 		}
 		return cube;
 	}

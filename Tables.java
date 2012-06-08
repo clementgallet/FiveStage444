@@ -1,13 +1,11 @@
 package fivestage444;
 
 import static fivestage444.Constants.*;
-import java.lang.Thread;
 import java.util.Arrays;
-import java.io.File;
 
 public final class Tables {
 
-	public final void init (){
+	public static final void init (){
 		init4Of8();
 		initEbmEloc();
 		initMap96();
@@ -17,7 +15,7 @@ public final class Tables {
 		initSquaresCenterMap();
 	}
 
-	public final void init_tables (){
+	public static final void init_tables (){
 		initSymEdgeToEdgeStage1();
 		initSymEdgeStage1();
 		initCornerStage1();
@@ -51,7 +49,7 @@ public final class Tables {
 	public static final byte[] bm4of8_to_70 = new byte[256];
 	public static final short[] bm4of8 = new short[70]; // (256). Was 'byte', now 'short' :(
 
-	public void init4Of8 (){
+	public static void init4Of8 (){
 		System.out.println( "Starting init4of8..." );
 		int a1, a2, a3, a4;
 		int i;
@@ -94,7 +92,7 @@ public final class Tables {
 		return parity;
 	}
 
-	public void initParityTable (){
+	public static void initParityTable (){
 		System.out.println( "Starting parity table..." );
 		int x;
 
@@ -110,7 +108,7 @@ public final class Tables {
 
 	private static int POW2_24 = 4096*4096;
 
-	private void initEbmEloc (){
+	private static void initEbmEloc (){
 		System.out.println( "Starting ebm eloc..." );
 		int a1, a2, a3, a4, a5, a6, a7, a8;
 		int count = 0;
@@ -142,7 +140,7 @@ public final class Tables {
 	/*** init map96 ***/
 	private static final byte[][] map96 = new byte[96][8];
 
-	private void initMap96 (){
+	private static void initMap96 (){
 		System.out.println( "Starting map 96..." );
 		int a1, i;
 		byte[] t = new byte[8];
@@ -178,7 +176,7 @@ public final class Tables {
 	public static final int[] c4_to_cloc = new int[24*24*24*24];
 	public static final int[] cloc_to_bm = new int[N_CENTER_COMBO4];
 
-	private void initCloc (){
+	private static void initCloc (){
 		System.out.println( "Starting cloc..." );
 		int a1, a2, a3, a4; //, a5, a6, a7, a8;
 		int count = 0;
@@ -227,7 +225,7 @@ public final class Tables {
 	/*** init_perm_to_420 ***/
 	public static final short[] perm_to_420 = new short[40320]; // (420)
 
-	public void initPerm420 (){
+	public static void initPerm420 (){
 		System.out.println( "Starting perm 420..." );
 		int i;
 		int u, v, w, u2;
@@ -267,7 +265,7 @@ public final class Tables {
 	public static int[] symEdgeToEdgeSTAGE1 = new int[N_SYMEDGE_COMBO8];
 	public static final long[] hasSymEdgeSTAGE1 = new long[N_SYMEDGE_COMBO8];
 
-	private void initSymEdgeToEdgeStage1 (){
+	private static void initSymEdgeToEdgeStage1 (){
 		System.out.println( "Starting symEdgeToEdge stage 1..." );
 		int i, sym;
 		int u, repIdx = 0;
@@ -298,7 +296,7 @@ public final class Tables {
 	/*** init stage 1 symEdges ***/
 	public static int[][] move_table_symEdgeSTAGE1 = new int[N_SYMEDGE_COMBO8][N_BASIC_MOVES]; // (15582*64) 15582*36 = 560952
 
-	private void initSymEdgeStage1 (){
+	private static void initSymEdgeStage1 (){
 
 		System.out.println( "Starting symEdge stage 1..." );
 		int i, mc;
@@ -323,7 +321,7 @@ public final class Tables {
 	/*** init stage 1 corners ***/
 	public static short[][] move_table_co = new short[N_CORNER_ORIENT][N_FACE_MOVES]; // (2187) 2187*18
 
-	public void initCornerStage1 (){
+	public static void initCornerStage1 (){
 
 		System.out.println( "Starting corner stage 1..." );
 		int i, mc;
@@ -350,7 +348,7 @@ public final class Tables {
 	/*** init stage 1 corner conjugate ***/
 	public static short[][] move_table_co_conj = new short[N_CORNER_ORIENT][N_SYM_STAGE1]; // (2187) 2187*48
 
-	public void initCornerConjStage1 (){
+	public static void initCornerConjStage1 (){
 
 		System.out.println( "Starting corner conjugate stage 1..." );
 		int i, sym;
@@ -376,7 +374,7 @@ public final class Tables {
 	/*** init stage 2 edges ***/
 	public static short[][] move_table_edgeSTAGE2 = new short[N_STAGE2_EDGE_CONFIGS][N_STAGE2_SLICE_MOVES]; // 420*28
 
-	public void initEdgeStage2 (){
+	public static void initEdgeStage2 (){
 
 		System.out.println( "Starting edge stage 2..." );
 		short u;
@@ -399,7 +397,7 @@ public final class Tables {
 	/*** init stage 2 edge conjugate ***/
 	public static short[][] move_table_edge_conjSTAGE2 = new short[N_STAGE2_EDGE_CONFIGS][N_SYM_STAGE2]; // (420) 420*16
 
-	public void initEdgeConjStage2 (){
+	public static void initEdgeConjStage2 (){
 
 		System.out.println( "Starting edge conjugate stage 2..." );
 		int i, sym;
@@ -425,7 +423,7 @@ public final class Tables {
 	public static short[] symCenterToCenterSTAGE2 = new short[N_SYMCENTER_COMBO4];
 	public static int[] hasSymCenterSTAGE2 = new int[N_SYMCENTER_COMBO4];
 
-	public void initSymCenterToCenterStage2 (){
+	public static void initSymCenterToCenterStage2 (){
 
 		System.out.println( "Starting symCenterToCenter stage 2..." );
 		int i, sym;
@@ -458,7 +456,7 @@ public final class Tables {
 	/*** init stage 2 symCenters ***/
 	public static short[][] move_table_symCenterSTAGE2 = new short[N_SYMCENTER_COMBO4][N_STAGE2_SLICE_MOVES]; // (716*16) 716*28
 
-	public void initSymCenterStage2 (){
+	public static void initSymCenterStage2 (){
 
 		System.out.println( "Starting symCenter stage 2..." );
 		int i, mc;
@@ -485,7 +483,7 @@ public final class Tables {
 
 	private static int POW2_16 = 256*256;
 
-	public void initE16Bm (){
+	public static void initE16Bm (){
 		System.out.println( "Starting e16bm..." );
 		int a1, a2, a3, a4, a5, a6, a7, a8;
 
@@ -519,7 +517,7 @@ public final class Tables {
 	public static int[] symCenterToCenterSTAGE3 = new int[N_STAGE3_SYMCENTER_CONFIGS];
 	public static int[] hasSymCenterSTAGE3 = new int[N_STAGE3_SYMCENTER_CONFIGS]; // Could use less than int. Problem with (byte)1 << 7 and sign...
 
-	public void initSymCenterToCenterStage3 (){
+	public static void initSymCenterToCenterStage3 (){
 
 		System.out.println( "Starting symCenterToCenter stage 3..." );
 		int i, sym;
@@ -551,7 +549,7 @@ public final class Tables {
 	/*** init stage 3 symCenters ***/
 	public static int[][] move_table_symCenterSTAGE3 = new int[N_STAGE3_SYMCENTER_CONFIGS][N_STAGE3_SLICE_MOVES]; // (906640) 113330*20=9MB
 
-	public void initSymCenterStage3 (){
+	public static void initSymCenterStage3 (){
 
 		System.out.println( "Starting symCenters stage 3..." );
 		int i, mc;
@@ -577,7 +575,7 @@ public final class Tables {
 	/*** init stage 3 edges ***/
 	public static short[][] move_table_edgeSTAGE3 = new short[N_STAGE3_EDGE_CONFIGS][N_STAGE3_SLICE_MOVES]; // (12870) 12870*20
 
-	public void initEdgeStage3 (){
+	public static void initEdgeStage3 (){
 
 		System.out.println( "Starting edge stage 3..." );
 		int mc;
@@ -600,7 +598,7 @@ public final class Tables {
 	/*** init stage 3 edge conjugate ***/
 	public static short[][] move_table_edge_conjSTAGE3 = new short[N_STAGE3_EDGE_CONFIGS][N_SYM_STAGE3]; // (2187) 2187*48
 
-	public void initEdgeConjStage3 (){
+	public static void initEdgeConjStage3 (){
 
 		System.out.println( "Starting edge conjugate stage 3..." );
 		int i, sym;
@@ -666,10 +664,10 @@ public final class Tables {
 	}
 
 	
-	private static int[] stage4_edge_hB = new int[40320]; // (40320 ?). Change from short to int then :(
-	private static int[] stage4_edge_hgB = new int[40320]; // (40320 ?). Change from short to int then :(
+	public static int[] stage4_edge_hB = new int[40320]; // (40320 ?). Change from short to int then :(
+	public static int[] stage4_edge_hgB = new int[40320]; // (40320 ?). Change from short to int then :(
 
-	public void initEdgeBStage4 (){
+	public static void initEdgeBStage4 (){
 		System.out.println( "Starting edge B stage 4..." );
 		byte i;
 		int u;
@@ -717,9 +715,9 @@ public final class Tables {
 		System.out.println( "Finishing edge B stage 4..." );
 	}
 
-	private static int[][] stage4_edge_hgA = new int[40320][36]; // (40320 ?). Change from short to int then :(
+	public static int[][] stage4_edge_hgA = new int[40320][36]; // (40320 ?). Change from short to int then :(
 
-	public void initEdgeAStage4 (){
+	public static void initEdgeAStage4 (){
 		System.out.println( "Starting edge A stage 4..." );
 		int i;
 		int u, h1, h2;
@@ -763,7 +761,7 @@ public final class Tables {
 	public static int[] symEdgeToEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS]; // 5968
 	public static int[] hasSymEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS]; // 5968
 
-	public void initEdgeRepStage4 (){
+	public static void initEdgeRepStage4 (){
 
 		System.out.println( "Starting edge rep stage 4..." );
 		int u1, sym;
@@ -816,7 +814,7 @@ public final class Tables {
 
 	public static int[][] move_table_symEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS][N_STAGE4_SLICE_MOVES]; // (5968*16) 5968*16.
 
-	public void initSymEdgeStage4 (){
+	public static void initSymEdgeStage4 (){
 
 		System.out.println( "Starting sym edge stage 4..." );
 		int mc;
@@ -837,7 +835,7 @@ public final class Tables {
 
 	public static short[][] move_table_cornerSTAGE4 = new short[N_STAGE4_CORNER_CONFIGS][N_STAGE4_SLICE_MOVES]; // (420) 420*16.
 
-	public void initCornerStage4 (){
+	public static void initCornerStage4 (){
 
 		System.out.println( "Starting corner stage 4..." );
 		int mc;
@@ -860,7 +858,7 @@ public final class Tables {
 
 	public static short[][] move_table_corner_conjSTAGE4 = new short[N_STAGE4_CORNER_CONFIGS][N_SYM_STAGE4]; // (420) 420*16.
 
-	public void initCornerConjStage4 (){
+	public static void initCornerConjStage4 (){
 
 		System.out.println( "Starting corner conj stage 4..." );
 		int sym;
@@ -883,7 +881,7 @@ public final class Tables {
 
 	public static byte[][] move_table_cenSTAGE4 = new byte[N_STAGE4_CENTER_CONFIGS][N_STAGE4_SLICE_MOVES]; // (70) 70*16.
 
-	public void initCenterStage4 (){
+	public static void initCenterStage4 (){
 
 		System.out.println( "Starting center stage 4..." );
 		int mc;
@@ -906,7 +904,7 @@ public final class Tables {
 
 	public static byte[][] move_table_cen_conjSTAGE4 = new byte[N_STAGE4_CENTER_CONFIGS][N_SYM_STAGE4]; // (70) 70*16.
 
-	public void initCenterConjStage4 (){
+	public static void initCenterConjStage4 (){
 
 		System.out.println( "Starting center stage 4..." );
 		int sym;
@@ -940,7 +938,7 @@ public final class Tables {
 
 	public static byte[][] move_table_cornerSTAGE5 = new byte[N_STAGE5_CORNER_PERM][N_STAGE5_MOVES]; // TODO: (96) 96*12
 
-	public void initSquaresMovemap (){
+	public static void initSquaresMovemap (){
 
 		System.out.println( "Starting corner stage 5..." );
 		int i, m;
@@ -961,7 +959,7 @@ public final class Tables {
 
 	public static final byte[] squares_cen_revmap = new byte[256]; // (12)
 
-	public void initSquaresCenterMap (){
+	public static void initSquaresCenterMap (){
 
 		System.out.println( "Starting squares center map..." );
 		int i, j;
@@ -976,7 +974,7 @@ public final class Tables {
 
 	public static short[][] move_table_cenSTAGE5 = new short[N_STAGE5_CENTER_PERM][N_STAGE5_MOVES]; // TODO: (1728) 1728*12 = 20736
 
-	public void initCenterStage5 (){
+	public static void initCenterStage5 (){
 
 		System.out.println( "Starting center stage5..." );
 		int i, m;
@@ -999,7 +997,7 @@ public final class Tables {
 	public static int[] symEdgeToEdgeSTAGE5 = new int[N_STAGE5_SYMEDGE_PERM];
 	public static long[] hasSymEdgeSTAGE5 = new long[N_STAGE5_SYMEDGE_PERM];
 
-	public void initSymEdgeToEdgeStage5 (){
+	public static void initSymEdgeToEdgeStage5 (){
 
 		System.out.println( "Starting symEdgeToEdge stage 5..." );
 		int i, sym;
@@ -1036,7 +1034,7 @@ public final class Tables {
 	/*** init stage 5 symEdges ***/
 	public static int[][] move_table_symEdgeSTAGE5 = new int[N_STAGE5_SYMEDGE_PERM][N_STAGE5_MOVES]; // (21908*48) 21908*12 = 6677424
 
-	public void initSymEdgeStage5 (){
+	public static void initSymEdgeStage5 (){
 
 		System.out.println( "Starting symEdge stage 5..." );
 		int i, mc;
@@ -1061,7 +1059,7 @@ public final class Tables {
 	/*** init stage 5 corner conjugate ***/
 	public static byte[][] move_table_corner_conjSTAGE5 = new byte[N_STAGE5_CORNER_PERM][N_SYM_STAGE5]; // (96) 96*48
 
-	public void initCornerConjStage5 (){
+	public static void initCornerConjStage5 (){
 
 		System.out.println( "Starting corner conjugate stage 5..." );
 		int i, sym;
@@ -1086,7 +1084,7 @@ public final class Tables {
 	/*** init stage 5 center conjugate ***/
 	public static short[][] move_table_cen_conjSTAGE5 = new short[N_STAGE5_CENTER_PERM][N_SYM_STAGE5]; // (1728) 1728*48
 
-	public void initCenterConjStage5 (){
+	public static void initCenterConjStage5 (){
 
 		System.out.println( "Starting center conjugate stage 5..." );
 		int i, sym;

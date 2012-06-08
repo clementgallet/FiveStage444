@@ -249,7 +249,7 @@ public final class Search {
 		return sb.toString();
 	}
 
-	public static void init_stage1 () {
+	public void init_stage1 () {
 		CubeStage1 s1 = new CubeStage1();
 		CubeStage1 s2 = new CubeStage1();
 		CubeStage1 s3 = new CubeStage1();
@@ -290,7 +290,7 @@ public final class Search {
 		}
 	}
 
-	public static boolean search_stage1 (CubeStage1 cube1, int depth, int moves_done, int last_move, int dist, int r){
+	public boolean search_stage1 (CubeStage1 cube1, int depth, int moves_done, int last_move, int dist, int r){
 		//CubeStage1 cube2 = new CubeStage1();
 		int mov_idx, j;
 		if (depth == 0){
@@ -324,7 +324,7 @@ public final class Search {
 		return false;
 	}
 
-	public static boolean init_stage2 (int r){
+	public boolean init_stage2 (int r){
 		int i;
 		int cubeDistCenF1 = 0;
 		int cubeDistCenB1 = 0;
@@ -437,7 +437,7 @@ public final class Search {
 		return false;
 	}
 
-	public static boolean search_stage2 (CubeStage2 cube1, int depth, int moves_done, int last_move, int r ){
+	public boolean search_stage2 (CubeStage2 cube1, int depth, int moves_done, int last_move, int r ){
 		//CubeStage2 cube2 = new CubeStage2();
 		int mov_idx, mc, j;
 		if (depth == 0) {
@@ -473,7 +473,7 @@ public final class Search {
 		return false;
 	}
 
-	public static boolean init_stage3 (int r){
+	public boolean init_stage3 (int r){
 		int i;
 		if(( solver_mode == SUB_23 ) || ( solver_mode == SUB_123 ) || ( solver_mode == SUB_234 ))
 			if ( found2 && ( endtime < System.currentTimeMillis()) ) return true;
@@ -557,7 +557,7 @@ public final class Search {
 		return false;
 	}
 
-	public static boolean search_stage3 (CubeStage3 cube1, int depth, int moves_done, int last_move){
+	public boolean search_stage3 (CubeStage3 cube1, int depth, int moves_done, int last_move){
 		CubeStage3 cube2 = new CubeStage3();
 		int mov_idx, j;
 		if (depth == 0) {
@@ -591,7 +591,7 @@ public final class Search {
 		return false;
 	}
 
-	public static boolean init_stage4 (){
+	public boolean init_stage4 (){
 		int i;
 		if(( solver_mode == SUB_34 ) || ( solver_mode == SUB_234 ) || ( solver_mode == SUB_345 ))
 			if (( endtime < System.currentTimeMillis()) && found3 ) return true;
@@ -638,7 +638,7 @@ public final class Search {
 		return false;
 	}
 
-	public static boolean search_stage4 (CubeStage4 cube1, int depth, int moves_done, int last_move, int dist){
+	public boolean search_stage4 (CubeStage4 cube1, int depth, int moves_done, int last_move, int dist){
 		CubeStage4 cube2 = new CubeStage4();
 		int mov_idx, j;
 		if (depth == 0) {
@@ -670,7 +670,7 @@ public final class Search {
 		return false;
 	}
 
-	public static boolean init_stage5 (){
+	public boolean init_stage5 (){
 		int i;
 		if ( found4 && ( endtime < System.currentTimeMillis()) ) return true;
 
@@ -708,7 +708,7 @@ public final class Search {
 		return false;
 	}
 
-	public static boolean search_stage5 (CubeStage5 cube1, int depth, int moves_done, int last_move, int distEdgCen){
+	public boolean search_stage5 (CubeStage5 cube1, int depth, int moves_done, int last_move, int distEdgCen){
 		CubeStage5 cube2 = new CubeStage5();
 		int mov_idx, j;
 		if (depth == 0) {

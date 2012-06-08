@@ -6,8 +6,8 @@ public final class Main {
 
 		int random_count = 100;
 
-		for (i = 0; i < random_count; ++i) {
-			System.out.println( Search.solve( Tools.randomCube(), 1000, true);
+		for (int i = 0; i < random_count; ++i) {
+			System.out.println( new Search().solve( Tools.randomCube(), 1000, true));
 		}
 	}
 }
