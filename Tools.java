@@ -249,7 +249,7 @@ public class Tools {
 		if(args.length == 1)
 			out = new FileOutputStream(args[0]);
 		else
-			out = new FileOutputStream(Constants.tables_path + "/fivephase_tables");
+			out = new FileOutputStream(new File(Constants.tables_path, "fivephase_tables"));
 		DataOutputStream dataOut = new DataOutputStream(out);
 		initTo(dataOut);
 		dataOut.close();
