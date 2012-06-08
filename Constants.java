@@ -307,6 +307,19 @@ public final class Constants{
 	{57, 54, 60, 60, 57, 54}, {58, 55, 61, 61, 58, 55}, {59, 56, 62, 62, 59, 56},
 	{60, 57, 54, 58, 55, 61}, {61, 58, 55, 57, 54, 60}, {62, 59, 56, 59, 56, 62}
 	};
+	
+	public static final int Cnk [][] = new int[25][25];
+	static {
+		for (int i=0; i<25; i++) {
+			Cnk[i][i] = 1;
+			Cnk[i][0] = 1;
+		}
+		for (int i=1; i<25; i++) {
+			for (int j=1; j<=i; j++) {
+				Cnk[i][j] = Cnk[i-1][j] + Cnk[i-1][j-1];
+			}
+		}
+	}
 
 	/**
 	 * Extract an element from a table that stores eight numbers per byte.

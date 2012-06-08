@@ -9,7 +9,6 @@ public final class CubeStage5 {
 
 	public static PruningStage5EdgCen prune_table_edgcen;
 	public static PruningStage5EdgCor prune_table_edgcor;
-	public static PruningStage5 prune_table;
 
 	public final void copyTo (CubeStage5 cube1){
 		cube1.center = center;
@@ -137,11 +136,6 @@ public final class CubeStage5 {
 	public final int new_dist_edgcen (int dist){
 		int idx = edge * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[center][sym];
 		return prune_table_edgcen.new_dist(idx, dist);
-	}
-
-	public final int get_dist (){
-		long idx = (long)(edge * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[center][sym])* Constants.N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[corner][sym];
-		return prune_table.get_dist_packed(idx);
 	}
 
 	public int getDistanceEdgCen (){

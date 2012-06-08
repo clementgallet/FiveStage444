@@ -418,13 +418,14 @@ public final class CubeState{
 	}
 
 	public int convert_edges_to_stage1 (){
-		int i, ebm = 0;
-		for (i = 0; i < 24; ++i) {
+		int idx = 0;
+		int r = 8;
+		for (int i=23; i>=0; i--) {
 			if (m_edge[i] >= 16) {
-				ebm |= (1 << i);
+				idx += Cnk[i][r--];
 			}
 		}
-		return Tables.ebm2eloc[ebm];
+		return idx;
 	}
 
 	public int convert_symedges_to_stage1 (){
