@@ -331,9 +331,9 @@ public final class Search {
 		c1.convert_to_stage2 (s1);
 		c1.copyTo (c1r);
 		/* Does sometimes not work. Why ? */
-		//c1r.leftMultEdges  ( 8 );
-		//c1r.leftMultCenters( 8 );
-		//c1r.leftMultCorners( 8 );
+		c1r.leftMultEdges  ( 8 );
+		c1r.leftMultCenters( 8 );
+		c1r.leftMultCorners( 8 );
 		c1r.convert_to_stage2 (s2);
 
 		int min2 = 999;
@@ -468,7 +468,6 @@ public final class Search {
 					/* Save current solution */
 					found1 = true;
 					r1_sub = r1;
-					r2_sub = r2;
 					System.arraycopy(move_list_stage1, 0, move_list_sub_stage1, 0, length1);
 					System.arraycopy(move_list_stage2, 0, move_list_sub_stage2, 0, length2);
 					length1_sub = length1;
@@ -537,6 +536,7 @@ public final class Search {
 					total_length = length2+length3+length4;
 					/* Save current solution */
 					found2 = true;
+					r2_sub = r2;
 					System.arraycopy(move_list_stage2, 0, move_list_sub_stage2, 0, length2);
 					System.arraycopy(move_list_stage3, 0, move_list_sub_stage3, 0, length3);
 					length2_sub = length2;
