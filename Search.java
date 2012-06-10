@@ -126,10 +126,12 @@ public final class Search {
 	byte[] move_list_sub_stage3 = new byte[50];
 	byte[] move_list_sub_stage4 = new byte[50];
 	byte[] move_list_sub_stage5 = new byte[50];
-	int length1_sub, length2_sub, length3_sub, length4_sub, length5_sub;
+	int length1_sub, length2_sub, length3_sub, length4_sub, length5_sub, lengthall_sub;
+	int best_sol;
+	boolean found_sol;
 	int r1, r2;
 	int r1_sub, r2_sub;
-	boolean found1, found2, found3, found4;
+	boolean found1, found2, found3;
 
 	int solver_mode;
 	static final int SUB_123 = 0;
@@ -164,7 +166,7 @@ public final class Search {
 	static int DEBUG_LEVEL = 0;
 
 	public String solve (CubeState cube, int timeOut, boolean inverse) {
-		int i;
+		int i, j;
 
 		Tools.init();
 		for( i=0; i<20; i++ ){
@@ -174,54 +176,69 @@ public final class Search {
 
 		time_per_stage = timeOut;
 
-		StringBuffer sb = new StringBuffer();
-		cube.copyTo (c);
+		StringBuffer sb;
+		String sol = "";
+		
+		best_sol = 100;
+		found_sol = false;
+		for( j = 0; j < 3; j++ ){
+			sb = new StringBuffer();
+			cube.copyTo (c);
+			cube.leftMultEdges  ( 16 );
+			cube.leftMultCenters( 16 );
+			cube.leftMultCorners( 16 );
 
-		solver_mode = SUB_123;
-		init_stage1 ();
+			solver_mode = SUB_123;
+			init_stage1 ();
 
-		/* Prepare for next step */
-		System.arraycopy(move_list_sub_stage1, 0, move_list_stage1, 0, length1_sub);
-		length1 = length1_sub;
+			/* Prepare for next step */
+			System.arraycopy(move_list_sub_stage1, 0, move_list_stage1, 0, length1_sub);
+			length1 = length1_sub;
+			found1 = false;
 
-		solver_mode = SUB_234;
-		init_stage2 ( r1_sub );
+			solver_mode = SUB_234;
+			init_stage2 ( r1_sub );
 
-		/* Prepare for next step */
-		System.arraycopy(move_list_sub_stage2, 0, move_list_stage2, 0, length2_sub);
-		length2 = length2_sub;
+			/* Prepare for next step */
+			System.arraycopy(move_list_sub_stage2, 0, move_list_stage2, 0, length2_sub);
+			length2 = length2_sub;
+			found2 = false;
 
-		solver_mode = SUB_345;
-		init_stage3 ( r2_sub );
+			solver_mode = SUB_345;
+			init_stage3 ( r2_sub );
 
-		/* Transform rotations before outputing the solution */
-		for (i = 0; i < length2_sub; ++i)
-			move_list_sub_stage2[i] = xlate_r6[stage2_slice_moves[move_list_sub_stage2[i]]][rotate];
-		for (i = 0; i < length3_sub; ++i)
-			move_list_sub_stage3[i] = xlate_r6[stage3_slice_moves[move_list_sub_stage3[i]]][rotate2];
-		for (i = 0; i < length4_sub; ++i)
-			move_list_sub_stage4[i] = xlate_r6[stage4_slice_moves[move_list_sub_stage4[i]]][rotate2];
-		for (i = 0; i < length5_sub; ++i)
-			move_list_sub_stage5[i] = xlate_r6[stage5_slice_moves[move_list_sub_stage5[i]]][rotate2];
+			if( ! found3 ) continue;
+			found3 = false;
+			best_sol = length1_sub + length2_sub + length3_sub + length4_sub + length5_sub;
+			/* Transform rotations before outputing the solution */
+			for (i = 0; i < length2_sub; ++i)
+				move_list_sub_stage2[i] = xlate_r6[stage2_slice_moves[move_list_sub_stage2[i]]][rotate];
+			for (i = 0; i < length3_sub; ++i)
+				move_list_sub_stage3[i] = xlate_r6[stage3_slice_moves[move_list_sub_stage3[i]]][rotate2];
+			for (i = 0; i < length4_sub; ++i)
+				move_list_sub_stage4[i] = xlate_r6[stage4_slice_moves[move_list_sub_stage4[i]]][rotate2];
+			for (i = 0; i < length5_sub; ++i)
+				move_list_sub_stage5[i] = xlate_r6[stage5_slice_moves[move_list_sub_stage5[i]]][rotate2];
 
-		if( inverse ){
-			sb.append(print_move_list (length5_sub, move_list_sub_stage5, inverse));
-			sb.append(print_move_list (length4_sub, move_list_sub_stage4, inverse));
-			sb.append(print_move_list (length3_sub, move_list_sub_stage3, rotate2+3, inverse));
-			sb.append(print_move_list (length2_sub, move_list_sub_stage2, rotate, inverse));
-			sb.append(print_move_list (length1_sub, move_list_sub_stage1, inverse));
+			if( inverse ){
+				sb.append(print_move_list (length5_sub, move_list_sub_stage5, inverse));
+				sb.append(print_move_list (length4_sub, move_list_sub_stage4, inverse));
+				sb.append(print_move_list (length3_sub, move_list_sub_stage3, rotate2+3, inverse));
+				sb.append(print_move_list (length2_sub, move_list_sub_stage2, rotate, inverse));
+				sb.append(print_move_list (length1_sub, move_list_sub_stage1, inverse));
+			}
+			else{
+				sb.append(print_move_list (length1_sub, move_list_sub_stage1, inverse));
+				sb.append(print_move_list (length2_sub, move_list_sub_stage2, rotate, inverse));
+				sb.append(print_move_list (length3_sub, move_list_sub_stage3, rotate2+3, inverse));
+				sb.append(print_move_list (length4_sub, move_list_sub_stage4, inverse));
+				sb.append(print_move_list (length5_sub, move_list_sub_stage5, inverse));
+			}
+
+			sol = sb.toString();
 		}
-		else{
-			sb.append(print_move_list (length1_sub, move_list_sub_stage1, inverse));
-			sb.append(print_move_list (length2_sub, move_list_sub_stage2, rotate, inverse));
-			sb.append(print_move_list (length3_sub, move_list_sub_stage3, rotate2+3, inverse));
-			sb.append(print_move_list (length4_sub, move_list_sub_stage4, inverse));
-			sb.append(print_move_list (length5_sub, move_list_sub_stage5, inverse));
-		}
-
-		System.out.println(length1_sub + length2_sub + length3_sub + length4_sub + length5_sub );
-
-		return sb.toString();
+		System.out.println( best_sol );
+		return sol;
 	}
 
 	public void init_stage1 () {
@@ -230,33 +247,15 @@ public final class Search {
 		CubeStage1 s3 = new CubeStage1();
 		c.convert_to_stage1 (s1);
 
-		c.copyTo (cr);
-		cr.leftMultEdges  ( 16 );
-		cr.leftMultCenters( 16 );
-		cr.leftMultCorners( 16 );
-		cr.convert_to_stage1 (s2);		
-		c.copyTo (cr2);
-		cr2.leftMultEdges  ( 32 );
-		cr2.leftMultCenters( 32 );
-		cr2.leftMultCorners( 32 );
-		cr2.convert_to_stage1 (s3);
-
-		int d1 = s1.getDistance();
-		int d2 = s2.getDistance();
-		int d3 = s3.getDistance();
-
-		int d = Math.min(d1, Math.min(d2, d3));
+		int d = s1.getDistance();
 
 		endtime = System.currentTimeMillis() + time_per_stage;
 
 		total_length = 100;
 		found1 = false;
-		found2 = false;
 		for (length1 = d; length1 < total_length; ++length1) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "Stage 1 - length "+length1 );
-			if( search_stage1 (s1, length1, 0, N_BASIC_MOVES, d1, 0 ) ||
-			    search_stage1 (s2, length1, 0, N_BASIC_MOVES, d2, 1 ) ||
-			    search_stage1 (s3, length1, 0, N_BASIC_MOVES, d3, 2 )) {
+			if ( search_stage1 (s1, length1, 0, N_BASIC_MOVES, d, 0 )){
 				break;
 			}
 		}
@@ -301,21 +300,9 @@ public final class Search {
 		int cubeDistCenF2 = 0;
 		int cubeDistCenB2 = 0;
 		int d22 = 999;
-		if(( solver_mode == SUB_123 ) && found1 && ( endtime < System.currentTimeMillis() )) return true;
+		if( found1 && ( endtime < System.currentTimeMillis() )) return true;
 		r1 = r;
-		switch (r1) {
-		case 0:
-			c.copyTo(c1);	
-			break;
-		case 1:
-			cr.copyTo(c1);	
-			break;
-		case 2:
-			cr2.copyTo(c1);	
-			break;
-		default:
-			System.out.println ("Invalid cube rotation state.");
-		}
+		c.copyTo(c1);	
 
 		c1.scramble( length1, move_list_stage1 );
 
@@ -354,7 +341,6 @@ public final class Search {
 			endtime = System.currentTimeMillis() + time_per_stage;
 			total_length = 100;
 			found2 = false;
-			found3 = false;
 			length1 = 0;
 		}
 		if( solver_mode == SUB_123 )
@@ -421,8 +407,7 @@ public final class Search {
 
 	public boolean init_stage3 (int r){
 		int i;
-		if(( solver_mode == SUB_123 ) || ( solver_mode == SUB_234 ))
-			if ( found2 && ( endtime < System.currentTimeMillis()) ) return true;
+		if ( found2 && ( endtime < System.currentTimeMillis()) ) return true;
 
 		r2 = r;
 		switch (r) {
@@ -451,9 +436,8 @@ public final class Search {
 
 		if( solver_mode == SUB_345 ){
 			endtime = System.currentTimeMillis() + time_per_stage;
-			total_length = 100;
+			total_length = best_sol - length1_sub - length2_sub;
 			found3 = false;
-			found4 = false;
 			length1 = 0;
 			length2 = 0;
 		}
@@ -483,7 +467,6 @@ public final class Search {
 					total_length = length1+length2+length3;
 					/* Save current solution */
 					found1 = true;
-					found2 = true;
 					r1_sub = r1;
 					r2_sub = r2;
 					System.arraycopy(move_list_stage1, 0, move_list_sub_stage1, 0, length1);
@@ -532,7 +515,7 @@ public final class Search {
 
 	public boolean init_stage4 (){
 		int i;
-		if ( found3 && ( endtime < System.currentTimeMillis())) return true;
+		if ( found_sol && ( endtime < System.currentTimeMillis())) return true;
 
 		c2.copyTo(c3);
 		c3.scramble( length3, move_list_stage3, stage3_slice_moves, Ff );
@@ -554,7 +537,6 @@ public final class Search {
 					total_length = length2+length3+length4;
 					/* Save current solution */
 					found2 = true;
-					found3 = true;
 					System.arraycopy(move_list_stage2, 0, move_list_sub_stage2, 0, length2);
 					System.arraycopy(move_list_stage3, 0, move_list_sub_stage3, 0, length3);
 					length2_sub = length2;
@@ -600,7 +582,6 @@ public final class Search {
 
 	public boolean init_stage5 (){
 		int i;
-		if ( found4 && ( endtime < System.currentTimeMillis()) ) return true;
 
 		c3.copyTo(c4);
 		c4.scramble( length4, move_list_stage4, stage4_slice_moves );
@@ -621,7 +602,7 @@ public final class Search {
 				total_length = length3+length4+length5;
 				/* Save current solution */
 				found3 = true;
-				found4 = true;
+				found_sol = true;
 				System.arraycopy(move_list_stage3, 0, move_list_sub_stage3, 0, length3);
 				System.arraycopy(move_list_stage4, 0, move_list_sub_stage4, 0, length4);
 				System.arraycopy(move_list_stage5, 0, move_list_sub_stage5, 0, length5);
