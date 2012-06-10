@@ -136,7 +136,7 @@ public class Tools {
 
 		try {
 			//FileInputStream is = new FileInputStream(new File(Utils.getResourceDirectory(), "twophase_tables"));
-			FileInputStream is = new FileInputStream(new File(Constants.tables_path, "fivephase_tables"));
+			FileInputStream is = new FileInputStream(new File(Constants.tables_path, "fivephase_tables_"+METRIC_STR));
 			inited = initFrom(new DataInputStream(is));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -249,7 +249,7 @@ public class Tools {
 		if(args.length == 1)
 			out = new FileOutputStream(args[0]);
 		else
-			out = new FileOutputStream(new File(Constants.tables_path, "fivephase_tables"));
+			out = new FileOutputStream(new File(Constants.tables_path, "fivephase_tables_"+METRIC_STR));
 		DataOutputStream dataOut = new DataOutputStream(out);
 		initTo(dataOut);
 		dataOut.close();

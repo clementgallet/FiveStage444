@@ -138,8 +138,8 @@ public final class Search {
 	static final int SUB_234 = 1;
 	static final int SUB_345 = 2;
 
-	static int MAX_STAGE2 = 7;
-	//static int MAX_STAGE2 = 6;
+	//static int MAX_STAGE2 = 7;
+	static int MAX_STAGE2 = 6;
 	static int MIN_STAGE3 = 7;
 
 	static int MAX_STAGE3 = 9;
