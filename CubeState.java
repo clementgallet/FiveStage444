@@ -98,13 +98,13 @@ public final class CubeState{
 		}
 	}
 
-	public void do_move (int move_code){
+	public final void do_move (int move_code){
 		rotate_sliceEDGE (move_code, METRIC);
 		rotate_sliceCORNER (move_code, METRIC);
 		rotate_sliceCENTER (move_code, METRIC);
 	}
 
-	public void do_move (int move_code, int metric){
+	public final void do_move (int move_code, int metric){
 		rotate_sliceEDGE (move_code, metric);
 		rotate_sliceCORNER (move_code, metric);
 		rotate_sliceCENTER (move_code, metric);

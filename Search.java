@@ -130,6 +130,7 @@ public final class Search {
 	int best_sol;
 	boolean found_sol;
 	int r1, r2;
+	int ori;
 	int r1_sub, r2_sub;
 	boolean found1, found2, found3;
 
@@ -138,8 +139,8 @@ public final class Search {
 	static final int SUB_234 = 1;
 	static final int SUB_345 = 2;
 
-	//static int MAX_STAGE2 = 7;
-	static int MAX_STAGE2 = 6;
+	static int MAX_STAGE2 = 7;
+	//static int MAX_STAGE2 = 6;
 	static int MIN_STAGE3 = 7;
 
 	static int MAX_STAGE3 = 9;
@@ -197,7 +198,7 @@ public final class Search {
 			found1 = false;
 
 			solver_mode = SUB_234;
-			init_stage2 ( r1_sub );
+			init_stage2 ( r1_sub, ori );
 
 			/* Prepare for next step */
 			System.arraycopy(move_list_sub_stage2, 0, move_list_stage2, 0, length2_sub);
@@ -268,7 +269,7 @@ public final class Search {
 			if (! cube1.is_solved ()) {
 				return false;
 			}
-			return init_stage2 (r);
+			return init_stage2 (r, 0);
 		}
 		for (mov_idx = 0; mov_idx < N_BASIC_MOVES; ++mov_idx) {
 			if (stage1_slice_moves_to_try[last_move][mov_idx])
@@ -292,7 +293,7 @@ public final class Search {
 		return false;
 	}
 
-	public boolean init_stage2 (int r){
+	public boolean init_stage2 (int r, int orientation){
 		int i;
 		int cubeDistCenF1 = 0;
 		int cubeDistCenB1 = 0;
@@ -326,16 +327,6 @@ public final class Search {
 			System.out.println ("Invalid cube rotation state.");
 		}
 
-		CubeStage2 s1 = new CubeStage2();
-		CubeStage2 s2 = new CubeStage2();
-		c1.convert_to_stage2 (s1);
-		c1.copyTo (c1r);
-		/* Does sometimes not work. Why ? */
-		c1r.leftMultEdges  ( 8 );
-		c1r.leftMultCenters( 8 );
-		c1r.leftMultCorners( 8 );
-		c1r.convert_to_stage2 (s2);
-
 		int min2 = 999;
 		if( solver_mode == SUB_234 ){
 			endtime = System.currentTimeMillis() + time_per_stage;
@@ -346,19 +337,32 @@ public final class Search {
 		if( solver_mode == SUB_123 )
 			min2 = Math.min( MAX_STAGE2 + 1, total_length - length1 - MIN_STAGE3);
 
-		cubeDistCenF1 = s1.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s1.centerF + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symF]];
-		if( cubeDistCenF1 < min2 ){
-			cubeDistCenB1 = s1.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s1.centerB + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symB]];
-			if( cubeDistCenB1 < min2 ){
-				d21 = Math.max(cubeDistCenF1, cubeDistCenB1);
+		CubeStage2 s1 = new CubeStage2();
+		CubeStage2 s2 = new CubeStage2();
+
+		if( orientation >= 0 ){
+			c1.convert_to_stage2 (s1);
+			cubeDistCenF1 = s1.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s1.centerF + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symF]];
+			if( cubeDistCenF1 < min2 ){
+				cubeDistCenB1 = s1.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s1.centerB + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symB]];
+				if( cubeDistCenB1 < min2 ){
+					d21 = Math.max(cubeDistCenF1, cubeDistCenB1);
+				}
 			}
 		}
 
-		cubeDistCenF2 = s2.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s2.centerF + Tables.move_table_edge_conjSTAGE2[s2.edge][s2.symF]];
-		if( cubeDistCenF2 < min2 ){
-			cubeDistCenB2 = s2.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s2.centerB + Tables.move_table_edge_conjSTAGE2[s2.edge][s2.symB]];
-			if( cubeDistCenB2 < min2 ){
-				d22 = Math.max(cubeDistCenF2, cubeDistCenB2);
+		if( orientation <= 0 ){
+			c1.copyTo (c1r);
+			c1r.leftMultEdges  ( 8 );
+			c1r.leftMultCenters( 8 );
+			c1r.leftMultCorners( 8 );
+			c1r.convert_to_stage2 (s2);
+			cubeDistCenF2 = s2.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s2.centerF + Tables.move_table_edge_conjSTAGE2[s2.edge][s2.symF]];
+			if( cubeDistCenF2 < min2 ){
+				cubeDistCenB2 = s2.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s2.centerB + Tables.move_table_edge_conjSTAGE2[s2.edge][s2.symB]];
+				if( cubeDistCenB2 < min2 ){
+					d22 = Math.max(cubeDistCenF2, cubeDistCenB2);
+				}
 			}
 		}
 
@@ -468,6 +472,7 @@ public final class Search {
 					/* Save current solution */
 					found1 = true;
 					r1_sub = r1;
+					ori = ( r2 == 0 ) ? 1 : -1;
 					System.arraycopy(move_list_stage1, 0, move_list_sub_stage1, 0, length1);
 					System.arraycopy(move_list_stage2, 0, move_list_sub_stage2, 0, length2);
 					length1_sub = length1;
