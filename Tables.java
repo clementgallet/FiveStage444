@@ -1,6 +1,6 @@
-package fivestage444;
+package cg.fivestage444;
 
-import static fivestage444.Constants.*;
+import static cg.fivestage444.Constants.*;
 import java.util.Arrays;
 
 public final class Tables {
@@ -49,7 +49,6 @@ public final class Tables {
 	public static final short[] bm4of8 = new short[70]; // (256). Was 'byte', now 'short' :(
 
 	public static void init4Of8 (){
-		System.out.println( "Starting init4of8..." );
 		int a1, a2, a3, a4;
 		int i;
 		int count = 0;
@@ -64,7 +63,6 @@ public final class Tables {
 				}
 			}
 		}
-		System.out.println( "Finishing init4of8..." );
 	}
 
 	/*** init_parity_table ***/
@@ -92,20 +90,17 @@ public final class Tables {
 	}
 
 	public static void initParityTable (){
-		System.out.println( "Starting parity table..." );
 		int x;
 
 		for (x = 0; x < 40320; ++x) {
 			parity_perm8_table[x] = (get_parity8 (x) != 0);
 		}
-		System.out.println( "Finishing parity table..." );
 	}
 
 	/*** init map96 ***/
 	private static final byte[][] map96 = new byte[96][8];
 
 	private static void initMap96 (){
-		System.out.println( "Starting map 96..." );
 		int a1, i;
 		byte[] t = new byte[8];
 		byte f;
@@ -133,7 +128,6 @@ public final class Tables {
 				map96[4*a1 + 3][i] = t[i];
 			}
 		}
-		System.out.println( "Finishing map 96..." );
 	}
 
 	/*** init_cloc ***/
@@ -141,7 +135,6 @@ public final class Tables {
 	public static final int[] cloc_to_bm = new int[N_CENTER_COMBO4];
 
 	private static void initCloc (){
-		System.out.println( "Starting cloc..." );
 		int a1, a2, a3, a4; //, a5, a6, a7, a8;
 		int count = 0;
 
@@ -183,14 +176,12 @@ public final class Tables {
 		  }
 		 }
 		}
-		System.out.println( "Finishing cloc..." );
 	}
 
 	/*** init_perm_to_420 ***/
 	public static final short[] perm_to_420 = new short[40320]; // (420)
 
 	public static void initPerm420 (){
-		System.out.println( "Starting perm 420..." );
 		int i;
 		int u, v, w, u2;
 		byte[] t = new byte[8];
@@ -222,7 +213,6 @@ public final class Tables {
 				}
 			}
 		}
-		System.out.println( "Finshing perm 420..." );
 	}
 
 	/*** init stage 1 symEdgeToEdge ***/
@@ -448,7 +438,6 @@ public final class Tables {
 	private static int POW2_16 = 256*256;
 
 	public static void initE16Bm (){
-		System.out.println( "Starting e16bm..." );
 		int a1, a2, a3, a4, a5, a6, a7, a8;
 
 		int count = 0;
@@ -474,7 +463,6 @@ public final class Tables {
 		  }
 		 }
 		}
-		System.out.println( "Finishing e16bm..." );
 	}
 
 	/*** init stage 3 symCenterToCenter ***/
@@ -925,7 +913,6 @@ public final class Tables {
 
 	public static void initSquaresCenterMap (){
 
-		System.out.println( "Starting squares center map..." );
 		int i, j;
 		for (i = 0; i < 256; ++i) {
 			squares_cen_revmap[i] = 0;
@@ -933,7 +920,6 @@ public final class Tables {
 		for (i = 0; i < 12; ++i) {
 			squares_cen_revmap[squares_cen_map[i]] = (byte)i;
 		}
-		System.out.println( "Finishing squares center map..." );
 	}
 
 	public static short[][] move_table_cenSTAGE5 = new short[N_STAGE5_CENTER_PERM][N_STAGE5_MOVES]; // TODO: (1728) 1728*12 = 20736

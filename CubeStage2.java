@@ -1,4 +1,4 @@
-package fivestage444;
+package cg.fivestage444;
 
 public final class CubeStage2 {
 

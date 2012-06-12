@@ -1,6 +1,6 @@
-package fivestage444;
+package cg.fivestage444;
 
-import static fivestage444.Constants.*;
+import static cg.fivestage444.Constants.*;
 
 public final class Symmetry {
 
@@ -18,8 +18,6 @@ public final class Symmetry {
 	}
 
 	static void initSymTables (){
-
-		System.out.println( "Starting initSymTables..." );
 
 		byte[] symRLEdges = {4, 5, 6, 7, 0, 1, 2, 3, 14, 15, 12, 13, 10, 11, 8, 9, 21, 20, 23, 22, 17, 16, 19, 18};
 		byte[] symRLCorners = {1, 0, 3, 2, 5, 4, 7, 6};
@@ -71,14 +69,11 @@ public final class Symmetry {
 			}
 			cube.inverse();
 		}
-		System.out.println( "Finishing initSymTables..." );
 	}
 
 	static int[] invSymIdx = new int[N_SYM_ALL];
 
 	static void initInvSymIdx(){
-
-		System.out.println( "Starting initInvSymIdx..." );
 
 		for (int i=0; i<N_SYM_ALL; i++)
 			for (int j=0; j<N_SYM_ALL; j++)
@@ -88,15 +83,11 @@ public final class Symmetry {
 					invSymIdx[i] = j;
 					break;
 				}
-
-		System.out.println( "Finishing initInvSymIdx..." );
 	}
 
 	static int[][] symIdxMultiply = new int[N_SYM_ALL][N_SYM_ALL];
 
 	static void initSymIdxMultiply(){
-
-		System.out.println( "Starting initSymIdxMultiply..." );
 
 		for (int i=0; i<N_SYM_ALL; i++)
 			for (int j=0; j<N_SYM_ALL; j++)
@@ -106,15 +97,11 @@ public final class Symmetry {
 						symIdxMultiply[i][j] = k;
 						break;
 					}
-
-		System.out.println( "Finishing initSymIdxMultiply..." );
 	}
 
 	static int[][] moveConjugate = new int[N_BASIC_MOVES][N_SYM_ALL];
 
 	static void initMoveConjugate(){
-
-		System.out.println( "Starting initMoveConjugate..." );
 
 		CubeState cube = new CubeState();
 		CubeState cube2 = new CubeState();
@@ -143,8 +130,6 @@ public final class Symmetry {
 				}
 			}
 		}
-
-		System.out.println( "Finishing initMoveConjugate..." );
 	}
 
 	static int[][] moveConjugate2 = new int[N_STAGE2_SLICE_MOVES][N_SYM_STAGE2];
@@ -155,8 +140,6 @@ public final class Symmetry {
 	static void initMoveConjugateStage(){
 
 		int i, j;
-
-		System.out.println( "Starting initMoveConjugate Stages..." );
 
 		for (i=0; i<N_STAGE2_SLICE_MOVES; i++)
 			for (j=0; j<N_SYM_STAGE2; j++)
@@ -173,7 +156,5 @@ public final class Symmetry {
 		for (i=0; i<N_STAGE5_MOVES; i++)
 			for (j=0; j<N_SYM_STAGE5; j++)
 				moveConjugate5[i][j] = stage5_inv_slice_moves[moveConjugate[stage5_slice_moves[i]][j]];
-
-		System.out.println( "Finishing initMoveConjugate Stages..." );
 	}
 }

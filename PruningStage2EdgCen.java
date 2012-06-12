@@ -1,6 +1,6 @@
-package fivestage444;
+package cg.fivestage444;
 
-import static fivestage444.Constants.*;
+import static cg.fivestage444.Constants.*;
 
 import java.io.File;
 

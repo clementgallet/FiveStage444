@@ -1,6 +1,6 @@
-package fivestage444;
+package cg.fivestage444;
 
-import static fivestage444.Constants.Cnk;
+import static cg.fivestage444.Constants.Cnk;
 
 public final class CubeStage1 {
 

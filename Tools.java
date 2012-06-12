@@ -1,6 +1,6 @@
-package fivestage444;
+package cg.fivestage444;
 
-import static fivestage444.Constants.*;
+import static cg.fivestage444.Constants.*;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
 
-//import net.gnehzr.tnoodle.utils.Utils;
+import net.gnehzr.tnoodle.utils.Utils;
 
 public class Tools {
 	static boolean inited = false;
@@ -135,8 +135,7 @@ public class Tools {
 		CubeStage5.prune_table_edgcor.init();
 
 		try {
-			//FileInputStream is = new FileInputStream(new File(Utils.getResourceDirectory(), "twophase_tables"));
-			FileInputStream is = new FileInputStream(new File(Constants.tables_path, "fivephase_tables_"+METRIC_STR));
+			FileInputStream is = new FileInputStream(new File(Utils.getResourceDirectory(), "fivephase_tables"));
 			inited = initFrom(new DataInputStream(is));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -241,15 +240,11 @@ public class Tools {
 	
 	public static void main(String[] args) throws IOException {
 		System.out.println(Arrays.toString(args));
-		if(args.length > 1) {
+		if(args.length != 1) {
 			System.out.println("Please provide 1 argument: the file to store the tables in");
 			System.exit(1);
 		}
-		FileOutputStream out;
-		if(args.length == 1)
-			out = new FileOutputStream(args[0]);
-		else
-			out = new FileOutputStream(new File(Constants.tables_path, "fivephase_tables_"+METRIC_STR));
+		FileOutputStream out = new FileOutputStream(args[0]);
 		DataOutputStream dataOut = new DataOutputStream(out);
 		initTo(dataOut);
 		dataOut.close();

@@ -1,6 +1,6 @@
-package fivestage444;
+package cg.fivestage444;
 
-import static fivestage444.Constants.*;
+import static cg.fivestage444.Constants.*;
 
 import java.util.Random;
 import java.io.ObjectOutputStream;
@@ -238,7 +238,7 @@ public final class Search {
 
 			sol = sb.toString();
 		}
-		System.out.println( best_sol );
+		//System.out.println( best_sol );
 		return sol;
 	}
 
