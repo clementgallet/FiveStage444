@@ -13,7 +13,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
-import java.lang.OutOfMemoryError;//<<<
 
 import net.gnehzr.tnoodle.utils.Utils;
 
