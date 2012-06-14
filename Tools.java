@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
 
-import net.gnehzr.tnoodle.utils.Utils;
+//import net.gnehzr.tnoodle.utils.Utils;
 
 public class Tools {
 	static boolean inited = false;
@@ -135,7 +135,8 @@ public class Tools {
 		CubeStage5.prune_table_edgcor.init();
 
 		try {
-			FileInputStream is = new FileInputStream(new File(Utils.getResourceDirectory(), "fivephase_tables"));
+			//FileInputStream is = new FileInputStream(new File(Utils.getResourceDirectory(), "fivephase_tables"));
+			FileInputStream is = new FileInputStream(new File(Constants.tables_path, "fivephase_tables_ftm"));
 			inited = initFrom(new DataInputStream(is));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -261,7 +262,7 @@ public class Tools {
 	
 	public static CubeState randomCube(Random r) {
 		int i;
-		int scramble_len = 1000;
+		int scramble_len = 1;
 		CubeState cube = new CubeState();
 
 		cube.init ();
