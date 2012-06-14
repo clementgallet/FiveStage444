@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
+import java.lang.OutOfMemoryError;//<<<
 
 import net.gnehzr.tnoodle.utils.Utils;
 
@@ -110,6 +111,10 @@ public class Tools {
 	}
 	
 	public static synchronized void init() {
+		init(true);
+	}
+
+	private static synchronized void init(boolean tryToReadFromDisk) {
 		if (inited)
 			return;
 		
@@ -134,11 +139,13 @@ public class Tools {
 		CubeStage5.prune_table_edgcor = new PruningStage5EdgCor();
 		CubeStage5.prune_table_edgcor.init();
 
-		try {
-			FileInputStream is = new FileInputStream(new File(Utils.getResourceDirectory(), "fivephase_tables"));
-			inited = initFrom(new DataInputStream(is));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		if(tryToReadFromDisk) {
+			try {
+				FileInputStream is = new FileInputStream(new File(Utils.getResourceDirectory(), "fivephase_tables"));
+				inited = initFrom(new DataInputStream(is));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
 		if(!inited) {
 			Tables.init_tables ();
@@ -200,7 +207,7 @@ public class Tools {
 	}
 
 	public static void initTo(DataOutput out) throws IOException {
-		init();
+		init(false);
 		write(Tables.symEdgeToEdgeSTAGE1, out);
 		write(Tables.move_table_symEdgeSTAGE1, out);
 		write(Tables.move_table_co, out);
