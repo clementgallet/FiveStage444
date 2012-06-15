@@ -311,7 +311,7 @@ public class Tools {
 		return cube;
 	}
 
-	/* Fisher–Yates shuffle */
+	/* Fisher-Yates shuffle */
 	private static void randomPerm(Random r, byte[] array, int n) {
 		int i, j;
 		byte t;
