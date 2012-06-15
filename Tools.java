@@ -12,11 +12,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.Random;
 
 import net.gnehzr.tnoodle.utils.Utils;
+import net.gnehzr.tnoodle.utils.TimedLogRecordStart;
 
 public class Tools {
+	private static final Logger l = Logger.getLogger(Tools.class.getName());
+
 	static boolean inited = false;
 	
 	static void read(byte[] arr, DataInput in) throws IOException {
@@ -110,13 +115,10 @@ public class Tools {
 	}
 	
 	public static synchronized void init() {
-		init(true);
+		init(true, null);
 	}
 
-	private static synchronized void init(boolean tryToReadFromDisk) {
-		if (inited)
-			return;
-		
+	private static void prepareTables() {
 		Symmetry.init();
 		Tables.init();
 		CubeStage1.prune_table = new PruningStage1();
@@ -137,17 +139,30 @@ public class Tools {
 		CubeStage5.prune_table_edgcen.init();
 		CubeStage5.prune_table_edgcor = new PruningStage5EdgCor();
 		CubeStage5.prune_table_edgcor.init();
+	}
 
-		if(tryToReadFromDisk) {
+	private static synchronized void init(boolean tryToReadFile, File fivephase_tables) {
+		if (inited)
+			return;
+		
+		if(fivephase_tables == null) {
+			fivephase_tables = new File(Utils.getResourceDirectory(), "fivephase_tables");
+		}
+
+		prepareTables();
+		if(tryToReadFile) {
 			try {
-				FileInputStream is = new FileInputStream(new File(Utils.getResourceDirectory(), "fivephase_tables"));
+				FileInputStream is = new FileInputStream(fivephase_tables);
 				inited = initFrom(new DataInputStream(is));
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				l.log(Level.INFO, "Failed to load " + fivephase_tables, e);
 			}
 		}
 		if(!inited) {
-			Tables.init_tables ();
+			TimedLogRecordStart start = new TimedLogRecordStart("Generating fivephase tables");
+			l.log(start);
+
+			Tables.init_tables();
 			CubeStage1.prune_table.analyse();
 			CubeStage2.prune_table_edgcen.analyse();
 			CubeStage3.prune_table_cen.analyse();
@@ -155,6 +170,17 @@ public class Tools {
 			CubeStage4.prune_table.analyse();
 			CubeStage5.prune_table_edgcen.analyse();
 			CubeStage5.prune_table_edgcor.analyse();
+
+			try {
+				l.info("Writing to " + fivephase_tables);
+				FileOutputStream out = new FileOutputStream(fivephase_tables);
+				DataOutputStream dataOut = new DataOutputStream(out);
+				initTo(dataOut);
+			} catch(IOException e) {
+				l.log(Level.INFO, "Failed to write to " + fivephase_tables, e);
+			}
+			
+			l.log(start.finishedNow());
 		}
 		inited = true;
 	}
@@ -206,7 +232,6 @@ public class Tools {
 	}
 
 	public static void initTo(DataOutput out) throws IOException {
-		init(false);
 		write(Tables.symEdgeToEdgeSTAGE1, out);
 		write(Tables.move_table_symEdgeSTAGE1, out);
 		write(Tables.move_table_co, out);
@@ -250,10 +275,7 @@ public class Tools {
 			System.out.println("Please provide 1 argument: the file to store the tables in");
 			System.exit(1);
 		}
-		FileOutputStream out = new FileOutputStream(args[0]);
-		DataOutputStream dataOut = new DataOutputStream(out);
-		initTo(dataOut);
-		dataOut.close();
+		init(false, new File(args[0]));
 	}
 
 	/**
@@ -270,7 +292,7 @@ public class Tools {
 		int scramble_len = 1000;
 		CubeState cube = new CubeState();
 
-		cube.init ();
+		cube.init();
 		for (i = 0; i < scramble_len; ++i) {
 			cube.do_move(r.nextInt(36));
 		}
