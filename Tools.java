@@ -288,15 +288,39 @@ public class Tools {
 	}
 	
 	public static CubeState randomCube(Random r) {
-		int i;
-		int scramble_len = 1;
+		int i, o, os;
 		CubeState cube = new CubeState();
+		cube.init ();
 
-		cube.init();
-		for (i = 0; i < scramble_len; ++i) {
-			cube.do_move(r.nextInt(36));
+		/* Randomize corners */
+		randomPerm(r, cube.m_cor, 8);
+		os = 0;
+		for (i=0; i<7; i++){
+			o = r.nextInt(3);
+			cube.m_cor[i] += 8*o;
+			os += o;
 		}
+		cube.m_cor[7] += 8*((15 - os) % 3);
+
+		/* Randomize centers */
+		randomPerm(r, cube.m_cen, 24);
+
+		/* Randomize edges */
+		randomPerm(r, cube.m_edge, 24);
+
 		return cube;
+	}
+
+	/* Fisher–Yates shuffle */
+	private static void randomPerm(Random r, byte[] array, int n) {
+		int i, j;
+		byte t;
+		for (i = n-1; i > 0; i--){
+			j = r.nextInt(i+1);
+			t = array[i];
+			array[i] = array[j];
+			array[j] = t;
+		}
 	}
 	
 }
