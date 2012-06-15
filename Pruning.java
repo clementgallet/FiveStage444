@@ -82,6 +82,8 @@ abstract class Pruning {
 
 		System.out.println("Packing table: "+(num_positions/4+1)+" -> "+n_packed);
 		pack();
+		ptable = null;
+		System.gc();
 	}
 
 	protected void generate (long idx, int dist, int new_dist){

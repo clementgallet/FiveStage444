@@ -333,6 +333,7 @@ public final class Search {
 			total_length = 100;
 			found2 = false;
 			length1 = 0;
+			min2 = total_length;
 		}
 		if( solver_mode == SUB_123 )
 			min2 = Math.min( MAX_STAGE2 + 1, total_length - length1 - MIN_STAGE3);
@@ -372,6 +373,10 @@ public final class Search {
 			   (( length2 >= d22 ) && search_stage2 (s2, length2, 0, N_STAGE2_SLICE_MOVES, 1 ))){
 				return false;
 			}
+			if( solver_mode == SUB_123 )
+				min2 = Math.min( MAX_STAGE2 + 1, total_length - length1 - MIN_STAGE3);
+			if( solver_mode == SUB_234 )
+				min2 = total_length;
 		}
 		return false;
 	}
@@ -455,7 +460,7 @@ public final class Search {
 				min3 = total_length - length2 - length1;
 				break;
 			default:
-				min3 = 999;
+				min3 = total_length;
 		}
 
 		int cubeDistCen = s1.prune_table_cen.ptable[s1.center];
@@ -479,6 +484,16 @@ public final class Search {
 					length2_sub = length2;
 				}
 				return false;
+			}
+			switch( solver_mode ){
+				case SUB_234: 
+					min3 = Math.min( MAX_STAGE3 + 1, total_length - length2 - MIN_STAGE4 );
+					break;
+				case SUB_123:
+					min3 = total_length - length2 - length1;
+					break;
+				default:
+					min3 = total_length;
 			}
 		}
 		return false;
@@ -549,6 +564,10 @@ public final class Search {
 				}
 				return false;
 			}
+			if( solver_mode == SUB_345 )
+				min4 = Math.min( MAX_STAGE4 + 1, total_length - length3 - MIN_STAGE5 );
+			else
+				min4 = total_length - length3 - length2;
 		}
 		return false;
 	}
@@ -594,14 +613,12 @@ public final class Search {
 		CubeStage5 s1 = new CubeStage5();
 		c4.convert_to_stage5 (s1);
 
-		int min5 = total_length-length4-length3;
-
 		int cubeDistEdgCor = s1.prune_table_edgcor.ptable[s1.edge * N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[s1.corner][s1.sym]];
-		if( cubeDistEdgCor >= min5 ) return false;
+		if( cubeDistEdgCor >= total_length-length4-length3 ) return false;
 		int cubeDistEdgCen = s1.getDistanceEdgCen();
 		int d5 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
 
-		for (length5 = d5; length5 < min5; ++length5) {
+		for (length5 = d5; length5 < total_length-length4-length3; ++length5) {
 			if( search_stage5 (s1, length5, 0, N_STAGE5_MOVES, cubeDistEdgCen)){
 				if( DEBUG_LEVEL >= 1 ) System.out.println( "        Stage 5 - length "+length5 );
 				total_length = length3+length4+length5;

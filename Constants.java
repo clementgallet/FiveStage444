@@ -12,8 +12,8 @@ import java.io.ObjectInputStream;
  */
 public final class Constants{
 
-	public static final String datafiles_path = "./fivestage444/";
-	public static final String tables_path = "./fivestage444/";
+	public static final String datafiles_path = "./cg/fivestage444/";
+	public static final String tables_path = "./cg/fivestage444/";
 	public static final int STM = 0;
 	public static final int FTM = 1;
 	public static int METRIC = FTM;

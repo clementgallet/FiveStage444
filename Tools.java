@@ -289,7 +289,7 @@ public class Tools {
 	
 	public static CubeState randomCube(Random r) {
 		int i;
-		int scramble_len = 1000;
+		int scramble_len = 1;
 		CubeState cube = new CubeState();
 
 		cube.init();
