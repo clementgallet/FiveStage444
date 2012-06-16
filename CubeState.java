@@ -145,29 +145,37 @@ public final class CubeState{
 			m_edge[i] = cs1.m_edge[cs2.m_edge[i]];
 	}
 
-	public void inverse() {
+	public void inverseTo( CubeState c) {
 		int i;
-		byte[] t = new byte[24];
-		byte[] x = new byte[6];
+		int[] t = new int[24];
 
+		/* Corner inverse taken from http://cube20.org/src/cubepos.w */
 		for (i = 0; i < 8; ++i) {
-			t[m_cor[i]] = (byte)i;
+			int cval = m_cor[i];
+			c.m_cor[cval & 0x7] = (byte)( i + 8 * (( 3 - ( cval>>3 )) % 3 ));
 		}
-		for (i = 0; i < 8; ++i) {
-			m_cor[i] = t[i];
+
+		/* Edge inverse */
+		for (i = 0; i < 24; ++i) {
+			c.m_edge[m_edge[i]] = (byte)i;
+		}
+
+		/* Center inverse. Need to convert to unique facelets */
+		int[] cenN = new int[6];
+		for (i = 0; i < 6; ++i) cenN[i] = 0;
+
+		for (i = 0; i < 24; ++i){
+			t[i] = m_cen[i] * 4 + cenN[m_cen[i]]++;
 		}
 		for (i = 0; i < 24; ++i) {
-			t[m_edge[i]] = (byte)i;
+			c.m_cen[t[i]] = (byte)(i/4);
 		}
-		for (i = 0; i < 24; ++i) {
-			m_edge[i] = t[i];
-		}
-		for (i = 0; i < 24; ++i) {
-			t[m_cen[i]] = (byte)i;
-		}
-		for (i = 0; i < 24; ++i) {
-			m_cen[i] = t[i];
-		}
+	}
+
+	public void inverse() {
+		CubeState temp = new CubeState();
+		copyTo(temp);
+		temp.inverseTo(this);
 	}
 
 	public void leftMultEdges (int symIdx){
