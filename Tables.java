@@ -480,6 +480,7 @@ public final class Tables {
 		cube2.init ();
 		CubeStage3 s3 = new CubeStage3();
 
+		System.out.println("Solved centers3");
 		byte[] isRepTable = new byte[(N_STAGE3_CENTER_CONFIGS>>3) + 1];
 		for (u = 0; u < N_STAGE3_CENTER_CONFIGS; ++u) {
 			if( get_value_1bit(u, isRepTable) != 0 ) continue;
@@ -487,13 +488,15 @@ public final class Tables {
 
 			for (sym = 1; sym < N_SYM_STAGE3; ++sym) {
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-				cube2.conjugateCenters( sym );
+				cube2.rightMultCenters (Symmetry.invSymIdx[sym]);
 				int cen = cube2.convert_centers_to_stage3();
 				set_1_1bit( cen, isRepTable); // not a rep.
 				if( cen == u )
 					hasSymCenterSTAGE3[repIdx] |= (1 << sym);
 			}
 			symCenterToCenterSTAGE3[repIdx++] = u;
+			if (( u == 900830 ) || (u ==  900844 ) || (u ==  900850 ) || (u ==  900853 ) || (u ==  900857 ) || (u ==  900858 ) || (u ==  900871 ) || (u ==  900872 ) || (u ==  900876 ) || (u ==  900879 ) || (u ==  900885 ) || (u ==  900899 ))
+				System.out.println(repIdx-1);
 		}
 		System.out.println( "Finishing symCenterToCenter stage 3... generated "+repIdx+" reps." );
 	}
@@ -565,7 +568,7 @@ public final class Tables {
 			s1.convert_edges_to_std_cube (cube1);
 			for (sym = 0; sym < N_SYM_STAGE3; ++sym) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.conjugateEdges (sym);
+				cube2.rightMultEdges (Symmetry.invSymIdx[sym]);
 				move_table_edge_conjSTAGE3[u][sym] = cube2.convert_edges_to_stage3();
 			}
 		}

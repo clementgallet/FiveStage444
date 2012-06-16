@@ -38,7 +38,7 @@ public final class Constants{
 	public static final int N_SYMCENTER_COMBO4 = 716;
 
 	public static final int N_STAGE3_CENTER_CONFIGS = 900900;	//(16*15*14*13/24)*(12*11*10*9/24)
-	public static final int N_STAGE3_SYMCENTER_CONFIGS = 113330;
+	public static final int N_STAGE3_SYMCENTER_CONFIGS = 112980;
 	public static final int N_COMBO_16_8 = 12870;				//16!/(8!*8!)
 	public static final int N_STAGE3_EDGE_PAR = 2;
 	public static final int N_STAGE3_EDGE_CONFIGS = N_COMBO_16_8;	//16!/(8!*8!), does not include parity info
@@ -429,10 +429,12 @@ public final class Constants{
 	582, 606, 631, 641, 664, 673
 	};
 
-	public static final int STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS = 7;
+	public static final int STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS = 6;
 	public static final int stage3_solved_sym_centers[] = {
-	113311, 113319,	113320, 113322, 113323, 113324, 113329
+	112966, 112974, 112975, 112977, 112978, 112979
 	};
+	// True solved centers, better not deleting.
+	// 900830, 900844, 900850, 900853, 900857, 900858, 900871, 900872, 900876, 900879, 900885, 900899
 
 	public static final int STAGE4_NUM_SOLVED_CENTER_CONFIGS = 12;
 	public static final short stage4_solved_centers_bm[] = {
