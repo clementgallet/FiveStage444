@@ -480,7 +480,6 @@ public final class Tables {
 		cube2.init ();
 		CubeStage3 s3 = new CubeStage3();
 
-		System.out.println("Solved centers3");
 		byte[] isRepTable = new byte[(N_STAGE3_CENTER_CONFIGS>>3) + 1];
 		for (u = 0; u < N_STAGE3_CENTER_CONFIGS; ++u) {
 			if( get_value_1bit(u, isRepTable) != 0 ) continue;
@@ -495,8 +494,6 @@ public final class Tables {
 					hasSymCenterSTAGE3[repIdx] |= (1 << sym);
 			}
 			symCenterToCenterSTAGE3[repIdx++] = u;
-			if (( u == 900830 ) || (u ==  900844 ) || (u ==  900850 ) || (u ==  900853 ) || (u ==  900857 ) || (u ==  900858 ) || (u ==  900871 ) || (u ==  900872 ) || (u ==  900876 ) || (u ==  900879 ) || (u ==  900885 ) || (u ==  900899 ))
-				System.out.println(repIdx-1);
 		}
 		System.out.println( "Finishing symCenterToCenter stage 3... generated "+repIdx+" reps." );
 	}
