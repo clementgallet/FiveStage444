@@ -23,11 +23,11 @@ public final class CubeStage5 {
 		center = Tables.move_table_cenSTAGE5[center][sqs_move_code];
 		corner = Tables.move_table_cornerSTAGE5[corner][sqs_move_code];
 
-		//int newEdge = Tables.move_table_symEdgeSTAGE5[edge][Symmetry.moveConjugate5[sqs_move_code][Symmetry.symIdxMultiply[cosym*2][sym]]];
-		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][Symmetry.moveConjugate5[sqs_move_code][Symmetry.symIdxMultiply[sym][cosym*2]]];
+		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][Symmetry.moveConjugate5[sqs_move_code][Symmetry.symIdxMultiply[cosym*2][sym]]];
 
 		int newSym = ( newEdge & 0xFF ) >> 2;
 		int newCosym = newEdge & 0x03;
+
 
 		int[] a = new int[4];
 		a[0] = Symmetry.invSymIdx[sym];
@@ -35,20 +35,13 @@ public final class CubeStage5 {
 		a[2] = sym;
 		a[3] = 2*cosym;
 
-		System.out.println("Values");
-		System.out.println(a[0]);
-		System.out.println(a[1]);
-		System.out.println(a[2]);
-		System.out.println(a[3]);
-
 		byte[] t = new byte[4];
-		for (int jj = 0; jj < 24; jj++){
-			Constants.perm_n_unpack(4, jj, t, 0);
-			System.out.println(Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[a[t[0]]][a[t[1]]]][Symmetry.symIdxMultiply[a[t[2]]][a[t[3]]]] / 2);
-		}
+		int jj = 7;
+		Constants.perm_n_unpack(4, jj, t, 0);
+		cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[a[t[0]]][a[t[1]]]][Symmetry.symIdxMultiply[a[t[2]]][a[t[3]]]] / 2;
 		//cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[sym][2*cosym]][Symmetry.symIdxMultiply[Symmetry.invSymIdx[sym]][2*newCosym]] / 2;
 		//cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[Symmetry.invSymIdx[sym]][newCosym*2]][Symmetry.symIdxMultiply[sym][2*cosym]] / 2;
-		cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[cosym*2][sym]][Symmetry.symIdxMultiply[2*newCosym][Symmetry.invSymIdx[sym]]] / 2;
+		//cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[cosym*2][sym]][Symmetry.symIdxMultiply[2*newCosym][Symmetry.invSymIdx[sym]]] / 2;
 		sym = Symmetry.symIdxMultiply[newSym][sym];
 		edge = newEdge >> 8;
 	}
