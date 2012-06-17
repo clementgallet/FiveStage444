@@ -67,7 +67,7 @@ public final class Symmetry {
 				cube.do_move (Rs3, FTM);
 				cube.do_move (Ls, FTM);
 			}
-			cube.inverse();
+			//cube.inverse();
 		}
 	}
 

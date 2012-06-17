@@ -27,6 +27,8 @@ abstract class PruningFull {
 		int idx, old_count = 0;
 		int max_dist = 16;	//MAX_DISTANCE;
 
+		init();
+
 		int new_count = count;
 		for (dist = 0; dist < max_dist && new_count > 0 && dist < back_dist; ++dist) {
 			System.out.println(" dist "+dist+": "+new_count+" positions.");

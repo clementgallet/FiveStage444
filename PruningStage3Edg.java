@@ -6,16 +6,20 @@ import java.io.File;
 
 public final class PruningStage3Edg extends PruningFull {
 
-	void init (){
-		int i;
-		fname = new File( tables_path, "stage3_edg_"+METRIC_STR+"_prune.rbk" );
-
-		// Definition of the allowed moves.
-		num_moves = N_STAGE3_SLICE_MOVES;
+	PruningStage3Edg(){
 
 		// Creation of the pruning table.
 		num_positions = N_STAGE3_EDGE_CONFIGS*N_STAGE3_EDGE_PAR;
 		ptable = new byte[num_positions];
+
+	}
+
+	void init (){
+		int i;
+
+		// Definition of the allowed moves.
+		num_moves = N_STAGE3_SLICE_MOVES;
+
 		for (i = 0; i < num_positions; ++i) {
 			ptable[i] = -1;
 		}

@@ -145,29 +145,37 @@ public final class CubeState{
 			m_edge[i] = cs1.m_edge[cs2.m_edge[i]];
 	}
 
-	public void inverse() {
+	public void inverseTo( CubeState c) {
 		int i;
-		byte[] t = new byte[24];
-		byte[] x = new byte[6];
+		int[] t = new int[24];
 
+		/* Corner inverse taken from http://cube20.org/src/cubepos.w */
 		for (i = 0; i < 8; ++i) {
-			t[m_cor[i]] = (byte)i;
+			int cval = m_cor[i];
+			c.m_cor[cval & 0x7] = (byte)( i + 8 * (( 3 - ( cval>>3 )) % 3 ));
 		}
-		for (i = 0; i < 8; ++i) {
-			m_cor[i] = t[i];
+
+		/* Edge inverse */
+		for (i = 0; i < 24; ++i) {
+			c.m_edge[m_edge[i]] = (byte)i;
+		}
+
+		/* Center inverse. Need to convert to unique facelets */
+		int[] cenN = new int[6];
+		for (i = 0; i < 6; ++i) cenN[i] = 0;
+
+		for (i = 0; i < 24; ++i){
+			t[i] = m_cen[i] * 4 + cenN[m_cen[i]]++;
 		}
 		for (i = 0; i < 24; ++i) {
-			t[m_edge[i]] = (byte)i;
+			c.m_cen[t[i]] = (byte)(i/4);
 		}
-		for (i = 0; i < 24; ++i) {
-			m_edge[i] = t[i];
-		}
-		for (i = 0; i < 24; ++i) {
-			t[m_cen[i]] = (byte)i;
-		}
-		for (i = 0; i < 24; ++i) {
-			m_cen[i] = t[i];
-		}
+	}
+
+	public void inverse() {
+		CubeState temp = new CubeState();
+		copyTo(temp);
+		temp.inverseTo(this);
 	}
 
 	public void leftMultEdges (int symIdx){
@@ -480,8 +488,6 @@ public final class CubeState{
 
 	public short convert_symcenters_to_stage2 (int c){
 		CubeState cube = new CubeState();
-		//short minCen = 32000;
-		//int minSym = 0;
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE2; sym++ ){
 			copyTo (cube);
@@ -489,15 +495,8 @@ public final class CubeState{
 			rep = Arrays.binarySearch(Tables.symCenterToCenterSTAGE2, cube.convert_centers_to_stage2(c));
 			if( rep >= 0 )
 				return (short)(( rep << 4 ) + sym);
-			//short cen = cube.convert_centers_to_stage2(c);
-			/*
-			if( cen < minCen){
-				minCen = cen;
-				minSym = sym;
-			}*/
 		}
 		return -1;
-		//return (short)(( Arrays.binarySearch(Tables.symCenterToCenterSTAGE2, minCen) << 4 ) + minSym);
 	}
 
 	public void convert_to_stage2 (CubeStage2 result_cube){
@@ -529,25 +528,15 @@ public final class CubeState{
 
 	public int convert_symcenters_to_stage3 (){
 		CubeState cube = new CubeState();
-		//int minCen = 99999999;
-		//int minSym = 0;
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE3; sym++ ){
 			System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
-			cube.conjugateCenters(sym);
-			//int cen = cube.convert_centers_to_stage3();
+			cube.rightMultCenters(Symmetry.invSymIdx[sym]);
 			rep = Arrays.binarySearch(Tables.symCenterToCenterSTAGE3, cube.convert_centers_to_stage3());
 			if( rep >= 0 )
 				return ( rep << 3 ) + sym;
-			/*
-			if( cen < minCen){
-				minCen = cen;
-				minSym = sym;
-			}
-			*/
 		}
 		return -1;
-		//return ( Arrays.binarySearch(Tables.symCenterToCenterSTAGE3, minCen) << 3 ) + minSym;
 	}
 
 	public short convert_edges_to_stage3 (){
