@@ -78,7 +78,7 @@ stage 1 symedges        15,582           36           4            2,243,808
 stage 1 corners          2,187           18           2               78,732
 stage 2 symcenters         716           28           2               40,096
 stage 2 edges              420           28           2               23,520
-stage 3 symcenters     113,330           20           4            9,066,400
+stage 3 symcenters     112,980           20           4            9,038,400
 stage 3 edges           12,870           20           2              514,800
 stage 4 symedges         5,968           16           4              381,952
 stage 4 corners            420           16           2               13,440
@@ -91,7 +91,7 @@ Pruning tables              Positions        Memory (byte)
 ----------------------------------------------------------
 stage 1                    34,077,834            6,815,567
 stage 2 centers/edges         300,720              300,720
-stage 3 symcenters            113,330              113,330
+stage 3 symcenters            112,980              112,980
 stage 3 edges                  25,740               25,740
 stage 4                   175,459,200           35,091,841
 stage 5 symedges/centers   37,857,024            7,571,405

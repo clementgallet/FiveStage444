@@ -122,23 +122,12 @@ public class Tools {
 		Symmetry.init();
 		Tables.init();
 		CubeStage1.prune_table = new PruningStage1();
-		CubeStage1.prune_table.init();
-
 		CubeStage2.prune_table_edgcen = new PruningStage2EdgCen();
-		CubeStage2.prune_table_edgcen.init();
-
 		CubeStage3.prune_table_cen = new PruningStage3Cen();
-		CubeStage3.prune_table_cen.init();
 		CubeStage3.prune_table_edg = new PruningStage3Edg();
-		CubeStage3.prune_table_edg.init();
-
 		CubeStage4.prune_table = new PruningStage4();
-		CubeStage4.prune_table.init();
-
 		CubeStage5.prune_table_edgcen = new PruningStage5EdgCen();
-		CubeStage5.prune_table_edgcen.init();
 		CubeStage5.prune_table_edgcor = new PruningStage5EdgCor();
-		CubeStage5.prune_table_edgcor.init();
 	}
 
 	private static synchronized void init(boolean tryToReadFile, File fivephase_tables) {
@@ -322,5 +311,4 @@ public class Tools {
 			array[j] = t;
 		}
 	}
-	
 }

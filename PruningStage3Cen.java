@@ -6,6 +6,14 @@ import java.io.File;
 
 public final class PruningStage3Cen extends PruningFull {
 
+	PruningStage3Cen(){
+
+		// Creation of the pruning table.
+		num_positions = N_STAGE3_SYMCENTER_CONFIGS;
+		ptable = new byte[num_positions];
+
+	}
+
 	void init (){
 		int i;
 		fname = new File( tables_path, "stage3_cen_"+METRIC_STR+"_prune.rbk" );
@@ -13,9 +21,6 @@ public final class PruningStage3Cen extends PruningFull {
 		// Definition of the allowed moves.
 		num_moves = N_STAGE3_SLICE_MOVES;
 
-		// Creation of the pruning table.
-		num_positions = N_STAGE3_SYMCENTER_CONFIGS;
-		ptable = new byte[num_positions];
 		for (i = 0; i < num_positions; ++i) {
 			ptable[i] = -1;
 		}

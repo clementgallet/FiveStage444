@@ -15,7 +15,6 @@ abstract class Pruning {
 	protected int num_moves;
 	protected long count = 0;
 	protected int unique_count = 0;
-	protected File fname;
 	protected int back_dist = 30;
 
 	private static int[] nd = new int[30 * 4];
@@ -54,6 +53,8 @@ abstract class Pruning {
 		int i, dist;
 		long idx, old_count = 0;
 		int max_dist = 30;	//MAX_DISTANCE;
+
+		init();
 
 		long new_count = count;
 		for (dist = 0; dist < max_dist && new_count > 0 && dist < back_dist; ++dist) {

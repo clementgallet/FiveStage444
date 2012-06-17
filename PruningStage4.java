@@ -6,22 +6,26 @@ import java.io.File;
 
 public final class PruningStage4 extends Pruning {
 
+	PruningStage4(){
+
+		num_positions = N_STAGE4_SYMEDGE_CONFIGS*N_STAGE4_CORNER_CONFIGS*N_STAGE4_CENTER_CONFIGS;
+		n_packed = (int)(num_positions/5 + 1);
+		ptable_packed = new byte[n_packed];
+
+	}
+
 	void init (){
 		int i;
-		fname = new File( tables_path, "stage4_"+METRIC_STR+"_prune.rbk" );
 
 		// Definition of the allowed moves.
 		num_moves = N_STAGE4_SLICE_MOVES;
 
 		// Creation of the pruning table.
-		num_positions = N_STAGE4_SYMEDGE_CONFIGS*N_STAGE4_CORNER_CONFIGS*N_STAGE4_CENTER_CONFIGS;
 		int n = (int)(num_positions/4 + 1);
 		ptable = new byte[n];
 		for (i = 0; i < n; ++i) {
 			ptable[i] = 0;
 		}
-		n_packed = (int) (num_positions/5 + 1);
-		ptable_packed = new byte[n_packed];
 
 		// Fill the solved states.
 		for (i = 0; i < STAGE4_NUM_SOLVED_CENTER_CONFIGS; ++i) {
@@ -32,9 +36,9 @@ public final class PruningStage4 extends Pruning {
 	}
 
 	long do_move (long idx, int move){
-		byte cen = (byte)(idx % N_STAGE4_CENTER_CONFIGS);
+		int cen = (int)(idx % N_STAGE4_CENTER_CONFIGS);
 		int rest = (int)(idx / N_STAGE4_CENTER_CONFIGS);
-		short cor = (short) (rest % N_STAGE4_CORNER_CONFIGS);
+		int cor = rest % N_STAGE4_CORNER_CONFIGS;
 		int edge = rest / N_STAGE4_CORNER_CONFIGS;
 	
 		int newEdge = Tables.move_table_symEdgeSTAGE4[edge][move];
@@ -53,9 +57,9 @@ public final class PruningStage4 extends Pruning {
 	void saveIdxAndSyms (long idx, int dist){
 		set_dist (idx, dist);
 
-		byte cen = (byte)(idx % N_STAGE4_CENTER_CONFIGS);
+		int cen = (int)(idx % N_STAGE4_CENTER_CONFIGS);
 		int rest = (int)(idx / N_STAGE4_CENTER_CONFIGS);
-		short cor = (short) (rest % N_STAGE4_CORNER_CONFIGS);
+		int cor = rest % N_STAGE4_CORNER_CONFIGS;
 		int edge = rest / N_STAGE4_CORNER_CONFIGS;
 
 		int symI = 0;

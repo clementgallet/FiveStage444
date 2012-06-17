@@ -487,7 +487,7 @@ public final class Tables {
 
 			for (sym = 1; sym < N_SYM_STAGE3; ++sym) {
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-				cube2.conjugateCenters( sym );
+				cube2.rightMultCenters (Symmetry.invSymIdx[sym]);
 				int cen = cube2.convert_centers_to_stage3();
 				set_1_1bit( cen, isRepTable); // not a rep.
 				if( cen == u )
@@ -565,7 +565,7 @@ public final class Tables {
 			s1.convert_edges_to_std_cube (cube1);
 			for (sym = 0; sym < N_SYM_STAGE3; ++sym) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.conjugateEdges (sym);
+				cube2.rightMultEdges (Symmetry.invSymIdx[sym]);
 				move_table_edge_conjSTAGE3[u][sym] = cube2.convert_edges_to_stage3();
 			}
 		}
