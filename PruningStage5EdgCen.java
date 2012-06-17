@@ -29,7 +29,6 @@ public final class PruningStage5EdgCen extends Pruning {
 
 		// Fill the solved states.
 		set_dist(0, 3);
-		set_dist(21616*N_STAGE5_CENTER_PERM+143, 3);
 		back_dist = 11;
 	}
 
@@ -38,11 +37,11 @@ public final class PruningStage5EdgCen extends Pruning {
 		int edge = (int)(idx / N_STAGE5_CENTER_PERM);
 
 		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][move];
-		int sym = newEdge & 0x3F;
-		int edgeRep = newEdge >> 6;
+		int allsym = newEdge & 0xFF;
+		int edgeRep = newEdge >> 8;
 
 		cen = Tables.move_table_cenSTAGE5[cen][move];
-		cen = Tables.move_table_cen_conjSTAGE5[cen][sym];
+		cen = Tables.move_table_cen_conjSTAGE5[cen][allsym];
 		return edgeRep*N_STAGE5_CENTER_PERM + cen;
 	}
 
@@ -51,15 +50,17 @@ public final class PruningStage5EdgCen extends Pruning {
 
 		int edge = (int)(idx / N_STAGE5_CENTER_PERM);
 		int cen = (int)(idx % N_STAGE5_CENTER_PERM);
-		int symI = 0;
-		long syms = Tables.hasSymEdgeSTAGE5[edge];
-		while (syms != 0){
-			if(( syms & 0x1L ) == 1 ){
-				short cen2 = Tables.move_table_cen_conjSTAGE5[cen][symI];
-				set_dist (edge*N_STAGE5_CENTER_PERM + cen2, dist);
+		for (int i=0; i < 4; i++){
+			int symI = 0;
+			long syms = Tables.hasSymEdgeSTAGE5[edge][i];
+			while (syms != 0){
+				if(( syms & 0x1L ) == 1 ){
+					short cen2 = Tables.move_table_cen_conjSTAGE5[cen][(symI<<2)+i];
+					set_dist (edge*N_STAGE5_CENTER_PERM + cen2, dist);
+				}
+				symI++;
+				syms >>= 1;
 			}
-			symI++;
-			syms >>= 1;
 		}
 	}
 }

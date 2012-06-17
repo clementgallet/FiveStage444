@@ -945,36 +945,33 @@ public final class Tables {
 
 	/*** init stage 5 symEdgeToEdge ***/
 	public static int[] symEdgeToEdgeSTAGE5 = new int[N_STAGE5_SYMEDGE_PERM];
-	public static long[] hasSymEdgeSTAGE5 = new long[N_STAGE5_SYMEDGE_PERM];
+	public static long[][] hasSymEdgeSTAGE5 = new long[N_STAGE5_SYMEDGE_PERM][4];
 
 	public static void initSymEdgeToEdgeStage5 (){
 
 		System.out.println( "Starting symEdgeToEdge stage 5..." );
-		int i, sym;
+		int i, sym, cosym;
 		int u, repIdx = 0;
 		CubeStage5 cs = new CubeStage5();
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 
 		byte[] isRepTable = new byte[N_STAGE5_EDGE_PERM >> 3];
-		for (u = 0; u < ( N_STAGE5_EDGE_PERM >> 3 ); ++u){
-			isRepTable[u] = 0;
-		}
-		for (u = 0; u < N_STAGE5_SYMEDGE_PERM; ++u){
-			hasSymEdgeSTAGE5[u] = 0;
-		}
 
 		for (u = 0; u < N_STAGE5_EDGE_PERM; ++u) {
 			if( get_value_1bit( u, isRepTable ) != 0 ) continue;
 			cs.convert_edges_to_std_cube (u, cube1);
 
-			for (sym = 1; sym < N_SYM_STAGE5; ++sym) { // starts with 1 because sym 0 is id.
-				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.conjugateEdges (sym);
-				int edge = cube2.convert_edges_to_stage5 ();
-				set_1_1bit( edge, isRepTable ); // not a rep.
-				if( edge == u )
-					hasSymEdgeSTAGE5[repIdx] |= ( 0x1L << sym );
+			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
+				for (cosym = 0; cosym < 4; ++cosym) {
+					System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
+					cube2.conjugateEdges (sym);
+					cube2.rightMultEdges (Symmetry.invSymIdx[2*cosym]);
+					int edge = cube2.convert_edges_to_stage5 ();
+					set_1_1bit( edge, isRepTable ); // not a rep.
+					if( edge == u )
+						hasSymEdgeSTAGE5[repIdx][cosym] |= ( 0x1L << sym );
+				}
 			}
 			symEdgeToEdgeSTAGE5[repIdx++] = u;
 		}
@@ -1007,12 +1004,12 @@ public final class Tables {
 	}
 
 	/*** init stage 5 corner conjugate ***/
-	public static byte[][] move_table_corner_conjSTAGE5 = new byte[N_STAGE5_CORNER_PERM][N_SYM_STAGE5]; // (96) 96*48
+	public static byte[][] move_table_corner_conjSTAGE5 = new byte[N_STAGE5_CORNER_PERM][N_SYM_STAGE5*4]; // (96) 96*48
 
 	public static void initCornerConjStage5 (){
 
 		System.out.println( "Starting corner conjugate stage 5..." );
-		int i, sym;
+		int i, sym, cosym;
 		int u;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
@@ -1023,21 +1020,24 @@ public final class Tables {
 			s1.corner = u;
 			s1.convert_corners_to_std_cube (cube1);
 			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
-				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
-				cube2.conjugateCorners (sym);
-				move_table_corner_conjSTAGE5[u][sym] = cube2.convert_corners_to_stage5 ();
+				for (cosym = 0; cosym < 4; ++cosym) {
+					System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
+					cube2.conjugateCorners (sym);
+					cube2.rightMultCorners (cosym*2);
+					move_table_corner_conjSTAGE5[u][(sym<<2) + cosym] = cube2.convert_corners_to_stage5 ();
+				}
 			}
 		}
 		System.out.println( "Finishing corner conjugate stage 5..." );
 	}
 
 	/*** init stage 5 center conjugate ***/
-	public static short[][] move_table_cen_conjSTAGE5 = new short[N_STAGE5_CENTER_PERM][N_SYM_STAGE5]; // (1728) 1728*48
+	public static short[][] move_table_cen_conjSTAGE5 = new short[N_STAGE5_CENTER_PERM][N_SYM_STAGE5*4]; // (1728) 1728*48
 
 	public static void initCenterConjStage5 (){
 
 		System.out.println( "Starting center conjugate stage 5..." );
-		int i, sym;
+		int i, sym, cosym;
 		int u;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
@@ -1048,9 +1048,12 @@ public final class Tables {
 			s1.center = u;
 			s1.convert_centers_to_std_cube (cube1);
 			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
-				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-				cube2.conjugateCenters (sym);
-				move_table_cen_conjSTAGE5[u][sym] = cube2.convert_centers_to_stage5();
+				for (cosym = 0; cosym < 4; ++cosym) {
+					System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
+					cube2.conjugateCenters (sym);
+					cube2.rightMultCenters (cosym*2);
+					move_table_cen_conjSTAGE5[u][(sym<<2) + cosym] = cube2.convert_centers_to_stage5();
+				}
 			}
 		}
 		System.out.println( "Finishing center conjugate stage 5..." );

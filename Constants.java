@@ -49,7 +49,7 @@ public final class Constants{
 	public static final int N_STAGE4_CORNER_CONFIGS = 420;	//8!/96
 
 	public static final int N_STAGE5_EDGE_PERM = 96*96*96;
-	public static final int N_STAGE5_SYMEDGE_PERM = 21908;
+	public static final int N_STAGE5_SYMEDGE_PERM = 7444;
 	public static final int N_STAGE5_CENTER_PERM = 12*12*12;
 	public static final int N_STAGE5_CORNER_PERM = 96;
 

@@ -671,23 +671,18 @@ public final class CubeState{
 
 	public int convert_symedges_to_stage5 (){
 		CubeState cube = new CubeState();
-		//int minEdge = 99999999;
-		//int minSym = 0;
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE5; sym++ ){
-			System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
-			cube.conjugateEdges(sym);
-			rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, cube.convert_edges_to_stage5 ());
-			if( rep >= 0 )
-				return ( rep << 6 ) + sym;
-			/*int edge = cube.convert_edges_to_stage5 ();
-			if( edge < minEdge){
-				minEdge = edge;
-				minSym = sym;
-			}*/
+			for (int cosym=0; cosym < 4; cosym++ ){
+				System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
+				cube.conjugateEdges(sym);
+				cube.rightMultEdges (Symmetry.invSymIdx[2*cosym]);
+				rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, cube.convert_edges_to_stage5 ());
+				if( rep >= 0 )
+					return ( rep << 8 ) + ( sym << 2 ) + cosym;
+			}
 		}
 		return -1;
-		//return ( Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, minEdge) << 6 ) + minSym;
 	}
 
 	public short convert_centers_to_stage5 (){
@@ -732,8 +727,10 @@ public final class CubeState{
 		result_cube.corner = convert_corners_to_stage5 ();
 		result_cube.center = convert_centers_to_stage5 ();
 		int symedge = convert_symedges_to_stage5 ();
-		result_cube.edge = symedge >> 6;
+		result_cube.cosym = symedge & 0x03;
+		symedge >>= 2;
 		result_cube.sym = symedge & 0x3F;
+		result_cube.edge = symedge >> 6;
 	}
 
 	public void print (){
