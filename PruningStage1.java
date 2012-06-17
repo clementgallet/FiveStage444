@@ -6,22 +6,26 @@ import java.io.File;
 
 public final class PruningStage1 extends Pruning {
 
+	PruningStage1(){
+
+		num_positions = N_CORNER_ORIENT*N_SYMEDGE_COMBO8;
+		n_packed = (int)(num_positions/5 + 1);
+		ptable_packed = new byte[n_packed];
+
+	}
+
 	void init (){
 		int i;
-		fname = new File( tables_path, "stage1_"+METRIC_STR+"_prune.rbk" );
 
 		// Definition of the allowed moves.
 		num_moves = N_BASIC_MOVES;
 
 		// Creation of the pruning table.
-		num_positions = N_CORNER_ORIENT*N_SYMEDGE_COMBO8;
 		int n = (int)(num_positions/4 + 1);
 		ptable = new byte[n];
 		for (i = 0; i < n; ++i) {
 			ptable[i] = 0;
 		}
-		n_packed = (int)(num_positions/5 + 1);
-		ptable_packed = new byte[n_packed];
 
 		// Fill the solved states.
 		set_dist( 0*N_CORNER_ORIENT + 1906, 3);

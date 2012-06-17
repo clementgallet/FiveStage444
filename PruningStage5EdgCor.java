@@ -6,16 +6,20 @@ import java.io.File;
 
 public final class PruningStage5EdgCor extends PruningFull {
 
-	void init (){
-		int i;
-		fname = new File( tables_path, "stage5_edgcor_"+METRIC_STR+"_prune.rbk" );
-
-		// Definition of the allowed moves.
-		num_moves = N_STAGE5_MOVES;
+	PruningStage5EdgCor(){
 
 		// Creation of the pruning table.
 		num_positions = N_STAGE5_SYMEDGE_PERM*N_STAGE5_CORNER_PERM;
 		ptable = new byte[num_positions];
+
+	}
+
+	void init (){
+		int i;
+
+		// Definition of the allowed moves.
+		num_moves = N_STAGE5_MOVES;
+
 		for (i = 0; i < num_positions; ++i) {
 			ptable[i] = -1;
 		}
@@ -29,7 +33,7 @@ public final class PruningStage5EdgCor extends PruningFull {
 	}
 
 	int do_move (int idx, int move){
-		byte cor = (byte)(idx % N_STAGE5_CORNER_PERM);
+		int cor = idx % N_STAGE5_CORNER_PERM;
 		int edge = idx / N_STAGE5_CORNER_PERM;
 
 		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][move];
@@ -45,7 +49,7 @@ public final class PruningStage5EdgCor extends PruningFull {
 		ptable[idx] = (byte)dist;
 		count++;
 
-		byte cor = (byte)(idx % N_STAGE5_CORNER_PERM);
+		int cor = idx % N_STAGE5_CORNER_PERM;
 		int edge = idx / N_STAGE5_CORNER_PERM;
 		int symI = 0;
 		long syms = Tables.hasSymEdgeSTAGE5[edge];

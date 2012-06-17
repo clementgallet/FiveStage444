@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Random;
 import java.lang.OutOfMemoryError;
 
-//import net.gnehzr.tnoodle.utils.Utils;
+import net.gnehzr.tnoodle.utils.Utils;
 
 public class Tools {
 	static boolean inited = false;
@@ -121,28 +121,17 @@ public class Tools {
 		Symmetry.init();
 		Tables.init();
 		CubeStage1.prune_table = new PruningStage1();
-		CubeStage1.prune_table.init();
-
 		CubeStage2.prune_table_edgcen = new PruningStage2EdgCen();
-		CubeStage2.prune_table_edgcen.init();
-
 		CubeStage3.prune_table_cen = new PruningStage3Cen();
-		CubeStage3.prune_table_cen.init();
 		CubeStage3.prune_table_edg = new PruningStage3Edg();
-		CubeStage3.prune_table_edg.init();
-
 		CubeStage4.prune_table = new PruningStage4();
-		CubeStage4.prune_table.init();
-
 		CubeStage5.prune_table_edgcen = new PruningStage5EdgCen();
-		CubeStage5.prune_table_edgcen.init();
 		CubeStage5.prune_table_edgcor = new PruningStage5EdgCor();
-		CubeStage5.prune_table_edgcor.init();
 
 		if(tryToReadFromDisk) {
 			try {
-				//FileInputStream is = new FileInputStream(new File(Utils.getResourceDirectory(), "fivephase_tables"));
-				FileInputStream is = new FileInputStream(new File(Constants.tables_path, "fivephase_tables_ftm"));
+				FileInputStream is = new FileInputStream(new File(Utils.getResourceDirectory(), "fivephase_tables"));
+				//FileInputStream is = new FileInputStream(new File(Constants.tables_path, "fivephase_tables_ftm"));
 				inited = initFrom(new DataInputStream(is));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -291,7 +280,7 @@ public class Tools {
 		return cube;
 	}
 
-	/* Fisher–Yates shuffle */
+	/* Fisher-Yates shuffle */
 	private static void randomPerm(Random r, byte[] array, int n) {
 		int i, j;
 		byte t;
