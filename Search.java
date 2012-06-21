@@ -521,9 +521,12 @@ public final class Search {
 			/* Move cube1 to cube2 */
 			cube2.edge = Tables.move_table_edgeSTAGE3[cube1.edge][mov_idx];
 			cube2.edge_odd = cube1.edge_odd ^ stage3_move_parity[mov_idx];
-			int newCen = Tables.move_table_symCenterSTAGE3[cube1.center][Symmetry.moveConjugate3[mov_idx][cube1.sym]];
-			cube2.sym = Symmetry.symIdxMultiply[newCen & 0x7][cube1.sym];
-			cube2.center = newCen >> 3;
+			int newCen = Tables.move_table_symCenterSTAGE3[cube1.center][Symmetry.moveConjugate3[mov_idx][Symmetry.symIdxMultiply[cube1.sym][cube1.cosym]]];
+			int newSym = ( newCen & 0xF ) >> 1;
+			int newCosym = newCen & 0x01;
+			cube2.cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[Symmetry.invSymIdx[cube1.sym]][newCosym]][Symmetry.symIdxMultiply[cube1.sym][cube1.cosym]];
+			cube2.sym = Symmetry.symIdxMultiply[newSym][cube1.sym];
+			cube2.center = newCen >> 4;
 
 			int newDistCen = cube2.prune_table_cen.ptable[cube2.center];
 			if (newDistCen > depth-1) continue;
@@ -656,10 +659,10 @@ public final class Search {
 			/* Move cube1 to cube2 */
 			cube2.center = Tables.move_table_cenSTAGE5[cube1.center][mov_idx];
 			cube2.corner = Tables.move_table_cornerSTAGE5[cube1.corner][mov_idx];
-			int newEdge = Tables.move_table_symEdgeSTAGE5[cube1.edge][Symmetry.moveConjugate5[mov_idx][Symmetry.symIdxMultiply[cube1.sym][cube1.cosym*2]]];
+			int newEdge = Tables.move_table_symEdgeSTAGE5[cube1.edge][Symmetry.moveConjugate5[mov_idx][Symmetry.symIdxMultiply[cube1.sym][cube1.cosym]]];
 			int newSym = ( newEdge & 0xFF ) >> 2;
 			int newCosym = newEdge & 0x03;
-			cube2.cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[Symmetry.invSymIdx[cube1.sym]][newCosym*2]][Symmetry.symIdxMultiply[cube1.sym][2*cube1.cosym]] / 2;
+			cube2.cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[Symmetry.invSymIdx[cube1.sym]][newCosym]][Symmetry.symIdxMultiply[cube1.sym][cube1.cosym]];
 			cube2.sym = Symmetry.symIdxMultiply[newSym][cube1.sym];
 			cube2.edge = newEdge >> 8;
 

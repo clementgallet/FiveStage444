@@ -530,11 +530,14 @@ public final class CubeState{
 		CubeState cube = new CubeState();
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE3; sym++ ){
-			System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
-			cube.rightMultCenters(Symmetry.invSymIdx[sym]);
-			rep = Arrays.binarySearch(Tables.symCenterToCenterSTAGE3, cube.convert_centers_to_stage3());
-			if( rep >= 0 )
-				return ( rep << 3 ) + sym;
+			for (int cosym=0; cosym < 2; cosym++ ){
+				System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
+				cube.rightMultCenters(Symmetry.invSymIdx[cosym]);
+				cube.conjugateCenters(sym);
+				rep = Arrays.binarySearch(Tables.symCenterToCenterSTAGE3, cube.convert_centers_to_stage3());
+				if( rep >= 0 )
+					return ( rep << 4 ) + ( sym << 1 ) + cosym;
+			}
 		}
 		return -1;
 	}
@@ -552,8 +555,9 @@ public final class CubeState{
 
 	public void convert_to_stage3 (CubeStage3 result_cube){
 		int symcen = convert_symcenters_to_stage3 ();
-		result_cube.center = symcen >> 3;
-		result_cube.sym = symcen & 0x7;
+		result_cube.center = symcen >> 4;
+		result_cube.sym = ( symcen & 0xF ) >> 1;
+		result_cube.cosym = symcen & 0x1;
 		result_cube.edge = convert_edges_to_stage3 ();
 		result_cube.edge_odd = edgeUD_parity_odd ();
 	}
@@ -562,8 +566,6 @@ public final class CubeState{
 
 	public int convert_symedges_to_stage4 (){
 		CubeState cube = new CubeState();
-		//int minEdge = 1999999999;
-		//int minSym = 0;
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE4; sym++ ){
 			copyTo (cube);
@@ -571,15 +573,8 @@ public final class CubeState{
 			rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE4, Tables.lrfb_get_edge_rep(cube.cube_state_to_lrfb ()));
 			if( rep >= 0 )
 				return ( rep << 4 ) + sym;
-			/*
-			int u2 = Tables.lrfb_get_edge_rep(cube.cube_state_to_lrfb ());
-			if( u2 < minEdge){
-				minEdge = u2;
-				minSym = sym;
-			}*/
 		}
 		return -1;
-		//return ( Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE4, minEdge) << 4 ) + minSym;
 	}
 
 	public short convert_corners_to_stage4 (){
@@ -675,7 +670,7 @@ public final class CubeState{
 		for (int sym=0; sym < Constants.N_SYM_STAGE5; sym++ ){
 			for (int cosym=0; cosym < 4; cosym++ ){
 				System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
-				cube.rightMultEdges (Symmetry.invSymIdx[2*cosym]);
+				cube.rightMultEdges (Symmetry.invSymIdx[cosym]);
 				cube.conjugateEdges(sym);
 				rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, cube.convert_edges_to_stage5 ());
 				if( rep >= 0 )

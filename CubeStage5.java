@@ -23,12 +23,12 @@ public final class CubeStage5 {
 		center = Tables.move_table_cenSTAGE5[center][sqs_move_code];
 		corner = Tables.move_table_cornerSTAGE5[corner][sqs_move_code];
 
-		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][Symmetry.moveConjugate5[sqs_move_code][Symmetry.symIdxMultiply[sym][2*cosym]]];
+		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][Symmetry.moveConjugate5[sqs_move_code][Symmetry.symIdxMultiply[sym][cosym]]];
 
 		int newSym = ( newEdge & 0xFF ) >> 2;
 		int newCosym = newEdge & 0x03;
 
-		cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[Symmetry.invSymIdx[sym]][newCosym*2]][Symmetry.symIdxMultiply[sym][2*cosym]] / 2;
+		cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[Symmetry.invSymIdx[sym]][newCosym]][Symmetry.symIdxMultiply[sym][cosym]];
 		sym = Symmetry.symIdxMultiply[newSym][sym];
 		edge = newEdge >> 8;
 	}

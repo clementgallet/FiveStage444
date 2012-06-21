@@ -472,7 +472,7 @@ public final class Tables {
 	public static void initSymCenterToCenterStage3 (){
 
 		System.out.println( "Starting symCenterToCenter stage 3..." );
-		int i, sym;
+		int i, sym, cosym;
 		int u, repIdx = 0;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
@@ -485,14 +485,19 @@ public final class Tables {
 			if( get_value_1bit(u, isRepTable) != 0 ) continue;
 			s3.convert_centers_to_std_cube(u, cube1);
 
-			for (sym = 1; sym < N_SYM_STAGE3; ++sym) {
-				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-				cube2.rightMultCenters (Symmetry.invSymIdx[sym]);
-				int cen = cube2.convert_centers_to_stage3();
-				set_1_1bit( cen, isRepTable); // not a rep.
-				if( cen == u )
-					hasSymCenterSTAGE3[repIdx] |= (1 << sym);
+			for (sym = 0; sym < N_SYM_STAGE3; ++sym) {
+				for (cosym = 0; cosym < 2; cosym++) {
+					System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
+					cube2.rightMultCenters (Symmetry.invSymIdx[cosym]);
+					cube2.conjugateCenters (sym);
+					int cen = cube2.convert_centers_to_stage3();
+					set_1_1bit( cen, isRepTable); // not a rep.
+					if( cen == u )
+						hasSymCenterSTAGE3[repIdx] |= (1 << ( sym<<1+cosym ));
+				}
 			}
+			if(( u == 900830 ) || ( u == 900844 ) || ( u == 900850 ) || ( u == 900853 ) || ( u == 900857 ) || ( u == 900858 ) || ( u == 900871 ) || ( u == 900872 ) || ( u == 900876 ) || ( u == 900879 ) || ( u == 900885 ) || ( u == 900899 ))
+				System.out.println(repIdx);
 			symCenterToCenterSTAGE3[repIdx++] = u;
 		}
 		System.out.println( "Finishing symCenterToCenter stage 3... generated "+repIdx+" reps." );
@@ -548,12 +553,12 @@ public final class Tables {
 	}
 
 	/*** init stage 3 edge conjugate ***/
-	public static short[][] move_table_edge_conjSTAGE3 = new short[N_STAGE3_EDGE_CONFIGS][N_SYM_STAGE3]; // (2187) 2187*48
+	public static short[][] move_table_edge_conjSTAGE3 = new short[N_STAGE3_EDGE_CONFIGS][N_SYM_STAGE3*2];
 
 	public static void initEdgeConjStage3 (){
 
 		System.out.println( "Starting edge conjugate stage 3..." );
-		int i, sym;
+		int i, sym, cosym;
 		int u;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
@@ -564,9 +569,12 @@ public final class Tables {
 			s1.edge = u;
 			s1.convert_edges_to_std_cube (cube1);
 			for (sym = 0; sym < N_SYM_STAGE3; ++sym) {
-				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.rightMultEdges (Symmetry.invSymIdx[sym]);
-				move_table_edge_conjSTAGE3[u][sym] = cube2.convert_edges_to_stage3();
+				for (cosym = 0; cosym < 2; ++cosym) {
+					System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
+					cube2.rightMultEdges (Symmetry.invSymIdx[cosym]);
+					cube2.conjugateEdges (sym);
+					move_table_edge_conjSTAGE3[u][(sym<<1)+cosym] = cube2.convert_edges_to_stage3();
+				}
 			}
 		}
 		System.out.println( "Finishing edge conjugate stage 3..." );
@@ -726,14 +734,14 @@ public final class Tables {
 		//int n = 40320*40320;
 		int n = 952222297+1; // TODO: Use a byte array like for the other stages. Reduce size by using big gaps in the array.
 		for (u1 = 0; u1 < n; ++u1) {
-			if ((u1 << 22 ) == 0) { // Throughly u1 % 1000 == 0
+			/*if ((u1 << 22 ) == 0) { // Throughly u1 % 1000 == 0
 				if (repcount == 5958 && u1 < 304700000 ) { // Obtained though execution
 					u1 = 952220735; // big gap !!
 				}
 				if (repcount == N_STAGE4_SYMEDGE_CONFIGS) {
 					break;
 				}
-			}
+			}*/
 			int uH = u1 / 40320;
 			int uL = u1 % 40320;
 			if (parity_perm8_table[uH] != parity_perm8_table[uL]) {
@@ -744,7 +752,7 @@ public final class Tables {
 
 				lrfb_to_cube_state(u1, cs1);
 				boolean isRep = true;
-				for (sym = 1; sym < N_SYM_STAGE4; ++sym) {
+				for (sym = 0; sym < N_SYM_STAGE4; ++sym) {
 					System.arraycopy(cs1.m_edge, 0, cs2.m_edge, 0, 24);
 					cs2.conjugateEdges (sym);
 					int newLrfb = lrfb_get_edge_rep(cs2.cube_state_to_lrfb ());
@@ -965,7 +973,7 @@ public final class Tables {
 			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
 				for (cosym = 0; cosym < 4; ++cosym) {
 					System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-					cube2.rightMultEdges (Symmetry.invSymIdx[2*cosym]);
+					cube2.rightMultEdges (Symmetry.invSymIdx[cosym]);
 					cube2.conjugateEdges (sym);
 					int edge = cube2.convert_edges_to_stage5 ();
 					set_1_1bit( edge, isRepTable ); // not a rep.
@@ -1022,7 +1030,7 @@ public final class Tables {
 			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
 				for (cosym = 0; cosym < 4; ++cosym) {
 					System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
-					cube2.rightMultCorners (cosym*2);
+					cube2.rightMultCorners (cosym);
 					cube2.conjugateCorners (sym);
 					move_table_corner_conjSTAGE5[u][(sym<<2) + cosym] = cube2.convert_corners_to_stage5 ();
 				}
@@ -1050,7 +1058,7 @@ public final class Tables {
 			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
 				for (cosym = 0; cosym < 4; ++cosym) {
 					System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-					cube2.rightMultCenters (cosym*2);
+					cube2.rightMultCenters (cosym);
 					cube2.conjugateCenters (sym);
 					move_table_cen_conjSTAGE5[u][(sym<<2) + cosym] = cube2.convert_centers_to_stage5();
 				}

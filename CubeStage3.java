@@ -2,8 +2,9 @@ package cg.fivestage444;
 
 public final class CubeStage3 {
 
-	public int center; // (113330)
+	public int center;
 	public int sym;
+	public int cosym;
 	public int edge; //edge coordinate (12870)
 	public boolean edge_odd; //odd parity of edges
 
@@ -13,6 +14,7 @@ public final class CubeStage3 {
 	public final void copyTo (CubeStage3 cube1){
 		cube1.center = center;
 		cube1.sym = sym;
+		cube1.cosym = cosym;
 		cube1.edge = edge;
 		cube1.edge_odd = edge_odd;
 	}
@@ -23,10 +25,13 @@ public final class CubeStage3 {
 			edge_odd = ! edge_odd;
 		}
 
-		int newCen = Tables.move_table_symCenterSTAGE3[center][Symmetry.moveConjugate3[move_code][sym]];
+		int newCen = Tables.move_table_symCenterSTAGE3[center][Symmetry.moveConjugate3[move_code][Symmetry.symIdxMultiply[sym][cosym]]];
+		int newSym = ( newCen & 0xF ) >> 1;
+		int newCosym = newCen & 0x01;
 
-		sym = Symmetry.symIdxMultiply[newCen & 0x7][sym];
-		center = newCen >> 3;
+		cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[Symmetry.invSymIdx[sym]][newCosym]][Symmetry.symIdxMultiply[sym][cosym]];
+		sym = Symmetry.symIdxMultiply[newSym][sym];
+		center = newCen >> 4;
 	}
 
 	public boolean centers_solved ()

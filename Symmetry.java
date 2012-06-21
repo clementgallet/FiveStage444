@@ -41,17 +41,17 @@ public final class Symmetry {
 							//SymLR2
 							for (i=0; i<24; i++){
 								symEdges[idx][i] = cube.m_edge[i];
-								symEdges[idx+1][i] = cube.m_edge[symRLEdges[i]];
+								symEdges[idx+4][i] = cube.m_edge[symRLEdges[i]];
 								symCenters[idx][i] = cube.m_cen[i];
-								symCenters[idx+1][i] = cube.m_cen[symRLCenters[i]];
+								symCenters[idx+4][i] = cube.m_cen[symRLCenters[i]];
 							}
 							for (i=0; i<8; i++){
 								symCornersPerm[idx][i] = (byte)(cube.m_cor[i] % 8);
-								symCornersPerm[idx+1][i] = (byte)(cube.m_cor[symRLCorners[i]] % 8);
+								symCornersPerm[idx+4][i] = (byte)(cube.m_cor[symRLCorners[i]] % 8);
 								symCornersOrient[idx][i] = (byte)(cube.m_cor[i] / 8);
-								symCornersOrient[idx+1][i] = (byte)(3 + (cube.m_cor[symRLCorners[i]] / 8));
+								symCornersOrient[idx+4][i] = (byte)(3 + (cube.m_cor[symRLCorners[i]] / 8));
 							}
-							idx += 2;
+							idx += 1;
 
 							cube.do_move (Us2, FTM);
 							cube.do_move (Ds2, FTM);
@@ -59,6 +59,7 @@ public final class Symmetry {
 						cube.do_move (Fs2, FTM);
 						cube.do_move (Bs2, FTM);
 					}
+					idx += 4;
 					cube.do_move (Us, FTM);
 					cube.do_move (Ds3, FTM);
 				}
