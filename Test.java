@@ -6,7 +6,7 @@ public final class Test {
 
 	public static void main(String[] args){
 		Tools.init();
-		testMove5Hack(2);
+		testMove5(10);
 	}
 
 	public static void randomScramble(CubeState cube, byte[] moves, int length){
@@ -56,64 +56,6 @@ public final class Test {
 		}
 		else {
 			System.out.println("Found no difference between (move + convert5) and (convert5 + move)");
-		}
-	}
-	public static void testMove5Hack(int n){
-
-		int move, move1;
-		Random gen = new Random();
-		CubeState cube = new CubeState();
-		CubeStage5 cs1 = new CubeStage5();
-		CubeStage5 cs2 = new CubeStage5();
-		CubeStage5 cs3 = new CubeStage5();
-		CubeStage5 cs4 = new CubeStage5();
-		CubeStage5 cs5 = new CubeStage5();
-
-		boolean error = false;
-		for( int i=0; i < 10;){
-
-			/* Generate a random cube in stage 5 subgroup and convert to CubeStage5 coordinates */
-			randomScramble( cube, Constants.stage5_slice_moves, Constants.N_STAGE5_MOVES );
-			cube.convert_to_stage5(cs1);
-			cube.convert_to_stage5(cs4);
-			cube.convert_to_stage5(cs5);
-
-			if( cs1.sym != 1 || cs1.cosym != 1) continue;
-			move = gen.nextInt(Constants.N_STAGE5_MOVES);
-			move1 = move;
-			int newEdge = Tables.move_table_symEdgeSTAGE5[cs5.edge][Symmetry.moveConjugate5[move1][Symmetry.symIdxMultiply[cs5.cosym*2][cs5.sym]]];
-			int newSym = ( newEdge & 0xFF ) >> 2;
-			int newCosym = newEdge & 0x03;
-			if( newCosym != 1 ) continue;
-			cube.do_move( Constants.stage5_slice_moves[move] );
-			cs1.do_move(move);
-			cs4.do_move(move);
-			move = gen.nextInt(Constants.N_STAGE5_MOVES);
-			cube.do_move( Constants.stage5_slice_moves[move] );
-			cube.convert_to_stage5(cs2);
-			cs4.do_move(move);
-			//if(( cs4.edge == cs2.edge ) && (cs4.corner == cs2.corner) && (cs4.center == cs2.center))
-			//	continue;
-			i++;
-			error = true;
-			System.out.println("sym: "+cs5.sym+" - cosym: "+cs5.cosym+" - newCosym:"+newCosym+" - newSym:"+newSym);
-			for( int k=0; k<4; k++){
-				cs3.edge = cs1.edge;
-				cs3.sym = cs1.sym;
-				cs3.corner = cs1.corner;
-				cs3.center = cs1.center;
-
-				cs3.cosym = k;
-				cs3.do_move(move);
-				if(( cs3.edge == cs2.edge ) && (cs3.corner == cs2.corner) && (cs3.center == cs2.center)){
-					System.out.println("Good cosym: "+k+" - Obtained cosym: "+cs1.cosym);
-					error = false;
-				}
-			}
-			if( error ){
-				System.out.println("Could not find any good cosym !!!");
-
-			}
 		}
 	}
 }

@@ -659,7 +659,7 @@ public final class Search {
 			int newEdge = Tables.move_table_symEdgeSTAGE5[cube1.edge][Symmetry.moveConjugate5[mov_idx][Symmetry.symIdxMultiply[cube1.sym][cube1.cosym*2]]];
 			int newSym = ( newEdge & 0xFF ) >> 2;
 			int newCosym = newEdge & 0x03;
-			cube2.cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[cube1.sym][2*cube1.cosym]][Symmetry.symIdxMultiply[Symmetry.invSymIdx[cube1.sym]][2*newCosym]] / 2;
+			cube2.cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[Symmetry.invSymIdx[cube1.sym]][newCosym*2]][Symmetry.symIdxMultiply[cube1.sym][2*cube1.cosym]] / 2;
 			cube2.sym = Symmetry.symIdxMultiply[newSym][cube1.sym];
 			cube2.edge = newEdge >> 8;
 

@@ -965,8 +965,8 @@ public final class Tables {
 			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
 				for (cosym = 0; cosym < 4; ++cosym) {
 					System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-					cube2.conjugateEdges (sym);
 					cube2.rightMultEdges (Symmetry.invSymIdx[2*cosym]);
+					cube2.conjugateEdges (sym);
 					int edge = cube2.convert_edges_to_stage5 ();
 					set_1_1bit( edge, isRepTable ); // not a rep.
 					if( edge == u )
@@ -1022,8 +1022,8 @@ public final class Tables {
 			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
 				for (cosym = 0; cosym < 4; ++cosym) {
 					System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
-					cube2.conjugateCorners (sym);
 					cube2.rightMultCorners (cosym*2);
+					cube2.conjugateCorners (sym);
 					move_table_corner_conjSTAGE5[u][(sym<<2) + cosym] = cube2.convert_corners_to_stage5 ();
 				}
 			}
@@ -1050,8 +1050,8 @@ public final class Tables {
 			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
 				for (cosym = 0; cosym < 4; ++cosym) {
 					System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-					cube2.conjugateCenters (sym);
 					cube2.rightMultCenters (cosym*2);
+					cube2.conjugateCenters (sym);
 					move_table_cen_conjSTAGE5[u][(sym<<2) + cosym] = cube2.convert_centers_to_stage5();
 				}
 			}

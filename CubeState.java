@@ -675,8 +675,8 @@ public final class CubeState{
 		for (int sym=0; sym < Constants.N_SYM_STAGE5; sym++ ){
 			for (int cosym=0; cosym < 4; cosym++ ){
 				System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
-				cube.conjugateEdges(sym);
 				cube.rightMultEdges (Symmetry.invSymIdx[2*cosym]);
+				cube.conjugateEdges(sym);
 				rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, cube.convert_edges_to_stage5 ());
 				if( rep >= 0 )
 					return ( rep << 8 ) + ( sym << 2 ) + cosym;
