@@ -1,5 +1,8 @@
 TODO:
 
 - Cancel moves between stages.
-- Try anti-symmetries
+- Try anti-symmetries (works for stage 5, might work for stage 4)
+- From Kociemba, do not consider solutions that contain a strict prefix that is also a solution (how in practice ?)
+- From Kociemba, filter last move possibilities (is it efficient ?)
+- From Kociemba, store specifically which moves decrease the distance when the distance to the subgroup is small
 - Doc the code !
