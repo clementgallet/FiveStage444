@@ -144,7 +144,7 @@ public class Tools {
 				FileInputStream is = new FileInputStream(fivephase_tables);
 				inited = initFrom(new DataInputStream(is));
 			} catch (FileNotFoundException e) {
-				l.log(Level.INFO, "Failed to load " + fivephase_tables, e);
+				l.info("Couldn't find " + fivephase_tables + ", going to create it.");
 			}
 		}
 		if(!inited) {
