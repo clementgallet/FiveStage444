@@ -35,7 +35,7 @@ public final class PruningStage4 extends Pruning {
 		back_dist = ( METRIC == STM ) ? 12 : 13;
 	}
 
-	long do_move (long idx, int move){
+	final long do_move (long idx, int move){
 		int cen = (int)(idx % N_STAGE4_CENTER_CONFIGS);
 		int rest = (int)(idx / N_STAGE4_CENTER_CONFIGS);
 		int cor = rest % N_STAGE4_CORNER_CONFIGS;
@@ -54,16 +54,18 @@ public final class PruningStage4 extends Pruning {
 		return (edgeRep*N_STAGE4_CORNER_CONFIGS + cor) * N_STAGE4_CENTER_CONFIGS + cen;
 	}
 
-	void saveIdxAndSyms (long idx, int dist){
+	final void saveIdxAndSyms (long idx, int dist){
 		set_dist (idx, dist);
+
+		int edge = (int) ( idx / ( N_STAGE4_CORNER_CONFIGS * N_STAGE4_CENTER_CONFIGS ));
+		int syms = Tables.hasSymEdgeSTAGE4[edge];
+		if( syms == 0 ) return;
 
 		int cen = (int)(idx % N_STAGE4_CENTER_CONFIGS);
 		int rest = (int)(idx / N_STAGE4_CENTER_CONFIGS);
 		int cor = rest % N_STAGE4_CORNER_CONFIGS;
-		int edge = rest / N_STAGE4_CORNER_CONFIGS;
 
 		int symI = 0;
-		int syms = Tables.hasSymEdgeSTAGE4[edge];
 		while (syms != 0){
 			if(( syms & 0x1 ) == 1 ){
 				byte cen2 = Tables.move_table_cen_conjSTAGE4[cen][symI];

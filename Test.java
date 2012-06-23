@@ -8,7 +8,7 @@ public final class Test {
 
 	public static void main(String[] args){
 
-		System.out.println("Pruning 1 takes "+timePruning1()+" ms" );
+		//System.out.println("Pruning 1 takes "+timePruning1()+" ms" );
 		System.out.println("Pruning 4 takes "+timePruning4()+" ms" );
 
 		Random gen = new Random(42);

@@ -52,6 +52,7 @@ abstract class Pruning {
 	public void analyse (){
 		int i, dist;
 		long idx, old_count = 0;
+		int old_dist, new_dist;
 		int max_dist = 30;	//MAX_DISTANCE;
 
 		init();
@@ -60,9 +61,12 @@ abstract class Pruning {
 		for (dist = 0; dist < max_dist && new_count > 0 && dist < back_dist; ++dist) {
 			System.out.println(" dist "+dist+": "+new_count+" positions.");
 			old_count = count;
+			old_dist = ((dist + 2) % 3) + 1;
+			//new_dist = (dist % 3) + 1;
 			for (idx = 0; idx < num_positions; ++idx) {
-				if (get_dist(idx) == (((dist + 2) % 3) + 1)){
-					generate (idx, 0, (dist % 3) + 1);
+				if (get_dist(idx) == old_dist){
+					//generate (idx, 0, new_dist);
+					generate (idx, 0, (dist%3)+1);
 				}
 			}
 			new_count = count - old_count;
@@ -71,9 +75,11 @@ abstract class Pruning {
 		for (; dist < max_dist && new_count > 0; ++dist) {
 			System.out.println(" dist "+dist+": "+new_count+" positions.");
 			old_count = count;
+			old_dist = ((dist + 2) % 3) + 1;
+			new_dist = (dist % 3) + 1;
 			for (idx = 0; idx < num_positions; ++idx) {
 				if (get_dist(idx) == 0){
-					generate (idx, ((dist + 2) % 3) + 1, (dist % 3) + 1);
+					generate (idx, old_dist, new_dist);
 				}
 			}
 			new_count = count - old_count;

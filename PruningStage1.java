@@ -32,7 +32,7 @@ public final class PruningStage1 extends Pruning {
 		back_dist = ( METRIC == STM ) ? 8 : 9;
 	}
 
-	long do_move (long idx, int move){
+	final long do_move (long idx, int move){
 		short co = (short)(idx % N_CORNER_ORIENT);
 		int edge = (int)(idx / N_CORNER_ORIENT);
 		
@@ -47,7 +47,7 @@ public final class PruningStage1 extends Pruning {
 		return (long)(edgeRep*N_CORNER_ORIENT + co);
 	}
 
-	void saveIdxAndSyms (long idx, int dist){
+	final void saveIdxAndSyms (long idx, int dist){
 		set_dist (idx, dist);
 
 		short co = (short)(idx % N_CORNER_ORIENT);
