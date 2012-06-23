@@ -29,7 +29,7 @@ public final class PruningStage1 extends Pruning {
 
 		// Fill the solved states.
 		set_dist( 0*N_CORNER_ORIENT + 1906, 3);
-		back_dist = 8;
+		back_dist = ( METRIC == STM ) ? 8 : 9;
 	}
 
 	long do_move (long idx, int move){

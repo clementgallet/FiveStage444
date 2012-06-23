@@ -219,7 +219,7 @@ public final class Tables {
 	public static int[] symEdgeToEdgeSTAGE1 = new int[N_SYMEDGE_COMBO8];
 	public static final long[] hasSymEdgeSTAGE1 = new long[N_SYMEDGE_COMBO8];
 
-	private static void initSymEdgeToEdgeStage1 (){
+	public static void initSymEdgeToEdgeStage1 (){
 		System.out.println( "Starting symEdgeToEdge stage 1..." );
 		int i, sym;
 		int u, repIdx = 0;
@@ -250,7 +250,7 @@ public final class Tables {
 	/*** init stage 1 symEdges ***/
 	public static int[][] move_table_symEdgeSTAGE1 = new int[N_SYMEDGE_COMBO8][N_BASIC_MOVES]; // (15582*64) 15582*36 = 560952
 
-	private static void initSymEdgeStage1 (){
+	public static void initSymEdgeStage1 (){
 
 		System.out.println( "Starting symEdge stage 1..." );
 		int i, mc;

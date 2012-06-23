@@ -420,7 +420,6 @@ public final class Search {
 	public boolean init_stage3 (int r){
 		int i;
 		if ( (found1 || found2) && ( endtime < System.currentTimeMillis()) ) return true;
-
 		r2 = r;
 		switch (r) {
 		case 0:
@@ -540,7 +539,7 @@ public final class Search {
 
 	public boolean init_stage4 (){
 		int i;
-		if ( found_sol && ( solver_mode == SUB_345 ) && ( endtime < System.currentTimeMillis())) return true;
+		if (( found2 || ( found_sol && ( solver_mode == SUB_345 ))) && ( endtime < System.currentTimeMillis())) return true;
 
 		c2.copyTo(c3);
 		c3.scramble( length3, move_list_stage3, stage3_slice_moves, Ff );
@@ -612,6 +611,7 @@ public final class Search {
 
 	public boolean init_stage5 (){
 		int i;
+		if ( found_sol && ( endtime < System.currentTimeMillis())) return true;
 
 		c3.copyTo(c4);
 		c4.scramble( length4, move_list_stage4, stage4_slice_moves );

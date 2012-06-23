@@ -7,14 +7,64 @@ import java.util.Random;
 public final class Test {
 
 	public static void main(String[] args){
-		Tools.init();
-		Random gen = new Random(44);
+
+		System.out.println("Pruning 1 takes "+timePruning1()+" ms" );
+		System.out.println("Pruning 4 takes "+timePruning4()+" ms" );
+
+		Random gen = new Random(42);
+		//Tools.init();
 		//testMove5(10);
+		/*
 		System.out.println("Search 1 takes "+( timeSearch1(1000, gen) / 1000.0 )+" ms" );
 		System.out.println("Search 2 takes "+( timeSearch2(1000, gen) / 1000.0 )+" ms" );
 		System.out.println("Search 3 takes "+( timeSearch3(1000, gen) / 1000.0 )+" ms" );
 		System.out.println("Search 4 takes "+( timeSearch4(1000, gen) / 1000.0 )+" ms" );
 		System.out.println("Search 5 takes "+( timeSearch5(1000, gen) / 1000.0 )+" ms" );
+
+		System.out.println("Search 1+2+3 takes "+( timeSearch123(1000, gen) / 1000.0 )+" ms" );
+		System.out.println("Search 2+3+4 takes "+( timeSearch234(1000, gen) / 1000.0 )+" ms" );
+		System.out.println("Search 3+4+5 takes "+( timeSearch345(1000, gen) / 1000.0 )+" ms" );
+		*/
+	}
+
+	public static long timePruning1(){
+		Symmetry.init();
+                Tables.init();
+		CubeStage1.prune_table = new PruningStage1();
+		Tables.initSymEdgeToEdgeStage1();
+		Tables.initSymEdgeStage1();
+		Tables.initCornerStage1();
+		Tables.initCornerConjStage1();
+		long time = System.currentTimeMillis();
+		CubeStage1.prune_table.analyse();
+		return System.currentTimeMillis() - time;
+	}
+
+	public static long timePruning4(){
+		Symmetry.init();
+                Tables.init();
+		CubeStage4.prune_table = new PruningStage4();
+		Tables.initParityTable();
+		Tables.initEdgeBStage4();
+		Tables.initEdgeAStage4();
+		Tables.initEdgeRepStage4();
+		Tables.initSymEdgeStage4();
+		Tables.initCornerStage4();
+		Tables.initCornerConjStage4();
+		Tables.initCenterStage4();
+		Tables.initCenterConjStage4();
+
+		long time = System.currentTimeMillis();
+		CubeStage4.prune_table.analyse();
+		return System.currentTimeMillis() - time;
+	}
+
+	public static void randomScramble(CubeState cube, Random gen){
+
+		cube.init();
+		for( int i=0; i < 100; i++ ){
+			cube.do_move(gen.nextInt(N_BASIC_MOVES), STM);
+		}		
 	}
 
 	public static void randomScramble(CubeState cube, byte[] moves, int length, Random gen){
@@ -163,6 +213,114 @@ public final class Test {
 			long itime = System.currentTimeMillis();
 			for (int length5 = d5; length5 < 100; ++length5){
 				if( s.search_stage5 (s1, length5, 0, N_STAGE5_MOVES, cubeDistEdgCen ))
+					break;
+			}
+			time += System.currentTimeMillis() - itime;
+		}
+
+		return time;
+	}
+
+	public static long timeSearch123(int n, Random gen){
+
+		Search s = new Search();
+		CubeStage1 s1 = new CubeStage1();
+		s.solver_mode = s.SUB_123;
+		/* Set up s for stopping after finding a solution */
+		s.endtime = System.currentTimeMillis() - 1;
+		s.MAX_STAGE2 = 100;
+		s.total_length = 100;
+		s.found1 = false;
+		for( int i=0; i<20; i++ ){
+			s.list1[i] = new CubeStage1();
+			s.list2[i] = new CubeStage2();
+		}
+		long time = 0;
+		for( int i=0; i < n; i++ ){
+
+			s.total_length = 100;
+			s.found1 = false;
+			/* Generate a random cube in stage 1 subgroup */
+			randomScramble(s.c, gen);
+
+			long itime = System.currentTimeMillis();
+
+			s.c.convert_to_stage1( s1 );
+			int d = s1.getDistance();
+			for (s.length1 = d; s.length1 < 100; ++s.length1)
+				if( s.search_stage1 (s1, s.length1, 0, Constants.N_BASIC_MOVES, d, 0 ))
+					break;
+
+			time += System.currentTimeMillis() - itime;
+		}
+
+		return time;
+	}
+
+	public static long timeSearch234(int n, Random gen){
+
+		Search s = new Search();
+		CubeStage2 s1 = new CubeStage2();
+		s.solver_mode = s.SUB_234;
+		/* Set up s for stopping after finding a solution */
+		s.endtime = System.currentTimeMillis() - 1;
+		s.MAX_STAGE3 = 100;
+		s.total_length = 100;
+		s.found2 = false;
+		for( int i=0; i<20; i++ ){
+			s.list2[i] = new CubeStage2();
+		}
+		long time = 0;
+		for( int i=0; i < n; i++ ){
+
+			s.total_length = 100;
+			s.found2 = false;
+			/* Generate a random cube in stage 2 subgroup */
+			randomScramble(s.c1, stage2_slice_moves, N_STAGE2_SLICE_MOVES, gen);
+			s.c1.convert_to_stage2( s1 );
+
+			int cubeDistCenF1 = s1.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s1.centerF + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symF]];
+			int cubeDistCenB1 = s1.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s1.centerB + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symB]];
+			int d2 = Math.max(cubeDistCenF1, cubeDistCenB1);
+
+			long itime = System.currentTimeMillis();
+			for (s.length2 = d2; s.length2 < 100; ++s.length2){
+				if( s.search_stage2 (s1, s.length2, 0, N_STAGE2_SLICE_MOVES, 0 ))
+					break;
+			}
+
+			time += System.currentTimeMillis() - itime;
+		}
+
+		return time;
+	}
+
+	public static long timeSearch345(int n, Random gen){
+
+		Search s = new Search();
+		CubeStage3 s1 = new CubeStage3();
+		s.solver_mode = s.SUB_345;
+		/* Set up s for stopping after finding a solution */
+		s.endtime = System.currentTimeMillis() - 1;
+		s.MAX_STAGE4 = 100;
+		s.total_length = 100;
+		s.found_sol = false;
+		long time = 0;
+		for( int i=0; i < n; i++ ){
+
+			s.total_length = 100;
+			s.found_sol = false;
+			/* Generate a random cube in stage 3 subgroup */
+			randomScramble(s.c2, stage3_slice_moves, N_STAGE3_SLICE_MOVES, gen);
+			s.c2.convert_to_stage3( s1 );
+
+			int cubeDistCen = s1.prune_table_cen.ptable[s1.center];
+			int cubeDistEdg = s1.prune_table_edg.ptable[( s1.edge<<1 ) + (s1.edge_odd?1:0)];
+			int d3 = Math.max(cubeDistCen, cubeDistEdg);
+
+			long itime = System.currentTimeMillis();
+			for (s.length3 = d3; s.length3 < 100; ++s.length3){
+				if( s.search_stage3 (s1, s.length3, 0, N_STAGE3_SLICE_MOVES ))
 					break;
 			}
 			time += System.currentTimeMillis() - itime;
