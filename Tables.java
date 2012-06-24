@@ -10,6 +10,7 @@ public final class Tables {
 		initMap96();
 		initCloc();
 		initPerm420();
+		initPerm6();
 		initE16Bm();
 		initSquaresCenterMap();
 	}
@@ -27,10 +28,8 @@ public final class Tables {
 		initSymCenterStage3();
 		initEdgeStage3();
 		initEdgeConjStage3();
-		initEdgeBStage4();
-		initEdgeAStage4();
 		initParityTable();
-		initEdgeRepStage4();
+		initSymEdgeToEdgeStage4();
 		initSymEdgeStage4();
 		initCornerStage4();
 		initCornerConjStage4();
@@ -98,7 +97,7 @@ public final class Tables {
 	}
 
 	/*** init map96 ***/
-	private static final byte[][] map96 = new byte[96][8];
+	public static final byte[][] map96 = new byte[96][8];
 
 	private static void initMap96 (){
 		int a1, i;
@@ -211,6 +210,22 @@ public final class Tables {
 					u2 = perm_n_pack (8, t3, 0);
 					perm_to_420[u2] = (short)(6*u + v);
 				}
+			}
+		}
+	}
+
+	/*** init_perm_to_6 ***/
+	public static final byte[] perm_to_6 = new byte[24*24]; // (420)
+
+	public static void initPerm6 (){
+		byte[] t = new byte[8];
+		byte[] t2 = new byte[8];
+		for( int i=0; i<6; i++ ){
+			perm_n_unpack (8, i, t, 0);
+			for (int w = 0; w < 96; w++) {
+				for (int k = 0; k < 8; k++)
+					t2[k] = t[map96[w][k]];
+				perm_to_6[perm_n_pack (4, t2, 0)*24 + perm_n_pack (4, t2, 4)] = (byte)i;
 			}
 		}
 	}
@@ -496,8 +511,6 @@ public final class Tables {
 						hasSymCenterSTAGE3[repIdx] |= (1 << ( sym<<1+cosym ));
 				}
 			}
-			if(( u == 900830 ) || ( u == 900844 ) || ( u == 900850 ) || ( u == 900853 ) || ( u == 900857 ) || ( u == 900858 ) || ( u == 900871 ) || ( u == 900872 ) || ( u == 900876 ) || ( u == 900879 ) || ( u == 900885 ) || ( u == 900899 ))
-				System.out.println(repIdx);
 			symCenterToCenterSTAGE3[repIdx++] = u;
 		}
 		System.out.println( "Finishing symCenterToCenter stage 3... generated "+repIdx+" reps." );
@@ -590,186 +603,45 @@ public final class Tables {
 		{  5,  9, 14, 18 }
 	};
 
-	private static final void array8_to_set_a (byte[] t, CubeState result_cube){
-		int i;
-		int j = 0;
-		for (i = 0; i < 8; ++i) {
-			if (i >= 4) {
-				j = i + 8;
-			} else {
-				j = i;
-			}
-			byte t1 = t[i];
-			if (t1 >= 4) {
-				t1 += 8;
-			}
-			result_cube.m_edge[j] = t1;
-		}
-	}
-
-	private static final void array8_to_set_b (byte[] t, CubeState result_cube){
-		int i;
-		for (i = 0; i < 8; ++i) {
-			result_cube.m_edge[4 + i] = (byte)(t[i] + 4);
-		}
-	}
-
-	public static final void lrfb_to_cube_state (int u, CubeState result_cube){
-		byte[] t = new byte[8];
-		result_cube.init ();
-		perm_n_unpack (8, u % 40320, t, 0);
-		array8_to_set_a (t, result_cube);
-		perm_n_unpack (8, u / 40320, t, 0);
-		array8_to_set_b (t, result_cube);
-	}
-
-	
-	public static int[] stage4_edge_hB = new int[40320]; // (40320 ?). Change from short to int then :(
-	public static int[] stage4_edge_hgB = new int[40320]; // (40320 ?). Change from short to int then :(
-
-	public static void initEdgeBStage4 (){
-		System.out.println( "Starting edge B stage 4..." );
-		byte i;
-		int u;
-		CubeState cs1 = new CubeState();
-		CubeState cs2 = new CubeState();
-		CubeState cs3 = new CubeState();
-		cs1.init ();
-		cs2.init ();
-		for (i = 0; i < 16; ++i ){
-			cs2.m_edge[i] = i;
-		}
-		for (u = 0; u < 40320; ++u) {
-			// lrfb_to_cube_state (40320*u, cs2); // Replaced by a nextPerm
-			int rep = 999;
-			int reph = 65000;
-			int Blr, Bfb;
-
-			for (i = 4; i < 8; ++i) {
-				cs1.m_edge[i] = i;
-			}
-
-			for (Blr = 0; Blr < 24; ++Blr) {
-
-				for (i = 8; i < 12; ++i) {
-					cs1.m_edge[i] = i;
-				}
-
-				for (Bfb = 0; Bfb < 24; ++Bfb) {
-					cs3.compose_edge (cs1, cs2);
-					int u3h = cs3.cube_state_to_lrfb_h ();
-					if (u3h < reph) {
-						reph = u3h;
-						rep = 24 * Blr + Bfb;
-					}
-					nextPerm( cs1.m_edge, 4, 8 );
-				}
-				nextPerm( cs1.m_edge, 4, 4 );
-			}
-			stage4_edge_hgB[u] = reph;
-			int repBlr = sqs_perm_to_rep[rep/24];
-			int repBfb = sqs_perm_to_rep[rep%24];
-			stage4_edge_hB[u] = 6*repBlr + repBfb;
-			nextPerm( cs2.m_edge, 8, 4 );
-		}
-		System.out.println( "Finishing edge B stage 4..." );
-	}
-
-	public static int[][] stage4_edge_hgA = new int[40320][36]; // (40320 ?). Change from short to int then :(
-
-	public static void initEdgeAStage4 (){
-		System.out.println( "Starting edge A stage 4..." );
-		int i;
-		int u, h1, h2;
-		CubeState cs1 = new CubeState();
-		CubeState cs2 = new CubeState();
-		CubeState cs3 = new CubeState();
-		cs1.init ();
-		cs2.init ();
-		for (u = 0; u < 40320; ++u) {
-			lrfb_to_cube_state (u, cs2);
-			for (h1 = 0; h1 < 36; ++h1) {
-				int repl = 65000;
-				int replr = h1 / 6;
-				int repfb = h1 % 6;
-				for (h2 = 0; h2 < 16; ++h2) {
-					perm_n_unpack (4, sqs_rep_to_perm[replr][h2%4], cs1.m_edge, 0);
-					if(( h2 % 4 ) == 0){ // Only need to update once every 4 iterations
-						perm_n_unpack (4, sqs_rep_to_perm[repfb][h2/4], cs1.m_edge, 12);
-						for (i = 12; i < 16; ++i) {
-							cs1.m_edge[i] += 12;
-						}
-					}
-					cs3.compose_edge (cs1, cs2);
-					int u3l = cs3.cube_state_to_lrfb_l();
-					if (u3l < repl) {
-						repl = u3l;
-					}
-				}
-				stage4_edge_hgA[u][h1] = repl;
-			}
-		}
-		System.out.println( "Finishing edge A stage 4..." );
-	}
-
-	public static final int lrfb_get_edge_rep (int u){
-		int reph = stage4_edge_hgB[u/40320];
-		int repl = stage4_edge_hgA[u % 40320][stage4_edge_hB[u/40320]];
-		return 40320*reph + repl;
-	}
-
 	public static int[] symEdgeToEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS]; // 5968
 	public static int[] hasSymEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS]; // 5968
 
-	public static void initEdgeRepStage4 (){
+	public static void initSymEdgeToEdgeStage4 (){
+		System.out.println( "Starting symEdgeToEdge stage 4..." );
+		int sym;
+		int u, repIdx = 0;
+		int uh, ul;
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		cube1.init ();
+		cube2.init ();
+		CubeStage4 s1 = new CubeStage4();
+		byte[] t = new byte[8];
 
-		System.out.println( "Starting edge rep stage 4..." );
-		int u1, sym;
-		CubeState cs1 = new CubeState();
-		CubeState cs2 = new CubeState();
-		cs1.init ();
-		cs2.init ();
+		byte[] isRepTable = new byte[(176400>>3) + 1];
+		for (u = 0; u < 176400; ++u) {
+			if( get_value_1bit(u, isRepTable) != 0 ) continue;
+			s1.convert_edges_to_std_cube( u, cube1 );
 
-		int repcount = 0;
-		//int n = 40320*40320;
-		int n = 952222297+1; // TODO: Use a byte array like for the other stages. Reduce size by using big gaps in the array.
-		for (u1 = 0; u1 < n; ++u1) {
-			if ((u1 << 22 ) == 0) { // Throughly u1 % 1000 == 0
-				if (repcount == 5958 && u1 < 304700000 ) { // Obtained though execution
-					u1 = 952220735; // big gap !!
-				}
-				if (repcount == N_STAGE4_SYMEDGE_CONFIGS) {
-					break;
-				}
-			}
-			int uH = u1 / 40320;
-			int uL = u1 % 40320;
-			if (parity_perm8_table[uH] != parity_perm8_table[uL]) {
-				continue;
-			}
-			int myrep = lrfb_get_edge_rep (u1);
-			if (myrep == u1) {
+			ul = perm_n_pack( 8, cube1.m_edge, 4 );
+			for (int i=0; i<4; i++)
+				t[i] = cube1.m_edge[i];
+			for (int i=4; i<8; i++)
+				t[i] = cube1.m_edge[i+8];
+			uh = perm_n_pack( 8, t, 0 );
+			if( parity_perm8_table[ul] != parity_perm8_table[uh] ) continue;
 
-				lrfb_to_cube_state(u1, cs1);
-				boolean isRep = true;
-				for (sym = 0; sym < N_SYM_STAGE4; ++sym) {
-					System.arraycopy(cs1.m_edge, 0, cs2.m_edge, 0, 24);
-					cs2.conjugateEdges (sym);
-					int newLrfb = lrfb_get_edge_rep(cs2.cube_state_to_lrfb ());
-					if( newLrfb == u1 )
-						hasSymEdgeSTAGE4[repcount] |= ( 1 << sym );
-					if( newLrfb < u1 ){
-						isRep = false;
-						hasSymEdgeSTAGE4[repcount] = 0;
-						break;
-					}
-				}
-				if (isRep){
-					symEdgeToEdgeSTAGE4[repcount++] = u1;
-				}
+			for (sym = 1; sym < N_SYM_STAGE4; ++sym) {
+				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
+				cube2.conjugateEdges (sym);
+				int edge = cube2.convert_edges_to_stage4();
+				set_1_1bit( edge, isRepTable); // not a rep.
+				if( edge == u )
+					hasSymEdgeSTAGE4[repIdx] |= (1 << sym);
 			}
+			symEdgeToEdgeSTAGE4[repIdx++] = u;
 		}
-		System.out.println( "Finishing edge rep stage 4, found "+repcount+" reps, last reped is "+symEdgeToEdgeSTAGE4[repcount-1]+"..." );
+		System.out.println( "Finishing symEdgeToEdge stage 4... generated "+repIdx+" reps." );
 	}
 
 	public static int[][] move_table_symEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS][N_STAGE4_SLICE_MOVES]; // (5968*16) 5968*16.
@@ -782,8 +654,9 @@ public final class Tables {
 		CubeState cs1 = new CubeState();
 		CubeState cs2 = new CubeState();
 		cs1.init ();
+		CubeStage4 s1 = new CubeStage4();
 		for (u = 0; u < N_STAGE4_SYMEDGE_CONFIGS; ++u) {
-			lrfb_to_cube_state (symEdgeToEdgeSTAGE4[u], cs1);
+			s1.convert_edges_to_std_cube( symEdgeToEdgeSTAGE4[u], cs1 );
 			for (mc = 0; mc < N_STAGE4_SLICE_MOVES; ++mc) {
 				System.arraycopy(cs1.m_edge, 0, cs2.m_edge, 0, 24);
 				cs2.rotate_sliceEDGE (stage4_slice_moves[mc], METRIC);

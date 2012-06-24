@@ -564,13 +564,26 @@ public final class CubeState{
 
 	private static byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
 
+	public int convert_edges_to_stage4 (){
+		int redge4of8 = 0;
+		int ledge4of8 = 0;
+		for( int i=0; i<4;i++){
+			redge4of8 |= 1 << (( m_edge[i] < 4 ) ? m_edge[i] : ( m_edge[i] - 8 ));
+			ledge4of8 |= 1 << ( m_edge[i+4] - 4 );
+		}
+		int perm6_rl = Tables.perm_to_6[perm_n_pack (4, m_edge, 4)*24 + perm_n_pack (4, m_edge, 0)];
+		int perm6_fb = Tables.perm_to_6[perm_n_pack (4, m_edge, 12)*24 + perm_n_pack (4, m_edge, 8)];
+
+		return ((( perm6_rl * 6 + perm6_fb ) * 70 + Tables.bm4of8_to_70[redge4of8] ) * 70 + Tables.bm4of8_to_70[ledge4of8] );
+	}
+
 	public int convert_symedges_to_stage4 (){
 		CubeState cube = new CubeState();
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE4; sym++ ){
 			copyTo (cube);
 			cube.conjugateEdges(sym);
-			rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE4, Tables.lrfb_get_edge_rep(cube.cube_state_to_lrfb ()));
+			rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE4, cube.convert_edges_to_stage4() );
 			if( rep >= 0 )
 				return ( rep << 4 ) + sym;
 		}
@@ -608,45 +621,6 @@ public final class CubeState{
 		result_cube.sym = symedge & 0xF;
 		result_cube.corner = convert_corners_to_stage4();
 		result_cube.center = convert_centers_to_stage4();
-	}
-
-	public int cube_state_to_lrfb_l (){
-		byte[] t = new byte[8];
-		set_a_to_array8 (t);
-		return Constants.perm_n_pack (8, t, 0);
-	}
-
-	public int cube_state_to_lrfb_h (){
-		byte[] t = new byte[8];
-		set_b_to_array8 (t);
-		return Constants.perm_n_pack (8, t, 0);
-	}
-
-	public int cube_state_to_lrfb (){
-		return 40320*cube_state_to_lrfb_h() + cube_state_to_lrfb_l();
-	}
-
-	public void set_a_to_array8 (byte[] t){
-		int i;
-		int j = 0;
-		for (i = 0; i < 8; ++i) {
-			if (i >= 4) {
-				j = i + 8;
-			} else {
-				j = i;
-			}
-			byte t1 = m_edge[j];
-			if (t1 >= 12)
-				t1 -= 8;
-			t[i] = t1;
-		}
-	}
-
-	public void set_b_to_array8 (byte[] t){
-		int i;
-		for (i = 0; i < 8; ++i) {
-			t[i] = (byte)(m_edge[4 + i] - 4);
-		}
 	}
 
 	private static byte std_to_sqs_cor[] = { 0, 4, 1, 5, 6, 2, 7, 3 };

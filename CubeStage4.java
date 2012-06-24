@@ -46,6 +46,38 @@ public final class CubeStage4 {
 
 	/* Convert functions */
 
+	public void convert_edges_to_std_cube (int e, CubeState result_cube){
+
+		result_cube.init();
+		short ledge4of8 = Tables.bm4of8[e % 70];
+		e /= 70;
+		short redge4of8 = Tables.bm4of8[e % 70];
+		e /= 70;
+		int perm6_fb = e % 6;
+		int perm6_rl = e / 6;
+		byte[] t = new byte[4];
+
+		int i1 = 0;
+		int i2 = 0;
+		Constants.perm_n_unpack( 4, perm6_rl, t, 0 );
+		for( int i=0; i < 8; i++ ){
+			if(( ledge4of8 & ( 1 << i )) != 0)
+				result_cube.m_edge[t[i1++]+4] = (byte)(i + 4);
+			else
+				result_cube.m_edge[(i2++)+8] = (byte)(i + 4);
+		}
+
+		i1 = 0;
+		i2 = 0;
+		Constants.perm_n_unpack( 4, perm6_fb, t, 0 );
+		for( int i=0; i < 8; i++ ){
+			if(( redge4of8 & ( 1 << i )) != 0)
+				result_cube.m_edge[i1++] = (byte)(( i < 4 ) ? i : i + 8);
+			else
+				result_cube.m_edge[t[i2++]+12] = (byte)(( i < 4 ) ? i : i + 8);
+		}
+	}
+
 	public void convert_corners_to_std_cube (CubeState result_cube){
 		int i;
 		byte[] t6 = new byte[4];

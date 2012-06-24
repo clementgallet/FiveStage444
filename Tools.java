@@ -189,9 +189,6 @@ public class Tools {
 			read(Tables.move_table_symCenterSTAGE3, in);
 			read(Tables.move_table_edgeSTAGE3, in);
 			read(Tables.move_table_edge_conjSTAGE3, in);
-			read(Tables.stage4_edge_hB, in);
-			read(Tables.stage4_edge_hgB, in);
-			read(Tables.stage4_edge_hgA, in);
 			read(Tables.symEdgeToEdgeSTAGE4, in);
 			read(Tables.move_table_symEdgeSTAGE4, in);
 			read(Tables.move_table_cornerSTAGE4, in);
@@ -234,9 +231,6 @@ public class Tools {
 		write(Tables.move_table_symCenterSTAGE3, out);
 		write(Tables.move_table_edgeSTAGE3, out);
 		write(Tables.move_table_edge_conjSTAGE3, out);
-		write(Tables.stage4_edge_hB, out);
-		write(Tables.stage4_edge_hgB, out);
-		write(Tables.stage4_edge_hgA, out);
 		write(Tables.symEdgeToEdgeSTAGE4, out);
 		write(Tables.move_table_symEdgeSTAGE4, out);
 		write(Tables.move_table_cornerSTAGE4, out);

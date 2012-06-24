@@ -6,13 +6,57 @@ import java.util.Random;
 
 public final class Test {
 
+
 	public static void main(String[] args){
 
 		//System.out.println("Pruning 1 takes "+timePruning1()+" ms" );
-		System.out.println("Pruning 4 takes "+timePruning4()+" ms" );
+		//System.out.println("Pruning 4 takes "+timePruning4()+" ms" );
 
-		Random gen = new Random(42);
-		//Tools.init();
+		Random gen = new Random();
+		Tools.init();
+
+		CubeState cube = new CubeState();
+		CubeState cube2 = new CubeState();
+		CubeStage4 s1 = new CubeStage4();
+		randomScramble(cube, stage4_slice_moves, N_STAGE4_SLICE_MOVES, gen);
+		//randomScramble(cube, stage5_slice_moves, N_STAGE5_MOVES, gen);
+		cube.print();
+		int edge = cube.convert_edges_to_stage4();
+		System.out.println(edge);
+		System.out.println(edge%70);
+		edge /= 70;
+		System.out.println(edge%70);
+		edge /= 70;
+		System.out.println(edge%6);
+		System.out.println(edge/6);
+
+		int sym = gen.nextInt(16);
+		cube.conjugateEdges(sym);
+		//cube.do_move(Ff2);
+		cube.print();
+		edge = cube.convert_edges_to_stage4();
+		System.out.println(edge);
+		System.out.println(edge%70);
+		edge /= 70;
+		System.out.println(edge%70);
+		edge /= 70;
+		System.out.println(edge%6);
+		System.out.println(edge/6);
+
+		s1.convert_edges_to_std_cube( cube.convert_edges_to_stage4(), cube2 );
+		cube2.print();
+
+		cube2.conjugateEdges(Symmetry.invSymIdx[sym]);
+		cube2.print();
+		edge = cube2.convert_edges_to_stage4();
+		System.out.println(edge);
+		System.out.println(edge%70);
+		edge /= 70;
+		System.out.println(edge%70);
+		edge /= 70;
+		System.out.println(edge%6);
+		System.out.println(edge/6);
+
 		//testMove5(10);
 		/*
 		System.out.println("Search 1 takes "+( timeSearch1(1000, gen) / 1000.0 )+" ms" );
@@ -45,9 +89,7 @@ public final class Test {
                 Tables.init();
 		CubeStage4.prune_table = new PruningStage4();
 		Tables.initParityTable();
-		Tables.initEdgeBStage4();
-		Tables.initEdgeAStage4();
-		Tables.initEdgeRepStage4();
+		Tables.initSymEdgeToEdgeStage4();
 		Tables.initSymEdgeStage4();
 		Tables.initCornerStage4();
 		Tables.initCornerConjStage4();
