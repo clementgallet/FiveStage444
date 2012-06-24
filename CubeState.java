@@ -567,12 +567,35 @@ public final class CubeState{
 	public int convert_edges_to_stage4 (){
 		int redge4of8 = 0;
 		int ledge4of8 = 0;
-		for( int i=0; i<4;i++){
-			redge4of8 |= 1 << (( m_edge[i] < 4 ) ? m_edge[i] : ( m_edge[i] - 8 ));
-			ledge4of8 |= 1 << ( m_edge[i+4] - 4 );
+		byte[] edges_rl = new byte[8];
+		byte[] edges_fb = new byte[8];
+
+		int i_rl = 4;
+		int i_fb = 0;
+		for( int i=0; i<8;i++){
+			if( m_edge[i+4] < 8 ){
+				ledge4of8 |= 1 << i;
+				edges_rl[i_rl++] = m_edge[i+4];
+			}
+			else
+				edges_fb[i_fb++] = (byte)(m_edge[i+4] - 8);
 		}
-		int perm6_rl = Tables.perm_to_6[perm_n_pack (4, m_edge, 4)*24 + perm_n_pack (4, m_edge, 0)];
-		int perm6_fb = Tables.perm_to_6[perm_n_pack (4, m_edge, 12)*24 + perm_n_pack (4, m_edge, 8)];
+
+		int u;
+		i_rl = 0;
+		i_fb = 4;
+		for( int i=0; i<8;i++){
+			u = (i < 4) ? i : i + 8;
+			if( m_edge[u] < 4 ){
+				redge4of8 |= 1 << i;
+				edges_rl[i_rl++] = m_edge[u];
+			}
+			else
+				edges_fb[i_fb++] = (byte)(m_edge[u] - 8);
+		}
+
+		int perm6_rl = Tables.perm_to_420[perm_n_pack (8, edges_rl, 0)]%6;
+		int perm6_fb = Tables.perm_to_420[perm_n_pack (8, edges_fb, 0)]%6;
 
 		return ((( perm6_rl * 6 + perm6_fb ) * 70 + Tables.bm4of8_to_70[redge4of8] ) * 70 + Tables.bm4of8_to_70[ledge4of8] );
 	}

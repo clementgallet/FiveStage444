@@ -594,14 +594,6 @@ public final class Tables {
 	}
 
 	/*** init_stage4 ***/
-	public static final int sqs_rep_to_perm[][] = {
-		{  0,  7, 16, 23 },
-		{  1,  6, 17, 22 },
-		{  2, 10, 13, 21 },
-		{  3, 11, 12, 20 },
-		{  4,  8, 15, 19 },
-		{  5,  9, 14, 18 }
-	};
 
 	public static int[] symEdgeToEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS]; // 5968
 	public static int[] hasSymEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS]; // 5968
@@ -661,6 +653,7 @@ public final class Tables {
 				System.arraycopy(cs1.m_edge, 0, cs2.m_edge, 0, 24);
 				cs2.rotate_sliceEDGE (stage4_slice_moves[mc], METRIC);
 				move_table_symEdgeSTAGE4[u][mc] = cs2.convert_symedges_to_stage4();
+				//System.out.println(u+" x "+mc+" = "+(cs2.convert_symedges_to_stage4()>>4));
 			}
 		}
 		System.out.println( "Finishing sym edge stage 4..." );

@@ -59,6 +59,15 @@ public final class CubeStage5 {
 
 	/* Convert functions */
 
+	public static final int sqs_rep_to_perm[][] = {
+		{  0,  7, 16, 23 },
+		{  1,  6, 17, 22 },
+		{  2, 10, 13, 21 },
+		{  3, 11, 12, 20 },
+		{  4,  8, 15, 19 },
+		{  5,  9, 14, 18 }
+	};
+
 	public void convert_edges_to_std_cube (int edge2, CubeState result_cube){
 		int i;
 
@@ -67,13 +76,13 @@ public final class CubeStage5 {
 		int ep3 = edge2/(96*96);
 		int rep = Tables.sqs_perm_to_rep[ep1/4];
 		Constants.perm_n_unpack (4, ep1/4, result_cube.m_edge, 0);
-		Constants.perm_n_unpack (4, Tables.sqs_rep_to_perm[rep][ep1 % 4], result_cube.m_edge, 4);
+		Constants.perm_n_unpack (4, sqs_rep_to_perm[rep][ep1 % 4], result_cube.m_edge, 4);
 		rep = Tables.sqs_perm_to_rep[ep2/4];
 		Constants.perm_n_unpack (4, ep2/4, result_cube.m_edge, 8);
-		Constants.perm_n_unpack (4, Tables.sqs_rep_to_perm[rep][ep2 % 4], result_cube.m_edge, 12);
+		Constants.perm_n_unpack (4, sqs_rep_to_perm[rep][ep2 % 4], result_cube.m_edge, 12);
 		rep = Tables.sqs_perm_to_rep[ep3/4];
 		Constants.perm_n_unpack (4, ep3/4, result_cube.m_edge, 16);
-		Constants.perm_n_unpack (4, Tables.sqs_rep_to_perm[rep][ep3 % 4], result_cube.m_edge, 20);
+		Constants.perm_n_unpack (4, sqs_rep_to_perm[rep][ep3 % 4], result_cube.m_edge, 20);
 		for (i = 0; i < 24; ++i) {
 			result_cube.m_edge[i] += 4*(i/4);
 		}
@@ -87,7 +96,7 @@ public final class CubeStage5 {
 
 		int rep = Tables.sqs_perm_to_rep[corner/4];
 		Constants.perm_n_unpack (4, corner/4, old_m_cor, 0);
-		Constants.perm_n_unpack (4, Tables.sqs_rep_to_perm[rep][corner % 4], old_m_cor, 4);
+		Constants.perm_n_unpack (4, sqs_rep_to_perm[rep][corner % 4], old_m_cor, 4);
 		for (i = 0; i < 8; ++i) {
 			old_m_cor[i] += (byte)(4*(i/4));
 		}

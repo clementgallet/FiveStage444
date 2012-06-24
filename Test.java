@@ -15,48 +15,7 @@ public final class Test {
 		Random gen = new Random();
 		Tools.init();
 
-		CubeState cube = new CubeState();
-		CubeState cube2 = new CubeState();
-		CubeStage4 s1 = new CubeStage4();
-		randomScramble(cube, stage4_slice_moves, N_STAGE4_SLICE_MOVES, gen);
-		//randomScramble(cube, stage5_slice_moves, N_STAGE5_MOVES, gen);
-		cube.print();
-		int edge = cube.convert_edges_to_stage4();
-		System.out.println(edge);
-		System.out.println(edge%70);
-		edge /= 70;
-		System.out.println(edge%70);
-		edge /= 70;
-		System.out.println(edge%6);
-		System.out.println(edge/6);
-
-		int sym = gen.nextInt(16);
-		cube.conjugateEdges(sym);
-		//cube.do_move(Ff2);
-		cube.print();
-		edge = cube.convert_edges_to_stage4();
-		System.out.println(edge);
-		System.out.println(edge%70);
-		edge /= 70;
-		System.out.println(edge%70);
-		edge /= 70;
-		System.out.println(edge%6);
-		System.out.println(edge/6);
-
-		s1.convert_edges_to_std_cube( cube.convert_edges_to_stage4(), cube2 );
-		cube2.print();
-
-		cube2.conjugateEdges(Symmetry.invSymIdx[sym]);
-		cube2.print();
-		edge = cube2.convert_edges_to_stage4();
-		System.out.println(edge);
-		System.out.println(edge%70);
-		edge /= 70;
-		System.out.println(edge%70);
-		edge /= 70;
-		System.out.println(edge%6);
-		System.out.println(edge/6);
-
+		testMove4(10);
 		//testMove5(10);
 		/*
 		System.out.println("Search 1 takes "+( timeSearch1(1000, gen) / 1000.0 )+" ms" );
@@ -369,6 +328,47 @@ public final class Test {
 		}
 
 		return time;
+	}
+
+	public static void testMove4(int n){
+
+		int move;
+		Random gen = new Random();
+		CubeState cube = new CubeState();
+		CubeStage4 cs1 = new CubeStage4();
+		CubeStage4 cs2 = new CubeStage4();
+
+		boolean error = false;
+		for( int i=0; i < 100; i++ ){
+
+			/* Generate a random cube in stage 4 subgroup and convert to CubeStage5 coordinates */
+			randomScramble( cube, Constants.stage4_slice_moves, Constants.N_STAGE4_SLICE_MOVES, gen );
+			cube.convert_to_stage4(cs1);
+
+			/* Apply n random moves from both the cube and the CubeStage5 coordinates */
+			for( int j=0; j<n; j++ ){
+				move = gen.nextInt(Constants.N_STAGE4_SLICE_MOVES);
+				cube.do_move( Constants.stage4_slice_moves[move] );
+				cs1.do_move(move);
+			}
+
+			/* Test if the two CubeStage4 are identical
+			   Don't check for syms because they might be different due to symmetrical positions */
+			cube.convert_to_stage4(cs2);
+			if(( cs1.edge != cs2.edge ) || (cs1.corner != cs2.corner) || (cs1.center != cs2.center)){
+				error = true;
+				break;
+			}
+		}
+
+		if( error ){
+			System.out.println("Found a difference between (move + convert4) and (convert4 + move)");
+			System.out.println("edge1:"+cs1.edge+"-corner1:"+cs1.corner+"-center1:"+cs1.center);
+			System.out.println("edge2:"+cs2.edge+"-corner2:"+cs2.corner+"-center2:"+cs2.center);
+		}
+		else {
+			System.out.println("Found no difference between (move + convert4) and (convert4 + move)");
+		}
 	}
 
 	public static void testMove5(int n){

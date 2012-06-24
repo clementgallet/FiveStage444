@@ -62,9 +62,9 @@ public final class CubeStage4 {
 		Constants.perm_n_unpack( 4, perm6_rl, t, 0 );
 		for( int i=0; i < 8; i++ ){
 			if(( ledge4of8 & ( 1 << i )) != 0)
-				result_cube.m_edge[t[i1++]+4] = (byte)(i + 4);
+				result_cube.m_edge[i+4] = (byte)( t[i1++] + 4 );
 			else
-				result_cube.m_edge[(i2++)+8] = (byte)(i + 4);
+				result_cube.m_edge[i+4] = (byte)( (i2++) + 8);
 		}
 
 		i1 = 0;
@@ -72,9 +72,9 @@ public final class CubeStage4 {
 		Constants.perm_n_unpack( 4, perm6_fb, t, 0 );
 		for( int i=0; i < 8; i++ ){
 			if(( redge4of8 & ( 1 << i )) != 0)
-				result_cube.m_edge[i1++] = (byte)(( i < 4 ) ? i : i + 8);
+				result_cube.m_edge[( i < 4 ) ? i : i + 8] = (byte)(i1++);
 			else
-				result_cube.m_edge[t[i2++]+12] = (byte)(( i < 4 ) ? i : i + 8);
+				result_cube.m_edge[( i < 4 ) ? i : i + 8] = (byte)(t[i2++] + 12);
 		}
 	}
 
