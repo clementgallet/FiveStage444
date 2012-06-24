@@ -19,45 +19,17 @@ public final class CubeStage3 {
 		cube1.edge_odd = edge_odd;
 	}
 
-	public final void do_move (int move_code){
-		edge = Tables.move_table_edgeSTAGE3[edge][move_code];
-		if (Constants.stage3_move_parity[move_code]) {
-			edge_odd = ! edge_odd;
-		}
-
-		int newCen = Tables.move_table_symCenterSTAGE3[center][Symmetry.moveConjugate3[move_code][Symmetry.symIdxMultiply[sym][cosym]]];
-		int newSym = ( newCen & 0xF ) >> 1;
-		int newCosym = newCen & 0x01;
-
-		cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[Symmetry.invSymIdx[sym]][newCosym]][Symmetry.symIdxMultiply[sym][cosym]];
-		sym = Symmetry.symIdxMultiply[newSym][sym];
-		center = newCen >> 4;
-	}
-
-	public boolean centers_solved ()
-	{
-		for (int i = 0; i < Constants.STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS; ++i)
-			if ( center == Constants.stage3_solved_sym_centers[i])
-				return true;	//If we found a matching center value, then it is solved.
-
-		return false;
-	}
-
-	public boolean edges_solved ()
-	{
+	public boolean is_solved (){
 		if (edge_odd)
 			return false;	//not solved if odd edge parity
 
 		if (edge != 494)
 			return false;	//not solved if wrong edge value
 
-		return true;
-	}
+		for (int i = 0; i < Constants.STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS; ++i)
+			if ( center == Constants.stage3_solved_sym_centers[i])
+				return true;	//If we found a matching center value, then it is solved.
 
-	public boolean is_solved ()
-	{
-		if (edges_solved())
-			return centers_solved();
 		return false;
 	}
 

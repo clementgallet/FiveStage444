@@ -19,7 +19,6 @@ public final class Constants{
 	public static int METRIC = FTM;
 	public static String METRIC_STR = (METRIC == STM) ? "stm" : "ftm";
 
-	public static final int N_SYM_ALL = 96; // With inverse.
 	public static final int N_SYM = 48;
 	public static final int N_SYM_STAGE1 = 48;
 	public static final int N_SYM_STAGE2 = 16;
@@ -399,6 +398,7 @@ public final class Constants{
 	 * @param length	length of the array
 	 * @param offset	index of the first element where the permutation starts in the table (can be >0)
 	 */
+
 	public static final void nextPerm (byte[] array, int length, int offset){
 		int j = length - 2;
 		while (j >= 0 && ( array[j+offset] >= array[j+1+offset] ))
@@ -431,7 +431,6 @@ public final class Constants{
 
 	public static final int STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS = 6;
 	public static final int stage3_solved_sym_centers[] = {
-	//112966, 112974, 112975, 112977, 112978, 112979
 	56966, 56974, 56975, 56977, 56978, 56979
 	};
 	// True solved centers, better not deleting. Edit: I'm so wise !

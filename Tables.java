@@ -10,7 +10,6 @@ public final class Tables {
 		initMap96();
 		initCloc();
 		initPerm420();
-		initPerm6();
 		initE16Bm();
 		initSquaresCenterMap();
 	}
@@ -210,22 +209,6 @@ public final class Tables {
 					u2 = perm_n_pack (8, t3, 0);
 					perm_to_420[u2] = (short)(6*u + v);
 				}
-			}
-		}
-	}
-
-	/*** init_perm_to_6 ***/
-	public static final byte[] perm_to_6 = new byte[24*24]; // (420)
-
-	public static void initPerm6 (){
-		byte[] t = new byte[8];
-		byte[] t2 = new byte[8];
-		for( int i=0; i<6; i++ ){
-			perm_n_unpack (8, i, t, 0);
-			for (int w = 0; w < 96; w++) {
-				for (int k = 0; k < 8; k++)
-					t2[k] = t[map96[w][k]];
-				perm_to_6[perm_n_pack (4, t2, 0)*24 + perm_n_pack (4, t2, 4)] = (byte)i;
 			}
 		}
 	}
@@ -610,8 +593,8 @@ public final class Tables {
 		CubeStage4 s1 = new CubeStage4();
 		byte[] t = new byte[8];
 
-		byte[] isRepTable = new byte[(176400>>3) + 1];
-		for (u = 0; u < 176400; ++u) {
+		byte[] isRepTable = new byte[((N_STAGE4_EDGE_CONFIGS*2)>>3) + 1];
+		for (u = 0; u < N_STAGE4_EDGE_CONFIGS*2; ++u) { // *2 because you didn't take care of the parity.
 			if( get_value_1bit(u, isRepTable) != 0 ) continue;
 			s1.convert_edges_to_std_cube( u, cube1 );
 
@@ -621,7 +604,7 @@ public final class Tables {
 			for (int i=4; i<8; i++)
 				t[i] = cube1.m_edge[i+8];
 			uh = perm_n_pack( 8, t, 0 );
-			if( parity_perm8_table[ul] != parity_perm8_table[uh] ) continue;
+			if( parity_perm8_table[ul] != parity_perm8_table[uh] ) continue; // getting rid of the parity.
 
 			for (sym = 1; sym < N_SYM_STAGE4; ++sym) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
@@ -653,7 +636,6 @@ public final class Tables {
 				System.arraycopy(cs1.m_edge, 0, cs2.m_edge, 0, 24);
 				cs2.rotate_sliceEDGE (stage4_slice_moves[mc], METRIC);
 				move_table_symEdgeSTAGE4[u][mc] = cs2.convert_symedges_to_stage4();
-				//System.out.println(u+" x "+mc+" = "+(cs2.convert_symedges_to_stage4()>>4));
 			}
 		}
 		System.out.println( "Finishing sym edge stage 4..." );
@@ -755,14 +737,7 @@ public final class Tables {
 
 	public static final short squares_cen_map[] = { 0x0F, 0x33, 0x3C, 0x55, 0x5A, 0x66, 0x99, 0xA5, 0xAA, 0xC3, 0xCC, 0xF0 };
 
-	public static final int sqs_perm_to_rep[] = {
-		0, 1, 2, 3, 4, 5,
-		1, 0, 4, 5, 2, 3,
-		3, 2, 5, 4, 0, 1,
-		5, 4, 3, 2, 1, 0
-	};
-
-	public static byte[][] move_table_cornerSTAGE5 = new byte[N_STAGE5_CORNER_PERM][N_STAGE5_MOVES]; // TODO: (96) 96*12
+	public static byte[][] move_table_cornerSTAGE5 = new byte[N_STAGE5_CORNER_PERM][N_STAGE5_MOVES]; // (96) 96*12
 
 	public static void initSquaresMovemap (){
 

@@ -5,5 +5,4 @@ TODO:
 - From Kociemba, do not consider solutions that contain a strict prefix that is also a solution (how in practice ?)
 - From Kociemba, filter last move possibilities (is it efficient ?)
 - From Kociemba, store specifically which moves decrease the distance when the distance to the subgroup is small
-- Find a better way to get the edge coord of stage 4
 - Doc the code !

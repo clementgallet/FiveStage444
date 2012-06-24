@@ -35,15 +35,7 @@ public final class CubeStage5 {
 
 	public boolean is_solved (){
 
-		if (Tables.move_table_cen_conjSTAGE5[center][(sym<<2)+cosym] == 0 && Tables.move_table_corner_conjSTAGE5[corner][(sym<<2)+cosym] == 0 && edge == 0) {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean edges_corners_solved (){
-
-		if (Tables.move_table_corner_conjSTAGE5[corner][(sym<<2)+cosym] == 0 && edge == 0) {
+		if ( edge == 0 && Tables.move_table_cen_conjSTAGE5[center][(sym<<2)+cosym] == 0 && Tables.move_table_corner_conjSTAGE5[corner][(sym<<2)+cosym] == 0 ) {
 			return true;
 		}
 		return false;
@@ -68,19 +60,26 @@ public final class CubeStage5 {
 		{  5,  9, 14, 18 }
 	};
 
+	public static final int sqs_perm_to_rep[] = {
+		0, 1, 2, 3, 4, 5,
+		1, 0, 4, 5, 2, 3,
+		3, 2, 5, 4, 0, 1,
+		5, 4, 3, 2, 1, 0
+	};
+
 	public void convert_edges_to_std_cube (int edge2, CubeState result_cube){
 		int i;
 
 		int ep1 = edge2 % 96;
 		int ep2 = (edge2/96) % 96;
 		int ep3 = edge2/(96*96);
-		int rep = Tables.sqs_perm_to_rep[ep1/4];
+		int rep = sqs_perm_to_rep[ep1/4];
 		Constants.perm_n_unpack (4, ep1/4, result_cube.m_edge, 0);
 		Constants.perm_n_unpack (4, sqs_rep_to_perm[rep][ep1 % 4], result_cube.m_edge, 4);
-		rep = Tables.sqs_perm_to_rep[ep2/4];
+		rep = sqs_perm_to_rep[ep2/4];
 		Constants.perm_n_unpack (4, ep2/4, result_cube.m_edge, 8);
 		Constants.perm_n_unpack (4, sqs_rep_to_perm[rep][ep2 % 4], result_cube.m_edge, 12);
-		rep = Tables.sqs_perm_to_rep[ep3/4];
+		rep = sqs_perm_to_rep[ep3/4];
 		Constants.perm_n_unpack (4, ep3/4, result_cube.m_edge, 16);
 		Constants.perm_n_unpack (4, sqs_rep_to_perm[rep][ep3 % 4], result_cube.m_edge, 20);
 		for (i = 0; i < 24; ++i) {
@@ -94,7 +93,7 @@ public final class CubeStage5 {
 		int i;
 		byte[] old_m_cor = new byte[8];
 
-		int rep = Tables.sqs_perm_to_rep[corner/4];
+		int rep = sqs_perm_to_rep[corner/4];
 		Constants.perm_n_unpack (4, corner/4, old_m_cor, 0);
 		Constants.perm_n_unpack (4, sqs_rep_to_perm[rep][corner % 4], old_m_cor, 4);
 		for (i = 0; i < 8; ++i) {
