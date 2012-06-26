@@ -35,7 +35,7 @@ public final class PruningStage3Cen extends PruningFull {
 
 	int do_move (int idx, int move){
 		int newCen = Tables.move_table_symCenterSTAGE3[idx][move];
-		int cenRep = newCen >> 3;
+		int cenRep = newCen >> 4;
 
 		return cenRep;
 	}

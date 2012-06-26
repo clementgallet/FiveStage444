@@ -27,8 +27,6 @@ public final class PruningStage5EdgCor extends PruningFull {
 		// Fill the solved states.
 		ptable[0] = 0;
 		count++;
-		ptable[21616*Constants.N_STAGE5_CORNER_PERM+66] = 0;
-		count++;
 		back_dist = 11;
 	}
 
@@ -37,11 +35,11 @@ public final class PruningStage5EdgCor extends PruningFull {
 		int edge = idx / N_STAGE5_CORNER_PERM;
 
 		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][move];
-		int sym = newEdge & 0x3F;
-		int edgeRep = newEdge >> 6;
+		int allsym = newEdge & 0xFF;
+		int edgeRep = newEdge >> 8;
 
 		cor = Tables.move_table_cornerSTAGE5[cor][move];
-		cor = Tables.move_table_corner_conjSTAGE5[cor][sym];
+		cor = Tables.move_table_corner_conjSTAGE5[cor][allsym];
 		return edgeRep*N_STAGE5_CORNER_PERM + cor;
 	}
 
@@ -51,16 +49,18 @@ public final class PruningStage5EdgCor extends PruningFull {
 
 		int cor = idx % N_STAGE5_CORNER_PERM;
 		int edge = idx / N_STAGE5_CORNER_PERM;
-		int symI = 0;
-		long syms = Tables.hasSymEdgeSTAGE5[edge];
-		while (syms != 0){
-			if(( syms & 0x1L ) == 1 ){
-				byte cor2 = Tables.move_table_corner_conjSTAGE5[cor][symI];
-				ptable[edge*N_STAGE5_CORNER_PERM + cor2] = (byte)dist;
-				count++;
+		for( int i=0; i < 4; i++){
+			int symI = 0;
+			long syms = Tables.hasSymEdgeSTAGE5[edge][i];
+			while (syms != 0){
+				if(( syms & 0x1L ) == 1 ){
+					byte cor2 = Tables.move_table_corner_conjSTAGE5[cor][(symI<<2)+i];
+					ptable[edge*N_STAGE5_CORNER_PERM + cor2] = (byte)dist;
+					count++;
+				}
+				symI++;
+				syms >>= 1;
 			}
-			symI++;
-			syms >>= 1;
 		}
 	}
 }

@@ -19,7 +19,6 @@ public final class Constants{
 	public static int METRIC = FTM;
 	public static String METRIC_STR = (METRIC == STM) ? "stm" : "ftm";
 
-	public static final int N_SYM_ALL = 96; // With inverse.
 	public static final int N_SYM = 48;
 	public static final int N_SYM_STAGE1 = 48;
 	public static final int N_SYM_STAGE2 = 16;
@@ -38,7 +37,7 @@ public final class Constants{
 	public static final int N_SYMCENTER_COMBO4 = 716;
 
 	public static final int N_STAGE3_CENTER_CONFIGS = 900900;	//(16*15*14*13/24)*(12*11*10*9/24)
-	public static final int N_STAGE3_SYMCENTER_CONFIGS = 112980;
+	public static final int N_STAGE3_SYMCENTER_CONFIGS = 56980;
 	public static final int N_COMBO_16_8 = 12870;				//16!/(8!*8!)
 	public static final int N_STAGE3_EDGE_PAR = 2;
 	public static final int N_STAGE3_EDGE_CONFIGS = N_COMBO_16_8;	//16!/(8!*8!), does not include parity info
@@ -49,7 +48,7 @@ public final class Constants{
 	public static final int N_STAGE4_CORNER_CONFIGS = 420;	//8!/96
 
 	public static final int N_STAGE5_EDGE_PERM = 96*96*96;
-	public static final int N_STAGE5_SYMEDGE_PERM = 21908;
+	public static final int N_STAGE5_SYMEDGE_PERM = 7444;
 	public static final int N_STAGE5_CENTER_PERM = 12*12*12;
 	public static final int N_STAGE5_CORNER_PERM = 96;
 
@@ -399,6 +398,7 @@ public final class Constants{
 	 * @param length	length of the array
 	 * @param offset	index of the first element where the permutation starts in the table (can be >0)
 	 */
+
 	public static final void nextPerm (byte[] array, int length, int offset){
 		int j = length - 2;
 		while (j >= 0 && ( array[j+offset] >= array[j+1+offset] ))
@@ -431,9 +431,9 @@ public final class Constants{
 
 	public static final int STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS = 6;
 	public static final int stage3_solved_sym_centers[] = {
-	112966, 112974, 112975, 112977, 112978, 112979
+	56966, 56974, 56975, 56977, 56978, 56979
 	};
-	// True solved centers, better not deleting.
+	// True solved centers, better not deleting. Edit: I'm so wise !
 	// 900830, 900844, 900850, 900853, 900857, 900858, 900871, 900872, 900876, 900879, 900885, 900899
 
 	public static final int STAGE4_NUM_SOLVED_CENTER_CONFIGS = 12;

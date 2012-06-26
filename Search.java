@@ -521,9 +521,12 @@ public final class Search {
 			/* Move cube1 to cube2 */
 			cube2.edge = Tables.move_table_edgeSTAGE3[cube1.edge][mov_idx];
 			cube2.edge_odd = cube1.edge_odd ^ stage3_move_parity[mov_idx];
-			int newCen = Tables.move_table_symCenterSTAGE3[cube1.center][Symmetry.moveConjugate3[mov_idx][cube1.sym]];
-			cube2.sym = Symmetry.symIdxMultiply[newCen & 0x7][cube1.sym];
-			cube2.center = newCen >> 3;
+			int newCen = Tables.move_table_symCenterSTAGE3[cube1.center][Symmetry.moveConjugate3[mov_idx][Symmetry.symIdxMultiply[cube1.sym][cube1.cosym]]];
+			int newSym = ( newCen & 0xF ) >> 1;
+			int newCosym = newCen & 0x01;
+			cube2.cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[Symmetry.invSymIdx[cube1.sym]][newCosym]][Symmetry.symIdxMultiply[cube1.sym][cube1.cosym]];
+			cube2.sym = Symmetry.symIdxMultiply[newSym][cube1.sym];
+			cube2.center = newCen >> 4;
 
 			int newDistCen = CubeStage3.prune_table_cen.ptable[cube2.center];
 			if (newDistCen > depth-1) continue;
@@ -537,14 +540,19 @@ public final class Search {
 
 	public boolean init_stage4 (){
 		int i;
-		if ( found_sol && ( solver_mode == SUB_345 ) && ( endtime < System.currentTimeMillis())) return true;
+		if (( found2 || ( found_sol && ( solver_mode == SUB_345 ))) && ( endtime < System.currentTimeMillis())) return true;
 
 		c2.copyTo(c3);
 		c3.scramble( length3, move_list_stage3, stage3_slice_moves, Ff );
 		CubeStage4 s1 = new CubeStage4();
 		c3.convert_to_stage4 (s1);
 
-		int d4 = s1.getDistance();
+		/** int d4 = s1.getDistance(); **/
+
+		int cubeDistEdgCen = s1.prune_table_edgcen.ptable[s1.edge * N_STAGE4_CENTER_CONFIGS + Tables.move_table_cen_conjSTAGE4[s1.center][s1.sym]];
+		if( cubeDistEdgCen >= total_length-length3-length2 ) return false;
+		int cubeDistEdgCor = s1.getDistanceEdgCor();
+		int d4 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
 
 		int min4;
 		if( solver_mode == SUB_345 )
@@ -554,7 +562,8 @@ public final class Search {
 
 		for (length4 = d4; length4 < min4; ++length4) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "      Stage 4 - length "+length4 );
-			if( search_stage4 (s1, length4, 0, N_STAGE4_SLICE_MOVES, d4 )) {
+			/** if( search_stage4 (s1, length4, 0, N_STAGE4_SLICE_MOVES, d4 )) { **/
+			if( search_stage4 (s1, length4, 0, N_STAGE4_SLICE_MOVES, cubeDistEdgCor )) {
 				if( solver_mode == SUB_234 ){
 					total_length = length2+length3+length4;
 					/* Save current solution */
@@ -599,7 +608,11 @@ public final class Search {
 			cube2.edge = newEdge >> 4;
 
 			/* Compute new distance */
-			int newDist = CubeStage4.prune_table.new_dist((( cube2.edge * N_STAGE4_CORNER_CONFIGS + Tables.move_table_corner_conjSTAGE4[cube2.corner][cube2.sym] ) * N_STAGE4_CENTER_CONFIGS ) + Tables.move_table_cen_conjSTAGE4[cube2.center][cube2.sym], dist);
+			/** int newDist = cube2.prune_table.new_dist((( cube2.edge * N_STAGE4_CORNER_CONFIGS + Tables.move_table_corner_conjSTAGE4[cube2.corner][cube2.sym] ) * N_STAGE4_CENTER_CONFIGS ) + Tables.move_table_cen_conjSTAGE4[cube2.center][cube2.sym], dist);
+			if (newDist > depth-1) continue; **/
+			int newDistEdgCen = cube2.prune_table_edgcen.ptable[cube2.edge * N_STAGE4_CENTER_CONFIGS + Tables.move_table_cen_conjSTAGE4[cube2.center][cube2.sym]];
+			if (newDistEdgCen > depth-1) continue;
+			int newDist = cube2.new_dist_edgcor(dist);
 			if (newDist > depth-1) continue;
 			move_list_stage4[moves_done] = (byte)mov_idx;
 			if (search_stage4 (cube2, depth - 1, moves_done + 1, mov_idx, newDist)) return true;
@@ -609,6 +622,7 @@ public final class Search {
 
 	public boolean init_stage5 (){
 		int i;
+		if ( found_sol && ( endtime < System.currentTimeMillis())) return true;
 
 		c3.copyTo(c4);
 		c4.scramble( length4, move_list_stage4, stage4_slice_moves );
@@ -616,7 +630,7 @@ public final class Search {
 		CubeStage5 s1 = new CubeStage5();
 		c4.convert_to_stage5 (s1);
 
-		int cubeDistEdgCor = CubeStage5.prune_table_edgcor.ptable[s1.edge * N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[s1.corner][s1.sym]];
+		int cubeDistEdgCor = CubeStage5.prune_table_edgcor.ptable[s1.edge * N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[s1.corner][(s1.sym<<2)+s1.cosym]];
 		if( cubeDistEdgCor >= total_length-length4-length3 ) return false;
 		int cubeDistEdgCen = s1.getDistanceEdgCen();
 		int d5 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
@@ -656,11 +670,14 @@ public final class Search {
 			/* Move cube1 to cube2 */
 			cube2.center = Tables.move_table_cenSTAGE5[cube1.center][mov_idx];
 			cube2.corner = Tables.move_table_cornerSTAGE5[cube1.corner][mov_idx];
-			int newEdge = Tables.move_table_symEdgeSTAGE5[cube1.edge][Symmetry.moveConjugate5[mov_idx][cube1.sym]];
-			cube2.sym = Symmetry.symIdxMultiply[newEdge & 0x3F][cube1.sym];
-			cube2.edge = newEdge >> 6;
+			int newEdge = Tables.move_table_symEdgeSTAGE5[cube1.edge][Symmetry.moveConjugate5[mov_idx][Symmetry.symIdxMultiply[cube1.sym][cube1.cosym]]];
+			int newSym = ( newEdge & 0xFF ) >> 2;
+			int newCosym = newEdge & 0x03;
+			cube2.cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[Symmetry.invSymIdx[cube1.sym]][newCosym]][Symmetry.symIdxMultiply[cube1.sym][cube1.cosym]];
+			cube2.sym = Symmetry.symIdxMultiply[newSym][cube1.sym];
+			cube2.edge = newEdge >> 8;
 
-			int newDistEdgCor = CubeStage5.prune_table_edgcor.ptable[cube2.edge * N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[cube2.corner][cube2.sym]];
+			int newDistEdgCor = CubeStage5.prune_table_edgcor.ptable[cube2.edge * N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[cube2.corner][(cube2.sym<<2)+cube2.cosym]];
 			if (newDistEdgCor > depth-1) continue;
 			int newDistEdgCen = cube2.new_dist_edgcen(distEdgCen);
 			if (newDistEdgCen > depth-1) continue;
