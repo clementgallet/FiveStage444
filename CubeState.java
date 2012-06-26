@@ -139,12 +139,6 @@ public final class CubeState{
 		System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
 	}
 
-	public void compose_edge (CubeState cs1, CubeState cs2){
-		int i;
-		for (i = 0; i < 24; ++i)
-			m_edge[i] = cs1.m_edge[cs2.m_edge[i]];
-	}
-
 	public void inverseTo( CubeState c) {
 		int i;
 		int[] t = new int[24];
@@ -309,15 +303,6 @@ public final class CubeState{
 		conjugateEdges (symIdx);
 		conjugateCenters (symIdx);
 		conjugateCorners (symIdx);
-	}
-
-	public void invert_fbcen (){
-		int i;
-		for (i = 0; i < 24; ++i) {
-			if (m_cen[i] >= 4) {
-				m_cen[i] ^= 1;
-			}
-		}
 	}
 
 	public boolean edgeUD_parity_odd (){

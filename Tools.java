@@ -125,7 +125,9 @@ public class Tools {
 		CubeStage2.prune_table_edgcen = new PruningStage2EdgCen();
 		CubeStage3.prune_table_cen = new PruningStage3Cen();
 		CubeStage3.prune_table_edg = new PruningStage3Edg();
-		CubeStage4.prune_table = new PruningStage4();
+		/** CubeStage4.prune_table = new PruningStage4(); **/
+		CubeStage4.prune_table_edgcen = new PruningStage4EdgCen();
+		CubeStage4.prune_table_edgcor = new PruningStage4EdgCor();
 		CubeStage5.prune_table_edgcen = new PruningStage5EdgCen();
 		CubeStage5.prune_table_edgcor = new PruningStage5EdgCor();
 	}
@@ -157,7 +159,9 @@ public class Tools {
 			CubeStage2.prune_table_edgcen.analyse();
 			CubeStage3.prune_table_cen.analyse();
 			CubeStage3.prune_table_edg.analyse();
-			CubeStage4.prune_table.analyse();
+			/** CubeStage4.prune_table.analyse(); **/
+			CubeStage4.prune_table_edgcen.analyse();
+			CubeStage4.prune_table_edgcor.analyse();
 			CubeStage5.prune_table_edgcen.analyse();
 			CubeStage5.prune_table_edgcor.analyse();
 
@@ -206,7 +210,9 @@ public class Tools {
 			read(CubeStage2.prune_table_edgcen.ptable, in);
 			read(CubeStage3.prune_table_cen.ptable, in);
 			read(CubeStage3.prune_table_edg.ptable, in);
-			read(CubeStage4.prune_table.ptable_packed, in);
+			/** read(CubeStage4.prune_table.ptable_packed, in); **/
+			read(CubeStage4.prune_table_edgcor.ptable_packed, in);
+			read(CubeStage4.prune_table_edgcen.ptable, in);
 			read(CubeStage5.prune_table_edgcen.ptable_packed, in);
 			read(CubeStage5.prune_table_edgcor.ptable, in);
 
@@ -248,7 +254,9 @@ public class Tools {
 		write(CubeStage2.prune_table_edgcen.ptable, out);
 		write(CubeStage3.prune_table_cen.ptable, out);
 		write(CubeStage3.prune_table_edg.ptable, out);
-		write(CubeStage4.prune_table.ptable_packed, out);
+		/** write(CubeStage4.prune_table.ptable_packed, out); **/
+		write(CubeStage4.prune_table_edgcor.ptable_packed, out);
+		write(CubeStage4.prune_table_edgcen.ptable, out);
 		write(CubeStage5.prune_table_edgcen.ptable_packed, out);
 		write(CubeStage5.prune_table_edgcor.ptable, out);
 	}

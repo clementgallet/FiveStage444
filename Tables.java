@@ -583,7 +583,7 @@ public final class Tables {
 
 	public static void initSymEdgeToEdgeStage4 (){
 		System.out.println( "Starting symEdgeToEdge stage 4..." );
-		int sym;
+		int sym, cosym;
 		int u, repIdx = 0;
 		int uh, ul;
 		CubeState cube1 = new CubeState();
@@ -606,7 +606,7 @@ public final class Tables {
 			uh = perm_n_pack( 8, t, 0 );
 			if( parity_perm8_table[ul] != parity_perm8_table[uh] ) continue; // getting rid of the parity.
 
-			for (sym = 1; sym < N_SYM_STAGE4; ++sym) {
+			for (sym = 0; sym < N_SYM_STAGE4; ++sym) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
 				cube2.conjugateEdges (sym);
 				int edge = cube2.convert_edges_to_stage4();
@@ -614,6 +614,17 @@ public final class Tables {
 				if( edge == u )
 					hasSymEdgeSTAGE4[repIdx] |= (1 << sym);
 			}
+			/*
+			cube1.inverse();
+			for (sym = 0; sym < N_SYM_STAGE4; ++sym) {
+				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
+				cube2.conjugateEdges (sym);
+				int edge = cube2.convert_edges_to_stage4();
+				set_1_1bit( edge, isRepTable); // not a rep.
+				if( edge == u )
+					hasSymEdgeSTAGE4[repIdx] |= (1 << sym);
+			}
+			*/
 			symEdgeToEdgeSTAGE4[repIdx++] = u;
 		}
 		System.out.println( "Finishing symEdgeToEdge stage 4... generated "+repIdx+" reps." );

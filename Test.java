@@ -9,15 +9,15 @@ public final class Test {
 
 	public static void main(String[] args){
 
-		//System.out.println("Pruning 1 takes "+timePruning1()+" ms" );
-		//System.out.println("Pruning 4 takes "+timePruning4()+" ms" );
+		System.out.println("Pruning 1 takes "+timePruning1()+" ms" );
+		System.out.println("Pruning 4 takes "+timePruning4()+" ms" );
 
 		Random gen = new Random();
 		Tools.init();
 
-		testMove4(10);
+		//testMove4(10);
 		//testMove5(10);
-		/*
+		
 		System.out.println("Search 1 takes "+( timeSearch1(1000, gen) / 1000.0 )+" ms" );
 		System.out.println("Search 2 takes "+( timeSearch2(1000, gen) / 1000.0 )+" ms" );
 		System.out.println("Search 3 takes "+( timeSearch3(1000, gen) / 1000.0 )+" ms" );
@@ -27,7 +27,7 @@ public final class Test {
 		System.out.println("Search 1+2+3 takes "+( timeSearch123(1000, gen) / 1000.0 )+" ms" );
 		System.out.println("Search 2+3+4 takes "+( timeSearch234(1000, gen) / 1000.0 )+" ms" );
 		System.out.println("Search 3+4+5 takes "+( timeSearch345(1000, gen) / 1000.0 )+" ms" );
-		*/
+		
 	}
 
 	public static long timePruning1(){

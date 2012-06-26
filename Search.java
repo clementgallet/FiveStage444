@@ -241,7 +241,7 @@ public final class Search {
 			//System.out.println( j + ":" + best_sol );
 			sol = sb.toString();
 		}
-		//System.out.println( best_sol );
+		System.out.println( best_sol );
 		return sol;
 	}
 
@@ -546,7 +546,12 @@ public final class Search {
 		CubeStage4 s1 = new CubeStage4();
 		c3.convert_to_stage4 (s1);
 
-		int d4 = s1.getDistance();
+		/** int d4 = s1.getDistance(); **/
+
+		int cubeDistEdgCen = s1.prune_table_edgcen.ptable[s1.edge * N_STAGE4_CENTER_CONFIGS + Tables.move_table_cen_conjSTAGE4[s1.center][s1.sym]];
+		if( cubeDistEdgCen >= total_length-length3-length2 ) return false;
+		int cubeDistEdgCor = s1.getDistanceEdgCor();
+		int d4 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
 
 		int min4;
 		if( solver_mode == SUB_345 )
@@ -556,7 +561,8 @@ public final class Search {
 
 		for (length4 = d4; length4 < min4; ++length4) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "      Stage 4 - length "+length4 );
-			if( search_stage4 (s1, length4, 0, N_STAGE4_SLICE_MOVES, d4 )) {
+			/** if( search_stage4 (s1, length4, 0, N_STAGE4_SLICE_MOVES, d4 )) { **/
+			if( search_stage4 (s1, length4, 0, N_STAGE4_SLICE_MOVES, cubeDistEdgCor )) {
 				if( solver_mode == SUB_234 ){
 					total_length = length2+length3+length4;
 					/* Save current solution */
@@ -601,7 +607,11 @@ public final class Search {
 			cube2.edge = newEdge >> 4;
 
 			/* Compute new distance */
-			int newDist = cube2.prune_table.new_dist((( cube2.edge * N_STAGE4_CORNER_CONFIGS + Tables.move_table_corner_conjSTAGE4[cube2.corner][cube2.sym] ) * N_STAGE4_CENTER_CONFIGS ) + Tables.move_table_cen_conjSTAGE4[cube2.center][cube2.sym], dist);
+			/** int newDist = cube2.prune_table.new_dist((( cube2.edge * N_STAGE4_CORNER_CONFIGS + Tables.move_table_corner_conjSTAGE4[cube2.corner][cube2.sym] ) * N_STAGE4_CENTER_CONFIGS ) + Tables.move_table_cen_conjSTAGE4[cube2.center][cube2.sym], dist);
+			if (newDist > depth-1) continue; **/
+			int newDistEdgCen = cube2.prune_table_edgcen.ptable[cube2.edge * N_STAGE4_CENTER_CONFIGS + Tables.move_table_cen_conjSTAGE4[cube2.center][cube2.sym]];
+			if (newDistEdgCen > depth-1) continue;
+			int newDist = cube2.new_dist_edgcor(dist);
 			if (newDist > depth-1) continue;
 			move_list_stage4[moves_done] = (byte)mov_idx;
 			if (search_stage4 (cube2, depth - 1, moves_done + 1, mov_idx, newDist)) return true;

@@ -11,7 +11,7 @@ public final class Main {
 			//System.out.println( new Search().solve( Tools.randomCube(), 1000, true));
 			c = Tools.randomCube();
 			s = new Search().solve( c, 50, true);
-			System.out.println (s);
+			//System.out.println (s);
 		}
 	}
 }
