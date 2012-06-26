@@ -10,6 +10,8 @@ public final class CubeStage4 {
 	public static byte sqs_to_std[] = { 0, 2, 5, 7, 1, 3, 4, 6 };
 
 	public static PruningStage4 prune_table;
+	public static PruningStage4EdgCen prune_table_edgcen;
+	public static PruningStage4EdgCor prune_table_edgcor;
 
 	public final void copyTo (CubeStage4 cube1){
 		cube1.edge = edge;
@@ -44,7 +46,43 @@ public final class CubeStage4 {
 		return false;
 	}
 
+	public boolean edges_corners_solved (){
+		return (corner == 0 && edge == 0);
+	}
+
 	/* Convert functions */
+
+	public void convert_edges_to_std_cube (int e, CubeState result_cube){
+
+		result_cube.init();
+		short ledge4of8 = Tables.bm4of8[e % 70];
+		e /= 70;
+		short redge4of8 = Tables.bm4of8[e % 70];
+		e /= 70;
+		int perm6_fb = e % 6;
+		int perm6_rl = e / 6;
+		byte[] t = new byte[4];
+
+		int i1 = 0;
+		int i2 = 0;
+		Constants.perm_n_unpack( 4, perm6_rl, t, 0 );
+		for( int i=0; i < 8; i++ ){
+			if(( ledge4of8 & ( 1 << i )) != 0)
+				result_cube.m_edge[i+4] = (byte)( t[i1++] + 4 );
+			else
+				result_cube.m_edge[i+4] = (byte)( (i2++) + 8);
+		}
+
+		i1 = 0;
+		i2 = 0;
+		Constants.perm_n_unpack( 4, perm6_fb, t, 0 );
+		for( int i=0; i < 8; i++ ){
+			if(( redge4of8 & ( 1 << i )) != 0)
+				result_cube.m_edge[( i < 4 ) ? i : i + 8] = (byte)(i1++);
+			else
+				result_cube.m_edge[( i < 4 ) ? i : i + 8] = (byte)(t[i2++] + 12);
+		}
+	}
 
 	public void convert_corners_to_std_cube (CubeState result_cube){
 		int i;
@@ -98,6 +136,16 @@ public final class CubeStage4 {
 		return prune_table.new_dist(get_idx(), dist);
 	}
 
+	public final int get_dist_edgcor (){
+		int idx = edge * Constants.N_STAGE4_CORNER_CONFIGS + Tables.move_table_corner_conjSTAGE4[corner][sym];
+		return prune_table_edgcor.get_dist_packed(idx);
+	}
+
+	public final int new_dist_edgcor (int dist){
+		int idx = edge * Constants.N_STAGE4_CORNER_CONFIGS + Tables.move_table_corner_conjSTAGE4[corner][sym];
+		return prune_table_edgcor.new_dist(idx, dist);
+	}
+
 	public int getDistance (){
 		CubeStage4 cube1 = new CubeStage4();
 		CubeStage4 cube2 = new CubeStage4();
@@ -114,6 +162,36 @@ public final class CubeStage4 {
 				cube1.copyTo(cube2);
 				cube2.do_move (mov_idx);
 				dist2 = cube2.get_dist();
+				if (((dist2+1) % 3) != dist1) continue;
+				cube2.copyTo(cube1);
+				nDist++;
+				dist1 = dist2;
+				noMoves = false;
+				break;
+			}
+			if( noMoves){
+				System.out.println("Could not find a move that lowers the distance !!");
+				break;
+			}
+		}
+		return nDist;
+	}
+	public int getDistanceEdgCor (){
+		CubeStage4 cube1 = new CubeStage4();
+		CubeStage4 cube2 = new CubeStage4();
+		int mov_idx, j, dist1, dist2;
+		int nDist = 0;
+
+		copyTo(cube1);
+		dist1 = cube1.get_dist_edgcor();
+
+		while( ! cube1.edges_corners_solved ()) {
+
+			boolean noMoves = true;
+			for (mov_idx = 0; mov_idx < Constants.N_STAGE4_SLICE_MOVES; ++mov_idx) {
+				cube1.copyTo(cube2);
+				cube2.do_move (mov_idx);
+				dist2 = cube2.get_dist_edgcor();
 				if (((dist2+1) % 3) != dist1) continue;
 				cube2.copyTo(cube1);
 				nDist++;

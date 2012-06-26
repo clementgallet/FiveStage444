@@ -18,22 +18,6 @@ public final class CubeStage2 {
 		cube1.symB = symB;
 	}
 
-	public boolean edges_center_solved (boolean front){
-		int i;
-		int cen;
-
-		if (( edge != 0 ) && ( edge != 414 ))
-			return false;
-
-		if (front) cen = centerF;
-		else cen = centerB;
-		for (i=0; i < Constants.STAGE2_NUM_SOLVED_SYMCENTER_CONFIGS; i++)
-			if (cen == Constants.stage2_solved_symcenters[i])
-				return true;
-
-		return false;
-	}
-
 	public boolean is_solved (){
 		int i;
 
@@ -45,21 +29,6 @@ public final class CubeStage2 {
 				return true;
 
 		return false;
-	}
-
-	public final void do_move (int move_code){
-
-		int newCen;
-
-		newCen = Tables.move_table_symCenterSTAGE2[centerF][Symmetry.moveConjugate2[move_code][symF]];
-		symF = Symmetry.symIdxMultiply[newCen & 0xF][symF];
-		centerF = newCen >> 4;
-
-		newCen = Tables.move_table_symCenterSTAGE2[centerB][Symmetry.moveConjugate2[move_code][symB]];
-		symB = Symmetry.symIdxMultiply[newCen & 0xF][symB];
-		centerB = newCen >> 4;
-
-		edge = Tables.move_table_edgeSTAGE2[edge][move_code];
 	}
 
 	/* Convert functions */

@@ -139,12 +139,6 @@ public final class CubeState{
 		System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
 	}
 
-	public void compose_edge (CubeState cs1, CubeState cs2){
-		int i;
-		for (i = 0; i < 24; ++i)
-			m_edge[i] = cs1.m_edge[cs2.m_edge[i]];
-	}
-
 	public void inverseTo( CubeState c) {
 		int i;
 		int[] t = new int[24];
@@ -309,15 +303,6 @@ public final class CubeState{
 		conjugateEdges (symIdx);
 		conjugateCenters (symIdx);
 		conjugateCorners (symIdx);
-	}
-
-	public void invert_fbcen (){
-		int i;
-		for (i = 0; i < 24; ++i) {
-			if (m_cen[i] >= 4) {
-				m_cen[i] ^= 1;
-			}
-		}
 	}
 
 	public boolean edgeUD_parity_odd (){
@@ -530,11 +515,14 @@ public final class CubeState{
 		CubeState cube = new CubeState();
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE3; sym++ ){
-			System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
-			cube.rightMultCenters(Symmetry.invSymIdx[sym]);
-			rep = Arrays.binarySearch(Tables.symCenterToCenterSTAGE3, cube.convert_centers_to_stage3());
-			if( rep >= 0 )
-				return ( rep << 3 ) + sym;
+			for (int cosym=0; cosym < 2; cosym++ ){
+				System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
+				cube.rightMultCenters(Symmetry.invSymIdx[cosym]);
+				cube.conjugateCenters(sym);
+				rep = Arrays.binarySearch(Tables.symCenterToCenterSTAGE3, cube.convert_centers_to_stage3());
+				if( rep >= 0 )
+					return ( rep << 4 ) + ( sym << 1 ) + cosym;
+			}
 		}
 		return -1;
 	}
@@ -552,34 +540,62 @@ public final class CubeState{
 
 	public void convert_to_stage3 (CubeStage3 result_cube){
 		int symcen = convert_symcenters_to_stage3 ();
-		result_cube.center = symcen >> 3;
-		result_cube.sym = symcen & 0x7;
+		result_cube.center = symcen >> 4;
+		result_cube.sym = ( symcen & 0xF ) >> 1;
+		result_cube.cosym = symcen & 0x1;
 		result_cube.edge = convert_edges_to_stage3 ();
 		result_cube.edge_odd = edgeUD_parity_odd ();
 	}
 
 	private static byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
 
+	public int convert_edges_to_stage4 (){
+		int redge4of8 = 0;
+		int ledge4of8 = 0;
+		byte[] edges_rl = new byte[8];
+		byte[] edges_fb = new byte[8];
+
+		int i_rl = 4;
+		int i_fb = 0;
+		for( int i=0; i<8;i++){
+			if( m_edge[i+4] < 8 ){
+				ledge4of8 |= 1 << i;
+				edges_rl[i_rl++] = m_edge[i+4];
+			}
+			else
+				edges_fb[i_fb++] = (byte)(m_edge[i+4] - 8);
+		}
+
+		int u;
+		i_rl = 0;
+		i_fb = 4;
+		for( int i=0; i<8;i++){
+			u = (i < 4) ? i : i + 8;
+			if( m_edge[u] < 4 ){
+				redge4of8 |= 1 << i;
+				edges_rl[i_rl++] = m_edge[u];
+			}
+			else
+				edges_fb[i_fb++] = (byte)(m_edge[u] - 8);
+		}
+
+		int perm6_rl = Tables.perm_to_420[perm_n_pack (8, edges_rl, 0)]%6;
+		int perm6_fb = Tables.perm_to_420[perm_n_pack (8, edges_fb, 0)]%6;
+
+		return ((( perm6_rl * 6 + perm6_fb ) * 70 + Tables.bm4of8_to_70[redge4of8] ) * 70 + Tables.bm4of8_to_70[ledge4of8] );
+	}
+
 	public int convert_symedges_to_stage4 (){
 		CubeState cube = new CubeState();
-		//int minEdge = 1999999999;
-		//int minSym = 0;
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE4; sym++ ){
 			copyTo (cube);
 			cube.conjugateEdges(sym);
-			rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE4, Tables.lrfb_get_edge_rep(cube.cube_state_to_lrfb ()));
+			rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE4, cube.convert_edges_to_stage4() );
 			if( rep >= 0 )
 				return ( rep << 4 ) + sym;
-			/*
-			int u2 = Tables.lrfb_get_edge_rep(cube.cube_state_to_lrfb ());
-			if( u2 < minEdge){
-				minEdge = u2;
-				minSym = sym;
-			}*/
 		}
 		return -1;
-		//return ( Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE4, minEdge) << 4 ) + minSym;
 	}
 
 	public short convert_corners_to_stage4 (){
@@ -615,45 +631,6 @@ public final class CubeState{
 		result_cube.center = convert_centers_to_stage4();
 	}
 
-	public int cube_state_to_lrfb_l (){
-		byte[] t = new byte[8];
-		set_a_to_array8 (t);
-		return Constants.perm_n_pack (8, t, 0);
-	}
-
-	public int cube_state_to_lrfb_h (){
-		byte[] t = new byte[8];
-		set_b_to_array8 (t);
-		return Constants.perm_n_pack (8, t, 0);
-	}
-
-	public int cube_state_to_lrfb (){
-		return 40320*cube_state_to_lrfb_h() + cube_state_to_lrfb_l();
-	}
-
-	public void set_a_to_array8 (byte[] t){
-		int i;
-		int j = 0;
-		for (i = 0; i < 8; ++i) {
-			if (i >= 4) {
-				j = i + 8;
-			} else {
-				j = i;
-			}
-			byte t1 = m_edge[j];
-			if (t1 >= 12)
-				t1 -= 8;
-			t[i] = t1;
-		}
-	}
-
-	public void set_b_to_array8 (byte[] t){
-		int i;
-		for (i = 0; i < 8; ++i) {
-			t[i] = (byte)(m_edge[4 + i] - 4);
-		}
-	}
-
 	private static byte std_to_sqs_cor[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
 	private static byte std_to_sqs_cen[] = {
 		0,  3,  1,  2,  5,  6,  4,  7,
@@ -671,23 +648,18 @@ public final class CubeState{
 
 	public int convert_symedges_to_stage5 (){
 		CubeState cube = new CubeState();
-		//int minEdge = 99999999;
-		//int minSym = 0;
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE5; sym++ ){
-			System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
-			cube.conjugateEdges(sym);
-			rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, cube.convert_edges_to_stage5 ());
-			if( rep >= 0 )
-				return ( rep << 6 ) + sym;
-			/*int edge = cube.convert_edges_to_stage5 ();
-			if( edge < minEdge){
-				minEdge = edge;
-				minSym = sym;
-			}*/
+			for (int cosym=0; cosym < 4; cosym++ ){
+				System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
+				cube.rightMultEdges (Symmetry.invSymIdx[cosym]);
+				cube.conjugateEdges(sym);
+				rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, cube.convert_edges_to_stage5 ());
+				if( rep >= 0 )
+					return ( rep << 8 ) + ( sym << 2 ) + cosym;
+			}
 		}
 		return -1;
-		//return ( Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, minEdge) << 6 ) + minSym;
 	}
 
 	public short convert_centers_to_stage5 (){
@@ -732,8 +704,10 @@ public final class CubeState{
 		result_cube.corner = convert_corners_to_stage5 ();
 		result_cube.center = convert_centers_to_stage5 ();
 		int symedge = convert_symedges_to_stage5 ();
-		result_cube.edge = symedge >> 6;
+		result_cube.cosym = symedge & 0x03;
+		symedge >>= 2;
 		result_cube.sym = symedge & 0x3F;
+		result_cube.edge = symedge >> 6;
 	}
 
 	public void print (){
