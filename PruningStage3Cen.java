@@ -19,7 +19,7 @@ public final class PruningStage3Cen extends PruningFull {
 		fname = new File( tables_path, "stage3_cen_"+METRIC_STR+"_prune.rbk" );
 
 		// Definition of the allowed moves.
-		num_moves = N_STAGE3_SLICE_MOVES;
+		num_moves = N_STAGE3_MOVES;
 
 		for (i = 0; i < num_positions; ++i) {
 			ptable[i] = -1;

@@ -261,9 +261,9 @@ public final class Tables {
 		for (u = 0; u < N_SYMEDGE_COMBO8; ++u) {
 			s1.convert_edges_to_std_cube( symEdgeToEdgeSTAGE1[u], cube1 );
 
-			for (mc = 0; mc < N_BASIC_MOVES; ++mc) {
+			for (mc = 0; mc < N_STAGE1_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.rotate_sliceEDGE (mc, METRIC);
+				cube2.rotate_sliceEDGE (stage1_slice_moves[mc], METRIC);
 				move_table_symEdgeSTAGE1[u][mc] = cube2.convert_symedges_to_stage1();
 			}
 		}
@@ -286,11 +286,11 @@ public final class Tables {
 		for (u = 0; u < N_CORNER_ORIENT; ++u) {
 			s1.corner = u;
 			s1.convert_corners_to_std_cube (cube1);
-			for (mc = 0; mc < N_BASIC_MOVES; ++mc) {
-				if(( mc % 6 ) >= 3 )
+			for (mc = 0; mc < N_STAGE1_MOVES; ++mc) {
+				if(( stage1_inv_slice_moves[mc] % 6 ) >= 3 )
 					continue;
 				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
-				cube2.rotate_sliceCORNER (mc, METRIC);
+				cube2.rotate_sliceCORNER (stage1_slice_moves[mc], METRIC);
 				move_table_co[u][basic_to_face[mc]] = cube2.convert_corners_to_stage1();
 			}
 		}
@@ -324,7 +324,7 @@ public final class Tables {
 	}
 
 	/*** init stage 2 edges ***/
-	public static short[][] move_table_edgeSTAGE2 = new short[N_STAGE2_EDGE_CONFIGS][N_STAGE2_SLICE_MOVES]; // 420*28
+	public static short[][] move_table_edgeSTAGE2 = new short[N_STAGE2_EDGE_CONFIGS][N_STAGE2_MOVES]; // 420*28
 
 	public static void initEdgeStage2 (){
 
@@ -337,7 +337,7 @@ public final class Tables {
 		for (u = 0; u < N_STAGE2_EDGE_CONFIGS; ++u) {
 			s1.edge = u;
 			s1.convert_edges_to_std_cube(cube1);
-			for (mc = 0; mc < N_STAGE2_SLICE_MOVES; ++mc) {
+			for (mc = 0; mc < N_STAGE2_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
 				cube2.rotate_sliceEDGE (stage2_slice_moves[mc], METRIC, Lf ); // For rlx, fbx moves, use STM
 				move_table_edgeSTAGE2[u][mc] = cube2.convert_edges_to_stage2();
@@ -406,7 +406,7 @@ public final class Tables {
 	}
 
 	/*** init stage 2 symCenters ***/
-	public static short[][] move_table_symCenterSTAGE2 = new short[N_SYMCENTER_COMBO4][N_STAGE2_SLICE_MOVES]; // (716*16) 716*28
+	public static short[][] move_table_symCenterSTAGE2 = new short[N_SYMCENTER_COMBO4][N_STAGE2_MOVES]; // (716*16) 716*28
 
 	public static void initSymCenterStage2 (){
 
@@ -420,7 +420,7 @@ public final class Tables {
 		CubeStage2 s2 = new CubeStage2();
 		for (u = 0; u < N_SYMCENTER_COMBO4; ++u) {
 			s2.convert_centers_to_std_cube( symCenterToCenterSTAGE2[u], cube1 );
-			for (mc = 0; mc < N_STAGE2_SLICE_MOVES; ++mc) {
+			for (mc = 0; mc < N_STAGE2_MOVES; ++mc) {
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
 				cube2.rotate_sliceCENTER (stage2_slice_moves[mc], METRIC, Lf); // For rlx, fbx moves, use STM
 				move_table_symCenterSTAGE2[u][mc] = cube2.convert_symcenters_to_stage2(5);
@@ -500,7 +500,7 @@ public final class Tables {
 	}
 
 	/*** init stage 3 symCenters ***/
-	public static int[][] move_table_symCenterSTAGE3 = new int[N_STAGE3_SYMCENTER_CONFIGS][N_STAGE3_SLICE_MOVES]; // (906640) 113330*20=9MB
+	public static int[][] move_table_symCenterSTAGE3 = new int[N_STAGE3_SYMCENTER_CONFIGS][N_STAGE3_MOVES]; // (906640) 113330*20=9MB
 
 	public static void initSymCenterStage3 (){
 
@@ -516,7 +516,7 @@ public final class Tables {
 		for (u = 0; u < N_STAGE3_SYMCENTER_CONFIGS; ++u) {
 			s3.convert_centers_to_std_cube(symCenterToCenterSTAGE3[u], cube1);
 
-			for (mc = 0; mc < N_STAGE3_SLICE_MOVES; ++mc) {
+			for (mc = 0; mc < N_STAGE3_MOVES; ++mc) {
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
 				cube2.rotate_sliceCENTER (stage3_slice_moves[mc], METRIC, Ff ); // For fbx moves use STM
 				move_table_symCenterSTAGE3[u][mc] = cube2.convert_symcenters_to_stage3();
@@ -526,7 +526,7 @@ public final class Tables {
 	}
 
 	/*** init stage 3 edges ***/
-	public static short[][] move_table_edgeSTAGE3 = new short[N_STAGE3_EDGE_CONFIGS][N_STAGE3_SLICE_MOVES]; // (12870) 12870*20
+	public static short[][] move_table_edgeSTAGE3 = new short[N_STAGE3_EDGE_CONFIGS][N_STAGE3_MOVES]; // (12870) 12870*20
 
 	public static void initEdgeStage3 (){
 
@@ -539,7 +539,7 @@ public final class Tables {
 		for (u = 0; u < N_STAGE3_EDGE_CONFIGS; ++u) {
 			s3.edge = u;
 			s3.convert_edges_to_std_cube(cube1);
-			for (mc = 0; mc < N_STAGE3_SLICE_MOVES; ++mc) {
+			for (mc = 0; mc < N_STAGE3_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
 				cube2.rotate_sliceEDGE (stage3_slice_moves[mc], METRIC, Ff ); // For fbx moves use STM
 				move_table_edgeSTAGE3[u][mc] = cube2.convert_edges_to_stage3();
@@ -630,7 +630,7 @@ public final class Tables {
 		System.out.println( "Finishing symEdgeToEdge stage 4... generated "+repIdx+" reps." );
 	}
 
-	public static int[][] move_table_symEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS][N_STAGE4_SLICE_MOVES]; // (5968*16) 5968*16.
+	public static int[][] move_table_symEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS][N_STAGE4_MOVES]; // (5968*16) 5968*16.
 
 	public static void initSymEdgeStage4 (){
 
@@ -643,7 +643,7 @@ public final class Tables {
 		CubeStage4 s1 = new CubeStage4();
 		for (u = 0; u < N_STAGE4_SYMEDGE_CONFIGS; ++u) {
 			s1.convert_edges_to_std_cube( symEdgeToEdgeSTAGE4[u], cs1 );
-			for (mc = 0; mc < N_STAGE4_SLICE_MOVES; ++mc) {
+			for (mc = 0; mc < N_STAGE4_MOVES; ++mc) {
 				System.arraycopy(cs1.m_edge, 0, cs2.m_edge, 0, 24);
 				cs2.rotate_sliceEDGE (stage4_slice_moves[mc], METRIC);
 				move_table_symEdgeSTAGE4[u][mc] = cs2.convert_symedges_to_stage4();
@@ -652,7 +652,7 @@ public final class Tables {
 		System.out.println( "Finishing sym edge stage 4..." );
 	}
 
-	public static short[][] move_table_cornerSTAGE4 = new short[N_STAGE4_CORNER_CONFIGS][N_STAGE4_SLICE_MOVES]; // (420) 420*16.
+	public static short[][] move_table_cornerSTAGE4 = new short[N_STAGE4_CORNER_CONFIGS][N_STAGE4_MOVES]; // (420) 420*16.
 
 	public static void initCornerStage4 (){
 
@@ -666,7 +666,7 @@ public final class Tables {
 		for (u = 0; u < N_STAGE4_CORNER_CONFIGS; ++u) {
 			s4.corner = u;
 			s4.convert_corners_to_std_cube (cs1);
-			for (mc = 0; mc < N_STAGE4_SLICE_MOVES; ++mc) {
+			for (mc = 0; mc < N_STAGE4_MOVES; ++mc) {
 				System.arraycopy(cs1.m_cor, 0, cs2.m_cor, 0, 8);
 				cs2.rotate_sliceCORNER (stage4_slice_moves[mc], METRIC);
 				move_table_cornerSTAGE4[u][mc] = cs2.convert_corners_to_stage4();
@@ -698,7 +698,7 @@ public final class Tables {
 		System.out.println( "Finishing corner conj stage 4..." );
 	}
 
-	public static byte[][] move_table_cenSTAGE4 = new byte[N_STAGE4_CENTER_CONFIGS][N_STAGE4_SLICE_MOVES]; // (70) 70*16.
+	public static byte[][] move_table_cenSTAGE4 = new byte[N_STAGE4_CENTER_CONFIGS][N_STAGE4_MOVES]; // (70) 70*16.
 
 	public static void initCenterStage4 (){
 
@@ -712,7 +712,7 @@ public final class Tables {
 		for (u = 0; u < N_STAGE4_CENTER_CONFIGS; ++u) {
 			s4.center = u;
 			s4.convert_centers_to_std_cube (cs1);
-			for (mc = 0; mc < N_STAGE4_SLICE_MOVES; ++mc) {
+			for (mc = 0; mc < N_STAGE4_MOVES; ++mc) {
 				System.arraycopy(cs1.m_cen, 0, cs2.m_cen, 0, 24);
 				cs2.rotate_sliceCENTER (stage4_slice_moves[mc], METRIC);
 				move_table_cenSTAGE4[u][mc] = cs2.convert_centers_to_stage4();

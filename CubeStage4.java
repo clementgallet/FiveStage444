@@ -158,7 +158,7 @@ public final class CubeStage4 {
 		while( ! cube1.is_solved ()) {
 
 			boolean noMoves = true;
-			for (mov_idx = 0; mov_idx < Constants.N_STAGE4_SLICE_MOVES; ++mov_idx) {
+			for (mov_idx = 0; mov_idx < Constants.N_STAGE4_MOVES; ++mov_idx) {
 				cube1.copyTo(cube2);
 				cube2.do_move (mov_idx);
 				dist2 = cube2.get_dist();
@@ -188,7 +188,7 @@ public final class CubeStage4 {
 		while( ! cube1.edges_corners_solved ()) {
 
 			boolean noMoves = true;
-			for (mov_idx = 0; mov_idx < Constants.N_STAGE4_SLICE_MOVES; ++mov_idx) {
+			for (mov_idx = 0; mov_idx < Constants.N_STAGE4_MOVES; ++mov_idx) {
 				cube1.copyTo(cube2);
 				cube2.do_move (mov_idx);
 				dist2 = cube2.get_dist_edgcor();

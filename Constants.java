@@ -105,159 +105,175 @@ public final class Constants{
 
 	public static final int N_FACE_MOVES = 18;
 
-	public static final int basic_to_face[] = {
-	 0,  1,  2,  0,  1,  2,  3,  4,  5,  3,  4,  5,
-	 6,  7,  8,  6,  7,  8,  9, 10, 11,  9, 10, 11,
-	12, 13, 14, 12, 13, 14, 15, 16, 17, 15, 16, 17
-	};
 
-	public static final boolean stage1_slice_moves_to_try [][] = new boolean[N_BASIC_MOVES + 1][N_BASIC_MOVES];
+
+	/** Filter certain combinaisons of moves:
+	  * Same slice. For example, Rf Rf2 is not permitted because Rf Rf2 = Rf3.
+	  * Same face, only a specific order is allowed. Rf Ls2 is allowed but not Ls2 Rf.
+	  * For STM only, if two successive moves are from the same face and the same rotation, the first one should be either Ufx, Rfx or Ffx.
+	  *   for example Rf Ls3 is ok but Lf2 Rs2 is not permitted because Lf2 Rs2 = Rf2 Ls2.
+	  **/
+
+	public static final boolean slice_moves_to_try [][] = new boolean[N_BASIC_MOVES][N_BASIC_MOVES];
 	static{
 		for (int i=0; i<N_BASIC_MOVES; i++) {
 			for (int j=0; j<N_BASIC_MOVES; j++) {
-				stage1_slice_moves_to_try[i][j] = (i/3 == j/3) || ((i/12 == j/12) && (i>j));
+				slice_moves_to_try[i][j] = (i/3 == j/3) || ((i/12 == j/12) && (i>j));
 				if( METRIC == STM )
-					stage1_slice_moves_to_try[i][j] |= (i/12 == j/12) && ((i%3) == (j%3)) && ((i%12) >= 3);
+					slice_moves_to_try[i][j] |= (i/12 == j/12) && ((i%3) == (j%3)) && ((i%12) >= 3);
 			}
-			stage1_slice_moves_to_try[N_BASIC_MOVES][i] = false;
-			if( METRIC == FTM ){
-				stage1_slice_moves_to_try[i][Ds] = true;
-				stage1_slice_moves_to_try[i][Ds3] = true;
-				stage1_slice_moves_to_try[i][Ds2] = true;
-				stage1_slice_moves_to_try[i][Ls] = true;
-				stage1_slice_moves_to_try[i][Ls3] = true;
-				stage1_slice_moves_to_try[i][Ls2] = true;
-				stage1_slice_moves_to_try[i][Bs] = true;
-				stage1_slice_moves_to_try[i][Bs3] = true;
-				stage1_slice_moves_to_try[i][Bs2] = true;
-			}
-		}
-		if( METRIC == FTM ){
-			stage1_slice_moves_to_try[N_BASIC_MOVES][Ds] = true;
-			stage1_slice_moves_to_try[N_BASIC_MOVES][Ds3] = true;
-			stage1_slice_moves_to_try[N_BASIC_MOVES][Ds2] = true;
-			stage1_slice_moves_to_try[N_BASIC_MOVES][Ls] = true;
-			stage1_slice_moves_to_try[N_BASIC_MOVES][Ls3] = true;
-			stage1_slice_moves_to_try[N_BASIC_MOVES][Ls2] = true;
-			stage1_slice_moves_to_try[N_BASIC_MOVES][Bs] = true;
-			stage1_slice_moves_to_try[N_BASIC_MOVES][Bs3] = true;
-			stage1_slice_moves_to_try[N_BASIC_MOVES][Bs2] = true;
 		}
 	}
 
-	public static final int N_STAGE2_SLICE_MOVES = 28;
-	public static final byte stage2_slice_moves[] = {
+	public static final int N_STAGE1_MOVES = 36;
+	public static final int N_STAGE1_SEARCH = ( METRIC == STM ) ? 36 : 27;
+	public static final int N_STAGE1_LAST = 4;
+
+	public static final byte stage1_slice_moves[] = {
+	Lf, Rf, Ff, Bf, // moves that will be tried for the last move
+	Lf3, Rf3, Ff3, Bf3, // other moves in stage 1 but not in stage 2
 	Uf, Uf3, Uf2, Us, Us3, Us2,
-	Df, Df3, Df2, Ds, Ds3, Ds2,
-	Lf2, Ls, Ls3, Ls2, Rf2, Rs, Rs3, Rs2,
-	Ff2, Fs, Fs3, Fs2, Bf2, Bs, Bs3, Bs2
+	Df, Df3, Df2,
+	Lf2, Rf2, Rs, Rs3, Rs2,
+	Ff2, Fs, Fs3, Fs2, Bf2,
+	Ds, Ds3, Ds2, Ls, Ls3, Ls2, Bs, Bs3, Bs2 // moves not used in FTM
+	};
+
+	public static final int basic_to_face[] = {
+	0, 1, 2, 3,
+	4, 5, 6, 7,
+	8, 9, 10, 8, 9, 10,
+	11, 12, 13,
+	14, 15, 1, 5, 15,
+	16, 2, 6, 16, 17,
+	11, 12, 13, 0, 4, 14, 3, 7, 17
+	};
+
+	public static final int stage1_inv_slice_moves[] = new int[N_BASIC_MOVES];
+	static {
+		for (int i=0; i<N_STAGE1_MOVES; i++) {
+			stage1_inv_slice_moves[stage1_slice_moves[i]] = i;
+		}
+	}
+
+	public static final boolean stage1_slice_moves_to_try [][] = new boolean[N_STAGE1_MOVES + 1][N_STAGE1_MOVES];
+	static{
+		for (int i=0; i<N_STAGE1_MOVES; i++) {
+			for (int j=0; j<N_STAGE1_MOVES; j++) {
+				stage1_slice_moves_to_try[i][j] = slice_moves_to_try[stage1_slice_moves[i]][stage1_slice_moves[j]];
+			}
+			stage1_slice_moves_to_try[N_STAGE1_MOVES][i] = false;
+		}
+	}
+
+	public static final int N_STAGE2_MOVES = 28;
+	public static final int N_STAGE2_SEARCH = ( METRIC == STM ) ? 28 : 24;
+	public static final int N_STAGE2_LAST = 4;
+
+	public static final byte stage2_slice_moves[] = {
+	Ds, // if STM, move that will be tried for the last move
+	Us, Ls, Rs, // moves that will be tried for the last move
+	Us3, Ls3, Rs3,
+	Uf, Uf3, Uf2, Us2,
+	Df, Df3, Df2,
+	Lf2, Ls2, Rf2,
+	Ff2, Fs, Fs3, Fs2, Bf2, Bs, Bs3,
+	Ds3, Ds2, Rs2, Bs2 // moves not used in FTM
 	};
 
 	public static final int stage2_inv_slice_moves[] = new int[N_BASIC_MOVES];
 	static {
-		for (int i=0; i<N_STAGE2_SLICE_MOVES; i++) {
+		for (int i=0; i<N_STAGE2_MOVES; i++) {
 			stage2_inv_slice_moves[stage2_slice_moves[i]] = i;
 		}
 	}
 
-	public static final boolean stage2_slice_moves_to_try [][] = new boolean[N_STAGE2_SLICE_MOVES + 1][N_STAGE2_SLICE_MOVES];
+	public static final boolean stage2_slice_moves_to_try [][] = new boolean[N_STAGE2_MOVES + 1][N_STAGE2_MOVES];
 	static{
-		for (int i=0; i<N_STAGE2_SLICE_MOVES; i++) {
-			for (int j=0; j<N_STAGE2_SLICE_MOVES; j++) {
+		for (int i=0; i<N_STAGE2_MOVES; i++) {
+			for (int j=0; j<N_STAGE2_MOVES; j++) {
 				stage2_slice_moves_to_try[i][j] = stage1_slice_moves_to_try[stage2_slice_moves[i]][stage2_slice_moves[j]];
 			}
-			stage2_slice_moves_to_try[N_STAGE2_SLICE_MOVES][i] = false;
-			if( METRIC == FTM ){
-				stage2_slice_moves_to_try[i][13] = false; // Ls
-				stage2_slice_moves_to_try[i][14] = false; // Ls3
-				stage2_slice_moves_to_try[i][25] = false; // Bs
-				stage2_slice_moves_to_try[i][26] = false; // Bs3
-			}
-		}
-		if( METRIC == FTM ){
-			stage2_slice_moves_to_try[N_STAGE2_SLICE_MOVES][9] = true; // Ds
-			stage2_slice_moves_to_try[N_STAGE2_SLICE_MOVES][10] = true; // Ds3
-			stage2_slice_moves_to_try[N_STAGE2_SLICE_MOVES][11] = true; // Ds2
-			stage2_slice_moves_to_try[N_STAGE2_SLICE_MOVES][15] = true; // Ls2
-			stage2_slice_moves_to_try[N_STAGE2_SLICE_MOVES][27] = true; // Bs2
+			stage2_slice_moves_to_try[N_STAGE2_MOVES][i] = false;
 		}
 	}
 
-	public static final int N_STAGE3_SLICE_MOVES = 20;
+	public static final int N_STAGE3_MOVES = 20;
+	public static final int N_STAGE3_SEARCH = ( METRIC == STM ) ? 20 : 17;
+	public static final int N_STAGE3_LAST = 4;
+
 	public static final byte stage3_slice_moves[] = {
+	Fs, Bs, // moves that will be tried for the last move
+	Fs3, Bs3,
 	Uf, Uf3, Uf2, Us2,
-	Df, Df3, Df2, Ds2,
-	Lf2, Ls2, Rf2, Rs2,
-	Ff2, Fs, Fs3, Fs2, Bf2, Bs, Bs3, Bs2
+	Df, Df3, Df2,
+	Lf2, Rf2, Rs2,
+	Ff2, Fs2, Bf2,
+	Ds2, Ls2, Bs2 // moves not used in FTM
 	};
 
 	public static final int stage3_inv_slice_moves[] = new int[N_BASIC_MOVES];
 	static {
-		for (int i=0; i<N_STAGE3_SLICE_MOVES; i++) {
+		for (int i=0; i<N_STAGE3_MOVES; i++) {
 			stage3_inv_slice_moves[stage3_slice_moves[i]] = i;
 		}
 	}
 
-	public static final boolean stage3_slice_moves_to_try [][] = new boolean[N_STAGE3_SLICE_MOVES + 1][N_STAGE3_SLICE_MOVES];
+	public static final boolean stage3_slice_moves_to_try [][] = new boolean[N_STAGE3_MOVES + 1][N_STAGE3_MOVES];
 	static{
-		for (int i=0; i<N_STAGE3_SLICE_MOVES; i++) {
-			for (int j=0; j<N_STAGE3_SLICE_MOVES; j++) {
+		for (int i=0; i<N_STAGE3_MOVES; i++) {
+			for (int j=0; j<N_STAGE3_MOVES; j++) {
 				stage3_slice_moves_to_try[i][j] = stage1_slice_moves_to_try[stage3_slice_moves[i]][stage3_slice_moves[j]];
 			}
-			stage3_slice_moves_to_try[N_STAGE3_SLICE_MOVES][i] = false;
-			if( METRIC == FTM ){
-				stage3_slice_moves_to_try[i][17] = false; // Bs
-				stage3_slice_moves_to_try[i][18] = false; // Bs3
-			}
-		}
-		if( METRIC == FTM ){
-			stage3_slice_moves_to_try[N_STAGE3_SLICE_MOVES][7] = true; // Ds2
-			stage3_slice_moves_to_try[N_STAGE3_SLICE_MOVES][9] = true; // Ls2
-			stage3_slice_moves_to_try[N_STAGE3_SLICE_MOVES][19] = true; // Bs2
+			stage3_slice_moves_to_try[N_STAGE3_MOVES][i] = false;
 		}
 	}
 
 	public static boolean stage3_move_parity[] = {
+		true, true, true, true,
 		false, false, false, false,
-		false, false, false, false,
-		false, false, false, false,
-		false, true,  true,  false,
-		false, true,  true,  false
+		false, false, false,
+		false, false, false,
+		false, false, false
 	};
 
-	public static final int N_STAGE4_SLICE_MOVES = 16;
+	public static final int N_STAGE4_MOVES = 16;
+	public static final int N_STAGE4_SEARCH = ( METRIC == STM ) ? 16 : 13;
+	public static final int N_STAGE4_LAST = 2;
+
 	public static final byte stage4_slice_moves[] = {
-	Uf, Uf3, Uf2, Us2,
-	Df, Df3, Df2, Ds2,
-	Lf2, Ls2, Rf2, Rs2,
-	Ff2, Fs2, Bf2, Bs2
+	Uf, Df, // moves that will be tried for the last move
+	Uf3, Df3,
+	Uf2, Us2, Df2,
+	Lf2, Rf2, Rs2,
+	Ff2, Fs2, Bf2,
+	Ds2, Ls2, Bs2 // moves not used in FTM
 	};
 
 	public static final int stage4_inv_slice_moves[] = new int[N_BASIC_MOVES];
 	static {
-		for (int i=0; i<N_STAGE4_SLICE_MOVES; i++) {
+		for (int i=0; i<N_STAGE4_MOVES; i++) {
 			stage4_inv_slice_moves[stage4_slice_moves[i]] = i;
 		}
 	}
 
-	public static final boolean stage4_slice_moves_to_try [][] = new boolean[N_STAGE4_SLICE_MOVES + 1][N_STAGE4_SLICE_MOVES];
+	public static final boolean stage4_slice_moves_to_try [][] = new boolean[N_STAGE4_MOVES + 1][N_STAGE4_MOVES];
 	static{
-		for (int i=0; i<N_STAGE4_SLICE_MOVES; i++) {
-			for (int j=0; j<N_STAGE4_SLICE_MOVES; j++) {
+		for (int i=0; i<N_STAGE4_MOVES; i++) {
+			for (int j=0; j<N_STAGE4_MOVES; j++) {
 				stage4_slice_moves_to_try[i][j] = stage1_slice_moves_to_try[stage4_slice_moves[i]][stage4_slice_moves[j]];
 			}
-			stage4_slice_moves_to_try[N_STAGE4_SLICE_MOVES][i] = false;
-		}
-		if( METRIC == FTM ){
-			stage4_slice_moves_to_try[N_STAGE4_SLICE_MOVES][7] = true; // Ds2
-			stage4_slice_moves_to_try[N_STAGE4_SLICE_MOVES][9] = true; // Ls2
-			stage4_slice_moves_to_try[N_STAGE4_SLICE_MOVES][15] = true; // Bs2
+			stage4_slice_moves_to_try[N_STAGE4_MOVES][i] = false;
 		}
 	}
 
 	public static final int N_STAGE5_MOVES = 12;
+	public static final int N_STAGE5_SEARCH = ( METRIC == STM ) ? 12 : 9;
 
-	public static final byte stage5_slice_moves[] = { Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2 };
+	public static final byte stage5_slice_moves[] = {
+	Uf2, Us2, Df2, Lf2, Rf2, Rs2, Ff2, Fs2, Bf2,
+	Ds2, Ls2, Bs2 // moves not used in FTM
+	};
 
 	public static final int stage5_inv_slice_moves[] = new int[N_BASIC_MOVES];
 	static {
@@ -266,18 +282,13 @@ public final class Constants{
 		}
 	}
 
-	public static final boolean sqs_slice_moves_to_try [][] = new boolean[N_STAGE5_MOVES + 1][N_STAGE5_MOVES];
+	public static final boolean stage5_slice_moves_to_try [][] = new boolean[N_STAGE5_MOVES + 1][N_STAGE5_MOVES];
 	static{
 		for (int i=0; i<N_STAGE5_MOVES; i++) {
 			for (int j=0; j<N_STAGE5_MOVES; j++) {
-				sqs_slice_moves_to_try[i][j] = stage1_slice_moves_to_try[stage5_slice_moves[i]][stage5_slice_moves[j]];
+				stage5_slice_moves_to_try[i][j] = stage1_slice_moves_to_try[stage5_slice_moves[i]][stage5_slice_moves[j]];
 			}
-			sqs_slice_moves_to_try[N_STAGE5_MOVES][i] = false;
-		}
-		if( METRIC == FTM ){
-			sqs_slice_moves_to_try[N_STAGE5_MOVES][3] = true; // Ds2
-			sqs_slice_moves_to_try[N_STAGE5_MOVES][5] = true; // Ls2
-			sqs_slice_moves_to_try[N_STAGE5_MOVES][11] = true; // Bs2
+			stage5_slice_moves_to_try[N_STAGE5_MOVES][i] = false;
 		}
 	}
 

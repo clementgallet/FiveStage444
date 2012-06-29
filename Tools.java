@@ -16,8 +16,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Random;
 
-import net.gnehzr.tnoodle.utils.Utils;
-import net.gnehzr.tnoodle.utils.TimedLogRecordStart;
+//import net.gnehzr.tnoodle.utils.Utils;
+//import net.gnehzr.tnoodle.utils.TimedLogRecordStart;
 
 public class Tools {
 	private static final Logger l = Logger.getLogger(Tools.class.getName());
@@ -137,8 +137,8 @@ public class Tools {
 			return;
 		
 		if(fivephase_tables == null) {
-			fivephase_tables = new File(Utils.getResourceDirectory(), "fivephase_tables");
-			//fivephase_tables = new File("cg/fivestage444/fivephase_tables_ftm");
+			//fivephase_tables = new File(Utils.getResourceDirectory(), "fivephase_tables");
+			fivephase_tables = new File("cg/fivestage444/fivephase_tables_"+METRIC_STR);
 		}
 
 		prepareTables();
@@ -151,8 +151,8 @@ public class Tools {
 			}
 		}
 		if(!inited) {
-			TimedLogRecordStart start = new TimedLogRecordStart("Generating fivephase tables");
-			l.log(start);
+			//TimedLogRecordStart start = new TimedLogRecordStart("Generating fivephase tables");
+			//l.log(start);
 
 			Tables.init_tables();
 			CubeStage1.prune_table.analyse();
@@ -174,7 +174,7 @@ public class Tools {
 				l.log(Level.INFO, "Failed to write to " + fivephase_tables, e);
 			}
 			
-			l.log(start.finishedNow());
+			//l.log(start.finishedNow());
 		}
 		inited = true;
 	}

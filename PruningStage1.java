@@ -18,7 +18,7 @@ public final class PruningStage1 extends Pruning {
 		int i;
 
 		// Definition of the allowed moves.
-		num_moves = N_BASIC_MOVES;
+		num_moves = N_STAGE1_MOVES;
 
 		// Creation of the pruning table.
 		int n = (int)(num_positions/4 + 1);
@@ -40,7 +40,7 @@ public final class PruningStage1 extends Pruning {
 		int sym = newEdge & 0x3F;
 		int edgeRep = newEdge >> 6;
 
-		if (( METRIC == FTM ) || (( move % 6 ) < 3 ))
+		if (( METRIC == FTM ) || (( stage1_inv_slice_moves[move] % 6 ) < 3 ))
 			co = Tables.move_table_co[co][basic_to_face[move]];
 		co = Tables.move_table_co_conj[co][sym];
 

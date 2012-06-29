@@ -18,7 +18,7 @@ public final class PruningStage2EdgCen extends PruningFull {
 		int i;
 
 		// Definition of the allowed moves.
-		num_moves = N_STAGE2_SLICE_MOVES;
+		num_moves = N_STAGE2_MOVES;
 
 		for (i = 0; i < num_positions; ++i) {
 			ptable[i] = -1;

@@ -18,7 +18,7 @@ public final class PruningStage4 extends Pruning {
 		int i;
 
 		// Definition of the allowed moves.
-		num_moves = N_STAGE4_SLICE_MOVES;
+		num_moves = N_STAGE4_MOVES;
 
 		// Creation of the pruning table.
 		int n = (int)(num_positions/4 + 1);
