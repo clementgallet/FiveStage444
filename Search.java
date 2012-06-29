@@ -133,7 +133,8 @@ public final class Search {
 
 	static int MAX_STAGE2 = (METRIC == STM) ? 6 : 8; // FTM
 	static int MAX_STAGE3 = 9;
-	static int MAX_STAGE4 = 11; // STM
+	//static int MAX_STAGE4 = 12;
+	static int MAX_STAGE4 = 11;
 
 	static int MIN_STAGE3 = 7;
 	static int MIN_STAGE4 = 8;
@@ -180,6 +181,8 @@ public final class Search {
 		init_stage1 ();
 
 		/* Transform rotations before outputing the solution */
+		for (i = 0; i < length1_sub; ++i)
+			move_list_sub_stage1[i] = stage1_slice_moves[move_list_sub_stage1[i]];
 		for (i = 0; i < length2_sub; ++i)
 			move_list_sub_stage2[i] = xlate_r6[stage2_slice_moves[move_list_sub_stage2[i]]][rotate];
 		for (i = 0; i < length3_sub; ++i)
@@ -234,7 +237,7 @@ public final class Search {
 
 		endtime = System.currentTimeMillis() + time_per_stage;
 
-		total_length = 46;
+		total_length = 50;
 		found_sol = false;
 		for (length1 = d; length1 < total_length; ++length1) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "Stage 1 - length "+length1 );
@@ -263,11 +266,11 @@ public final class Search {
 				continue;
 
 			/* Move cube1 to list1[depth] */
-			if (( METRIC == FTM ) || (( stage1_inv_slice_moves[mov_idx] % 6 ) < 3 ))
+			if (( METRIC == FTM ) || (( stage1_slice_moves[mov_idx] % 6 ) < 3 ))
 				list1[depth].corner = Tables.move_table_co[cube1.corner][basic_to_face[mov_idx]];
 			else
 				list1[depth].corner = cube1.corner;
-			int newEdge = Tables.move_table_symEdgeSTAGE1[cube1.edge][Symmetry.moveConjugate[mov_idx][cube1.sym]];
+			int newEdge = Tables.move_table_symEdgeSTAGE1[cube1.edge][Symmetry.moveConjugate1[mov_idx][cube1.sym]];
 			list1[depth].sym = Symmetry.symIdxMultiply[newEdge & 0x3F][cube1.sym];
 			list1[depth].edge = newEdge >> 6 ;
 

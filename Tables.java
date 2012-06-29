@@ -287,7 +287,7 @@ public final class Tables {
 			s1.corner = u;
 			s1.convert_corners_to_std_cube (cube1);
 			for (mc = 0; mc < N_STAGE1_MOVES; ++mc) {
-				if(( stage1_inv_slice_moves[mc] % 6 ) >= 3 )
+				if(( stage1_slice_moves[mc] % 6 ) >= 3 )
 					continue;
 				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
 				cube2.rotate_sliceCORNER (stage1_slice_moves[mc], METRIC);

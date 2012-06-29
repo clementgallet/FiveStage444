@@ -129,6 +129,7 @@ public final class Symmetry {
 		}
 	}
 
+	static int[][] moveConjugate1 = new int[N_STAGE1_MOVES][N_SYM_STAGE1];
 	static int[][] moveConjugate2 = new int[N_STAGE2_MOVES][N_SYM_STAGE2];
 	static int[][] moveConjugate3 = new int[N_STAGE3_MOVES][N_SYM_STAGE3];
 	static int[][] moveConjugate4 = new int[N_STAGE4_MOVES][N_SYM_STAGE4];
@@ -137,6 +138,10 @@ public final class Symmetry {
 	static void initMoveConjugateStage(){
 
 		int i, j;
+
+		for (i=0; i<N_STAGE1_MOVES; i++)
+			for (j=0; j<N_SYM_STAGE1; j++)
+				moveConjugate1[i][j] = stage1_inv_slice_moves[moveConjugate[stage1_slice_moves[i]][j]];
 
 		for (i=0; i<N_STAGE2_MOVES; i++)
 			for (j=0; j<N_SYM_STAGE2; j++)

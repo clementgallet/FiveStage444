@@ -200,7 +200,7 @@ public final class Constants{
 
 	public static final int N_STAGE3_MOVES = 20;
 	public static final int N_STAGE3_SEARCH = ( METRIC == STM ) ? 20 : 17;
-	public static final int N_STAGE3_LAST = 4;
+	public static final int N_STAGE3_LAST = 2;
 
 	public static final byte stage3_slice_moves[] = {
 	Fs, Bs, // moves that will be tried for the last move
@@ -232,6 +232,7 @@ public final class Constants{
 	public static boolean stage3_move_parity[] = {
 		true, true, true, true,
 		false, false, false, false,
+		false, false, false,
 		false, false, false,
 		false, false, false,
 		false, false, false
