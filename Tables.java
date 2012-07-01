@@ -246,7 +246,7 @@ public final class Tables {
 	}
 
 	/*** init stage 1 symEdges ***/
-	public static int[][] move_table_symEdgeSTAGE1 = new int[N_SYMEDGE_COMBO8][N_BASIC_MOVES]; // (15582*64) 15582*36 = 560952
+	public static int[][] move_table_symEdgeSTAGE1 = new int[N_SYMEDGE_COMBO8][N_STAGE1_MOVES]; // (15582*64) 15582*36 = 560952
 
 	public static void initSymEdgeStage1 (){
 

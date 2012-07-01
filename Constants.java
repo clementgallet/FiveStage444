@@ -127,7 +127,8 @@ public final class Constants{
 
 	public static final int N_STAGE1_MOVES = 36;
 	public static final int N_STAGE1_SEARCH = ( METRIC == STM ) ? 36 : 27;
-	public static final int N_STAGE1_LAST = 4;
+	//public static final int N_STAGE1_LAST = 4;
+	public static final int N_STAGE1_LAST = 27;
 
 	public static final byte stage1_slice_moves[] = {
 	Lf, Rf, Ff, Bf, // moves that will be tried for the last move
@@ -168,7 +169,8 @@ public final class Constants{
 
 	public static final int N_STAGE2_MOVES = 28;
 	public static final int N_STAGE2_SEARCH = ( METRIC == STM ) ? 28 : 24;
-	public static final int N_STAGE2_LAST = 4;
+	public static final int N_STAGE2_LAST = 24;
+	//public static final int N_STAGE2_LAST = 4;
 
 	public static final byte stage2_slice_moves[] = {
 	Ds, // if STM, move that will be tried for the last move
@@ -192,7 +194,7 @@ public final class Constants{
 	static{
 		for (int i=0; i<N_STAGE2_MOVES; i++) {
 			for (int j=0; j<N_STAGE2_MOVES; j++) {
-				stage2_slice_moves_to_try[i][j] = stage1_slice_moves_to_try[stage2_slice_moves[i]][stage2_slice_moves[j]];
+				stage2_slice_moves_to_try[i][j] = slice_moves_to_try[stage2_slice_moves[i]][stage2_slice_moves[j]];
 			}
 			stage2_slice_moves_to_try[N_STAGE2_MOVES][i] = false;
 		}
@@ -200,7 +202,8 @@ public final class Constants{
 
 	public static final int N_STAGE3_MOVES = 20;
 	public static final int N_STAGE3_SEARCH = ( METRIC == STM ) ? 20 : 17;
-	public static final int N_STAGE3_LAST = 2;
+	public static final int N_STAGE3_LAST = 17;
+	//public static final int N_STAGE3_LAST = 2;
 
 	public static final byte stage3_slice_moves[] = {
 	Fs, Bs, // moves that will be tried for the last move
@@ -223,7 +226,7 @@ public final class Constants{
 	static{
 		for (int i=0; i<N_STAGE3_MOVES; i++) {
 			for (int j=0; j<N_STAGE3_MOVES; j++) {
-				stage3_slice_moves_to_try[i][j] = stage1_slice_moves_to_try[stage3_slice_moves[i]][stage3_slice_moves[j]];
+				stage3_slice_moves_to_try[i][j] = slice_moves_to_try[stage3_slice_moves[i]][stage3_slice_moves[j]];
 			}
 			stage3_slice_moves_to_try[N_STAGE3_MOVES][i] = false;
 		}
@@ -240,7 +243,8 @@ public final class Constants{
 
 	public static final int N_STAGE4_MOVES = 16;
 	public static final int N_STAGE4_SEARCH = ( METRIC == STM ) ? 16 : 13;
-	public static final int N_STAGE4_LAST = 2;
+	public static final int N_STAGE4_LAST = 13;
+	//public static final int N_STAGE4_LAST = 2;
 
 	public static final byte stage4_slice_moves[] = {
 	Uf, Df, // moves that will be tried for the last move
@@ -262,7 +266,7 @@ public final class Constants{
 	static{
 		for (int i=0; i<N_STAGE4_MOVES; i++) {
 			for (int j=0; j<N_STAGE4_MOVES; j++) {
-				stage4_slice_moves_to_try[i][j] = stage1_slice_moves_to_try[stage4_slice_moves[i]][stage4_slice_moves[j]];
+				stage4_slice_moves_to_try[i][j] = slice_moves_to_try[stage4_slice_moves[i]][stage4_slice_moves[j]];
 			}
 			stage4_slice_moves_to_try[N_STAGE4_MOVES][i] = false;
 		}
@@ -287,7 +291,7 @@ public final class Constants{
 	static{
 		for (int i=0; i<N_STAGE5_MOVES; i++) {
 			for (int j=0; j<N_STAGE5_MOVES; j++) {
-				stage5_slice_moves_to_try[i][j] = stage1_slice_moves_to_try[stage5_slice_moves[i]][stage5_slice_moves[j]];
+				stage5_slice_moves_to_try[i][j] = slice_moves_to_try[stage5_slice_moves[i]][stage5_slice_moves[j]];
 			}
 			stage5_slice_moves_to_try[N_STAGE5_MOVES][i] = false;
 		}
