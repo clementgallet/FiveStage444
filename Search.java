@@ -52,7 +52,7 @@ public final class Search {
 
 	static int DEBUG_LEVEL = 0;
 
-	public String solve (CubeState cube, int timeOut, boolean inverse) {
+	public String solve (CubeState cube, boolean inverse) {
 		int i, j;
 
 		Tools.init();
@@ -112,6 +112,8 @@ public final class Search {
 
 		//System.out.print(length1_sub + length2_sub + length3_sub + length4_sub + length5_sub);
 		//System.out.print("\t");
+		if( ! Tools.checkSolution(cube, sb.toString()))
+			System.out.println("Not a solution !!!!!!");
 		return sb.toString();
 	}
 

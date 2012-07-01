@@ -457,7 +457,7 @@ public final class Constants{
 	0x0F, 0xF0, 0x55, 0xAA, 0x5A, 0xA5, 0x69, 0x96, 0x66, 0x99, 0x3C, 0xC3
 	};
 
-	private static String move_strings[] = {
+	public static String move_strings[] = {
 	"U", "U'", "U2", "u", "u'", "u2",
 	"D", "D'", "D2", "d", "d'", "d2",
 	"L", "L'", "L2", "l", "l'", "l2",

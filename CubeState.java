@@ -98,6 +98,46 @@ public final class CubeState{
 		}
 	}
 
+	public boolean similarTo (CubeState cube){
+		int symA, symB;
+		byte i;
+
+		CubeState cube2 = new CubeState();
+		for (symA=0; symA<48; symA++) for (symB=0; symB<48; symB++){
+			cube.copyTo( cube2 );
+			cube2.rightMultEdges  ( symA );
+			cube2.rightMultCenters( symA );
+			cube2.rightMultCorners( symA );
+			cube2.leftMultEdges  ( symB );
+			cube2.leftMultCenters( symB );
+			cube2.leftMultCorners( symB );
+
+			boolean similar = true;
+			for (i = 0; i < 24; ++i)
+				if( cube2.m_edge[i] != m_edge[i] ){
+					similar = false;
+					break;
+				}
+			if( ! similar ) continue;
+
+			for (i = 0; i < 8; ++i)
+				if( cube2.m_cor[i] != m_cor[i] ){
+					similar = false;
+					break;
+				}
+			if( ! similar ) continue;
+
+			for (i = 0; i < 24; ++i)
+				if( cube2.m_cen[i] != m_cen[i] ){
+					similar = false;
+					break;
+			}
+			if( similar ) return true;
+		}
+
+		return false;
+	}
+
 	public final void do_move (int move_code){
 		rotate_sliceEDGE (move_code, METRIC);
 		rotate_sliceCORNER (move_code, METRIC);

@@ -303,6 +303,34 @@ public class Tools {
 		return cube;
 	}
 
+	public static boolean checkSolution(CubeState cube, String scramble){
+
+		CubeState cube2 = new CubeState();
+		String[] moves = scramble.split("\\s+");
+		for (int i=0; i<moves.length; i++){
+			if( moves[i].isEmpty() ) continue;
+			/* Do it the lazy way... */
+			int themove = -1;
+			for(int m=0; m < 72; m++){
+				if( moves[i].equals( Constants.move_strings[m] )){
+					themove = m;
+					break;
+				}
+			}
+			if( themove == -1 ){
+				System.out.println("Unknown move");
+				return false;
+			}
+
+			if( themove < 36 )
+				cube2.do_move(themove, STM);
+			else
+				cube2.do_move(themove-36, FTM);
+		}
+
+		return cube.similarTo(cube2);
+	}
+
 	/* Fisher-Yates shuffle */
 	private static void randomPerm(Random r, byte[] array, int n) {
 		int i, j;
