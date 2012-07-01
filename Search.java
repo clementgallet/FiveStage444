@@ -549,7 +549,7 @@ public final class Search {
 
 		/** int d4 = s1.getDistance(); **/
 
-		int cubeDistEdgCen = s1.prune_table_edgcen.ptable[s1.edge * N_STAGE4_CENTER_CONFIGS + Tables.move_table_cen_conjSTAGE4[s1.center][s1.sym]];
+		int cubeDistEdgCen = CubeStage4.prune_table_edgcen.ptable[s1.edge * N_STAGE4_CENTER_CONFIGS + Tables.move_table_cen_conjSTAGE4[s1.center][s1.sym]];
 		if( cubeDistEdgCen >= total_length-length3-length2 ) return false;
 		int cubeDistEdgCor = s1.getDistanceEdgCor();
 		int d4 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
@@ -610,7 +610,7 @@ public final class Search {
 			/* Compute new distance */
 			/** int newDist = cube2.prune_table.new_dist((( cube2.edge * N_STAGE4_CORNER_CONFIGS + Tables.move_table_corner_conjSTAGE4[cube2.corner][cube2.sym] ) * N_STAGE4_CENTER_CONFIGS ) + Tables.move_table_cen_conjSTAGE4[cube2.center][cube2.sym], dist);
 			if (newDist > depth-1) continue; **/
-			int newDistEdgCen = cube2.prune_table_edgcen.ptable[cube2.edge * N_STAGE4_CENTER_CONFIGS + Tables.move_table_cen_conjSTAGE4[cube2.center][cube2.sym]];
+			int newDistEdgCen = CubeStage4.prune_table_edgcen.ptable[cube2.edge * N_STAGE4_CENTER_CONFIGS + Tables.move_table_cen_conjSTAGE4[cube2.center][cube2.sym]];
 			if (newDistEdgCen > depth-1) continue;
 			int newDist = cube2.new_dist_edgcor(dist);
 			if (newDist > depth-1) continue;

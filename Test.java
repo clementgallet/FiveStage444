@@ -124,8 +124,8 @@ public final class Test {
 			randomScramble(cube, stage2_slice_moves, N_STAGE2_SLICE_MOVES, gen);
 			cube.convert_to_stage2( s1 );
 
-			int cubeDistCenF1 = s1.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s1.centerF + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symF]];
-			int cubeDistCenB1 = s1.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s1.centerB + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symB]];
+			int cubeDistCenF1 = CubeStage2.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s1.centerF + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symF]];
+			int cubeDistCenB1 = CubeStage2.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s1.centerB + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symB]];
 			int d2 = Math.max(cubeDistCenF1, cubeDistCenB1);
 
 			long itime = System.currentTimeMillis();
@@ -144,7 +144,7 @@ public final class Test {
 		CubeState cube = new CubeState();
 		CubeStage3 s1 = new CubeStage3();
 		/* Set up s for stopping after finding a solution */
-		s.solver_mode = s.SUB_123;
+		s.solver_mode = Search.SUB_123;
 
 		long time = 0;
 		for( int i=0; i < n; i++ ){
@@ -153,8 +153,8 @@ public final class Test {
 			randomScramble(cube, stage3_slice_moves, N_STAGE3_SLICE_MOVES, gen);
 			cube.convert_to_stage3( s1 );
 
-			int cubeDistCen = s1.prune_table_cen.ptable[s1.center];
-			int cubeDistEdg = s1.prune_table_edg.ptable[( s1.edge<<1 ) + (s1.edge_odd?1:0)];
+			int cubeDistCen = CubeStage3.prune_table_cen.ptable[s1.center];
+			int cubeDistEdg = CubeStage3.prune_table_edg.ptable[( s1.edge<<1 ) + (s1.edge_odd?1:0)];
 			int d3 = Math.max(cubeDistCen, cubeDistEdg);
 
 			long itime = System.currentTimeMillis();
@@ -173,7 +173,7 @@ public final class Test {
 		CubeState cube = new CubeState();
 		CubeStage4 s1 = new CubeStage4();
 		/* Set up s for stopping after finding a solution */
-		s.solver_mode = s.SUB_234;
+		s.solver_mode = Search.SUB_234;
 
 		long time = 0;
 		for( int i=0; i < n; i++ ){
@@ -207,7 +207,7 @@ public final class Test {
 			randomScramble(cube, stage5_slice_moves, N_STAGE5_MOVES, gen);
 			cube.convert_to_stage5( s1 );
 
-			int cubeDistEdgCor = s1.prune_table_edgcor.ptable[s1.edge * N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[s1.corner][(s1.sym<<2)+s1.cosym]];
+			int cubeDistEdgCor = CubeStage5.prune_table_edgcor.ptable[s1.edge * N_STAGE5_CORNER_PERM + Tables.move_table_corner_conjSTAGE5[s1.corner][(s1.sym<<2)+s1.cosym]];
 			int cubeDistEdgCen = s1.getDistanceEdgCen();
 			int d5 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
 
@@ -226,10 +226,10 @@ public final class Test {
 
 		Search s = new Search();
 		CubeStage1 s1 = new CubeStage1();
-		s.solver_mode = s.SUB_123;
+		s.solver_mode = Search.SUB_123;
 		/* Set up s for stopping after finding a solution */
 		s.endtime = System.currentTimeMillis() - 1;
-		s.MAX_STAGE2 = 100;
+		Search.MAX_STAGE2 = 100;
 		s.total_length = 100;
 		s.found1 = false;
 		for( int i=0; i<20; i++ ){
@@ -262,10 +262,10 @@ public final class Test {
 
 		Search s = new Search();
 		CubeStage2 s1 = new CubeStage2();
-		s.solver_mode = s.SUB_234;
+		s.solver_mode = Search.SUB_234;
 		/* Set up s for stopping after finding a solution */
 		s.endtime = System.currentTimeMillis() - 1;
-		s.MAX_STAGE3 = 100;
+		Search.MAX_STAGE3 = 100;
 		s.total_length = 100;
 		s.found2 = false;
 		for( int i=0; i<20; i++ ){
@@ -280,8 +280,8 @@ public final class Test {
 			randomScramble(s.c1, stage2_slice_moves, N_STAGE2_SLICE_MOVES, gen);
 			s.c1.convert_to_stage2( s1 );
 
-			int cubeDistCenF1 = s1.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s1.centerF + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symF]];
-			int cubeDistCenB1 = s1.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s1.centerB + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symB]];
+			int cubeDistCenF1 = CubeStage2.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s1.centerF + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symF]];
+			int cubeDistCenB1 = CubeStage2.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s1.centerB + Tables.move_table_edge_conjSTAGE2[s1.edge][s1.symB]];
 			int d2 = Math.max(cubeDistCenF1, cubeDistCenB1);
 
 			long itime = System.currentTimeMillis();
@@ -300,10 +300,10 @@ public final class Test {
 
 		Search s = new Search();
 		CubeStage3 s1 = new CubeStage3();
-		s.solver_mode = s.SUB_345;
+		s.solver_mode = Search.SUB_345;
 		/* Set up s for stopping after finding a solution */
 		s.endtime = System.currentTimeMillis() - 1;
-		s.MAX_STAGE4 = 100;
+		Search.MAX_STAGE4 = 100;
 		s.total_length = 100;
 		s.found_sol = false;
 		long time = 0;
@@ -315,8 +315,8 @@ public final class Test {
 			randomScramble(s.c2, stage3_slice_moves, N_STAGE3_SLICE_MOVES, gen);
 			s.c2.convert_to_stage3( s1 );
 
-			int cubeDistCen = s1.prune_table_cen.ptable[s1.center];
-			int cubeDistEdg = s1.prune_table_edg.ptable[( s1.edge<<1 ) + (s1.edge_odd?1:0)];
+			int cubeDistCen = CubeStage3.prune_table_cen.ptable[s1.center];
+			int cubeDistEdg = CubeStage3.prune_table_edg.ptable[( s1.edge<<1 ) + (s1.edge_odd?1:0)];
 			int d3 = Math.max(cubeDistCen, cubeDistEdg);
 
 			long itime = System.currentTimeMillis();
