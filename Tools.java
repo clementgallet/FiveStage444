@@ -305,9 +305,8 @@ public class Tools {
 
 	public static boolean checkSolution(CubeState cube, String scramble){
 
-		CubeState cube2 = new CubeState();
 		String[] moves = scramble.split("\\s+");
-		for (int i=0; i<moves.length; i++){
+		for (int i=moves.length-1; i>=0; i--){
 			if( moves[i].isEmpty() ) continue;
 			/* Do it the lazy way... */
 			int themove = -1;
@@ -321,14 +320,13 @@ public class Tools {
 				System.out.println("Unknown move");
 				return false;
 			}
-
+			themove = themove + ((( themove + 2 ) % 3 ) - 1);
 			if( themove < 36 )
-				cube2.do_move(themove, STM);
+				cube.do_move(themove, STM);
 			else
-				cube2.do_move(themove-36, FTM);
+				cube.do_move(themove-36, FTM);
 		}
-
-		return cube.similarTo(cube2);
+		return cube.is_solved();
 	}
 
 	/* Fisher-Yates shuffle */

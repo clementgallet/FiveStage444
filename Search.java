@@ -18,6 +18,7 @@ public final class Search {
 	byte[] move_list_stage5 = new byte[50];
 	int length1, length2, length3, length4, length5;
 	int rotate, rotate2;
+	int rotate_sub, rotate2_sub;
 	int total_length;
 
 	byte[] move_list_sub_stage1 = new byte[50];
@@ -63,14 +64,15 @@ public final class Search {
 
 		StringBuffer sb = new StringBuffer();
 		String sol = "";
+		CubeState c = new CubeState();
+		cube.copyTo( c );
 		
-		for( j=0; j<6; j++){
+		for( j=0; j<3; j++){
 			init_cube[j] = new CubeState();
-			cube.copyTo( init_cube[j] );
-			cube.leftMultEdges  ( 16 );
-			cube.leftMultCenters( 16 );
-			cube.leftMultCorners( 16 );
-			if( j == 2 ) cube.inverse();
+			c.copyTo( init_cube[j] );
+			c.leftMultEdges  ( 16 );
+			c.leftMultCenters( 16 );
+			c.leftMultCorners( 16 );
 		}
 
 		init_stage1 ();
@@ -79,31 +81,31 @@ public final class Search {
 		for (i = 0; i < length1_sub; ++i)
 			move_list_sub_stage1[i] = stage1_slice_moves[move_list_sub_stage1[i]];
 		for (i = 0; i < length2_sub; ++i)
-			move_list_sub_stage2[i] = xlate_r6[stage2_slice_moves[move_list_sub_stage2[i]]][rotate];
+			move_list_sub_stage2[i] = xlate_r6[stage2_slice_moves[move_list_sub_stage2[i]]][rotate_sub];
 		for (i = 0; i < length3_sub; ++i)
-			move_list_sub_stage3[i] = xlate_r6[stage3_slice_moves[move_list_sub_stage3[i]]][rotate2];
+			move_list_sub_stage3[i] = xlate_r6[stage3_slice_moves[move_list_sub_stage3[i]]][rotate2_sub];
 		for (i = 0; i < length4_sub; ++i)
-			move_list_sub_stage4[i] = xlate_r6[stage4_slice_moves[move_list_sub_stage4[i]]][rotate2];
+			move_list_sub_stage4[i] = xlate_r6[stage4_slice_moves[move_list_sub_stage4[i]]][rotate2_sub];
 		for (i = 0; i < length5_sub; ++i)
-			move_list_sub_stage5[i] = xlate_r6[stage5_slice_moves[move_list_sub_stage5[i]]][rotate2];
+			move_list_sub_stage5[i] = xlate_r6[stage5_slice_moves[move_list_sub_stage5[i]]][rotate2_sub];
 
-		if( inverse ^ (r1_sub>2) ){
+		if( inverse ){
 			sb.append(print_move_list (length5_sub, move_list_sub_stage5, true));
 			//sb.append("* ");
 			sb.append(print_move_list (length4_sub, move_list_sub_stage4, true));
 			//sb.append("* ");
-			sb.append(print_move_list (length3_sub, move_list_sub_stage3, rotate2+3, true));
+			sb.append(print_move_list (length3_sub, move_list_sub_stage3, rotate2_sub+3, true));
 			//sb.append("* ");
-			sb.append(print_move_list (length2_sub, move_list_sub_stage2, rotate, true));
+			sb.append(print_move_list (length2_sub, move_list_sub_stage2, rotate_sub, true));
 			//sb.append("* ");
 			sb.append(print_move_list (length1_sub, move_list_sub_stage1, true));
 		}
 		else{
 			sb.append(print_move_list (length1_sub, move_list_sub_stage1, false));
 			//sb.append("* ");
-			sb.append(print_move_list (length2_sub, move_list_sub_stage2, rotate, false));
+			sb.append(print_move_list (length2_sub, move_list_sub_stage2, rotate_sub, false));
 			//sb.append("* ");
-			sb.append(print_move_list (length3_sub, move_list_sub_stage3, rotate2+3, false));
+			sb.append(print_move_list (length3_sub, move_list_sub_stage3, rotate2_sub+3, false));
 			//sb.append("* ");
 			sb.append(print_move_list (length4_sub, move_list_sub_stage4, false));
 			//sb.append("* ");
@@ -121,24 +123,15 @@ public final class Search {
 		CubeStage1 s1 = new CubeStage1();
 		CubeStage1 s2 = new CubeStage1();
 		CubeStage1 s3 = new CubeStage1();
-		CubeStage1 s4 = new CubeStage1();
-		CubeStage1 s5 = new CubeStage1();
-		CubeStage1 s6 = new CubeStage1();
 
 		init_cube[0].convert_to_stage1 (s1);
 		init_cube[1].convert_to_stage1 (s2);
 		init_cube[2].convert_to_stage1 (s3);
-		init_cube[3].convert_to_stage1 (s4);
-		init_cube[4].convert_to_stage1 (s5);
-		init_cube[5].convert_to_stage1 (s6);
 
 		int d1 = s1.getDistance();
 		int d2 = s2.getDistance();
 		int d3 = s3.getDistance();
-		int d4 = s4.getDistance();
-		int d5 = s5.getDistance();
-		int d6 = s6.getDistance();
-		int d = Math.min(Math.min(Math.min(d1, d2), d3), Math.min(Math.min(d4, d5), d6));
+		int d = Math.min(Math.min(d1, d2), d3);
 
 		total_length = 48;
 		found_sol = false;
@@ -146,10 +139,7 @@ public final class Search {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "Stage 1 - length "+length1 );
 			if ( search_stage1 (s1, length1, 0, N_BASIC_MOVES, d1, 0 )
 			  || search_stage1 (s2, length1, 0, N_BASIC_MOVES, d2, 1 )
-			  || search_stage1 (s3, length1, 0, N_BASIC_MOVES, d3, 2 )
-			  || search_stage1 (s4, length1, 0, N_BASIC_MOVES, d4, 3 )
-			  || search_stage1 (s5, length1, 0, N_BASIC_MOVES, d5, 4 )
-			  || search_stage1 (s6, length1, 0, N_BASIC_MOVES, d6, 5 ))
+			  || search_stage1 (s3, length1, 0, N_BASIC_MOVES, d3, 2 ))
 				return;
 		}
 	}
@@ -467,6 +457,8 @@ public final class Search {
 				length5_sub = length5;
 				r1_sub = r1;
 				r2_sub = r2;
+				rotate_sub = rotate;
+				rotate2_sub = rotate2;
 				return true;
 			}
 		}

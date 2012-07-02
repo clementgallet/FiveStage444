@@ -98,41 +98,38 @@ public final class CubeState{
 		}
 	}
 
-	public boolean similarTo (CubeState cube){
-		int symA, symB;
+	public boolean is_solved (){
+		int sym;
 		byte i;
 
-		CubeState cube2 = new CubeState();
-		for (symA=0; symA<48; symA++) for (symB=0; symB<48; symB++){
-			cube.copyTo( cube2 );
-			cube2.rightMultEdges  ( symA );
-			cube2.rightMultCenters( symA );
-			cube2.rightMultCorners( symA );
-			cube2.leftMultEdges  ( symB );
-			cube2.leftMultCenters( symB );
-			cube2.leftMultCorners( symB );
+		CubeState cube = new CubeState();
+		for (sym=0; sym<48; sym++){
+			copyTo( cube );
+			cube.leftMultEdges  ( sym );
+			cube.leftMultCenters( sym );
+			cube.leftMultCorners( sym );
 
-			boolean similar = true;
+			boolean solved = true;
 			for (i = 0; i < 24; ++i)
-				if( cube2.m_edge[i] != m_edge[i] ){
-					similar = false;
+				if( cube.m_edge[i] != i ){
+					solved = false;
 					break;
 				}
-			if( ! similar ) continue;
+			if( ! solved ) continue;
 
 			for (i = 0; i < 8; ++i)
-				if( cube2.m_cor[i] != m_cor[i] ){
-					similar = false;
+				if( cube.m_cor[i] != i ){
+					solved = false;
 					break;
 				}
-			if( ! similar ) continue;
+			if( ! solved ) continue;
 
 			for (i = 0; i < 24; ++i)
-				if( cube2.m_cen[i] != m_cen[i] ){
-					similar = false;
+				if( cube.m_cen[i] != (byte)(i/4) ){
+					solved = false;
 					break;
 			}
-			if( similar ) return true;
+			if( solved ) return true;
 		}
 
 		return false;
