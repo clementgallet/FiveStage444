@@ -97,7 +97,7 @@ public final class Search {
 			sb.append(print_move_list (length3_sub, move_list_sub_stage3, rotate2_sub+3, true));
 			//sb.append("* ");
 			sb.append(print_move_list (length2_sub, move_list_sub_stage2, rotate_sub, true));
-			//sb.append("* ");
+			sb.append("* ");
 			sb.append(print_move_list (length1_sub, move_list_sub_stage1, true));
 		}
 		else{
@@ -111,11 +111,11 @@ public final class Search {
 			//sb.append("* ");
 			sb.append(print_move_list (length5_sub, move_list_sub_stage5, false));
 		}
-
 		//System.out.print(length1_sub + length2_sub + length3_sub + length4_sub + length5_sub);
 		//System.out.print("\t");
-		if( ! Tools.checkSolution(cube, sb.toString()))
-			System.out.println("Not a solution !!!!!!");
+		/* Check the solution */
+		/*if( ! Tools.checkSolution(cube, sb.toString()))
+			System.out.println("Not a solution !!!!!!");*/
 		return sb.toString();
 	}
 

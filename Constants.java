@@ -16,7 +16,7 @@ public final class Constants{
 	public static final String tables_path = "./cg/fivestage444/";
 	public static final int STM = 0;
 	public static final int FTM = 1;
-	public static int METRIC = STM;
+	public static int METRIC = FTM;
 	public static String METRIC_STR = (METRIC == STM) ? "stm" : "ftm";
 
 	public static final int N_SYM = 48;
@@ -169,18 +169,17 @@ public final class Constants{
 
 	public static final int N_STAGE2_MOVES = 28;
 	public static final int N_STAGE2_SEARCH = ( METRIC == STM ) ? 28 : 24;
-	public static final int N_STAGE2_LAST = 24;
 	//public static final int N_STAGE2_LAST = 4;
+	public static final int N_STAGE2_LAST = 8;
 
 	public static final byte stage2_slice_moves[] = {
-	Ds, // if STM, move that will be tried for the last move
-	Us, Ls, Rs, // moves that will be tried for the last move
-	Us3, Ls3, Rs3,
+	Ds, Us, Ls, Rs, // moves that will be tried for the last move
+	Ds3, Us3, Ls3, Rs3,
 	Uf, Uf3, Uf2, Us2,
 	Df, Df3, Df2,
 	Lf2, Ls2, Rf2,
 	Ff2, Fs, Fs3, Fs2, Bf2, Bs, Bs3,
-	Ds3, Ds2, Rs2, Bs2 // moves not used in FTM
+	Ds2, Rs2, Bs2 // moves not used in FTM
 	};
 
 	public static final int stage2_inv_slice_moves[] = new int[N_BASIC_MOVES];
@@ -202,7 +201,7 @@ public final class Constants{
 
 	public static final int N_STAGE3_MOVES = 20;
 	public static final int N_STAGE3_SEARCH = ( METRIC == STM ) ? 20 : 17;
-	public static final int N_STAGE3_LAST = 17;
+	public static final int N_STAGE3_LAST = 4;
 	//public static final int N_STAGE3_LAST = 2;
 
 	public static final byte stage3_slice_moves[] = {
@@ -243,7 +242,7 @@ public final class Constants{
 
 	public static final int N_STAGE4_MOVES = 16;
 	public static final int N_STAGE4_SEARCH = ( METRIC == STM ) ? 16 : 13;
-	public static final int N_STAGE4_LAST = 13;
+	public static final int N_STAGE4_LAST = 4;
 	//public static final int N_STAGE4_LAST = 2;
 
 	public static final byte stage4_slice_moves[] = {
@@ -482,8 +481,8 @@ public final class Constants{
 		{ true, false, true }, // [rd]
 		{ false, true, true }, // [fu]
 		{ true, false, true }, // [u]
-		{ true, true, false }, // [rdu]
-		{ false, true, true } // [fuu]
+		{ false, true, true }, // [rdu]
+		{ true, true, false } // [fuu]
 	};
 
 	public static String print_move_list (int count, byte[] move_list, boolean inverse){
