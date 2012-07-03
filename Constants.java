@@ -128,25 +128,27 @@ public final class Constants{
 	public static final int N_STAGE1_MOVES = 36;
 	public static final int N_STAGE1_SEARCH = ( METRIC == STM ) ? 36 : 27;
 	//public static final int N_STAGE1_LAST = 4;
-	public static final int N_STAGE1_LAST = 27;
+	public static final int N_STAGE1_LAST = 12;
 
 	public static final byte stage1_slice_moves[] = {
 	Lf, Rf, Ff, Bf, // moves that will be tried for the last move
 	Lf3, Rf3, Ff3, Bf3, // other moves in stage 1 but not in stage 2
+	Rs, Rs3, Fs, Fs3,
 	Uf, Uf3, Uf2, Us, Us3, Us2,
 	Df, Df3, Df2,
-	Lf2, Rf2, Rs, Rs3, Rs2,
-	Ff2, Fs, Fs3, Fs2, Bf2,
+	Lf2, Rf2, Rs2,
+	Ff2, Fs2, Bf2,
 	Ds, Ds3, Ds2, Ls, Ls3, Ls2, Bs, Bs3, Bs2 // moves not used in FTM
 	};
 
 	public static final int basic_to_face[] = {
 	0, 1, 2, 3,
 	4, 5, 6, 7,
+	1, 5, 2, 6,
 	8, 9, 10, 8, 9, 10,
 	11, 12, 13,
-	14, 15, 1, 5, 15,
-	16, 2, 6, 16, 17,
+	14, 15, 15,
+	16, 16, 17,
 	11, 12, 13, 0, 4, 14, 3, 7, 17
 	};
 
