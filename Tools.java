@@ -22,8 +22,6 @@ import net.gnehzr.tnoodle.utils.TimedLogRecordStart;
 public class Tools {
 	private static final Logger l = Logger.getLogger(Tools.class.getName());
 
-	static boolean inited = false;
-	
 	static void read(byte[] arr, DataInput in) throws IOException {
 		in.readFully(arr);
 	}
@@ -132,9 +130,27 @@ public class Tools {
 		CubeStage5.prune_table_edgcor = new PruningStage5EdgCor();
 	}
 
+	public static enum InitializationState {
+		UNINITIALIZED,
+		INITING_TABLES,
+		STAGE1A,
+		STAGE2A,
+		STAGE3A, STAGE3B,
+		STAGE4A, STAGE4B,
+		STAGE5A, STAGE5B,
+		INITIALIZED;
+	}
+
+	public static InitializationState getInitializationState() {
+		return inited;
+	}
+
+	static volatile InitializationState inited = InitializationState.UNINITIALIZED;
+	
 	private static synchronized void init(boolean tryToReadFile, File fivephase_tables) {
-		if (inited)
+		if(inited != InitializationState.UNINITIALIZED) {
 			return;
+		}
 		
 		if(fivephase_tables == null) {
 			fivephase_tables = new File(Utils.getResourceDirectory(), "fivephase_tables");
@@ -145,24 +161,36 @@ public class Tools {
 		if(tryToReadFile) {
 			try {
 				FileInputStream is = new FileInputStream(fivephase_tables);
-				inited = initFrom(new DataInputStream(is));
+				if(initFrom(new DataInputStream(is))) {
+					inited = InitializationState.INITIALIZED;
+				}
 			} catch (FileNotFoundException e) {
 				l.info("Couldn't find " + fivephase_tables + ", going to create it.");
 			}
 		}
-		if(!inited) {
+		if(inited == InitializationState.UNINITIALIZED) {
 			TimedLogRecordStart start = new TimedLogRecordStart("Generating fivephase tables");
 			l.log(start);
-
+			
+			inited = InitializationState.INITING_TABLES;
 			Tables.init_tables();
+
+			inited = InitializationState.STAGE1A;
 			CubeStage1.prune_table.analyse();
+			inited = InitializationState.STAGE2A;
 			CubeStage2.prune_table_edgcen.analyse();
+			inited = InitializationState.STAGE3A;
 			CubeStage3.prune_table_cen.analyse();
+			inited = InitializationState.STAGE3B;
 			CubeStage3.prune_table_edg.analyse();
 			/** CubeStage4.prune_table.analyse(); **/
+			inited = InitializationState.STAGE4A;
 			CubeStage4.prune_table_edgcen.analyse();
+			inited = InitializationState.STAGE4B;
 			CubeStage4.prune_table_edgcor.analyse();
+			inited = InitializationState.STAGE5A;
 			CubeStage5.prune_table_edgcen.analyse();
+			inited = InitializationState.STAGE5B;
 			CubeStage5.prune_table_edgcor.analyse();
 
 			try {
@@ -176,7 +204,7 @@ public class Tools {
 			
 			l.log(start.finishedNow());
 		}
-		inited = true;
+		inited = InitializationState.INITIALIZED;
 	}
 	
 	public static boolean initFrom(DataInput in) {
@@ -216,7 +244,6 @@ public class Tools {
 			read(CubeStage5.prune_table_edgcen.ptable_packed, in);
 			read(CubeStage5.prune_table_edgcor.ptable, in);
 
-			inited = true;
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
