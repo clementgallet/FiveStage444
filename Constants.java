@@ -61,50 +61,71 @@ public final class Constants{
 	public static final int Us3 = 4;	//Up "slice" counter-clockwise
 	public static final int Us2 = 5;	//Up "slice" 180 degrees
 
-	public static final int Df  = 6;	//Down "face" (bottom slice) clockwise wrt bottom
-	public static final int Df3 = 7;	//Down "face" counter-clockwise
-	public static final int Df2 = 8;	//Down "face" 180 degrees
+	public static final int Uw  = 6;	//Up "wide" (double outer slice) clockwise wrt top
+	public static final int Uw3 = 7;	//Up "wide" counter-clockwise
+	public static final int Uw2 = 8;	//Up "wide" 180 degrees
 
-	public static final int Ds  = 9;	//Down "slice" (lower inner slice) clockwise wrt bottom
-	public static final int Ds3 = 10;	//Down "slice" counter-clockwise
-	public static final int Ds2 = 11;	//Down "slice" 180 degrees
+	public static final int Df  = 9;	//Down "face" (bottom slice) clockwise wrt bottom
+	public static final int Df3 = 10;	//Down "face" counter-clockwise
+	public static final int Df2 = 11;	//Down "face" 180 degrees
 
-	public static final int Lf  = 12;	//Left "face" (left-hand outer slice) clockwise wrt left side
-	public static final int Lf3 = 13;	//Left "face" counter-clockwise
-	public static final int Lf2 = 14;	//Left "face" 180 degrees
+	public static final int Ds  = 12;	//Down "slice" (lower inner slice) clockwise wrt bottom
+	public static final int Ds3 = 13;	//Down "slice" counter-clockwise
+	public static final int Ds2 = 14;	//Down "slice" 180 degrees
 
-	public static final int Ls  = 15;	//Left "slice" (left-hand inner slice) clockwise wrt left side
-	public static final int Ls3 = 16;	//Left "slice" counter-clockwise
-	public static final int Ls2 = 17;	//Left "slice" 180 degrees
+	public static final int Dw  = 15;	//Down "wide" (double outer slice) clockwise wrt bottom
+	public static final int Dw3 = 16;	//Down "wide" counter-clockwise
+	public static final int Dw2 = 17;	//Down "wide" 180 degrees
 
-	public static final int Rf  = 18;	//Right "face" (right-hand outer slice) clockwise wrt right side
-	public static final int Rf3 = 19;	//Right "face" counter-clockwise
-	public static final int Rf2 = 20;	//Right "face" 180 degrees
+	public static final int Lf  = 18;	//Left "face" (left-hand outer slice) clockwise wrt left side
+	public static final int Lf3 = 19;	//Left "face" counter-clockwise
+	public static final int Lf2 = 20;	//Left "face" 180 degrees
 
-	public static final int Rs  = 21;	//Right "slice" (right-hand inner slice) clockwise wrt right side
-	public static final int Rs3 = 22;	//Right "slice" counter-clockwise
-	public static final int Rs2 = 23;	//Right "slice" 180 degrees
+	public static final int Ls  = 21;	//Left "slice" (left-hand inner slice) clockwise wrt left side
+	public static final int Ls3 = 22;	//Left "slice" counter-clockwise
+	public static final int Ls2 = 23;	//Left "slice" 180 degrees
 
-	public static final int Ff  = 24;	//Front "face" (front outer slice) clockwise wrt front
-	public static final int Ff3 = 25;	//Front "face" counter-clockwise
-	public static final int Ff2 = 26;	//Front "face" 180 degrees
+	public static final int Lw  = 24;	//Left "wide" (left-hand double outer slice) clockwise wrt left side
+	public static final int Lw3 = 25;	//Left "wide" counter-clockwise
+	public static final int Lw2 = 26;	//Left "wide" 180 degrees
 
-	public static final int Fs  = 27;	//Front "slice" (front inner slice) clockwise wrt front
-	public static final int Fs3 = 28;	//Front "slice" counter-clockwise
-	public static final int Fs2 = 29;	//Front "slice" 180 degrees
+	public static final int Rf  = 27;	//Right "face" (right-hand outer slice) clockwise wrt right side
+	public static final int Rf3 = 28;	//Right "face" counter-clockwise
+	public static final int Rf2 = 29;	//Right "face" 180 degrees
 
-	public static final int Bf  = 30;	//Back "face" (rear outer slice) clockwise wrt back side
-	public static final int Bf3 = 31;	//Back "face" counter-clockwise
-	public static final int Bf2 = 32;	//Back "face" 180 degrees
+	public static final int Rs  = 30;	//Right "slice" (right-hand inner slice) clockwise wrt right side
+	public static final int Rs3 = 31;	//Right "slice" counter-clockwise
+	public static final int Rs2 = 32;	//Right "slice" 180 degrees
 
-	public static final int Bs  = 33;	//Back "slice" (rear inner slice) clockwise wrt back side
-	public static final int Bs3 = 34;	//Back "slice" counter-clockwise
-	public static final int Bs2 = 35;	//Back "slice" 180 degrees
+	public static final int Rw  = 33;	//Right "wide" (right-hand double outer slice) clockwise wrt right side
+	public static final int Rw3 = 34;	//Right "wide" counter-clockwise
+	public static final int Rw2 = 35;	//Right "wide" 180 degrees
 
-	public static final int N_BASIC_MOVES  = Bs2 + 1;	//last rotate code plus one
+	public static final int Ff  = 36;	//Front "face" (front outer slice) clockwise wrt front
+	public static final int Ff3 = 37;	//Front "face" counter-clockwise
+	public static final int Ff2 = 38;	//Front "face" 180 degrees
 
-	public static final int N_FACE_MOVES = 18;
+	public static final int Fs  = 39;	//Front "slice" (front inner slice) clockwise wrt front
+	public static final int Fs3 = 40;	//Front "slice" counter-clockwise
+	public static final int Fs2 = 41;	//Front "slice" 180 degrees
 
+	public static final int Fw  = 42;	//Front "wide" (front double outer slice) clockwise wrt front
+	public static final int Fw3 = 43;	//Front "wide" counter-clockwise
+	public static final int Fw2 = 44;	//Front "wide" 180 degrees
+
+	public static final int Bf  = 45;	//Back "face" (rear outer slice) clockwise wrt back side
+	public static final int Bf3 = 46;	//Back "face" counter-clockwise
+	public static final int Bf2 = 47;	//Back "face" 180 degrees
+
+	public static final int Bs  = 48;	//Back "slice" (rear inner slice) clockwise wrt back side
+	public static final int Bs3 = 49;	//Back "slice" counter-clockwise
+	public static final int Bs2 = 50;	//Back "slice" 180 degrees
+
+	public static final int Bw  = 51;	//Back "wide" (rear double outer slice) clockwise wrt back side
+	public static final int Bw3 = 52;	//Back "wide" counter-clockwise
+	public static final int Bw2 = 53;	//Back "wide" 180 degrees
+
+	public static final int N_MOVES  = Bw2 + 1;	//last rotate code plus one
 
 
 	/** Filter certain combinaisons of moves:
@@ -114,45 +135,50 @@ public final class Constants{
 	  *   for example Rf Ls3 is ok but Lf2 Rs2 is not permitted because Lf2 Rs2 = Rf2 Ls2.
 	  **/
 
-	public static final boolean slice_moves_to_try [][] = new boolean[N_BASIC_MOVES][N_BASIC_MOVES];
+	public static final boolean slice_moves_to_try [][] = new boolean[N_MOVES][N_MOVES];
 	static{
-		for (int i=0; i<N_BASIC_MOVES; i++) {
-			for (int j=0; j<N_BASIC_MOVES; j++) {
-				slice_moves_to_try[i][j] = (i/3 == j/3) || ((i/12 == j/12) && (i>j));
+		for (int i=0; i<N_MOVES; i++) {
+			for (int j=0; j<N_MOVES; j++) {
+				slice_moves_to_try[i][j] = (i/3 == j/3) || ((i/18 == j/18) && (i>j));
 				if( METRIC == STM )
-					slice_moves_to_try[i][j] |= (i/12 == j/12) && ((i%3) == (j%3)) && ((i%12) >= 3);
+					slice_moves_to_try[i][j] |= (i/16 == j/16) && ((i%3) == (j%3)) && ((i%12) >= 3);
 			}
 		}
 	}
 
 	public static final int N_STAGE1_MOVES = 36;
 	public static final int N_STAGE1_SEARCH = ( METRIC == STM ) ? 36 : 27;
-	//public static final int N_STAGE1_LAST = 4;
-	public static final int N_STAGE1_LAST = 12;
+	public static final int N_STAGE1_LAST = ( METRIC == STM ) ? 8 : 12;
 
-	public static final byte stage1_slice_moves[] = {
-	Lf, Rf, Ff, Bf, // moves that will be tried for the last move
-	Lf3, Rf3, Ff3, Bf3, // other moves in stage 1 but not in stage 2
-	Rs, Rs3, Fs, Fs3,
-	Uf, Uf3, Uf2, Us, Us3, Us2,
-	Df, Df3, Df2,
-	Lf2, Rf2, Rs2,
-	Ff2, Fs2, Bf2,
-	Ds, Ds3, Ds2, Ls, Ls3, Ls2, Bs, Bs3, Bs2 // moves not used in FTM
+	public static final byte stage1_slice_moves[];
+	static{
+		if( METRIC == STM )
+			stage1_slice_moves = new byte[]{
+				Lf, Rf, Ff, Bf, Lf3, Rf3, Ff3, Bf3, // moves that will be tried for the last move
+				Uf, Uf3, Uf2, Us, Us3, Us2, Df, Df3, Df2, Ds, Ds3, Ds2,
+				         Lf2, Ls, Ls3, Ls2,          Rf2, Rs, Rs3, Rs2,
+				         Ff2, Fs, Fs3, Fs2,          Bf2, Bs, Bs3, Bs2
+			};
+		else
+			stage1_slice_moves = new byte[]{
+				Lf, Rf, Ff, Bf, Lf3, Rf3, Ff3, Bf3, Lw, Lw3, Fw, Fw3, // moves that will be tried for the last move
+				Uf, Uf3, Uf2, Uw, Uw3, Uw2, Df, Df3, Df2,
+				         Lf2,          Lw2,          Rf2,
+				         Ff2,          Fw2,          Bf2,
+				Dw, Dw3, Dw2, Rw, Rw3, Rw2, Bw, Bw3, Bw2
+			};
+	}
+
+	public static final int N_FACE_MOVES = 18;
+	public static final int basic_to_face[] = new int[N_MOVES];
+	static {
+		for( int i = 0; i < N_MOVES; i++ ){
+			byte m = stage1_slice_moves[i];
+			basic_to_face[i] = ( m / 9 ) * 3 + ( m % 3 );
+		}
 	};
 
-	public static final int basic_to_face[] = {
-	0, 1, 2, 3,
-	4, 5, 6, 7,
-	1, 5, 2, 6,
-	8, 9, 10, 8, 9, 10,
-	11, 12, 13,
-	14, 15, 15,
-	16, 16, 17,
-	11, 12, 13, 0, 4, 14, 3, 7, 17
-	};
-
-	public static final int stage1_inv_slice_moves[] = new int[N_BASIC_MOVES];
+	public static final int stage1_inv_slice_moves[] = new int[N_MOVES];
 	static {
 		for (int i=0; i<N_STAGE1_MOVES; i++) {
 			stage1_inv_slice_moves[stage1_slice_moves[i]] = i;
@@ -170,21 +196,29 @@ public final class Constants{
 	}
 
 	public static final int N_STAGE2_MOVES = 28;
-	public static final int N_STAGE2_SEARCH = ( METRIC == STM ) ? 28 : 24;
-	//public static final int N_STAGE2_LAST = 4;
-	public static final int N_STAGE2_LAST = 8;
+	public static final int N_STAGE2_SEARCH = ( METRIC == STM ) ? 28 : 23;
+	public static final int N_STAGE2_LAST = ( METRIC == STM ) 8 ? 6;
 
-	public static final byte stage2_slice_moves[] = {
-	Ds, Us, Ls, Rs, // moves that will be tried for the last move
-	Ds3, Us3, Ls3, Rs3,
-	Uf, Uf3, Uf2, Us2,
-	Df, Df3, Df2,
-	Lf2, Ls2, Rf2,
-	Ff2, Fs, Fs3, Fs2, Bf2, Bs, Bs3,
-	Ds2, Rs2, Bs2 // moves not used in FTM
-	};
+	public static final byte stage2_slice_moves[];
+	static {
+		if( METRIC == STM )
+			stage2_slice_moves = new byte[]{
+				Us, Ds, Ls, Rs, Us3, Ds3, Ls3, Rs3,
+				Uf, Uf3, Uf2,          Us2, Df, Df3, Df2,          Ds2,
+				         Lf2,          Ls2,          Rf2,          Rs2,
+				         Ff2, Fs, Fs3, Fs2,          Bf2, Bs, Bs3, Bs2
+			};
+		else
+			stage2_slice_moves = new byte[]{
+				Uw, Ls, Rs, Uw3, Ls3, Rs3,
+				Uf, Uf3, Uf2,          Uw2, Df, Df3, Df2,
+				         Lf2,          Lw2,          Rf2,
+				         Ff2, Fs, Fs3, Fw2,          Bf2, Bs, Bs3,
+				Dw2, Rw2, Bw2
+			};
+	}
 
-	public static final int stage2_inv_slice_moves[] = new int[N_BASIC_MOVES];
+	public static final int stage2_inv_slice_moves[] = new int[N_MOVES];
 	static {
 		for (int i=0; i<N_STAGE2_MOVES; i++) {
 			stage2_inv_slice_moves[stage2_slice_moves[i]] = i;
@@ -204,19 +238,27 @@ public final class Constants{
 	public static final int N_STAGE3_MOVES = 20;
 	public static final int N_STAGE3_SEARCH = ( METRIC == STM ) ? 20 : 17;
 	public static final int N_STAGE3_LAST = 4;
-	//public static final int N_STAGE3_LAST = 2;
 
-	public static final byte stage3_slice_moves[] = {
-	Fs, Bs, // moves that will be tried for the last move
-	Fs3, Bs3,
-	Uf, Uf3, Uf2, Us2,
-	Df, Df3, Df2,
-	Lf2, Rf2, Rs2,
-	Ff2, Fs2, Bf2,
-	Ds2, Ls2, Bs2 // moves not used in FTM
-	};
+	public static final byte stage3_slice_moves[];
+	static {
+		if( METRIC == STM )
+			stage3_slice_moves = new byte[]{
+				Fs, Bs, Fs3, Bs3,
+				Uf, Uf3, Uf2, Us2, Df, Df3, Df2, Ds2,
+				         Lf2, Ls2,          Rf2, Rs2,
+				         Ff2, Fs2,          Bf2, Bs2
+			}
+		else
+			stage3_slice_moves = new byte[]{
+				Fs, Bs, Fs3, Bs3,
+				Uf, Uf3, Uf2, Uw2, Df, Df3, Df2,
+				         Lf2, Lw2,          Rf2,
+				         Ff2, Fw2,          Bf2,
+				Dw2, Rw2, Bw2
+			}
+	}
 
-	public static final int stage3_inv_slice_moves[] = new int[N_BASIC_MOVES];
+	public static final int stage3_inv_slice_moves[] = new int[N_MOVES];
 	static {
 		for (int i=0; i<N_STAGE3_MOVES; i++) {
 			stage3_inv_slice_moves[stage3_slice_moves[i]] = i;
@@ -233,30 +275,36 @@ public final class Constants{
 		}
 	}
 
-	public static boolean stage3_move_parity[] = {
-		true, true, true, true,
-		false, false, false, false,
-		false, false, false,
-		false, false, false,
-		false, false, false,
-		false, false, false
-	};
+	public static boolean stage3_move_parity[] = new boolean[N_STAGE3_MOVES];
+	static {
+		for( int i = 0; i < N_STAGE3_MOVES; i++)
+			stage3_move_parity[i] = ((( stage3_slice_moves[i] / 3 ) % 3 ) == 1 );
+	}
 
 	public static final int N_STAGE4_MOVES = 16;
 	public static final int N_STAGE4_SEARCH = ( METRIC == STM ) ? 16 : 13;
 	public static final int N_STAGE4_LAST = 4;
-	//public static final int N_STAGE4_LAST = 2;
 
-	public static final byte stage4_slice_moves[] = {
-	Uf, Df, // moves that will be tried for the last move
-	Uf3, Df3,
-	Uf2, Us2, Df2,
-	Lf2, Rf2, Rs2,
-	Ff2, Fs2, Bf2,
-	Ds2, Ls2, Bs2 // moves not used in FTM
-	};
+	public static final byte stage4_slice_moves[];
+	static {
+		if( METRIC == STM )
+			stage4_slice_moves = new byte[]{
+				Uf, Df,	Uf3, Df3,
+				Uf2, Us2, Df2, Ds2,
+				Lf2, Ls2, Rf2, Rs2,
+				Ff2, Fs2, Bf2, Bs2
+			}
+		else
+			stage4_slice_moves = new byte[]{
+				Uf, Df,	Uf3, Df3,
+				Uf2, Uw2, Df2,
+				Lf2, Lw2, Rf2,
+				Ff2, Fw2, Bf2,
+				Dw2, Rw2, Bw2
+			}
+	}
 
-	public static final int stage4_inv_slice_moves[] = new int[N_BASIC_MOVES];
+	public static final int stage4_inv_slice_moves[] = new int[N_MOVES];
 	static {
 		for (int i=0; i<N_STAGE4_MOVES; i++) {
 			stage4_inv_slice_moves[stage4_slice_moves[i]] = i;
@@ -276,12 +324,20 @@ public final class Constants{
 	public static final int N_STAGE5_MOVES = 12;
 	public static final int N_STAGE5_SEARCH = ( METRIC == STM ) ? 12 : 9;
 
-	public static final byte stage5_slice_moves[] = {
-	Uf2, Us2, Df2, Lf2, Rf2, Rs2, Ff2, Fs2, Bf2,
-	Ds2, Ls2, Bs2 // moves not used in FTM
-	};
+	public static final byte stage5_slice_moves[];
+	static {
+		if( METRIC == STM )
+			stage5_slice_moves = new byte[]{
+				Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2
+			}
+		else
+			stage5_slice_moves = new byte[]{
+				Uf2, Uw2, Df2, Lf2, Lw2, Rf2, Ff2, Fw2, Bf2,
+				Dw2, Rw2, Bw2
+			}
 
-	public static final int stage5_inv_slice_moves[] = new int[N_BASIC_MOVES];
+
+	public static final int stage5_inv_slice_moves[] = new int[N_MOVES];
 	static {
 		for (int i=0; i<N_STAGE5_MOVES; i++) {
 			stage5_inv_slice_moves[stage5_slice_moves[i]] = i;
@@ -298,30 +354,6 @@ public final class Constants{
 		}
 	}
 
-	public static byte xlate_r6[][] = {
-	{ 0, 24, 12,  0, 24, 12}, { 1, 25, 13,  1, 25, 13}, { 2, 26, 14,  2, 26, 14},
-	{ 3, 27, 15,  3, 27, 15}, { 4, 28, 16,  4, 28, 16}, { 5, 29, 17,  5, 29, 17},
-	{ 6, 30, 18,  6, 30, 18}, { 7, 31, 19,  7, 31, 19}, { 8, 32, 20,  8, 32, 20},
-	{ 9, 33, 21,  9, 33, 21}, {10, 34, 22, 10, 34, 22}, {11, 35, 23, 11, 35, 23},
-	{12,  0, 24, 24, 12,  0}, {13,  1, 25, 25, 13,  1}, {14,  2, 26, 26, 14,  2},
-	{15,  3, 27, 27, 15,  3}, {16,  4, 28, 28, 16,  4}, {17,  5, 29, 29, 17,  5},
-	{18,  6, 30, 30, 18,  6}, {19,  7, 31, 31, 19,  7}, {20,  8, 32, 32, 20,  8},
-	{21,  9, 33, 33, 21,  9}, {22, 10, 34, 34, 22, 10}, {23, 11, 35, 35, 23, 11},
-	{24, 12,  0, 18,  6, 30}, {25, 13,  1, 19,  7, 31}, {26, 14,  2, 20,  8, 32},
-	{27, 15,  3, 21,  9, 33}, {28, 16,  4, 22, 10, 34}, {29, 17,  5, 23, 11, 35},
-	{30, 18,  6, 12,  0, 24}, {31, 19,  7, 13,  1, 25}, {32, 20,  8, 14,  2, 26},
-	{33, 21,  9, 15,  3, 27}, {34, 22, 10, 16,  4, 28}, {35, 23, 11, 17,  5, 29},
-	{36, 48, 42, 36, 48, 42}, {37, 49, 43, 37, 49, 43}, {38, 50, 44, 38, 50, 44},
-	{39, 51, 45, 39, 51, 45}, {40, 52, 46, 40, 52, 46}, {41, 53, 47, 41, 53, 47},
-	{42, 36, 48, 48, 42, 36}, {43, 37, 49, 49, 43, 37}, {44, 38, 50, 50, 44, 38},
-	{45, 39, 51, 51, 45, 39}, {46, 40, 52, 52, 46, 40}, {47, 41, 53, 53, 47, 41},
-	{48, 42, 36, 45, 39, 51}, {49, 43, 37, 46, 40, 52}, {50, 44, 38, 47, 41, 53},
-	{51, 45, 39, 42, 36, 48}, {52, 46, 40, 43, 37, 49}, {53, 47, 41, 44, 38, 50},
-	{54, 60, 57, 54, 60, 57}, {55, 61, 58, 55, 61, 58}, {56, 62, 59, 56, 62, 59},
-	{57, 54, 60, 60, 57, 54}, {58, 55, 61, 61, 58, 55}, {59, 56, 62, 62, 59, 56},
-	{60, 57, 54, 58, 55, 61}, {61, 58, 55, 57, 54, 60}, {62, 59, 56, 59, 56, 62}
-	};
-	
 	public static final int Cnk [][] = new int[25][25];
 	static {
 		for (int i=0; i<25; i++) {

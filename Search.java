@@ -81,31 +81,31 @@ public final class Search {
 		for (i = 0; i < length1_sub; ++i)
 			move_list_sub_stage1[i] = stage1_slice_moves[move_list_sub_stage1[i]];
 		for (i = 0; i < length2_sub; ++i)
-			move_list_sub_stage2[i] = xlate_r6[stage2_slice_moves[move_list_sub_stage2[i]]][rotate_sub];
+			move_list_sub_stage2[i] = Symmetry.moveConjugate[stage2_slice_moves[move_list_sub_stage2[i]]][rotate_sub];
 		for (i = 0; i < length3_sub; ++i)
-			move_list_sub_stage3[i] = xlate_r6[stage3_slice_moves[move_list_sub_stage3[i]]][rotate2_sub];
+			move_list_sub_stage3[i] = Symmetry.moveConjugate[stage3_slice_moves[move_list_sub_stage3[i]]][rotate2_sub];
 		for (i = 0; i < length4_sub; ++i)
-			move_list_sub_stage4[i] = xlate_r6[stage4_slice_moves[move_list_sub_stage4[i]]][rotate2_sub];
+			move_list_sub_stage4[i] = Symmetry.moveConjugate[stage4_slice_moves[move_list_sub_stage4[i]]][rotate2_sub];
 		for (i = 0; i < length5_sub; ++i)
-			move_list_sub_stage5[i] = xlate_r6[stage5_slice_moves[move_list_sub_stage5[i]]][rotate2_sub];
+			move_list_sub_stage5[i] = Symmetry.moveConjugate[stage5_slice_moves[move_list_sub_stage5[i]]][rotate2_sub];
 
 		if( inverse ){
 			sb.append(print_move_list (length5_sub, move_list_sub_stage5, true));
 			//sb.append("* ");
 			sb.append(print_move_list (length4_sub, move_list_sub_stage4, true));
 			//sb.append("* ");
-			sb.append(print_move_list (length3_sub, move_list_sub_stage3, rotate2_sub+3, true));
+			sb.append(print_move_list (length3_sub, move_list_sub_stage3, true));
 			//sb.append("* ");
-			sb.append(print_move_list (length2_sub, move_list_sub_stage2, rotate_sub, true));
-			sb.append("* ");
+			sb.append(print_move_list (length2_sub, move_list_sub_stage2, true));
+			//sb.append("* ");
 			sb.append(print_move_list (length1_sub, move_list_sub_stage1, true));
 		}
 		else{
 			sb.append(print_move_list (length1_sub, move_list_sub_stage1, false));
 			//sb.append("* ");
-			sb.append(print_move_list (length2_sub, move_list_sub_stage2, rotate_sub, false));
+			sb.append(print_move_list (length2_sub, move_list_sub_stage2, false));
 			//sb.append("* ");
-			sb.append(print_move_list (length3_sub, move_list_sub_stage3, rotate2_sub+3, false));
+			sb.append(print_move_list (length3_sub, move_list_sub_stage3, false));
 			//sb.append("* ");
 			sb.append(print_move_list (length4_sub, move_list_sub_stage4, false));
 			//sb.append("* ");
@@ -199,12 +199,14 @@ public final class Search {
 			c1.do_move (Rs, FTM);
 			c1.do_move (Us3, FTM);
 			c1.do_move (Ds, FTM);
+			rotate = 32;
 			break;
 		case 2:
 			c1.do_move (Fs, FTM);
 			c1.do_move (Bs3, FTM);
 			c1.do_move (Us, FTM);
 			c1.do_move (Ds3, FTM);
+			rotate = 16;
 			break;
 		default:
 			System.out.println ("Invalid cube rotation state.");
@@ -305,7 +307,7 @@ public final class Search {
 		if (c2.m_cen[16] < 4) {
 			c2.do_move (Us, FTM);
 			c2.do_move (Ds3, FTM);
-			rotate2 += 3;
+			rotate2 += 8;
 		}
 
 		CubeStage3 s1 = new CubeStage3();
