@@ -17,7 +17,7 @@ public final class CubeStage1 {
 	}
 
 	public final void do_move (int move_code){
-		if (( Constants.METRIC == Constants.FTM ) || (( Constants.stage1_slice_moves[move_code] % 6 ) < 3 ))
+		if ((Constants.stage1_slice_moves[move_code]/3)%3 != 1 )
 			corner = Tables.move_table_co[corner][Constants.basic_to_face[move_code]];
 
 		int newEdge = Tables.move_table_symEdgeSTAGE1[edge][Symmetry.moveConjugate1[move_code][sym]];
@@ -90,7 +90,7 @@ public final class CubeStage1 {
 		while( ! cube1.is_solved ()) {
 
 			boolean noMoves=true;
-			for (mov_idx = 0; mov_idx < Constants.N_BASIC_MOVES; ++mov_idx) {
+			for (mov_idx = 0; mov_idx < Constants.N_STAGE1_MOVES; ++mov_idx) {
 				cube1.copyTo (cube2);
 				cube2.do_move (mov_idx);
 				dist2 = cube2.get_dist();

@@ -310,7 +310,7 @@ public class Tools {
 			if( moves[i].isEmpty() ) continue;
 			/* Do it the lazy way... */
 			int themove = -1;
-			for(int m=0; m < 72; m++){
+			for(int m=0; m < Constants.N_MOVES; m++){
 				if( moves[i].equals( Constants.move_strings[m] )){
 					themove = m;
 					break;
@@ -321,10 +321,7 @@ public class Tools {
 				return false;
 			}
 			themove = themove + ((( themove + 2 ) % 3 ) - 1);
-			if( themove < 36 )
-				cube.do_move(themove, STM);
-			else
-				cube.do_move(themove-36, FTM);
+			cube.do_move(themove);
 		}
 		return cube.is_solved();
 	}

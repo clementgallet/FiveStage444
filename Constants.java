@@ -16,7 +16,7 @@ public final class Constants{
 	public static final String tables_path = "./cg/fivestage444/";
 	public static final int STM = 0;
 	public static final int FTM = 1;
-	public static int METRIC = FTM;
+	public static int METRIC = STM;
 	public static String METRIC_STR = (METRIC == STM) ? "stm" : "ftm";
 
 	public static final int N_SYM = 48;
@@ -172,7 +172,7 @@ public final class Constants{
 	public static final int N_FACE_MOVES = 18;
 	public static final int basic_to_face[] = new int[N_MOVES];
 	static {
-		for( int i = 0; i < N_MOVES; i++ ){
+		for( int i = 0; i < N_STAGE1_MOVES; i++ ){
 			byte m = stage1_slice_moves[i];
 			basic_to_face[i] = ( m / 9 ) * 3 + ( m % 3 );
 		}
@@ -197,7 +197,7 @@ public final class Constants{
 
 	public static final int N_STAGE2_MOVES = 28;
 	public static final int N_STAGE2_SEARCH = ( METRIC == STM ) ? 28 : 23;
-	public static final int N_STAGE2_LAST = ( METRIC == STM ) 8 ? 6;
+	public static final int N_STAGE2_LAST = ( METRIC == STM ) ? 8 : 6;
 
 	public static final byte stage2_slice_moves[];
 	static {
@@ -214,7 +214,7 @@ public final class Constants{
 				Uf, Uf3, Uf2,          Uw2, Df, Df3, Df2,
 				         Lf2,          Lw2,          Rf2,
 				         Ff2, Fs, Fs3, Fw2,          Bf2, Bs, Bs3,
-				Dw2, Rw2, Bw2
+				Dw, Dw3, Dw2, Rw2, Bw2
 			};
 	}
 
@@ -247,7 +247,7 @@ public final class Constants{
 				Uf, Uf3, Uf2, Us2, Df, Df3, Df2, Ds2,
 				         Lf2, Ls2,          Rf2, Rs2,
 				         Ff2, Fs2,          Bf2, Bs2
-			}
+			};
 		else
 			stage3_slice_moves = new byte[]{
 				Fs, Bs, Fs3, Bs3,
@@ -255,7 +255,7 @@ public final class Constants{
 				         Lf2, Lw2,          Rf2,
 				         Ff2, Fw2,          Bf2,
 				Dw2, Rw2, Bw2
-			}
+			};
 	}
 
 	public static final int stage3_inv_slice_moves[] = new int[N_MOVES];
@@ -278,7 +278,7 @@ public final class Constants{
 	public static boolean stage3_move_parity[] = new boolean[N_STAGE3_MOVES];
 	static {
 		for( int i = 0; i < N_STAGE3_MOVES; i++)
-			stage3_move_parity[i] = ((( stage3_slice_moves[i] / 3 ) % 3 ) == 1 );
+			stage3_move_parity[i] = ((( stage3_slice_moves[i] / 3 ) % 3 ) == 1 ) && (( stage3_slice_moves[i] % 3 ) < 2 );
 	}
 
 	public static final int N_STAGE4_MOVES = 16;
@@ -293,7 +293,7 @@ public final class Constants{
 				Uf2, Us2, Df2, Ds2,
 				Lf2, Ls2, Rf2, Rs2,
 				Ff2, Fs2, Bf2, Bs2
-			}
+			};
 		else
 			stage4_slice_moves = new byte[]{
 				Uf, Df,	Uf3, Df3,
@@ -301,7 +301,7 @@ public final class Constants{
 				Lf2, Lw2, Rf2,
 				Ff2, Fw2, Bf2,
 				Dw2, Rw2, Bw2
-			}
+			};
 	}
 
 	public static final int stage4_inv_slice_moves[] = new int[N_MOVES];
@@ -329,13 +329,13 @@ public final class Constants{
 		if( METRIC == STM )
 			stage5_slice_moves = new byte[]{
 				Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2
-			}
+			};
 		else
 			stage5_slice_moves = new byte[]{
 				Uf2, Uw2, Df2, Lf2, Lw2, Rf2, Ff2, Fw2, Bf2,
 				Dw2, Rw2, Bw2
-			}
-
+			};
+	}
 
 	public static final int stage5_inv_slice_moves[] = new int[N_MOVES];
 	static {
@@ -491,32 +491,12 @@ public final class Constants{
 	};
 
 	public static String move_strings[] = {
-	"U", "U'", "U2", "u", "u'", "u2",
-	"D", "D'", "D2", "d", "d'", "d2",
-	"L", "L'", "L2", "l", "l'", "l2",
-	"R", "R'", "R2", "r", "r'", "r2",
-	"F", "F'", "F2", "f", "f'", "f2",
-	"B", "B'", "B2", "b", "b'", "b2",
-	"U", "U'", "U2", "Uw", "Uw'", "Uw2",
-	"D", "D'", "D2", "Dw", "Dw'", "Dw2",
-	"L", "L'", "L2", "Lw", "Lw'", "Lw2",
-	"R", "R'", "R2", "Rw", "Rw'", "Rw2",
-	"F", "F'", "F2", "Fw", "Fw'", "Fw2",
-	"B", "B'", "B2", "Bw", "Bw'", "Bw2"
-	};
-
-	private static boolean rotate_move_stage23[][] = {
-		// Stage 2
-		{ true, false, false }, // no rotation
-		{ false, false, true }, // [rd]
-		{ false, true, false }, // [fu]
-		// Stage 3
-		{ true, true, false }, // no rotation
-		{ true, false, true }, // [rd]
-		{ false, true, true }, // [fu]
-		{ true, false, true }, // [u]
-		{ false, true, true }, // [rdu]
-		{ true, true, false } // [fuu]
+	"U", "U'", "U2", "u", "u'", "u2", "Uw", "Uw'", "Uw2",
+	"D", "D'", "D2", "d", "d'", "d2", "Dw", "Dw'", "Dw2",
+	"L", "L'", "L2", "l", "l'", "l2", "Lw", "Lw'", "Lw2",
+	"R", "R'", "R2", "r", "r'", "r2", "Rw", "Rw'", "Rw2",
+	"F", "F'", "F2", "f", "f'", "f2", "Fw", "Fw'", "Fw2",
+	"B", "B'", "B2", "b", "b'", "b2", "Bw", "Bw'", "Bw2"
 	};
 
 	public static String print_move_list (int count, byte[] move_list, boolean inverse){
@@ -526,39 +506,12 @@ public final class Constants{
 			for (j = count-1; j >= 0; --j) {
 				m = move_list[j];
 				m = m + ((( m + 2 ) % 3 ) - 1); // inverse
-				if( METRIC == FTM )
-					m += 36;
 				sb.append(move_strings[m] + ' ');
 			}
 		}
 		else {
 			for (j = 0; j < count; ++j) {
 				m = move_list[j];
-				if( METRIC == FTM )
-					m += 36;
-				sb.append(move_strings[m] + ' ');
-			}
-		}
-		return sb.toString();
-	}
-
-	public static String print_move_list (int count, byte[] move_list, int rotate, boolean inverse){
-		int j, m;
-		StringBuffer sb = new StringBuffer();
-		if( inverse ){
-			for (j = count-1; j >= 0; --j) {
-				m = move_list[j];
-				m = m + ((( m + 2 ) % 3 ) - 1); // inverse
-				if(( METRIC == FTM ) && (( m % 3 == 2 ) || rotate_move_stage23[rotate][m/12] ))
-					m += 36;
-				sb.append(move_strings[m] + ' ');
-			}
-		}
-		else {
-			for (j = 0; j < count; ++j) {
-				m = move_list[j];
-				if(( METRIC == FTM ) && (( m % 3 == 2 ) || rotate_move_stage23[rotate][m/12] ))
-					m += 36;
 				sb.append(move_strings[m] + ' ');
 			}
 		}

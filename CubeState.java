@@ -136,15 +136,9 @@ public final class CubeState{
 	}
 
 	public final void do_move (int move_code){
-		rotate_sliceEDGE (move_code, METRIC);
-		rotate_sliceCORNER (move_code, METRIC);
-		rotate_sliceCENTER (move_code, METRIC);
-	}
-
-	public final void do_move (int move_code, int metric){
-		rotate_sliceEDGE (move_code, metric);
-		rotate_sliceCORNER (move_code, metric);
-		rotate_sliceCENTER (move_code, metric);
+		rotate_sliceEDGE (move_code);
+		rotate_sliceCORNER (move_code);
+		rotate_sliceCENTER (move_code);
 	}
 
 	public void scramble (int move_count, byte[] move_arr){
@@ -161,52 +155,10 @@ public final class CubeState{
 		}
 	}
 
-	public void scramble (int move_count, byte[] move_arr, byte[] move_trans, int metric_switch){
-		int i;
-		byte m;
-		for (i = 0; i < move_count; ++i) {
-			m = move_trans[move_arr[i]];
-			do_move (m, (( m > metric_switch ) && (( m % 3 ) < 2 )) ? STM : METRIC);
-		}
-	}
-
 	public void copyTo (CubeState cube){
 		System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
 		System.arraycopy(m_cor, 0, cube.m_cor, 0, 8);
 		System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
-	}
-
-	public void inverseTo( CubeState c) {
-		int i;
-		int[] t = new int[24];
-
-		/* Corner inverse taken from http://cube20.org/src/cubepos.w */
-		for (i = 0; i < 8; ++i) {
-			int cval = m_cor[i];
-			c.m_cor[cval & 0x7] = (byte)( i + 8 * (( 3 - ( cval>>3 )) % 3 ));
-		}
-
-		/* Edge inverse */
-		for (i = 0; i < 24; ++i) {
-			c.m_edge[m_edge[i]] = (byte)i;
-		}
-
-		/* Center inverse. Need to convert to unique facelets */
-		int[] cenN = new int[6];
-		for (i = 0; i < 6; ++i) cenN[i] = 0;
-
-		for (i = 0; i < 24; ++i){
-			t[i] = m_cen[i] * 4 + cenN[m_cen[i]]++;
-		}
-		for (i = 0; i < 24; ++i) {
-			c.m_cen[t[i]] = (byte)(i/4);
-		}
-	}
-
-	public void inverse() {
-		CubeState temp = new CubeState();
-		copyTo(temp);
-		temp.inverseTo(this);
 	}
 
 	public void leftMultEdges (int symIdx){
@@ -336,6 +288,18 @@ public final class CubeState{
 		leftMultCorners( symIdx );
 	}
 
+	public void leftMult (int symIdx){
+		leftMultEdges (symIdx);
+		leftMultCenters (symIdx);
+		leftMultCorners (symIdx);
+	}
+
+	public void rightMult (int symIdx){
+		rightMultEdges (symIdx);
+		rightMultCenters (symIdx);
+		rightMultCorners (symIdx);
+	}
+
 	public void conjugate (int symIdx){
 		conjugateEdges (symIdx);
 		conjugateCenters (symIdx);
@@ -366,28 +330,22 @@ public final class CubeState{
 		return parity != 0;
 	}
 
-	public void rotate_sliceCORNER (int move_code, int metric){
+	public void rotate_sliceCORNER (int move_code){
 		int i;
-		if (move_code % 6 >= 3) {
-			if( metric == STM ) 
-				return;		//inner slice turn, no corners affected
-			if( metric == FTM )
-				move_code -= 3; //only do the inner slice
-		}
-		int mc6 = move_code/6;
-		int mc = 3*mc6 + move_code % 3;
+		if (( move_code / 3 ) % 3 == 1 )
+			return;		//inner slice turn, no corners affected
+
+		int mc = 3*(move_code/9) + ( move_code % 3 );
 		int fidx = rotateCOR_fidx[mc];
 		int tidx = rotateCOR_tidx[mc];
 		byte[] old_m_cor = new byte[8];
 		System.arraycopy(m_cor, 0, old_m_cor, 0, 8);
-		if (mc % 3 != 2) {	//avoid doing "if" inside loop, for speed
+		if (( mc % 3 != 2 ) && ( mc >= 6 )) { // single L, R, F or B face turn
 			for (i = 0; i < 4; ++i) {
 				byte tmpface = old_m_cor[rotateCOR_ft[fidx + i]];
-				if (mc >= 6) {	//L,R,F,B face turns
-					byte new_ori = (byte)((tmpface >> 3) + rotateCOR_ori[i]);
-					new_ori %= 3;
-					tmpface = (byte)((tmpface & 0x7) + (new_ori << 3));
-				}
+				byte new_ori = (byte)((tmpface >> 3) + rotateCOR_ori[i]);
+				new_ori %= 3;
+				tmpface = (byte)((tmpface & 0x7) + (new_ori << 3));
 				m_cor[rotateCOR_ft[tidx + i]] = tmpface;
 			}
 		} else {
@@ -397,22 +355,15 @@ public final class CubeState{
 		}
 	}
 
-	public void rotate_sliceEDGE (int move_code, int metric, int metric_switch){
-		if(( move_code > metric_switch ) && ( move_code % 3 < 2 ))
-			rotate_sliceEDGE ( move_code, STM );
-		else
-			rotate_sliceEDGE ( move_code, metric );
-	}
-
-	public void rotate_sliceEDGE (int move_code, int metric){
+	public void rotate_sliceEDGE (int move_code){
 		byte[] old_m_edge = new byte[24];
 		int i, j;
 		System.arraycopy(m_edge, 0, old_m_edge, 0, 24);
-		int mc3 = move_code/3;
 		int movdir = move_code % 3;
-		int mcx = 3*(mc3/2);
+		int mcx = 3*(move_code/9);
+		int layer = (move_code/3)%3; // 0: face, 1: slice, 2: face+slice
 		for (j = 0; j < 3; ++j) { // j = 0, 1: face turn. j = 2: slice turn
-			if((( metric == STM ) && ( ( (mc3 & 0x1) != 0 ) ^ ( j == 2 ) )) || (( metric == FTM ) && ( (mc3 & 0x1) == 0 ) && ( j == 2 )))
+			if(((layer==1) && (j<2)) || ((layer==0) && (j==2)))
 				continue;
 			int fidx = rotateEDGE_fidx[3*(mcx+j) + movdir];
 			int tidx = rotateEDGE_tidx[3*(mcx+j) + movdir];
@@ -422,22 +373,15 @@ public final class CubeState{
 		}
 	}
 
-	public void rotate_sliceCENTER (int move_code, int metric, int metric_switch){
-		if(( move_code > metric_switch ) && ( move_code % 3 < 2 ))
-			rotate_sliceCENTER ( move_code, STM );
-		else
-			rotate_sliceCENTER ( move_code, metric );
-	}
-
-	public void rotate_sliceCENTER (int move_code, int metric){
+	public void rotate_sliceCENTER (int move_code){
 		byte[] old_m_cen = new byte[24];
 		int i, j;
 		System.arraycopy(m_cen, 0, old_m_cen, 0, 24);
-		int mc3 = move_code/3;
 		int movdir = move_code % 3;
-		int mcx = 3*(mc3/2);
+		int mcx = 3*(move_code/9);
+		int layer = (move_code/3)%3; // 0: face, 1: slice, 2: face+slice
 		for (j = 0; j < 3; ++j) { // j = 0: face turn. j = 1, 2: slice turn
-			if((( metric == STM ) && ( ( (mc3 & 0x1) != 0 ) ^ ( j > 0 ) )) || (( metric == FTM ) && ( (mc3 & 0x1) == 0 ) && ( j > 0 )))
+			if(((layer==1) && (j==0)) || ((layer==0) && (j>0)))
 				continue;
 			int fidx = rotateEDGE_fidx[3*(mcx+j) + movdir]; // rotateCEN_fidx = rotateEDGE_fidx
 			int tidx = rotateEDGE_tidx[3*(mcx+j) + movdir]; // rotateCEN_tidx = rotateEDGE_tidx

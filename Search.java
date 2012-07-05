@@ -40,7 +40,7 @@ public final class Search {
 	static int MIN_STAGE4 = 8;
 	static int MIN_STAGE5 = 8;
 
-	CubeState[] init_cube = new CubeState[6];
+	CubeState[] init_cube = new CubeState[3];
 	CubeState c1 = new CubeState();
 	CubeState c1r = new CubeState();
 	CubeState c2 = new CubeState();
@@ -70,9 +70,7 @@ public final class Search {
 		for( j=0; j<3; j++){
 			init_cube[j] = new CubeState();
 			c.copyTo( init_cube[j] );
-			c.leftMultEdges  ( 16 );
-			c.leftMultCenters( 16 );
-			c.leftMultCorners( 16 );
+			c.leftMult ( 16 );
 		}
 
 		init_stage1 ();
@@ -114,8 +112,8 @@ public final class Search {
 		//System.out.print(length1_sub + length2_sub + length3_sub + length4_sub + length5_sub);
 		//System.out.print("\t");
 		/* Check the solution */
-		/*if( ! Tools.checkSolution(cube, sb.toString()))
-			System.out.println("Not a solution !!!!!!");*/
+		if( ! Tools.checkSolution(cube, sb.toString()))
+			System.out.println("Not a solution !!!!!!");
 		return sb.toString();
 	}
 
@@ -137,9 +135,9 @@ public final class Search {
 		found_sol = false;
 		for (length1 = d; length1 < total_length; ++length1) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "Stage 1 - length "+length1 );
-			if ( search_stage1 (s1, length1, 0, N_BASIC_MOVES, d1, 0 )
-			  || search_stage1 (s2, length1, 0, N_BASIC_MOVES, d2, 1 )
-			  || search_stage1 (s3, length1, 0, N_BASIC_MOVES, d3, 2 ))
+			if ( search_stage1 (s1, length1, 0, N_STAGE1_MOVES, d1, 0 )
+			  || search_stage1 (s2, length1, 0, N_STAGE1_MOVES, d2, 1 )
+			  || search_stage1 (s3, length1, 0, N_STAGE1_MOVES, d3, 2 ))
 				return;
 		}
 	}
@@ -159,7 +157,7 @@ public final class Search {
 				continue;
 
 			/* Move cube1 to list1[depth] */
-			if (( METRIC == FTM ) || (( stage1_slice_moves[mov_idx] % 6 ) < 3 ))
+			if (( stage1_slice_moves[mov_idx]/3)%3 != 1 )
 				list1[depth].corner = Tables.move_table_co[cube1.corner][basic_to_face[mov_idx]];
 			else
 				list1[depth].corner = cube1.corner;
@@ -195,17 +193,11 @@ public final class Search {
 		case 0:
 			break;	//no whole cube rotation
 		case 1:
-			c1.do_move (Ls3, FTM);
-			c1.do_move (Rs, FTM);
-			c1.do_move (Us3, FTM);
-			c1.do_move (Ds, FTM);
+			c1.rightMult ( 32 );
 			rotate = 32;
 			break;
 		case 2:
-			c1.do_move (Fs, FTM);
-			c1.do_move (Bs3, FTM);
-			c1.do_move (Us, FTM);
-			c1.do_move (Ds3, FTM);
+			c1.rightMult ( 16 );
 			rotate = 16;
 			break;
 		default:
@@ -300,13 +292,12 @@ public final class Search {
 			System.out.println ("Invalid cube rotation state.");
 		}
 
-		c2.scramble( length2, move_list_stage2, stage2_slice_moves, Lf );
+		c2.scramble( length2, move_list_stage2, stage2_slice_moves );
 
 		rotate2 = rotate;
 
 		if (c2.m_cen[16] < 4) {
-			c2.do_move (Us, FTM);
-			c2.do_move (Ds3, FTM);
+			c2.rightMult ( 8 );
 			rotate2 += 8;
 		}
 
@@ -369,12 +360,13 @@ public final class Search {
 		if ( found_sol ) return true;
 
 		c2.copyTo(c3);
-		c3.scramble( length3, move_list_stage3, stage3_slice_moves, Ff );
+		c3.scramble( length3, move_list_stage3, stage3_slice_moves );
 		CubeStage4 s1 = new CubeStage4();
 		c3.convert_to_stage4 (s1);
 
 		/** int d4 = s1.getDistance(); **/
 
+		if( s1.edge < 0) System.out.println(s1.edge);
 		int cubeDistEdgCen = s1.prune_table_edgcen.ptable[s1.edge * N_STAGE4_CENTER_CONFIGS + Tables.move_table_cen_conjSTAGE4[s1.center][s1.sym]];
 		if( cubeDistEdgCen >= total_length-length3-length2 ) return false;
 		int cubeDistEdgCor = s1.getDistanceEdgCor();

@@ -51,20 +51,20 @@ public final class Symmetry {
 							symCornersOrient[idx+4][i] = (byte)(3 + (cube.m_cor[symRLCorners[i]] / 8));
 						}
 						idx += 1;
-						cube.do_move (Us2, FTM);
-						cube.do_move (Ds2, FTM);
+						cube.do_move (Uw2);
+						cube.do_move (Dw2);
 					}
-					cube.do_move (Fs2, FTM);
-					cube.do_move (Bs2, FTM);
+					cube.do_move (Fw2);
+					cube.do_move (Bw2);
 				}
 				idx += 4;
-				cube.do_move (Us, FTM);
-				cube.do_move (Ds3, FTM);
+				cube.do_move (Uw);
+				cube.do_move (Dw3);
 			}
-			cube.do_move (Us3, FTM);
-			cube.do_move (Ds, FTM);
-			cube.do_move (Rs3, FTM);
-			cube.do_move (Ls, FTM);
+			cube.do_move (Uw3);
+			cube.do_move (Dw);
+			cube.do_move (Rw3);
+			cube.do_move (Lw);
 		}
 	}
 
@@ -96,7 +96,7 @@ public final class Symmetry {
 					}
 	}
 
-	static int[][] moveConjugate = new int[N_BASIC_MOVES][N_SYM];
+	static byte[][] moveConjugate = new byte[N_MOVES][N_SYM];
 
 	static void initMoveConjugate(){
 
@@ -104,13 +104,13 @@ public final class Symmetry {
 		CubeState cube2 = new CubeState();
 		CubeState cube3 = new CubeState();
 
-		for (int i=0; i<N_BASIC_MOVES; i++){
+		for (int i=0; i<N_MOVES; i++){
 			cube.init();
 			cube.do_move(i);
 			for (int j=0; j<N_SYM; j++){
 				cube.copyTo(cube2);
 				cube2.conjugate(j);
-				for (int k=0; k<N_BASIC_MOVES; k++){
+				for (int k=0; k<N_MOVES; k++){
 					cube3.init();
 					cube3.do_move(k);
 					boolean isMove = true;
@@ -121,7 +121,7 @@ public final class Symmetry {
 						}
 					}
 					if( isMove ){
-						moveConjugate[i][j] = k;
+						moveConjugate[i][j] = (byte)k;
 						break;
 					}
 				}
