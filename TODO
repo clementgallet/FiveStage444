@@ -1,8 +1,31 @@
 TODO:
 
 - Cancel moves between stages.
-- Try anti-symmetries (works for stage 5, might work for stage 4)
-- From Kociemba, do not consider solutions that contain a strict prefix that is also a solution (how in practice ?)
-- From Kociemba, filter last move possibilities (is it efficient ?)
-- From Kociemba, store specifically which moves decrease the distance when the distance to the subgroup is small
+- Try anti-symmetries (works for stage 5, might work for stage 4). It should not work on centers though.
+- Eventually get rid of all the CubeStagex classes, and use directly the coordinates
+- Eventually don't use the CubeState class anymore during the solve between stages, but generate all coordinates at the beginning and more move tables
+- Get rid of all the PruningTable classes, incorporate into Tables.java
 - Doc the code !
+
+- From Kociemba
+-- Do not consider solutions that contain a strict prefix that is also a solution (how in practice ?)
+-- Filter last move possibilities (is it efficient ?)
+-- Store specifically which moves decrease the distance when the distance to the subgroup is small
+
+- From Chen Shuang (min2phase)
+-- Use multithreading (again) for table generation
+-- Add temporary raw2sym tables during initialisation
+-- Check if using int tables instead of byte tables is faster
+-- Try a custom binary search
+
+
+
+DONE:
+
++ Find a better way to get the edge coord of stage 4
++ Solve the inverse cube -> not working
++ Use symmetry reduction. With this, it would be possible to get stage 1 and 4 full pruning tables (see http://kociemba.org/cube.htm)
++ Use backward search when generating pruning tables
++ Use tables when getting values from pruning tables
++ Pack 5 values into one byte instead of 4
+
