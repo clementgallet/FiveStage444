@@ -155,7 +155,7 @@ public final class CubeStage5 {
 		copyTo (cube1);
 		dist1 = cube1.get_dist_edgcen();
 
-		while (! cube1.edges_centers_solved()) {
+		while ( true ) {
 
 			boolean noMoves=true;
 			for (mov_idx = 0; mov_idx < Constants.N_STAGE5_MOVES; ++mov_idx) {
@@ -171,7 +171,6 @@ public final class CubeStage5 {
 				break;
 			}
 			if( noMoves){
-				System.out.println("Could not find a move that lowers the distance !!");
 				break;
 			}
 		}

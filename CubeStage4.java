@@ -185,7 +185,7 @@ public final class CubeStage4 {
 		copyTo(cube1);
 		dist1 = cube1.get_dist_edgcor();
 
-		while( ! cube1.edges_corners_solved ()) {
+		while( true ) {
 
 			boolean noMoves = true;
 			for (mov_idx = 0; mov_idx < Constants.N_STAGE4_MOVES; ++mov_idx) {
@@ -200,7 +200,6 @@ public final class CubeStage4 {
 				break;
 			}
 			if( noMoves){
-				System.out.println("Could not find a move that lowers the distance !!");
 				break;
 			}
 		}

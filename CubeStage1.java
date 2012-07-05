@@ -87,7 +87,7 @@ public final class CubeStage1 {
 		copyTo (cube1);
 		dist1 = cube1.get_dist();
 
-		while( ! cube1.is_solved ()) {
+		while( true ) {
 
 			boolean noMoves=true;
 			for (mov_idx = 0; mov_idx < Constants.N_STAGE1_MOVES; ++mov_idx) {
@@ -102,7 +102,6 @@ public final class CubeStage1 {
 				break;
 			}
 			if( noMoves){
-				System.out.println("Could not find a move that lowers the distance !!");
 				break;
 
 			}
