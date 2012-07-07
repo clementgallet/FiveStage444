@@ -1,7 +1,6 @@
 TODO:
 
 - Cancel moves between stages.
-- Try anti-symmetries (works for stage 5, might work for stage 4). It should not work on centers though.
 - Eventually get rid of all the CubeStagex classes, and use directly the coordinates
 - Eventually don't use the CubeState class anymore during the solve between stages, but generate all coordinates at the beginning and more move tables
 - Get rid of all the PruningTable classes, incorporate into Tables.java
@@ -20,6 +19,7 @@ TODO:
 
 DONE:
 
++ Try anti-symmetries (works for stage 5, might work for stage 4) -> Not working on centers.
 + Try a custom binary search -> slower.
 + Add temporary raw2sym tables during initialisation -> tables would be too big... giving up.
 + Find a better way to get the edge coord of stage 4 -> done

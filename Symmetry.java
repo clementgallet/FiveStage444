@@ -128,8 +128,7 @@ public final class Symmetry {
 			cube.init();
 			cube.do_move(i);
 			for (int j=0; j<N_SYM; j++){
-				cube.copyTo(cube2);
-				cube2.conjugate(j);
+				cube.conjugateEdges(j, cube2);
 				for (int k=0; k<N_MOVES; k++){
 					cube3.init();
 					cube3.do_move(k);

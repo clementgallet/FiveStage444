@@ -233,8 +233,7 @@ public final class Tables {
 			s1.convert_edges_to_std_cube( u, cube1 );
 
 			for (sym = 1; sym < N_SYM_STAGE1; ++sym) {
-				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.rightMultEdges (Symmetry.invSymIdx[sym]);
+				cube1.rightMultEdges (Symmetry.invSymIdx[sym], cube2);
 				int edge = cube2.convert_edges_to_stage1();
 				set_1_1bit( edge, isRepTable); // not a rep.
 				if( edge == u )
@@ -314,8 +313,7 @@ public final class Tables {
 			s1.corner = u;
 			s1.convert_corners_to_std_cube (cube1);
 			for (sym = 0; sym < N_SYM_STAGE1; ++sym) {
-				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
-				cube2.rightMultCorners (Symmetry.invSymIdx[sym]);
+				cube1.rightMultCorners (Symmetry.invSymIdx[sym], cube2);
 				cube2.deMirrorCorners ();
 				move_table_co_conj[u][sym] = cube2.convert_corners_to_stage1 ();
 			}
@@ -363,8 +361,7 @@ public final class Tables {
 			s2.edge = u;
 			s2.convert_edges_to_std_cube (cube1);
 			for (sym = 0; sym < N_SYM_STAGE2; ++sym) {
-				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.rightMultEdges (Symmetry.invSymIdx[sym]);
+				cube1.rightMultEdges (Symmetry.invSymIdx[sym], cube2);
 				move_table_edge_conjSTAGE2[u][sym] = cube2.convert_edges_to_stage2 ();
 			}
 		}
@@ -392,8 +389,7 @@ public final class Tables {
 			s2.convert_centers_to_std_cube( u, cube1 );
 
 			for (sym = 1; sym < N_SYM_STAGE2; ++sym) {
-				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-				cube2.rightMultCenters (Symmetry.invSymIdx[sym]);
+				cube1.rightMultCenters (Symmetry.invSymIdx[sym], cube2);
 				short cen = cube2.convert_centers_to_stage2(5);
 				set_1_1bit( cen, isRepTable); // not a rep.
 				if( cen == u ){
@@ -485,9 +481,8 @@ public final class Tables {
 
 			for (sym = 0; sym < N_SYM_STAGE3; ++sym) {
 				for (cosym = 0; cosym < 2; cosym++) {
-					System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-					cube2.rightMultCenters (Symmetry.invSymIdx[cosym]);
-					cube2.conjugateCenters (sym);
+					cube1.rightMultCenters(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
+					cube2.leftMultCenters(sym);
 					int cen = cube2.convert_centers_to_stage3();
 					set_1_1bit( cen, isRepTable); // not a rep.
 					if( cen == u )
@@ -566,9 +561,8 @@ public final class Tables {
 			s1.convert_edges_to_std_cube (cube1);
 			for (sym = 0; sym < N_SYM_STAGE3; ++sym) {
 				for (cosym = 0; cosym < 2; ++cosym) {
-					System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-					cube2.rightMultEdges (Symmetry.invSymIdx[cosym]);
-					cube2.conjugateEdges (sym);
+					cube1.rightMultEdges(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
+					cube2.leftMultEdges(sym);
 					move_table_edge_conjSTAGE3[u][(sym<<1)+cosym] = cube2.convert_edges_to_stage3();
 				}
 			}
@@ -607,24 +601,12 @@ public final class Tables {
 			if( parity_perm8_table[ul] != parity_perm8_table[uh] ) continue; // getting rid of the parity.
 
 			for (sym = 0; sym < N_SYM_STAGE4; ++sym) {
-				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.conjugateEdges (sym);
+				cube1.conjugateEdges (sym, cube2);
 				int edge = cube2.convert_edges_to_stage4();
 				set_1_1bit( edge, isRepTable); // not a rep.
 				if( edge == u )
 					hasSymEdgeSTAGE4[repIdx] |= (1 << sym);
 			}
-			/*
-			cube1.inverse();
-			for (sym = 0; sym < N_SYM_STAGE4; ++sym) {
-				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.conjugateEdges (sym);
-				int edge = cube2.convert_edges_to_stage4();
-				set_1_1bit( edge, isRepTable); // not a rep.
-				if( edge == u )
-					hasSymEdgeSTAGE4[repIdx] |= (1 << sym);
-			}
-			*/
 			symEdgeToEdgeSTAGE4[repIdx++] = u;
 		}
 		System.out.println( "Finishing symEdgeToEdge stage 4... generated "+repIdx+" reps." );
@@ -690,8 +672,7 @@ public final class Tables {
 			s4.corner = u;
 			s4.convert_corners_to_std_cube (cs1);
 			for (sym = 0; sym < N_SYM_STAGE4; ++sym) {
-				System.arraycopy(cs1.m_cor, 0, cs2.m_cor, 0, 8);
-				cs2.conjugateCorners (sym);
+				cs1.conjugateCorners (sym, cs2);
 				move_table_corner_conjSTAGE4[u][sym] = cs2.convert_corners_to_stage4();
 			}
 		}
@@ -736,8 +717,7 @@ public final class Tables {
 			s4.center = u;
 			s4.convert_centers_to_std_cube (cs1);
 			for (sym = 0; sym < N_SYM_STAGE4; ++sym) {
-				System.arraycopy(cs1.m_cen, 0, cs2.m_cen, 0, 24);
-				cs2.conjugateCenters (sym);
+				cs1.conjugateCenters (sym, cs2);
 				move_table_cen_conjSTAGE4[u][sym] = cs2.convert_centers_to_stage4();
 			}
 		}
@@ -795,7 +775,7 @@ public final class Tables {
 			s5.center = i;
 			s5.convert_centers_to_std_cube (cs1);
 			for (m = 0; m < N_STAGE5_MOVES; ++m) {
-				System.arraycopy(cs1.m_cen, 0, cs2.m_cen, 0, 24);
+				System.arraycopy(cs1.m_edge, 0, cs2.m_edge, 0, 24);
 				cs2.rotate_sliceCENTER (stage5_slice_moves[m]);
 				move_table_cenSTAGE5[i][m]= cs2.convert_centers_to_stage5();
 			}
@@ -824,9 +804,8 @@ public final class Tables {
 
 			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
 				for (cosym = 0; cosym < 4; ++cosym) {
-					System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-					cube2.rightMultEdges (Symmetry.invSymIdx[cosym]);
-					cube2.conjugateEdges (sym);
+					cube1.rightMultEdges(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
+					cube2.leftMultEdges(sym);
 					int edge = cube2.convert_edges_to_stage5 ();
 					set_1_1bit( edge, isRepTable ); // not a rep.
 					if( edge == u )
@@ -882,8 +861,8 @@ public final class Tables {
 			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
 				for (cosym = 0; cosym < 4; ++cosym) {
 					System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
-					cube2.rightMultCorners (cosym);
-					cube2.conjugateCorners (sym);
+					cube1.rightMultCorners(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
+					cube2.leftMultCorners(sym);
 					move_table_corner_conjSTAGE5[u][(sym<<2) + cosym] = cube2.convert_corners_to_stage5 ();
 				}
 			}
@@ -909,9 +888,8 @@ public final class Tables {
 			s1.convert_centers_to_std_cube (cube1);
 			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
 				for (cosym = 0; cosym < 4; ++cosym) {
-					System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-					cube2.rightMultCenters (cosym);
-					cube2.conjugateCenters (sym);
+					cube1.rightMultCenters(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
+					cube2.leftMultCenters(sym);
 					move_table_cen_conjSTAGE5[u][(sym<<2) + cosym] = cube2.convert_centers_to_stage5();
 				}
 			}

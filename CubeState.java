@@ -169,21 +169,18 @@ public final class CubeState{
 		}
 	}
 
-	public void rightMultEdges (int symIdx){
+	public void rightMultEdges (int symIdx, CubeState c){
 		int i;
-		byte[] edge = new byte[24];
 		byte[] sym = Symmetry.symEdges[symIdx];
 
-		System.arraycopy(m_edge, 0, edge, 0, 24);
-
 		for (i = 0; i < 24; ++i){
-			m_edge[i] = edge[sym[i]];
+			c.m_edge[i] = m_edge[sym[i]];
 		}
 	}
 
-	public void conjugateEdges (int symIdx){
-		rightMultEdges( Symmetry.invSymIdx[symIdx] );
-		leftMultEdges( symIdx );
+	public void conjugateEdges (int symIdx, CubeState c){
+		rightMultEdges( Symmetry.invSymIdx[symIdx], c );
+		c.leftMultEdges( symIdx );
 	}
 
 	public void leftMultCenters (int symIdx){
@@ -209,22 +206,19 @@ public final class CubeState{
 		}
 	}
 
-	public void rightMultCenters (int symIdx){
+	public void rightMultCenters (int symIdx, CubeState c){
 		int i;
-		byte[] cen = new byte[24];
 		byte[] sym = Symmetry.symCenters[symIdx];
-
-		System.arraycopy(m_cen, 0, cen, 0, 24);
 
 		// Conjugate edges and centers.
 		for (i = 0; i < 24; ++i){
-			m_cen[i] = cen[sym[i]];
+			c.m_cen[i] = m_cen[sym[i]];
 		}
 	}
 
-	public void conjugateCenters (int symIdx){
-		rightMultCenters( Symmetry.invSymIdx[symIdx] );
-		leftMultCenters( symIdx );
+	public void conjugateCenters (int symIdx, CubeState c){
+		rightMultCenters( Symmetry.invSymIdx[symIdx], c );
+		c.leftMultCenters( symIdx );
 	}
 
 	private byte multD3( byte oriA, byte oriB){
@@ -265,18 +259,16 @@ public final class CubeState{
 		}
 	}
 
-	public void rightMultCorners (int symIdx){
+	public void rightMultCorners (int symIdx, CubeState c){
 		int i;
 		byte orientA, orientB;
 		byte symO[] = Symmetry.symCornersOrient[symIdx];
 		byte symP[] = Symmetry.symCornersPerm[symIdx];
-		byte[] cor = new byte[8];
-		System.arraycopy(m_cor, 0, cor, 0, 8);
 
 		for (i = 0; i < 8; ++i){
-			orientA = (byte) (cor[symP[i]] >> 3);
+			orientA = (byte) (m_cor[symP[i]] >> 3);
 			orientB = symO[i];
-			m_cor[i] = (byte) (( multD3(orientA, orientB) << 3 ) + (cor[symP[i]] & 0x7));
+			c.m_cor[i] = (byte) (( multD3(orientA, orientB) << 3 ) + (m_cor[symP[i]] & 0x7));
 		}
 	}
 
@@ -291,9 +283,9 @@ public final class CubeState{
 		}
 	}
 
-	public void conjugateCorners (int symIdx){
-		rightMultCorners( Symmetry.invSymIdx[symIdx] );
-		leftMultCorners( symIdx );
+	public void conjugateCorners (int symIdx, CubeState c){
+		rightMultCorners( Symmetry.invSymIdx[symIdx], c );
+		c.leftMultCorners( symIdx );
 	}
 
 	public void leftMult (int symIdx){
@@ -303,15 +295,11 @@ public final class CubeState{
 	}
 
 	public void rightMult (int symIdx){
-		rightMultEdges (symIdx);
-		rightMultCenters (symIdx);
-		rightMultCorners (symIdx);
-	}
-
-	public void conjugate (int symIdx){
-		conjugateEdges (symIdx);
-		conjugateCenters (symIdx);
-		conjugateCorners (symIdx);
+		CubeState c = new CubeState();
+		copyTo(c);
+		c.rightMultEdges (symIdx, this);
+		c.rightMultCenters (symIdx, this);
+		c.rightMultCorners (symIdx, this);
 	}
 
 	public boolean edgeUD_parity_odd (){
@@ -416,15 +404,14 @@ public final class CubeState{
 		int minEdge = 999999999;
 		int minSym = 0;
 		for (int sym=0; sym < Constants.N_SYM_STAGE1; sym++ ){
-			copyTo (cube);
-			cube.rightMultEdges(Symmetry.invSymIdx[sym]);
+			rightMultEdges(Symmetry.invSymIdx[sym], cube);
 			int edge = cube.convert_edges_to_stage1();
 			if( edge < minEdge){
 				minEdge = edge;
 				minSym = sym;
 			}
 		}
-		return ( Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE1, minEdge) << 6 ) + minSym;
+		return ( Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE1, minEdge) << 6 ) | minSym;
 	}
 
 	public short convert_corners_to_stage1 (){
@@ -464,8 +451,7 @@ public final class CubeState{
 		CubeState cube = new CubeState();
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE2; sym++ ){
-			copyTo (cube);
-			cube.rightMultCenters(Symmetry.invSymIdx[sym]);
+			rightMultCenters(Symmetry.invSymIdx[sym], cube);
 			rep = Arrays.binarySearch(Tables.symCenterToCenterSTAGE2, cube.convert_centers_to_stage2(c));
 			if( rep >= 0 )
 				return (short)(( rep << 4 ) + sym);
@@ -505,12 +491,11 @@ public final class CubeState{
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE3; sym++ ){
 			for (int cosym=0; cosym < 2; cosym++ ){
-				System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
-				cube.rightMultCenters(Symmetry.invSymIdx[cosym]);
-				cube.conjugateCenters(sym);
+				rightMultCenters(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube);
+				cube.leftMultCenters(sym);
 				rep = Arrays.binarySearch(Tables.symCenterToCenterSTAGE3, cube.convert_centers_to_stage3());
 				if( rep >= 0 )
-					return ( rep << 4 ) + ( sym << 1 ) + cosym;
+					return ( rep << 4 ) | ( sym << 1 ) | cosym;
 			}
 		}
 		return -1;
@@ -577,11 +562,10 @@ public final class CubeState{
 		CubeState cube = new CubeState();
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE4; sym++ ){
-			copyTo (cube);
-			cube.conjugateEdges(sym);
+			conjugateEdges(sym, cube);
 			rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE4, cube.convert_edges_to_stage4() );
 			if( rep >= 0 )
-				return ( rep << 4 ) + sym;
+				return ( rep << 4 ) | sym;
 		}
 		return -1;
 	}
@@ -630,8 +614,7 @@ public final class CubeState{
 		int ep1 = Constants.perm_4_pack (m_edge, 0);
 		int ep2 = Constants.perm_4_pack (m_edge, 8);
 		int ep3 = Constants.perm_4_pack (m_edge, 16);
-		return 96*96*(4*ep3 + (m_edge[20] - 20)) + 96*(4*ep2 + (m_edge[12] - 12)) +
-			4*ep1 + (m_edge[4] - 4);
+		return 96*(96*(4*ep3 + (m_edge[20] - 20))+(4*ep2 + (m_edge[12] - 12))) + 4*ep1 + (m_edge[4] - 4);
 	}
 
 	public int convert_symedges_to_stage5 (){
@@ -642,11 +625,10 @@ public final class CubeState{
 			System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
 			cube.leftMultEdges(sym);
 			for (int cosym=0; cosym < 4; cosym++ ){
-				System.arraycopy(cube.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.rightMultEdges (Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]]);
+				cube.rightMultEdges (Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
 				rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, cube2.convert_edges_to_stage5 ());
 				if( rep >= 0 )
-					return ( rep << 8 ) + ( sym << 2 ) + cosym;
+					return ( rep << 8 ) | ( sym << 2 ) | cosym;
 			}
 		}
 		return -1;

@@ -33,7 +33,7 @@ public final class Search {
 
 	static int MAX_STAGE2 = (METRIC == STM) ? 6 : 8; // FTM
 	static int MAX_STAGE3 = 9;
-	static int MAX_STAGE4 = (METRIC == STM) ? 11 : 11;
+	static int MAX_STAGE4 = (METRIC == STM) ? 11 : 12;
 
 	static int MIN_STAGE3 = 7;
 	static int MIN_STAGE4 = 8;
@@ -140,7 +140,6 @@ public final class Search {
 	}
 
 	public boolean search_stage1 (CubeStage1 cube1, int depth, int moves_done, int last_move, int dist, int r){
-		//CubeStage1 cube2 = new CubeStage1();
 		int mov_idx, j;
 		if (cube1.is_solved ()) {
 			if (depth == 0)
@@ -216,9 +215,7 @@ public final class Search {
 		}
 
 		c1.copyTo (c1r);
-		c1r.leftMultEdges  ( 8 );
-		c1r.leftMultCenters( 8 );
-		c1r.leftMultCorners( 8 );
+		c1r.leftMult  ( 8 );
 		c1r.convert_to_stage2 (s2);
 		cubeDistCenF2 = CubeStage2.prune_table_edgcen.ptable[N_STAGE2_EDGE_CONFIGS * s2.centerF + Tables.move_table_edge_conjSTAGE2[s2.edge][s2.symF]];
 		if( cubeDistCenF2 < min2 ){
