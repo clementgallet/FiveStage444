@@ -32,38 +32,6 @@ public final class CubeStage1 {
 		return false;
 	}
 
-	/* Convert functions */
-
-	public void convert_edges_to_std_cube (int edge2, CubeState result_cube)
-	{
-		int r = 8;
-		byte lrfb = 0;
-		byte ud = 16;
-		for (int i=23; i>=0; i--) {
-			if (edge2 >= Cnk[i][r]) {
-				edge2 -= Cnk[i][r--];
-				result_cube.m_edge[i] = ud++;
-			} else {
-				result_cube.m_edge[i] = lrfb++;
-			}
-		}
-	}
-
-	public void convert_corners_to_std_cube (CubeState result_cube)
-	{
-		int i;
-
-		int orientc = corner;
-		int orientcmod3 = 0;
-		for (i = 6; i >= 0; --i) {	//don't want 8th edge orientation
-			byte fo = (byte)(orientc % 3);
-			result_cube.m_cor[i] = (byte)(i + (fo << 3));
-			orientcmod3 += fo;
-			orientc /= 3;
-		}
-		result_cube.m_cor[7] = (byte)(7 + (((24 - orientcmod3) % 3) << 3));
-	}
-
 	/* Pruning functions */
 
 	private final int get_idx (){

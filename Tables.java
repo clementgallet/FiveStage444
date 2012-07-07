@@ -215,24 +215,20 @@ public final class Tables {
 
 	/*** init stage 1 symEdgeToEdge ***/
 	public static int[] symEdgeToEdgeSTAGE1 = new int[N_SYMEDGE_COMBO8];
-	public static final long[] hasSymEdgeSTAGE1 = new long[N_SYMEDGE_COMBO8];
+	public static long[] hasSymEdgeSTAGE1;
 
 	public static void initSymEdgeToEdgeStage1 (){
 		System.out.println( "Starting symEdgeToEdge stage 1..." );
-		int i, sym;
-		int u, repIdx = 0;
+		int repIdx = 0;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		cube1.init ();
-		cube2.init ();
-		CubeStage1 s1 = new CubeStage1();
 
 		byte[] isRepTable = new byte[(N_EDGE_COMBO8>>3) + 1];
-		for (u = 0; u < N_EDGE_COMBO8; ++u) {
+		hasSymEdgeSTAGE1 = new long[N_SYMEDGE_COMBO8];
+		for (int u = 0; u < N_EDGE_COMBO8; ++u) {
 			if( get_value_1bit(u, isRepTable) != 0 ) continue;
-			s1.convert_edges_to_std_cube( u, cube1 );
-
-			for (sym = 1; sym < N_SYM_STAGE1; ++sym) {
+			cube1.convert_edges1_to_std_cube(u);
+			for (int sym = 1; sym < N_SYM_STAGE1; ++sym) {
 				cube1.rightMultEdges (Symmetry.invSymIdx[sym], cube2);
 				int edge = cube2.convert_edges_to_stage1();
 				set_1_1bit( edge, isRepTable); // not a rep.
@@ -250,17 +246,11 @@ public final class Tables {
 	public static void initSymEdgeStage1 (){
 
 		System.out.println( "Starting symEdge stage 1..." );
-		int i, mc;
-		int u, edge;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		cube1.init ();
-		cube2.init ();
-		CubeStage1 s1 = new CubeStage1();
-		for (u = 0; u < N_SYMEDGE_COMBO8; ++u) {
-			s1.convert_edges_to_std_cube( symEdgeToEdgeSTAGE1[u], cube1 );
-
-			for (mc = 0; mc < N_STAGE1_MOVES; ++mc) {
+		for (int u = 0; u < N_SYMEDGE_COMBO8; ++u) {
+			cube1.convert_edges1_to_std_cube( symEdgeToEdgeSTAGE1[u] );
+			for (int mc = 0; mc < N_STAGE1_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
 				cube2.rotate_sliceEDGE (stage1_slice_moves[mc]);
 				move_table_symEdgeSTAGE1[u][mc] = cube2.convert_symedges_to_stage1();
@@ -275,17 +265,11 @@ public final class Tables {
 	public static void initCornerStage1 (){
 
 		System.out.println( "Starting corner stage 1..." );
-		int i, mc;
-		int u;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		cube1.init ();
-		cube2.init ();
-		CubeStage1 s1 = new CubeStage1();
-		for (u = 0; u < N_CORNER_ORIENT; ++u) {
-			s1.corner = u;
-			s1.convert_corners_to_std_cube (cube1);
-			for (mc = 0; mc < N_STAGE1_MOVES; ++mc) {
+		for (int u = 0; u < N_CORNER_ORIENT; ++u) {
+			cube1.convert_corners1_to_std_cube (u);
+			for (int mc = 0; mc < N_STAGE1_MOVES; ++mc) {
 				if((stage1_slice_moves[mc]/3)%3 == 1 )
 					continue;
 				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
@@ -302,17 +286,11 @@ public final class Tables {
 	public static void initCornerConjStage1 (){
 
 		System.out.println( "Starting corner conjugate stage 1..." );
-		int i, sym;
-		int u;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		cube1.init ();
-		cube2.init ();
-		CubeStage1 s1 = new CubeStage1();
-		for (u = 0; u < N_CORNER_ORIENT; ++u) {
-			s1.corner = u;
-			s1.convert_corners_to_std_cube (cube1);
-			for (sym = 0; sym < N_SYM_STAGE1; ++sym) {
+		for (int u = 0; u < N_CORNER_ORIENT; ++u) {
+			cube1.convert_corners1_to_std_cube (u);
+			for (int sym = 0; sym < N_SYM_STAGE1; ++sym) {
 				cube1.rightMultCorners (Symmetry.invSymIdx[sym], cube2);
 				cube2.deMirrorCorners ();
 				move_table_co_conj[u][sym] = cube2.convert_corners_to_stage1 ();
@@ -327,15 +305,11 @@ public final class Tables {
 	public static void initEdgeStage2 (){
 
 		System.out.println( "Starting edge stage 2..." );
-		short u;
-		int mc;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		CubeStage2 s1 = new CubeStage2();
-		for (u = 0; u < N_STAGE2_EDGE_CONFIGS; ++u) {
-			s1.edge = u;
-			s1.convert_edges_to_std_cube(cube1);
-			for (mc = 0; mc < N_STAGE2_MOVES; ++mc) {
+		for (int u = 0; u < N_STAGE2_EDGE_CONFIGS; ++u) {
+			cube1.convert_edges2_to_std_cube(u);
+			for (int mc = 0; mc < N_STAGE2_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
 				cube2.rotate_sliceEDGE (stage2_slice_moves[mc]);
 				move_table_edgeSTAGE2[u][mc] = cube2.convert_edges_to_stage2();
@@ -350,17 +324,11 @@ public final class Tables {
 	public static void initEdgeConjStage2 (){
 
 		System.out.println( "Starting edge conjugate stage 2..." );
-		int i, sym;
-		int u;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		cube1.init ();
-		cube2.init ();
-		CubeStage2 s2 = new CubeStage2();
-		for (u = 0; u < N_STAGE2_EDGE_CONFIGS; ++u) {
-			s2.edge = u;
-			s2.convert_edges_to_std_cube (cube1);
-			for (sym = 0; sym < N_SYM_STAGE2; ++sym) {
+		for (int u = 0; u < N_STAGE2_EDGE_CONFIGS; ++u) {
+			cube1.convert_edges2_to_std_cube (u);
+			for (int sym = 0; sym < N_SYM_STAGE2; ++sym) {
 				cube1.rightMultEdges (Symmetry.invSymIdx[sym], cube2);
 				move_table_edge_conjSTAGE2[u][sym] = cube2.convert_edges_to_stage2 ();
 			}
@@ -370,25 +338,21 @@ public final class Tables {
 
 	/*** init stage 2 symCenterToCenter ***/
 	public static short[] symCenterToCenterSTAGE2 = new short[N_SYMCENTER_COMBO4];
-	public static int[] hasSymCenterSTAGE2 = new int[N_SYMCENTER_COMBO4];
+	public static int[] hasSymCenterSTAGE2;
 
 	public static void initSymCenterToCenterStage2 (){
 
 		System.out.println( "Starting symCenterToCenter stage 2..." );
-		int i, sym;
-		int u, repIdx = 0;
+		int repIdx = 0;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		cube1.init ();
-		cube2.init ();
-		CubeStage2 s2 = new CubeStage2();
-
 		byte[] isRepTable = new byte[(N_CENTER_COMBO4>>3) + 1];
-		for (u = 0; u < N_CENTER_COMBO4; ++u) {
+		hasSymCenterSTAGE2 = new int[N_SYMCENTER_COMBO4];
+		for (int u = 0; u < N_CENTER_COMBO4; ++u) {
 			if( get_value_1bit(u, isRepTable) != 0 ) continue;
-			s2.convert_centers_to_std_cube( u, cube1 );
+			cube1.convert_centers2_to_std_cube( u );
 
-			for (sym = 1; sym < N_SYM_STAGE2; ++sym) {
+			for (int sym = 1; sym < N_SYM_STAGE2; ++sym) {
 				cube1.rightMultCenters (Symmetry.invSymIdx[sym], cube2);
 				short cen = cube2.convert_centers_to_stage2(5);
 				set_1_1bit( cen, isRepTable); // not a rep.
@@ -407,16 +371,11 @@ public final class Tables {
 	public static void initSymCenterStage2 (){
 
 		System.out.println( "Starting symCenter stage 2..." );
-		int i, mc;
-		int u, edge;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		cube1.init ();
-		cube2.init ();
-		CubeStage2 s2 = new CubeStage2();
-		for (u = 0; u < N_SYMCENTER_COMBO4; ++u) {
-			s2.convert_centers_to_std_cube( symCenterToCenterSTAGE2[u], cube1 );
-			for (mc = 0; mc < N_STAGE2_MOVES; ++mc) {
+		for (int u = 0; u < N_SYMCENTER_COMBO4; ++u) {
+			cube1.convert_centers2_to_std_cube( symCenterToCenterSTAGE2[u] );
+			for (int mc = 0; mc < N_STAGE2_MOVES; ++mc) {
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
 				cube2.rotate_sliceCENTER (stage2_slice_moves[mc]);
 				move_table_symCenterSTAGE2[u][mc] = cube2.convert_symcenters_to_stage2(5);
@@ -461,26 +420,21 @@ public final class Tables {
 
 	/*** init stage 3 symCenterToCenter ***/
 	public static int[] symCenterToCenterSTAGE3 = new int[N_STAGE3_SYMCENTER_CONFIGS];
-	public static int[] hasSymCenterSTAGE3 = new int[N_STAGE3_SYMCENTER_CONFIGS]; // Could use less than int. Problem with (byte)1 << 7 and sign...
+	public static int[] hasSymCenterSTAGE3;
 
 	public static void initSymCenterToCenterStage3 (){
 
 		System.out.println( "Starting symCenterToCenter stage 3..." );
-		int i, sym, cosym;
-		int u, repIdx = 0;
+		int repIdx = 0;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		cube1.init ();
-		cube2.init ();
-		CubeStage3 s3 = new CubeStage3();
-
 		byte[] isRepTable = new byte[(N_STAGE3_CENTER_CONFIGS>>3) + 1];
-		for (u = 0; u < N_STAGE3_CENTER_CONFIGS; ++u) {
+		hasSymCenterSTAGE3 = new int[N_STAGE3_SYMCENTER_CONFIGS];
+		for (int u = 0; u < N_STAGE3_CENTER_CONFIGS; ++u) {
 			if( get_value_1bit(u, isRepTable) != 0 ) continue;
-			s3.convert_centers_to_std_cube(u, cube1);
-
-			for (sym = 0; sym < N_SYM_STAGE3; ++sym) {
-				for (cosym = 0; cosym < 2; cosym++) {
+			cube1.convert_centers3_to_std_cube(u);
+			for (int sym = 0; sym < N_SYM_STAGE3; ++sym) {
+				for (int cosym = 0; cosym < 2; cosym++) {
 					cube1.rightMultCenters(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
 					cube2.leftMultCenters(sym);
 					int cen = cube2.convert_centers_to_stage3();
@@ -500,18 +454,11 @@ public final class Tables {
 	public static void initSymCenterStage3 (){
 
 		System.out.println( "Starting symCenters stage 3..." );
-		int i, mc;
-		byte lrfb, ud;
-		int u, edge;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		cube1.init ();
-		cube2.init ();
-		CubeStage3 s3 = new CubeStage3();
-		for (u = 0; u < N_STAGE3_SYMCENTER_CONFIGS; ++u) {
-			s3.convert_centers_to_std_cube(symCenterToCenterSTAGE3[u], cube1);
-
-			for (mc = 0; mc < N_STAGE3_MOVES; ++mc) {
+		for (int u = 0; u < N_STAGE3_SYMCENTER_CONFIGS; ++u) {
+			cube1.convert_centers3_to_std_cube(symCenterToCenterSTAGE3[u]);
+			for (int mc = 0; mc < N_STAGE3_MOVES; ++mc) {
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
 				cube2.rotate_sliceCENTER (stage3_slice_moves[mc]);
 				move_table_symCenterSTAGE3[u][mc] = cube2.convert_symcenters_to_stage3();
@@ -526,15 +473,11 @@ public final class Tables {
 	public static void initEdgeStage3 (){
 
 		System.out.println( "Starting edge stage 3..." );
-		int mc;
-		int u;
-		CubeStage3 s3 = new CubeStage3();
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		for (u = 0; u < N_STAGE3_EDGE_CONFIGS; ++u) {
-			s3.edge = u;
-			s3.convert_edges_to_std_cube(cube1);
-			for (mc = 0; mc < N_STAGE3_MOVES; ++mc) {
+		for (int u = 0; u < N_STAGE3_EDGE_CONFIGS; ++u) {
+			cube1.convert_edges3_to_std_cube(u);
+			for (int mc = 0; mc < N_STAGE3_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
 				cube2.rotate_sliceEDGE (stage3_slice_moves[mc]);
 				move_table_edgeSTAGE3[u][mc] = cube2.convert_edges_to_stage3();
@@ -549,18 +492,12 @@ public final class Tables {
 	public static void initEdgeConjStage3 (){
 
 		System.out.println( "Starting edge conjugate stage 3..." );
-		int i, sym, cosym;
-		int u;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		cube1.init ();
-		cube2.init ();
-		CubeStage3 s1 = new CubeStage3();
-		for (u = 0; u < N_STAGE3_EDGE_CONFIGS; ++u) {
-			s1.edge = u;
-			s1.convert_edges_to_std_cube (cube1);
-			for (sym = 0; sym < N_SYM_STAGE3; ++sym) {
-				for (cosym = 0; cosym < 2; ++cosym) {
+		for (int u = 0; u < N_STAGE3_EDGE_CONFIGS; ++u) {
+			cube1.convert_edges3_to_std_cube (u);
+			for (int sym = 0; sym < N_SYM_STAGE3; ++sym) {
+				for (int cosym = 0; cosym < 2; ++cosym) {
 					cube1.rightMultEdges(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
 					cube2.leftMultEdges(sym);
 					move_table_edge_conjSTAGE3[u][(sym<<1)+cosym] = cube2.convert_edges_to_stage3();
@@ -573,34 +510,31 @@ public final class Tables {
 	/*** init_stage4 ***/
 
 	public static int[] symEdgeToEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS]; // 5968
-	public static int[] hasSymEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS]; // 5968
+	public static int[] hasSymEdgeSTAGE4;
 
 	public static void initSymEdgeToEdgeStage4 (){
 		System.out.println( "Starting symEdgeToEdge stage 4..." );
-		int sym, cosym;
-		int u, repIdx = 0;
-		int uh, ul;
+		int repIdx = 0;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		cube1.init ();
-		cube2.init ();
-		CubeStage4 s1 = new CubeStage4();
 		byte[] t = new byte[8];
 
 		byte[] isRepTable = new byte[((N_STAGE4_EDGE_CONFIGS*2)>>3) + 1];
-		for (u = 0; u < N_STAGE4_EDGE_CONFIGS*2; ++u) { // *2 because you didn't take care of the parity.
+		hasSymEdgeSTAGE4 = new int[N_STAGE4_SYMEDGE_CONFIGS];
+		for (int u = 0; u < N_STAGE4_EDGE_CONFIGS*2; ++u) { // *2 because you didn't take care of the parity.
 			if( get_value_1bit(u, isRepTable) != 0 ) continue;
-			s1.convert_edges_to_std_cube( u, cube1 );
+			cube1.convert_edges4_to_std_cube( u );
 
-			ul = perm_n_pack( 8, cube1.m_edge, 4 );
+			/* Only retain configs without parity */
+			int ul = perm_n_pack( 8, cube1.m_edge, 4 );
 			for (int i=0; i<4; i++)
 				t[i] = cube1.m_edge[i];
 			for (int i=4; i<8; i++)
 				t[i] = cube1.m_edge[i+8];
-			uh = perm_n_pack( 8, t, 0 );
+			int uh = perm_n_pack( 8, t, 0 );
 			if( parity_perm8_table[ul] != parity_perm8_table[uh] ) continue; // getting rid of the parity.
 
-			for (sym = 0; sym < N_SYM_STAGE4; ++sym) {
+			for (int sym = 0; sym < N_SYM_STAGE4; ++sym) {
 				cube1.conjugateEdges (sym, cube2);
 				int edge = cube2.convert_edges_to_stage4();
 				set_1_1bit( edge, isRepTable); // not a rep.
@@ -617,18 +551,14 @@ public final class Tables {
 	public static void initSymEdgeStage4 (){
 
 		System.out.println( "Starting sym edge stage 4..." );
-		int mc;
-		int u;
-		CubeState cs1 = new CubeState();
-		CubeState cs2 = new CubeState();
-		cs1.init ();
-		CubeStage4 s1 = new CubeStage4();
-		for (u = 0; u < N_STAGE4_SYMEDGE_CONFIGS; ++u) {
-			s1.convert_edges_to_std_cube( symEdgeToEdgeSTAGE4[u], cs1 );
-			for (mc = 0; mc < N_STAGE4_MOVES; ++mc) {
-				System.arraycopy(cs1.m_edge, 0, cs2.m_edge, 0, 24);
-				cs2.rotate_sliceEDGE (stage4_slice_moves[mc]);
-				move_table_symEdgeSTAGE4[u][mc] = cs2.convert_symedges_to_stage4();
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		for (int u = 0; u < N_STAGE4_SYMEDGE_CONFIGS; ++u) {
+			cube1.convert_edges4_to_std_cube( symEdgeToEdgeSTAGE4[u] );
+			for (int mc = 0; mc < N_STAGE4_MOVES; ++mc) {
+				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
+				cube2.rotate_sliceEDGE (stage4_slice_moves[mc]);
+				move_table_symEdgeSTAGE4[u][mc] = cube2.convert_symedges_to_stage4();
 			}
 		}
 		System.out.println( "Finishing sym edge stage 4..." );
@@ -639,19 +569,14 @@ public final class Tables {
 	public static void initCornerStage4 (){
 
 		System.out.println( "Starting corner stage 4..." );
-		int mc;
-		int u;
-		CubeStage4 s4 = new CubeStage4();
-		CubeState cs1 = new CubeState();
-		CubeState cs2 = new CubeState();
-		cs1.init ();
-		for (u = 0; u < N_STAGE4_CORNER_CONFIGS; ++u) {
-			s4.corner = u;
-			s4.convert_corners_to_std_cube (cs1);
-			for (mc = 0; mc < N_STAGE4_MOVES; ++mc) {
-				System.arraycopy(cs1.m_cor, 0, cs2.m_cor, 0, 8);
-				cs2.rotate_sliceCORNER (stage4_slice_moves[mc]);
-				move_table_cornerSTAGE4[u][mc] = cs2.convert_corners_to_stage4();
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		for (int u = 0; u < N_STAGE4_CORNER_CONFIGS; ++u) {
+			cube1.convert_corners4_to_std_cube (u);
+			for (int mc = 0; mc < N_STAGE4_MOVES; ++mc) {
+				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
+				cube2.rotate_sliceCORNER (stage4_slice_moves[mc]);
+				move_table_cornerSTAGE4[u][mc] = cube2.convert_corners_to_stage4();
 			}
 		}
 		System.out.println( "Finishing corner stage 4..." );
@@ -662,18 +587,13 @@ public final class Tables {
 	public static void initCornerConjStage4 (){
 
 		System.out.println( "Starting corner conj stage 4..." );
-		int sym;
-		int u;
-		CubeStage4 s4 = new CubeStage4();
-		CubeState cs1 = new CubeState();
-		CubeState cs2 = new CubeState();
-		cs1.init ();
-		for (u = 0; u < N_STAGE4_CORNER_CONFIGS; ++u) {
-			s4.corner = u;
-			s4.convert_corners_to_std_cube (cs1);
-			for (sym = 0; sym < N_SYM_STAGE4; ++sym) {
-				cs1.conjugateCorners (sym, cs2);
-				move_table_corner_conjSTAGE4[u][sym] = cs2.convert_corners_to_stage4();
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		for (int u = 0; u < N_STAGE4_CORNER_CONFIGS; ++u) {
+			cube1.convert_corners4_to_std_cube (u);
+			for (int sym = 0; sym < N_SYM_STAGE4; ++sym) {
+				cube1.conjugateCorners (sym, cube2);
+				move_table_corner_conjSTAGE4[u][sym] = cube2.convert_corners_to_stage4();
 			}
 		}
 		System.out.println( "Finishing corner conj stage 4..." );
@@ -684,19 +604,14 @@ public final class Tables {
 	public static void initCenterStage4 (){
 
 		System.out.println( "Starting center stage 4..." );
-		int mc;
-		int u;
-		CubeStage4 s4 = new CubeStage4();
-		CubeState cs1 = new CubeState();
-		CubeState cs2 = new CubeState();
-		cs1.init ();
-		for (u = 0; u < N_STAGE4_CENTER_CONFIGS; ++u) {
-			s4.center = u;
-			s4.convert_centers_to_std_cube (cs1);
-			for (mc = 0; mc < N_STAGE4_MOVES; ++mc) {
-				System.arraycopy(cs1.m_cen, 0, cs2.m_cen, 0, 24);
-				cs2.rotate_sliceCENTER (stage4_slice_moves[mc]);
-				move_table_cenSTAGE4[u][mc] = cs2.convert_centers_to_stage4();
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		for (int u = 0; u < N_STAGE4_CENTER_CONFIGS; ++u) {
+			cube1.convert_centers4_to_std_cube (u);
+			for (int mc = 0; mc < N_STAGE4_MOVES; ++mc) {
+				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
+				cube2.rotate_sliceCENTER (stage4_slice_moves[mc]);
+				move_table_cenSTAGE4[u][mc] = cube2.convert_centers_to_stage4();
 			}
 		}
 		System.out.println( "Finishing center stage 4..." );
@@ -707,18 +622,13 @@ public final class Tables {
 	public static void initCenterConjStage4 (){
 
 		System.out.println( "Starting center stage 4..." );
-		int sym;
-		int u;
-		CubeStage4 s4 = new CubeStage4();
-		CubeState cs1 = new CubeState();
-		CubeState cs2 = new CubeState();
-		cs1.init ();
-		for (u = 0; u < N_STAGE4_CENTER_CONFIGS; ++u) {
-			s4.center = u;
-			s4.convert_centers_to_std_cube (cs1);
-			for (sym = 0; sym < N_SYM_STAGE4; ++sym) {
-				cs1.conjugateCenters (sym, cs2);
-				move_table_cen_conjSTAGE4[u][sym] = cs2.convert_centers_to_stage4();
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		for (int u = 0; u < N_STAGE4_CENTER_CONFIGS; ++u) {
+			cube1.convert_centers4_to_std_cube (u);
+			for (int sym = 0; sym < N_SYM_STAGE4; ++sym) {
+				cube1.conjugateCenters (sym, cube2);
+				move_table_cen_conjSTAGE4[u][sym] = cube2.convert_centers_to_stage4();
 			}
 		}
 		System.out.println( "Finishing center conj stage 4..." );
@@ -733,17 +643,14 @@ public final class Tables {
 	public static void initSquaresMovemap (){
 
 		System.out.println( "Starting corner stage 5..." );
-		int i, m;
-		CubeStage5 s5 = new CubeStage5();
-		CubeState cs1 = new CubeState();
-		CubeState cs2 = new CubeState();
-		for (i = 0; i < N_STAGE5_CORNER_PERM; ++i) {
-			s5.corner = i;
-			s5.convert_corners_to_std_cube (cs1);
-			for (m = 0; m < N_STAGE5_MOVES; ++m) {
-				System.arraycopy(cs1.m_cor, 0, cs2.m_cor, 0, 8);
-				cs2.rotate_sliceCORNER (stage5_slice_moves[m]);
-				move_table_cornerSTAGE5[i][m] = cs2.convert_corners_to_stage5();
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		for (int u = 0; u < N_STAGE5_CORNER_PERM; ++u) {
+			cube1.convert_corners5_to_std_cube (u);
+			for (int m = 0; m < N_STAGE5_MOVES; ++m) {
+				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
+				cube2.rotate_sliceCORNER (stage5_slice_moves[m]);
+				move_table_cornerSTAGE5[u][m] = cube2.convert_corners_to_stage5();
 			}
 		}
 		System.out.println( "Finishing corner stage 5..." );
@@ -767,17 +674,14 @@ public final class Tables {
 	public static void initCenterStage5 (){
 
 		System.out.println( "Starting center stage5..." );
-		int i, m;
-		CubeStage5 s5 = new CubeStage5();
-		CubeState cs1 = new CubeState();
-		CubeState cs2 = new CubeState();
-		for (i = 0; i < N_STAGE5_CENTER_PERM; ++i) {
-			s5.center = i;
-			s5.convert_centers_to_std_cube (cs1);
-			for (m = 0; m < N_STAGE5_MOVES; ++m) {
-				System.arraycopy(cs1.m_edge, 0, cs2.m_edge, 0, 24);
-				cs2.rotate_sliceCENTER (stage5_slice_moves[m]);
-				move_table_cenSTAGE5[i][m]= cs2.convert_centers_to_stage5();
+		CubeState cube1 = new CubeState();
+		CubeState cube2 = new CubeState();
+		for (int u = 0; u < N_STAGE5_CENTER_PERM; ++u) {
+			cube1.convert_centers5_to_std_cube (u);
+			for (int m = 0; m < N_STAGE5_MOVES; ++m) {
+				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
+				cube2.rotate_sliceCENTER (stage5_slice_moves[m]);
+				move_table_cenSTAGE5[u][m]= cube2.convert_centers_to_stage5();
 			}
 		}
 		System.out.println( "Finishing center stage5..." );
@@ -785,25 +689,24 @@ public final class Tables {
 
 	/*** init stage 5 symEdgeToEdge ***/
 	public static int[] symEdgeToEdgeSTAGE5 = new int[N_STAGE5_SYMEDGE_PERM];
-	public static long[][] hasSymEdgeSTAGE5 = new long[N_STAGE5_SYMEDGE_PERM][4];
+	public static long[][] hasSymEdgeSTAGE5;
 
 	public static void initSymEdgeToEdgeStage5 (){
 
 		System.out.println( "Starting symEdgeToEdge stage 5..." );
-		int i, sym, cosym;
-		int u, repIdx = 0;
-		CubeStage5 cs = new CubeStage5();
+		int repIdx = 0;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 
 		byte[] isRepTable = new byte[N_STAGE5_EDGE_PERM >> 3];
+		hasSymEdgeSTAGE5 = new long[N_STAGE5_SYMEDGE_PERM][4];
 
-		for (u = 0; u < N_STAGE5_EDGE_PERM; ++u) {
+		for (int u = 0; u < N_STAGE5_EDGE_PERM; ++u) {
 			if( get_value_1bit( u, isRepTable ) != 0 ) continue;
-			cs.convert_edges_to_std_cube (u, cube1);
+			cube1.convert_edges5_to_std_cube (u);
 
-			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
-				for (cosym = 0; cosym < 4; ++cosym) {
+			for (int sym = 0; sym < N_SYM_STAGE5; ++sym) {
+				for (int cosym = 0; cosym < 4; ++cosym) {
 					cube1.rightMultEdges(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
 					cube2.leftMultEdges(sym);
 					int edge = cube2.convert_edges_to_stage5 ();
@@ -823,17 +726,11 @@ public final class Tables {
 	public static void initSymEdgeStage5 (){
 
 		System.out.println( "Starting symEdge stage 5..." );
-		int i, mc;
-		int u, edge;
-		CubeStage5 cs = new CubeStage5();
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		cube1.init ();
-		cube2.init ();
-		for (u = 0; u < N_STAGE5_SYMEDGE_PERM; ++u) {
-			cs.convert_edges_to_std_cube (symEdgeToEdgeSTAGE5[u], cube1);
-
-			for (mc = 0; mc < N_STAGE5_MOVES; ++mc) {
+		for (int u = 0; u < N_STAGE5_SYMEDGE_PERM; ++u) {
+			cube1.convert_edges5_to_std_cube (symEdgeToEdgeSTAGE5[u]);
+			for (int mc = 0; mc < N_STAGE5_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
 				cube2.rotate_sliceEDGE (stage5_slice_moves[mc]);
 				move_table_symEdgeSTAGE5[u][mc] = cube2.convert_symedges_to_stage5();
@@ -848,18 +745,12 @@ public final class Tables {
 	public static void initCornerConjStage5 (){
 
 		System.out.println( "Starting corner conjugate stage 5..." );
-		int i, sym, cosym;
-		int u;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		cube1.init ();
-		cube2.init ();
-		CubeStage5 s1 = new CubeStage5();
-		for (u = 0; u < N_STAGE5_CORNER_PERM; ++u) {
-			s1.corner = u;
-			s1.convert_corners_to_std_cube (cube1);
-			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
-				for (cosym = 0; cosym < 4; ++cosym) {
+		for (int u = 0; u < N_STAGE5_CORNER_PERM; ++u) {
+			cube1.convert_corners5_to_std_cube (u);
+			for (int sym = 0; sym < N_SYM_STAGE5; ++sym) {
+				for (int cosym = 0; cosym < 4; ++cosym) {
 					System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
 					cube1.rightMultCorners(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
 					cube2.leftMultCorners(sym);
@@ -876,18 +767,12 @@ public final class Tables {
 	public static void initCenterConjStage5 (){
 
 		System.out.println( "Starting center conjugate stage 5..." );
-		int i, sym, cosym;
-		int u;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		cube1.init ();
-		cube2.init ();
-		CubeStage5 s1 = new CubeStage5();
-		for (u = 0; u < N_STAGE5_CENTER_PERM; ++u) {
-			s1.center = u;
-			s1.convert_centers_to_std_cube (cube1);
-			for (sym = 0; sym < N_SYM_STAGE5; ++sym) {
-				for (cosym = 0; cosym < 4; ++cosym) {
+		for (int u = 0; u < N_STAGE5_CENTER_PERM; ++u) {
+			cube1.convert_centers5_to_std_cube (u);
+			for (int sym = 0; sym < N_SYM_STAGE5; ++sym) {
+				for (int cosym = 0; cosym < 4; ++cosym) {
 					cube1.rightMultCenters(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
 					cube2.leftMultCenters(sym);
 					move_table_cen_conjSTAGE5[u][(sym<<2) + cosym] = cube2.convert_centers_to_stage5();

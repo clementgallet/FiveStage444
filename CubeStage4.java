@@ -7,8 +7,6 @@ public final class CubeStage4 {
 	public int edge; //sym edge coordinate (5968*16)
 	public int sym;
 
-	public static byte sqs_to_std[] = { 0, 2, 5, 7, 1, 3, 4, 6 };
-
 	public static PruningStage4 prune_table;
 	public static PruningStage4EdgCen prune_table_edgcen;
 	public static PruningStage4EdgCor prune_table_edgcor;
@@ -51,76 +49,6 @@ public final class CubeStage4 {
 	}
 
 	/* Convert functions */
-
-	public void convert_edges_to_std_cube (int e, CubeState result_cube){
-
-		result_cube.init();
-		short ledge4of8 = Tables.bm4of8[e % 70];
-		e /= 70;
-		short redge4of8 = Tables.bm4of8[e % 70];
-		e /= 70;
-		int perm6_fb = e % 6;
-		int perm6_rl = e / 6;
-		byte[] t = new byte[4];
-
-		int i1 = 0;
-		int i2 = 0;
-		Constants.perm_n_unpack( 4, perm6_rl, t, 0 );
-		for( int i=0; i < 8; i++ ){
-			if(( ledge4of8 & ( 1 << i )) != 0)
-				result_cube.m_edge[i+4] = (byte)( t[i1++] + 4 );
-			else
-				result_cube.m_edge[i+4] = (byte)( (i2++) + 8);
-		}
-
-		i1 = 0;
-		i2 = 0;
-		Constants.perm_n_unpack( 4, perm6_fb, t, 0 );
-		for( int i=0; i < 8; i++ ){
-			if(( redge4of8 & ( 1 << i )) != 0)
-				result_cube.m_edge[( i < 4 ) ? i : i + 8] = (byte)(i1++);
-			else
-				result_cube.m_edge[( i < 4 ) ? i : i + 8] = (byte)(t[i2++] + 12);
-		}
-	}
-
-	public void convert_corners_to_std_cube (CubeState result_cube){
-		int i;
-		byte[] t6 = new byte[4];
-		byte[] t8 = new byte[8];
-		//Note: for corners, "squares" style mapping is used in creating the "coordinate" value.
-		//But the do_move function for std_cube assumes "standard" mapping.
-		//Therefore the m_cor array must be converted accordingly using this conversion array.
-		int cor_bm = Tables.bm4of8[corner / 6];
-		Constants.perm_n_unpack (4, corner % 6, t6, 0);
-		int a = 0;
-		int b = 0;
-		for (i = 0; i < 8; ++i) {
-			if ((cor_bm & (1 << i)) == 0) {
-				t8[i] = (byte)(4 + t6[b++]);
-			} else {
-				t8[i] = (byte)a++;
-			}
-		}
-		for (i = 0; i < 8; ++i) {
-			result_cube.m_cor[sqs_to_std[i]] = sqs_to_std[t8[i]];
-		}
-	}
-
-	public void convert_centers_to_std_cube (CubeState result_cube){
-		int i;
-		int cenbm = Tables.bm4of8[center];
-		for (i = 0; i < 8; ++i) {
-			if ((cenbm & (1 << i)) == 0) {
-				result_cube.m_cen[i] = 1;
-			} else {
-				result_cube.m_cen[i] = 0;
-			}
-		}
-		for (i = 8; i < 24; ++i) {
-			result_cube.m_cen[i] = (byte)(i/4);
-		}
-	}
 
 	/* Pruning functions */
 

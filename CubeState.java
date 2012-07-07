@@ -398,6 +398,21 @@ public final class CubeState{
 		return idx;
 	}
 
+	public void convert_edges1_to_std_cube (int edge)
+	{
+		int r = 8;
+		byte lrfb = 0;
+		byte ud = 16;
+		for (int i=23; i>=0; i--) {
+			if (edge >= Cnk[i][r]) {
+				edge -= Cnk[i][r--];
+				m_edge[i] = ud++;
+			} else {
+				m_edge[i] = lrfb++;
+			}
+		}
+	}
+
 	public int convert_symedges_to_stage1 (){
 		CubeState cube = new CubeState();
 		int i;
@@ -422,6 +437,21 @@ public final class CubeState{
 		return (short)orientc;
 	}
 
+	public void convert_corners1_to_std_cube (int corner)
+	{
+		int i;
+
+		int orientc = corner;
+		int orientcmod3 = 0;
+		for (i = 6; i >= 0; --i) {	//don't want 8th edge orientation
+			byte fo = (byte)(orientc % 3);
+			m_cor[i] = (byte)(i + (fo << 3));
+			orientcmod3 += fo;
+			orientc /= 3;
+		}
+		m_cor[7] = (byte)(7 + (((24 - orientcmod3) % 3) << 3));
+	}
+
 	public void convert_to_stage1 (CubeStage1 result_cube){
 		result_cube.corner = convert_corners_to_stage1();
 		int symedge = convert_symedges_to_stage1();
@@ -432,6 +462,25 @@ public final class CubeState{
 	public short convert_edges_to_stage2 (){
 		int u = Constants.perm_n_pack (8, m_edge, 16);
 		return Tables.perm_to_420[u];
+	}
+
+	public void convert_edges2_to_std_cube (int edge){
+		int i;
+		byte[] t6 = new byte[4];
+		int edgeFbm = Tables.bm4of8[edge / 6];
+		Constants.perm_n_unpack (4, edge % 6, t6, 0);
+		for (i = 0; i < 16; ++i)
+			m_edge[i] = (byte)i;
+
+		byte f = 16;
+		int b = 0;
+		for (i = 0; i < 8; ++i) {
+			if ((edgeFbm & (1 << i)) == 0) {
+				m_edge[16 + i] = (byte)(20 + t6[b++]);
+			} else {
+				m_edge[16 + i] = f++;
+			}
+		}
 	}
 
 	public short convert_centers_to_stage2 (int c){
@@ -445,6 +494,19 @@ public final class CubeState{
 		}
 		int idx = 24*24*24*t[0] + 24*24*t[1] + 24*t[2] + t[3];
 		return (short)Tables.c4_to_cloc[idx];
+	}
+
+	public void convert_centers2_to_std_cube (int center){
+		int i;
+		int cbmb = Tables.cloc_to_bm[center];
+		int udlrf = 0;
+		for (i = 0; i < 24; ++i) {
+			if ((cbmb & (1 << i)) == 0) {
+				m_cen[i] = (byte)(udlrf++/4);
+			} else {
+				m_cen[i] = 5;
+			}
+		}
 	}
 
 	public short convert_symcenters_to_stage2 (int c){
@@ -486,6 +548,28 @@ public final class CubeState{
 		return 70*Tables.e16bm2eloc[cenbm] + Tables.bm4of8_to_70[cenbm4of8];
 	}
 
+	public void convert_centers3_to_std_cube (int center){
+		int i;
+		int cenbm = Tables.eloc2e16bm[center/70];
+		int cenbm4of8 = Tables.bm4of8[center % 70];
+		int ud = 0;
+		int pos4of8 = 0;
+		for (i = 0; i < 16; ++i) {
+			if ((cenbm & (1 << i)) == 0) {
+				m_cen[i] = (byte)(ud++/4);
+			} else {
+				if ((cenbm4of8 & (1 << pos4of8++)) == 0) {
+					m_cen[i] = 3;
+				} else {
+					m_cen[i] = 2;
+				}
+			}
+		}
+		for (i = 16; i < 24; ++i) {
+			m_cen[i] = (byte)(i/4);
+		}
+	}
+
 	public int convert_symcenters_to_stage3 (){
 		CubeState cube = new CubeState();
 		int rep;
@@ -512,6 +596,26 @@ public final class CubeState{
 		return (short)Tables.e16bm2eloc[edge_bm];
 	}
 
+	public void convert_edges3_to_std_cube (int edge){
+		int i;
+		int edge_bm = Tables.eloc2e16bm[edge];
+		byte e0 = 0;
+		byte e1 = 4;
+		for (i = 0; i < 16; ++i) {
+			if ((edge_bm & (1 << i)) != 0) {
+				m_edge[i] = e0++;
+				if (e0 == 4) {
+					e0 = 12;		//skip numbers 4..11; those are used for e1
+				}
+			} else {
+				m_edge[i] = e1++;
+			}
+		}
+		for (i = 16; i < 24; ++i) {
+			m_edge[i] = (byte)i;
+		}
+	}
+
 	public void convert_to_stage3 (CubeStage3 result_cube){
 		int symcen = convert_symcenters_to_stage3 ();
 		result_cube.center = symcen >> 4;
@@ -520,7 +624,8 @@ public final class CubeState{
 		result_cube.edge_odd = edgeUD_parity_odd ();
 	}
 
-	private static byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
+	private static final byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
+	private static final byte sqs_to_std[] = { 0, 2, 5, 7, 1, 3, 4, 6 };
 
 	public int convert_edges_to_stage4 (){
 		int redge4of8 = 0;
@@ -558,6 +663,40 @@ public final class CubeState{
 		return ((( perm6_rl * 6 + perm6_fb ) * 70 + Tables.bm4of8_to_70[redge4of8] ) * 70 + Tables.bm4of8_to_70[ledge4of8] );
 	}
 
+	public void convert_edges4_to_std_cube (int edge){
+
+		short ledge4of8 = Tables.bm4of8[edge % 70];
+		edge /= 70;
+		short redge4of8 = Tables.bm4of8[edge % 70];
+		edge /= 70;
+		int perm6_fb = edge % 6;
+		int perm6_rl = edge / 6;
+		byte[] t = new byte[4];
+
+		int i1 = 0;
+		int i2 = 0;
+		Constants.perm_n_unpack( 4, perm6_rl, t, 0 );
+		for( int i=0; i < 8; i++ ){
+			if(( ledge4of8 & ( 1 << i )) != 0)
+				m_edge[i+4] = (byte)( t[i1++] + 4 );
+			else
+				m_edge[i+4] = (byte)( (i2++) + 8);
+		}
+
+		i1 = 0;
+		i2 = 0;
+		Constants.perm_n_unpack( 4, perm6_fb, t, 0 );
+		for( int i=0; i < 8; i++ ){
+			if(( redge4of8 & ( 1 << i )) != 0)
+				m_edge[( i < 4 ) ? i : i + 8] = (byte)(i1++);
+			else
+				m_edge[( i < 4 ) ? i : i + 8] = (byte)(t[i2++] + 12);
+		}
+
+		for( int i=16; i < 24; i++ )
+			m_edge[i] = (byte)i;
+	}
+
 	public int convert_symedges_to_stage4 (){
 		CubeState cube = new CubeState();
 		int rep;
@@ -584,6 +723,29 @@ public final class CubeState{
 		return Tables.perm_to_420[u];
 	}
 
+	public void convert_corners4_to_std_cube (int corner){
+		int i;
+		byte[] t6 = new byte[4];
+		byte[] t8 = new byte[8];
+		//Note: for corners, "squares" style mapping is used in creating the "coordinate" value.
+		//But the do_move function for std_cube assumes "standard" mapping.
+		//Therefore the m_cor array must be converted accordingly using this conversion array.
+		int cor_bm = Tables.bm4of8[corner / 6];
+		Constants.perm_n_unpack (4, corner % 6, t6, 0);
+		int a = 0;
+		int b = 0;
+		for (i = 0; i < 8; ++i) {
+			if ((cor_bm & (1 << i)) == 0) {
+				t8[i] = (byte)(4 + t6[b++]);
+			} else {
+				t8[i] = (byte)a++;
+			}
+		}
+		for (i = 0; i < 8; ++i) {
+			m_cor[sqs_to_std[i]] = sqs_to_std[t8[i]];
+		}
+	}
+
 	public byte convert_centers_to_stage4 (){
 		int i;
 		int cenbm4of8 = 0;
@@ -595,6 +757,21 @@ public final class CubeState{
 		return Tables.bm4of8_to_70[cenbm4of8];
 	}
 
+	public void convert_centers4_to_std_cube (int center){
+		int i;
+		int cenbm = Tables.bm4of8[center];
+		for (i = 0; i < 8; ++i) {
+			if ((cenbm & (1 << i)) == 0) {
+				m_cen[i] = 1;
+			} else {
+				m_cen[i] = 0;
+			}
+		}
+		for (i = 8; i < 24; ++i) {
+			m_cen[i] = (byte)(i/4);
+		}
+	}
+
 	public void convert_to_stage4 (CubeStage4 result_cube){
 		int symedge = convert_symedges_to_stage4();
 		result_cube.edge = symedge >> 4;
@@ -603,18 +780,60 @@ public final class CubeState{
 		result_cube.center = convert_centers_to_stage4();
 	}
 
-	private static byte std_to_sqs_cor[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
-	private static byte std_to_sqs_cen[] = {
+	private static final byte std_to_sqs_cor[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
+	private static final byte sqs_to_std_cor[] = { 0, 2, 5, 7, 1, 3, 4, 6 };
+	private static final byte std_to_sqs_cen[] = {
 		0,  3,  1,  2,  5,  6,  4,  7,
 		8, 11,  9, 10, 13, 14, 12, 15,
 		16, 19, 17, 18, 21, 22, 20, 23
 	};
+	private static final byte sqs_to_std_cen[] = {
+		0,  2,  3,  1,  6,  4,  5,  7,
+		8, 10, 11,  9, 14, 12, 13, 15,
+		16, 18, 19, 17, 22, 20, 21, 23
+	};
+	private static final int sqs_rep_to_perm[][] = {
+		{  0,  7, 16, 23 },
+		{  1,  6, 17, 22 },
+		{  2, 10, 13, 21 },
+		{  3, 11, 12, 20 },
+		{  4,  8, 15, 19 },
+		{  5,  9, 14, 18 }
+	};
+
+	private static final int sqs_perm_to_rep[] = {
+		0, 1, 2, 3, 4, 5,
+		1, 0, 4, 5, 2, 3,
+		3, 2, 5, 4, 0, 1,
+		5, 4, 3, 2, 1, 0
+	};
+
 
 	public int convert_edges_to_stage5 (){
 		int ep1 = Constants.perm_4_pack (m_edge, 0);
 		int ep2 = Constants.perm_4_pack (m_edge, 8);
 		int ep3 = Constants.perm_4_pack (m_edge, 16);
-		return 96*(96*(4*ep3 + (m_edge[20] - 20))+(4*ep2 + (m_edge[12] - 12))) + 4*ep1 + (m_edge[4] - 4);
+		return 96*96*(4*ep3 + (m_edge[20] - 20)) + 96*(4*ep2 + (m_edge[12] - 12)) + 4*ep1 + (m_edge[4] - 4);
+	}
+
+	public void convert_edges5_to_std_cube (int edge){
+		int i;
+
+		int ep1 = edge % 96;
+		int ep2 = (edge/96) % 96;
+		int ep3 = edge/(96*96);
+		int rep = sqs_perm_to_rep[ep1/4];
+		Constants.perm_n_unpack (4, ep1/4, m_edge, 0);
+		Constants.perm_n_unpack (4, sqs_rep_to_perm[rep][ep1 % 4], m_edge, 4);
+		rep = sqs_perm_to_rep[ep2/4];
+		Constants.perm_n_unpack (4, ep2/4, m_edge, 8);
+		Constants.perm_n_unpack (4, sqs_rep_to_perm[rep][ep2 % 4], m_edge, 12);
+		rep = sqs_perm_to_rep[ep3/4];
+		Constants.perm_n_unpack (4, ep3/4, m_edge, 16);
+		Constants.perm_n_unpack (4, sqs_rep_to_perm[rep][ep3 % 4], m_edge, 20);
+		for (i = 0; i < 24; ++i) {
+			m_edge[i] += 4*(i/4);
+		}
 	}
 
 	public int convert_symedges_to_stage5 (){
@@ -659,6 +878,27 @@ public final class CubeState{
 		return cen;
 	}
 
+	public void convert_centers5_to_std_cube (int center){
+		int i;
+		byte[] old_m_cen = new byte[24];
+
+		int cen1 = center % 12;
+		int cen2 = (center/12) % 12;
+		int cen3 = center/(12*12);
+		int x = (Tables.squares_cen_map[cen1] << 16) | (Tables.squares_cen_map[cen2] << 8) | Tables.squares_cen_map[cen3];
+		int b = 0x800000;
+		for (i = 0; i < 24; ++i) {
+			old_m_cen[i] = (byte) (2*(i/8) + ((x & b) == 0 ? 0 : 1));
+			b >>= 1;
+		}
+
+		//We must convert between "standard"-style cubie numbering and the "square"-style
+		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
+		for (i = 0; i < 24; ++i) {
+			m_cen[sqs_to_std_cen[i]] = (byte)(sqs_to_std_cen[4*old_m_cen[i]]/4);
+		}
+	}
+
 	public byte convert_corners_to_stage5 (){
 		int i;
 		//We must convert between "squares"-style cubie numbering and the "standard"-style
@@ -670,6 +910,24 @@ public final class CubeState{
 		}
 
 		return (byte)(4*Constants.perm_n_pack (4, new_m_cor, 0) + (new_m_cor[4] - 4));
+	}
+
+	public void convert_corners5_to_std_cube (int corner){
+		int i;
+		byte[] old_m_cor = new byte[8];
+
+		int rep = sqs_perm_to_rep[corner/4];
+		Constants.perm_n_unpack (4, corner/4, old_m_cor, 0);
+		Constants.perm_n_unpack (4, sqs_rep_to_perm[rep][corner % 4], old_m_cor, 4);
+		for (i = 0; i < 8; ++i) {
+			old_m_cor[i] += (byte)(4*(i/4));
+		}
+
+		//We must convert between "standard"-style cubie numbering and the "square"-style
+		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
+		for (i = 0; i < 8; ++i) {
+			m_cor[sqs_to_std_cor[i]] = sqs_to_std_cor[old_m_cor[i]];
+		}
 	}
 
 	public void convert_to_stage5 (CubeStage5 result_cube){
