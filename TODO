@@ -14,18 +14,18 @@ TODO:
 
 - From Chen Shuang (min2phase)
 -- Use multithreading (again) for table generation
--- Add temporary raw2sym tables during initialisation
 -- Check if using int tables instead of byte tables is faster
--- Try a custom binary search
 
 
 
 DONE:
 
-+ Find a better way to get the edge coord of stage 4
++ Try a custom binary search -> slower.
++ Add temporary raw2sym tables during initialisation -> tables would be too big... giving up.
++ Find a better way to get the edge coord of stage 4 -> done
 + Solve the inverse cube -> not working
-+ Use symmetry reduction. With this, it would be possible to get stage 1 and 4 full pruning tables (see http://kociemba.org/cube.htm)
-+ Use backward search when generating pruning tables
-+ Use tables when getting values from pruning tables
-+ Pack 5 values into one byte instead of 4
++ Use symmetry reduction. With this, it would be possible to get stage 1 and 4 full pruning tables (see http://kociemba.org/cube.htm) -> done
++ Use backward search when generating pruning tables -> done
++ Use tables when getting values from pruning tables -> done
++ Pack 5 values into one byte instead of 4 -> done
 

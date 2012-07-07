@@ -145,11 +145,11 @@ public final class Search {
 	public boolean search_stage1 (CubeStage1 cube1, int depth, int moves_done, int last_move, int dist, int r){
 		//CubeStage1 cube2 = new CubeStage1();
 		int mov_idx, j;
-		if (depth == 0){
-			if (! cube1.is_solved ()) {
+		if (cube1.is_solved ()) {
+			if (depth == 0)
+				return init_stage2 (r);
+			else
 				return false;
-			}
-			return init_stage2 (r);
 		}
 		int end = ( depth == 1 ) ? N_STAGE1_LAST : N_STAGE1_SEARCH;
 		for (mov_idx = 0; mov_idx < end; ++mov_idx) {
@@ -245,11 +245,11 @@ public final class Search {
 	public boolean search_stage2 (CubeStage2 cube1, int depth, int moves_done, int last_move, int r ){
 		//CubeStage2 cube2 = new CubeStage2();
 		int mov_idx, mc, j;
-		if (depth == 0) {
-			if (! cube1.is_solved ()) {
+		if (cube1.is_solved ()) {
+			if (depth == 0) 
+				return init_stage3 (r);
+			else
 				return false;
-			}
-			return init_stage3 (r);
 		}
 		int end = ( depth == 1 ) ? N_STAGE2_LAST : N_STAGE2_SEARCH;
 		for (mov_idx = 0; mov_idx < end; ++mov_idx) {
@@ -324,11 +324,11 @@ public final class Search {
 	public boolean search_stage3 (CubeStage3 cube1, int depth, int moves_done, int last_move){
 		CubeStage3 cube2 = new CubeStage3();
 		int mov_idx, j;
-		if (depth == 0) {
-			if (! cube1.is_solved ()) {
+		if (cube1.is_solved ()) {
+			if (depth == 0)
+				return init_stage4 ();
+			else
 				return false;
-			}
-			return init_stage4 ();
 		}
 		int end = ( depth == 1 ) ? N_STAGE3_LAST : N_STAGE3_SEARCH;
 		for (mov_idx = 0; mov_idx < end; ++mov_idx) {
@@ -388,11 +388,11 @@ public final class Search {
 	public boolean search_stage4 (CubeStage4 cube1, int depth, int moves_done, int last_move, int dist){
 		CubeStage4 cube2 = new CubeStage4();
 		int mov_idx, j;
-		if (depth == 0) {
-			if (! cube1.is_solved ()) {
+		if (cube1.is_solved ()) {
+			if (depth == 0)
+				return init_stage5 ();
+			else
 				return false;
-			}
-			return init_stage5 ();
 		}
 		int end = ( depth == 1 ) ? N_STAGE4_LAST : N_STAGE4_SEARCH;
 		for (mov_idx = 0; mov_idx < end; ++mov_idx) {
@@ -463,10 +463,7 @@ public final class Search {
 		CubeStage5 cube2 = new CubeStage5();
 		int mov_idx, j;
 		if (depth == 0) {
-			if (! cube1.is_solved ()) {
-				return false;
-			}
-			return true;
+			return cube1.is_solved ();
 		}
 		for (mov_idx = 0; mov_idx < N_STAGE5_SEARCH; ++mov_idx) {
 			if (stage5_slice_moves_to_try[last_move][mov_idx])
