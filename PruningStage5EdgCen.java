@@ -37,11 +37,11 @@ public final class PruningStage5EdgCen extends Pruning {
 		int edge = (int)(idx / N_STAGE5_CENTER_PERM);
 
 		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][move];
-		int allsym = newEdge & 0xFF;
+		int sym = newEdge & 0xFF;
 		int edgeRep = newEdge >> 8;
 
 		cen = Tables.move_table_cenSTAGE5[cen][move];
-		cen = Tables.move_table_cen_conjSTAGE5[cen][allsym];
+		cen = Tables.move_table_cen_conjSTAGE5[cen][sym];
 		return edgeRep*N_STAGE5_CENTER_PERM + cen;
 	}
 

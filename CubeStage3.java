@@ -17,20 +17,6 @@ public final class CubeStage3 {
 		cube1.edge_odd = edge_odd;
 	}
 
-	public boolean is_solved (){
-		if (edge_odd)
-			return false;	//not solved if odd edge parity
-
-		if (edge != 494)
-			return false;	//not solved if wrong edge value
-
-		for (int i = 0; i < Constants.STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS; ++i)
-			if ( center == Constants.stage3_solved_sym_centers[i])
-				return true;	//If we found a matching center value, then it is solved.
-
-		return false;
-	}
-
 	/* Convert functions */
 
 	public void convert_centers_to_std_cube (int center2, CubeState result_cube){

@@ -694,10 +694,8 @@ public final class CubeState{
 		result_cube.corner = convert_corners_to_stage5 ();
 		result_cube.center = convert_centers_to_stage5 ();
 		int symedge = convert_symedges_to_stage5 ();
-		result_cube.cosym = symedge & 0x03;
-		symedge >>= 2;
-		result_cube.sym = symedge & 0x3F;
-		result_cube.edge = symedge >> 6;
+		result_cube.sym = symedge & 0xFF;
+		result_cube.edge = symedge >> 8;
 	}
 
 	public void print (){

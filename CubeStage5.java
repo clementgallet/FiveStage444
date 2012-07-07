@@ -4,7 +4,6 @@ public final class CubeStage5 {
 
 	public int edge;
 	public int sym;
-	public int cosym;
 	public int center;
 	public int corner;
 
@@ -16,26 +15,21 @@ public final class CubeStage5 {
 		cube1.corner = corner;
 		cube1.edge = edge;
 		cube1.sym = sym;
-		cube1.cosym = cosym;
 	}
 
 	public final void do_move (int sqs_move_code){
 		center = Tables.move_table_cenSTAGE5[center][sqs_move_code];
 		corner = Tables.move_table_cornerSTAGE5[corner][sqs_move_code];
 
-		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][Symmetry.moveConjugate5[sqs_move_code][Symmetry.symIdxMultiply[sym][cosym]]];
+		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][Symmetry.moveConjugate5[sqs_move_code][sym]];
 
-		int newSym = ( newEdge & 0xFF ) >> 2;
-		int newCosym = newEdge & 0x03;
-
-		cosym = Symmetry.symIdxMultiply[Symmetry.symIdxMultiply[Symmetry.invSymIdx[sym]][newCosym]][Symmetry.symIdxMultiply[sym][cosym]];
-		sym = Symmetry.symIdxMultiply[newSym][sym];
+		sym = Symmetry.symIdxCo4Multiply[sym][newEdge&0xFF];
 		edge = newEdge >> 8;
 	}
 
 	public boolean is_solved (){
 
-		if ( edge == 0 && Tables.move_table_cen_conjSTAGE5[center][(sym<<2)+cosym] == 0 && Tables.move_table_corner_conjSTAGE5[corner][(sym<<2)+cosym] == 0 ) {
+		if ( edge == 0 && Tables.move_table_cen_conjSTAGE5[center][sym] == 0 && Tables.move_table_corner_conjSTAGE5[corner][sym] == 0 ) {
 			return true;
 		}
 		return false;
@@ -43,7 +37,7 @@ public final class CubeStage5 {
 
 	public boolean edges_centers_solved (){
 
-		if (Tables.move_table_cen_conjSTAGE5[center][(sym<<2)+cosym] == 0 && edge == 0) {
+		if (Tables.move_table_cen_conjSTAGE5[center][sym] == 0 && edge == 0) {
 			return true;
 		}
 		return false;
@@ -137,12 +131,12 @@ public final class CubeStage5 {
 	/* Pruning functions */
 
 	public final int get_dist_edgcen (){
-		int idx = edge * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[center][(sym<<2)+cosym];
+		int idx = edge * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[center][sym];
 		return prune_table_edgcen.get_dist_packed(idx);
 	}
 
 	public final int new_dist_edgcen (int dist){
-		int idx = edge * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[center][(sym<<2)+cosym];
+		int idx = edge * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[center][sym];
 		return prune_table_edgcen.new_dist(idx, dist);
 	}
 

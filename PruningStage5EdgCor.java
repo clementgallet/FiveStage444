@@ -35,11 +35,11 @@ public final class PruningStage5EdgCor extends PruningFull {
 		int edge = idx / N_STAGE5_CORNER_PERM;
 
 		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][move];
-		int allsym = newEdge & 0xFF;
+		int sym = newEdge & 0xFF;
 		int edgeRep = newEdge >> 8;
 
 		cor = Tables.move_table_cornerSTAGE5[cor][move];
-		cor = Tables.move_table_corner_conjSTAGE5[cor][allsym];
+		cor = Tables.move_table_corner_conjSTAGE5[cor][sym];
 		return edgeRep*N_STAGE5_CORNER_PERM + cor;
 	}
 
