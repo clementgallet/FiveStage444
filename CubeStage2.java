@@ -18,19 +18,6 @@ public final class CubeStage2 {
 		cube1.symB = symB;
 	}
 
-	public boolean is_solved (){
-		int i;
-
-		if (( edge != 0 ) && ( edge != 414 ))
-			return false;
-
-		for (i=0; i < Constants.STAGE2_NUM_SOLVED_SYMCENTER_CONFIGS; i++)
-			if ((centerF == centerB) && (centerB == Constants.stage2_solved_symcenters[i]) && (( symF & 0x8 ) == ( symB & 0x8 )) && ( ((( symF & 0x8 ) == 0 ) && ( edge == 414 )) || ((( symF & 0x8 ) != 0 ) && ( edge == 0 )) ))
-				return true;
-
-		return false;
-	}
-
 	/* Convert functions */
 
 	public void convert_centers_to_std_cube (int u, CubeState result_cube){

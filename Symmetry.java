@@ -13,6 +13,8 @@ public final class Symmetry {
 		initSymTables();
 		initInvSymIdx();
 		initSymIdxMultiply();
+		initSymIdxCo2Multiply();
+		initSymIdxCo4Multiply();
 		initMoveConjugate();
 		initMoveConjugateStage();
 	}
@@ -96,6 +98,24 @@ public final class Symmetry {
 					}
 	}
 
+	static int[][] symIdxCo2Multiply = new int[N_SYM*2][N_SYM*2];
+
+	static void initSymIdxCo2Multiply(){
+
+		for (int i=0; i<N_SYM*2; i++)
+			for (int j=0; j<N_SYM*2; j++)
+				symIdxCo2Multiply[i][j] = symIdxMultiply[symIdxMultiply[invSymIdx[i>>1]][j&1]][symIdxMultiply[i>>1][i&1]] + ( symIdxMultiply[j>>1][i>>1] << 1 );
+	}
+
+	static int[][] symIdxCo4Multiply = new int[N_SYM*4][N_SYM*4];
+
+	static void initSymIdxCo4Multiply(){
+
+		for (int i=0; i<N_SYM*4; i++)
+			for (int j=0; j<N_SYM*4; j++)
+				symIdxCo4Multiply[i][j] = ( symIdxMultiply[symIdxMultiply[invSymIdx[i>>2]][j&3]][symIdxMultiply[i>>2][i&3]] << 2 ) + symIdxMultiply[j>>2][i>>2];
+	}
+
 	static byte[][] moveConjugate = new byte[N_MOVES][N_SYM];
 
 	static void initMoveConjugate(){
@@ -131,7 +151,7 @@ public final class Symmetry {
 
 	static int[][] moveConjugate1 = new int[N_STAGE1_MOVES][N_SYM_STAGE1];
 	static int[][] moveConjugate2 = new int[N_STAGE2_MOVES][N_SYM_STAGE2];
-	static int[][] moveConjugate3 = new int[N_STAGE3_MOVES][N_SYM_STAGE3];
+	static int[][] moveConjugate3 = new int[N_STAGE3_MOVES][N_SYM_STAGE3*2];
 	static int[][] moveConjugate4 = new int[N_STAGE4_MOVES][N_SYM_STAGE4];
 	static int[][] moveConjugate5 = new int[N_STAGE5_MOVES][N_SYM_STAGE5];
 
@@ -148,8 +168,8 @@ public final class Symmetry {
 				moveConjugate2[i][j] = stage2_inv_slice_moves[moveConjugate[stage2_slice_moves[i]][j]];
 
 		for (i=0; i<N_STAGE3_MOVES; i++)
-			for (j=0; j<N_SYM_STAGE3; j++)
-				moveConjugate3[i][j] = stage3_inv_slice_moves[moveConjugate[stage3_slice_moves[i]][j]];
+			for (j=0; j<N_SYM_STAGE3*2; j++)
+				moveConjugate3[i][j] = stage3_inv_slice_moves[moveConjugate[stage3_slice_moves[i]][symIdxMultiply[j>>1][j&1]]];
 
 		for (i=0; i<N_STAGE4_MOVES; i++)
 			for (j=0; j<N_SYM_STAGE4; j++)

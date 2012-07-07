@@ -12,8 +12,6 @@ import java.io.ObjectInputStream;
  */
 public final class Constants{
 
-	public static final String datafiles_path = "./cg/fivestage444/";
-	public static final String tables_path = "./cg/fivestage444/";
 	public static final int STM = 0;
 	public static final int FTM = 1;
 	public static int METRIC = FTM;
@@ -149,6 +147,7 @@ public final class Constants{
 	public static final int N_STAGE1_MOVES = 36;
 	public static final int N_STAGE1_SEARCH = ( METRIC == STM ) ? 36 : 27;
 	public static final int N_STAGE1_LAST = ( METRIC == STM ) ? 8 : 12;
+	//public static final int N_STAGE1_LAST = ( METRIC == STM ) ? 4 : 6;
 
 	public static final byte stage1_slice_moves[];
 	static{
@@ -161,7 +160,7 @@ public final class Constants{
 			};
 		else
 			stage1_slice_moves = new byte[]{
-				Lf, Rf, Ff, Bf, Lf3, Rf3, Ff3, Bf3, Lw, Lw3, Fw, Fw3, // moves that will be tried for the last move
+				Lf, Rf, Ff, Bf, Lw, Fw, Lf3, Rf3, Ff3, Bf3, Lw3, Fw3, // moves that will be tried for the last move
 				Uf, Uf3, Uf2, Uw, Uw3, Uw2, Df, Df3, Df2,
 				         Lf2,          Lw2,          Rf2,
 				         Ff2,          Fw2,          Bf2,
@@ -198,6 +197,7 @@ public final class Constants{
 	public static final int N_STAGE2_MOVES = 28;
 	public static final int N_STAGE2_SEARCH = ( METRIC == STM ) ? 28 : 23;
 	public static final int N_STAGE2_LAST = ( METRIC == STM ) ? 8 : 6;
+	//public static final int N_STAGE2_LAST = ( METRIC == STM ) ? 4 : 3;
 
 	public static final byte stage2_slice_moves[];
 	static {
@@ -238,6 +238,7 @@ public final class Constants{
 	public static final int N_STAGE3_MOVES = 20;
 	public static final int N_STAGE3_SEARCH = ( METRIC == STM ) ? 20 : 17;
 	public static final int N_STAGE3_LAST = 4;
+	//public static final int N_STAGE3_LAST = 2;
 
 	public static final byte stage3_slice_moves[];
 	static {
@@ -284,6 +285,7 @@ public final class Constants{
 	public static final int N_STAGE4_MOVES = 16;
 	public static final int N_STAGE4_SEARCH = ( METRIC == STM ) ? 16 : 13;
 	public static final int N_STAGE4_LAST = 4;
+	//public static final int N_STAGE4_LAST = 2;
 
 	public static final byte stage4_slice_moves[];
 	static {
@@ -414,6 +416,23 @@ public final class Constants{
 					++idx;
 				}
 			}
+		}
+		return idx;
+	}
+
+	/**
+	 * Faster version of perm_n_pack for n=4. Taken from Chen Shuang (min2phase).
+	 * @param array_in	permutation
+	 * @param offset	index of the first element where the permutation starts in the table (can be >0)
+	 * @return		an integer representing the permutation
+	 */
+	public static final int perm_4_pack (byte[] array_in, int offset){
+		int idx = 0;
+		int val = 0x3210;
+		for (int i=0; i<3; i++) {
+			int v = (array_in[i+offset]-offset) << 2;
+			idx = (4 - i) * idx + ((val >> v) & 07);
+			val -= 0x1110 << v;
 		}
 		return idx;
 	}

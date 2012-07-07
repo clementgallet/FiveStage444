@@ -16,7 +16,6 @@ public final class PruningStage3Cen extends PruningFull {
 
 	void init (){
 		int i;
-		fname = new File( tables_path, "stage3_cen_"+METRIC_STR+"_prune.rbk" );
 
 		// Definition of the allowed moves.
 		num_moves = N_STAGE3_MOVES;

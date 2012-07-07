@@ -163,19 +163,21 @@ public final class CubeState{
 
 	public void leftMultEdges (int symIdx){
 		int i;
+		byte[] sym = Symmetry.symEdges[symIdx];
 		for (i = 0; i < 24; ++i){
-			m_edge[i] = Symmetry.symEdges[symIdx][m_edge[i]];
+			m_edge[i] = sym[m_edge[i]];
 		}
 	}
 
 	public void rightMultEdges (int symIdx){
 		int i;
 		byte[] edge = new byte[24];
+		byte[] sym = Symmetry.symEdges[symIdx];
 
 		System.arraycopy(m_edge, 0, edge, 0, 24);
 
 		for (i = 0; i < 24; ++i){
-			m_edge[i] = edge[Symmetry.symEdges[symIdx][i]];
+			m_edge[i] = edge[sym[i]];
 		}
 	}
 
@@ -196,8 +198,9 @@ public final class CubeState{
 		}
 
 		// Multiply.
+		byte[] sym = Symmetry.symCenters[symIdx];
 		for (i = 0; i < 24; ++i){
-			m_cen[i] = Symmetry.symCenters[symIdx][m_cen[i]];
+			m_cen[i] = sym[m_cen[i]];
 		}
 
 		// Transform centers back.
@@ -209,12 +212,13 @@ public final class CubeState{
 	public void rightMultCenters (int symIdx){
 		int i;
 		byte[] cen = new byte[24];
+		byte[] sym = Symmetry.symCenters[symIdx];
 
 		System.arraycopy(m_cen, 0, cen, 0, 24);
 
 		// Conjugate edges and centers.
 		for (i = 0; i < 24; ++i){
-			m_cen[i] = cen[Symmetry.symCenters[symIdx][i]];
+			m_cen[i] = cen[sym[i]];
 		}
 	}
 
@@ -251,24 +255,28 @@ public final class CubeState{
 	public void leftMultCorners (int symIdx){
 		int i;
 		byte orientA, orientB;
+		byte symO[] = Symmetry.symCornersOrient[symIdx];
+		byte symP[] = Symmetry.symCornersPerm[symIdx];
 
 		for (i = 0; i < 8; ++i){
-			orientA = Symmetry.symCornersOrient[symIdx][(m_cor[i] & 0x7)];
+			orientA = symO[(m_cor[i] & 0x7)];
 			orientB = (byte)(m_cor[i] >> 3);
-			m_cor[i] = (byte) ((multD3(orientA, orientB) << 3 ) + Symmetry.symCornersPerm[symIdx][(m_cor[i] & 0x7)]);
+			m_cor[i] = (byte) ((multD3(orientA, orientB) << 3 ) + symP[(m_cor[i] & 0x7)]);
 		}
 	}
 
 	public void rightMultCorners (int symIdx){
 		int i;
 		byte orientA, orientB;
+		byte symO[] = Symmetry.symCornersOrient[symIdx];
+		byte symP[] = Symmetry.symCornersPerm[symIdx];
 		byte[] cor = new byte[8];
 		System.arraycopy(m_cor, 0, cor, 0, 8);
 
 		for (i = 0; i < 8; ++i){
-			orientA = (byte) (cor[Symmetry.symCornersPerm[symIdx][i]] >> 3);
-			orientB = Symmetry.symCornersOrient[symIdx][i];
-			m_cor[i] = (byte) (( multD3(orientA, orientB) << 3 ) + (cor[Symmetry.symCornersPerm[symIdx][i]] & 0x7));
+			orientA = (byte) (cor[symP[i]] >> 3);
+			orientB = symO[i];
+			m_cor[i] = (byte) (( multD3(orientA, orientB) << 3 ) + (cor[symP[i]] & 0x7));
 		}
 	}
 
@@ -522,8 +530,7 @@ public final class CubeState{
 	public void convert_to_stage3 (CubeStage3 result_cube){
 		int symcen = convert_symcenters_to_stage3 ();
 		result_cube.center = symcen >> 4;
-		result_cube.sym = ( symcen & 0xF ) >> 1;
-		result_cube.cosym = symcen & 0x1;
+		result_cube.sym = symcen & 0xF;
 		result_cube.edge = convert_edges_to_stage3 ();
 		result_cube.edge_odd = edgeUD_parity_odd ();
 	}
@@ -620,22 +627,24 @@ public final class CubeState{
 	};
 
 	public int convert_edges_to_stage5 (){
-		int ep1 = Constants.perm_n_pack (4, m_edge, 0);
-		int ep2 = Constants.perm_n_pack (4, m_edge, 8);
-		int ep3 = Constants.perm_n_pack (4, m_edge, 16);
+		int ep1 = Constants.perm_4_pack (m_edge, 0);
+		int ep2 = Constants.perm_4_pack (m_edge, 8);
+		int ep3 = Constants.perm_4_pack (m_edge, 16);
 		return 96*96*(4*ep3 + (m_edge[20] - 20)) + 96*(4*ep2 + (m_edge[12] - 12)) +
 			4*ep1 + (m_edge[4] - 4);
 	}
 
 	public int convert_symedges_to_stage5 (){
 		CubeState cube = new CubeState();
+		CubeState cube2 = new CubeState();
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE5; sym++ ){
+			System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
+			cube.leftMultEdges(sym);
 			for (int cosym=0; cosym < 4; cosym++ ){
-				System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
-				cube.rightMultEdges (Symmetry.invSymIdx[cosym]);
-				cube.conjugateEdges(sym);
-				rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, cube.convert_edges_to_stage5 ());
+				System.arraycopy(cube.m_edge, 0, cube2.m_edge, 0, 24);
+				cube2.rightMultEdges (Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]]);
+				rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, cube2.convert_edges_to_stage5 ());
 				if( rep >= 0 )
 					return ( rep << 8 ) + ( sym << 2 ) + cosym;
 			}

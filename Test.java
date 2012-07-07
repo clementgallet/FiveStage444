@@ -12,6 +12,7 @@ public final class Test {
 		Random gen = new Random();
 		Tools.init();
 
+		testSolve3(10);
 		//testMove4(10);
 		//testMove5(10);
 		
@@ -31,6 +32,28 @@ public final class Test {
 		for( int i=0; i < 100; i++ ){
 			cube.do_move(moves[gen.nextInt(length)]);
 		}		
+	}
+
+	public static void testSolve3(int n){
+
+		Random gen = new Random();
+		CubeState cube = new CubeState();
+		CubeStage2 cs1 = new CubeStage2();
+
+		for( int i=0; i < 100; i++ ){
+
+			/* Generate a random cube in stage 3 subgroup and convert to CubeStage3 coordinates */
+			randomScramble( cube, Constants.stage3_slice_moves, Constants.N_STAGE3_MOVES, gen );
+			int rr = gen.nextInt(4);
+			for( int j=0; j<rr; j++){
+				cube.do_move(Uw);
+				cube.do_move(Dw3);
+			}
+			cube.convert_to_stage2(cs1);
+
+			System.out.println("edge: "+cs1.edge+", centerF: "+cs1.centerF+", centerB:"+cs1.centerB+", symF:"+cs1.symF+", symB:"+cs1.symB);
+
+		}
 	}
 
 	public static void testMove4(int n){

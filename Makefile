@@ -12,8 +12,14 @@ default:
 run:
 	$(JAVA) $(DIR)/Main
 
+test:
+	$(JAVA) $(DIR)/Test
+
+profile:
+	$(JAVA) -javaagent:../jip/profile.jar $(DIR)/Main
+
 tables:
-	$(JAVA) $(DIR)/Main $(TABLES)
+	$(JAVA) $(DIR)/Tools $(TABLES)
 
 clean:
 	$(RM) $(DIR)/*.class
