@@ -65,13 +65,13 @@ public final class CubeStage5 {
 		dist1 = cube1.get_dist_edgcen();
 
 		while ( true ) {
-
+			//System.out.println(cube1.center+","+cube1.corner+","+cube1.edge+","+cube1.sym);
 			boolean noMoves=true;
 			for (mov_idx = 0; mov_idx < Constants.N_STAGE5_MOVES; ++mov_idx) {
 				cube1.copyTo (cube2);
 				cube2.do_move (mov_idx);
 				dist2 = cube2.get_dist_edgcen();
-
+				//System.out.println("dists:"+dist1+","+dist2);
 				if (((dist2+1) % 3) != dist1) continue;
 				cube2.copyTo (cube1);
 				nDist++;
