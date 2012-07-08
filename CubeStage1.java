@@ -18,16 +18,16 @@ public final class CubeStage1 {
 
 	public final void do_move (int move_code){
 		if ((Constants.stage1_slice_moves[move_code]/3)%3 != 1 )
-			corner = Tables.move_table_co[corner][Constants.basic_to_face[move_code]];
+			corner = Tables.moveCorner1[corner][Constants.basic_to_face[move_code]];
 
-		int newEdge = Tables.move_table_symEdgeSTAGE1[edge][Symmetry.moveConjugate1[move_code][sym]];
+		int newEdge = Tables.moveEdge1[edge][Symmetry.moveConjugate1[move_code][sym]];
 
 		sym = Symmetry.symIdxMultiply[newEdge & 0x3F][sym];
 		edge = newEdge >> 6 ;
 	}
 
 	public boolean is_solved (){
-		if (( edge == 0 ) && Tables.move_table_co_conj[corner][sym] == 1906)
+		if (( edge == 0 ) && Tables.conjCorner1[corner][sym] == 1906)
 			return true;
 		return false;
 	}
@@ -35,7 +35,7 @@ public final class CubeStage1 {
 	/* Pruning functions */
 
 	private final int get_idx (){
-		return Constants.N_CORNER_ORIENT * edge + Tables.move_table_co_conj[corner][sym];
+		return Constants.N_STAGE1_CORNERS * edge + Tables.conjCorner1[corner][sym];
 	}
 
 	public final int get_dist (){

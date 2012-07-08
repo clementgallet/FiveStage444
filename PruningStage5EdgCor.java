@@ -9,7 +9,7 @@ public final class PruningStage5EdgCor extends PruningFull {
 	PruningStage5EdgCor(){
 
 		// Creation of the pruning table.
-		num_positions = N_STAGE5_SYMEDGE_PERM*N_STAGE5_CORNER_PERM;
+		num_positions = N_STAGE5_SYMEDGES*N_STAGE5_CORNERS;
 		ptable = new byte[num_positions];
 
 	}
@@ -31,31 +31,31 @@ public final class PruningStage5EdgCor extends PruningFull {
 	}
 
 	int do_move (int idx, int move){
-		int cor = idx % N_STAGE5_CORNER_PERM;
-		int edge = idx / N_STAGE5_CORNER_PERM;
+		int cor = idx % N_STAGE5_CORNERS;
+		int edge = idx / N_STAGE5_CORNERS;
 
-		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][move];
+		int newEdge = Tables.moveEdge5[edge][move];
 		int sym = newEdge & 0xFF;
 		int edgeRep = newEdge >> 8;
 
-		cor = Tables.move_table_cornerSTAGE5[cor][move];
-		cor = Tables.move_table_corner_conjSTAGE5[cor][sym];
-		return edgeRep*N_STAGE5_CORNER_PERM + cor;
+		cor = Tables.moveCorner5[cor][move];
+		cor = Tables.conjCorner5[cor][sym];
+		return edgeRep*N_STAGE5_CORNERS + cor;
 	}
 
 	void saveIdxAndSyms (int idx, int dist){
 		ptable[idx] = (byte)dist;
 		count++;
 
-		int cor = idx % N_STAGE5_CORNER_PERM;
-		int edge = idx / N_STAGE5_CORNER_PERM;
+		int cor = idx % N_STAGE5_CORNERS;
+		int edge = idx / N_STAGE5_CORNERS;
 		for( int i=0; i < 4; i++){
 			int symI = 0;
 			long syms = Tables.hasSymEdgeSTAGE5[edge][i];
 			while (syms != 0){
 				if(( syms & 0x1L ) == 1 ){
-					byte cor2 = Tables.move_table_corner_conjSTAGE5[cor][(symI<<2)+i];
-					ptable[edge*N_STAGE5_CORNER_PERM + cor2] = (byte)dist;
+					byte cor2 = Tables.conjCorner5[cor][(symI<<2)+i];
+					ptable[edge*N_STAGE5_CORNERS + cor2] = (byte)dist;
 					count++;
 				}
 				symI++;

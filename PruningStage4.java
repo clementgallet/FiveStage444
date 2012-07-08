@@ -8,7 +8,7 @@ public final class PruningStage4 extends Pruning {
 
 	PruningStage4(){
 
-		num_positions = N_STAGE4_SYMEDGE_CONFIGS*N_STAGE4_CORNER_CONFIGS*N_STAGE4_CENTER_CONFIGS;
+		num_positions = N_STAGE4_SYMEDGES*N_STAGE4_CORNERS*N_STAGE4_CENTERS;
 		n_packed = (int)(num_positions/5 + 1);
 		ptable_packed = new byte[n_packed];
 
@@ -28,7 +28,7 @@ public final class PruningStage4 extends Pruning {
 		}
 
 		// Fill the solved states.
-		for (i = 0; i < STAGE4_NUM_SOLVED_CENTER_CONFIGS; ++i) {
+		for (i = 0; i < stage4_solved_centers_bm.length; ++i) {
 			set_dist( Tables.bm4of8_to_70[stage4_solved_centers_bm[i]], 3);
 		}
 		unique_count = 5;
@@ -36,41 +36,41 @@ public final class PruningStage4 extends Pruning {
 	}
 
 	final long do_move (long idx, int move){
-		int cen = (int)(idx % N_STAGE4_CENTER_CONFIGS);
-		int rest = (int)(idx / N_STAGE4_CENTER_CONFIGS);
-		int cor = rest % N_STAGE4_CORNER_CONFIGS;
-		int edge = rest / N_STAGE4_CORNER_CONFIGS;
+		int cen = (int)(idx % N_STAGE4_CENTERS);
+		int rest = (int)(idx / N_STAGE4_CENTERS);
+		int cor = rest % N_STAGE4_CORNERS;
+		int edge = rest / N_STAGE4_CORNERS;
 	
-		int newEdge = Tables.move_table_symEdgeSTAGE4[edge][move];
+		int newEdge = Tables.moveEdge4[edge][move];
 		int sym = newEdge & 0xF;
 		int edgeRep = newEdge >> 4;
 
-		cen = Tables.move_table_cenSTAGE4[cen][move];
-		cen = Tables.move_table_cen_conjSTAGE4[cen][sym];
+		cen = Tables.moveCenter4[cen][move];
+		cen = Tables.conjCenter4[cen][sym];
 
-		cor = Tables.move_table_cornerSTAGE4[cor][move];
-		cor = Tables.move_table_corner_conjSTAGE4[cor][sym];
+		cor = Tables.moveCorner4[cor][move];
+		cor = Tables.conjCorner4[cor][sym];
 
-		return (edgeRep*N_STAGE4_CORNER_CONFIGS + cor) * N_STAGE4_CENTER_CONFIGS + cen;
+		return (edgeRep*N_STAGE4_CORNERS + cor) * N_STAGE4_CENTERS + cen;
 	}
 
 	final void saveIdxAndSyms (long idx, int dist){
 		set_dist (idx, dist);
 
-		int edge = (int) ( idx / ( N_STAGE4_CORNER_CONFIGS * N_STAGE4_CENTER_CONFIGS ));
+		int edge = (int) ( idx / ( N_STAGE4_CORNERS * N_STAGE4_CENTERS ));
 		int syms = Tables.hasSymEdgeSTAGE4[edge];
 		if( syms == 0 ) return;
 
-		int cen = (int)(idx % N_STAGE4_CENTER_CONFIGS);
-		int rest = (int)(idx / N_STAGE4_CENTER_CONFIGS);
-		int cor = rest % N_STAGE4_CORNER_CONFIGS;
+		int cen = (int)(idx % N_STAGE4_CENTERS);
+		int rest = (int)(idx / N_STAGE4_CENTERS);
+		int cor = rest % N_STAGE4_CORNERS;
 
 		int symI = 0;
 		while (syms != 0){
 			if(( syms & 0x1 ) == 1 ){
-				byte cen2 = Tables.move_table_cen_conjSTAGE4[cen][symI];
-				short cor2 = Tables.move_table_corner_conjSTAGE4[cor][symI];
-				set_dist ((edge*N_STAGE4_CORNER_CONFIGS + cor2) * N_STAGE4_CENTER_CONFIGS + cen2, dist);
+				byte cen2 = Tables.conjCenter4[cen][symI];
+				short cor2 = Tables.conjCorner4[cor][symI];
+				set_dist ((edge*N_STAGE4_CORNERS + cor2) * N_STAGE4_CENTERS + cen2, dist);
 			}
 			symI++;
 			syms >>= 1;

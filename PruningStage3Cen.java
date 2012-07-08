@@ -9,7 +9,7 @@ public final class PruningStage3Cen extends PruningFull {
 	PruningStage3Cen(){
 
 		// Creation of the pruning table.
-		num_positions = N_STAGE3_SYMCENTER_CONFIGS;
+		num_positions = N_STAGE3_SYMCENTERS;
 		ptable = new byte[num_positions];
 
 	}
@@ -25,7 +25,7 @@ public final class PruningStage3Cen extends PruningFull {
 		}
 
 		// Fill the solved states.
-		for (i = 0; i < STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS; ++i) {
+		for (i = 0; i < stage3_solved_sym_centers.length; ++i) {
 			ptable[stage3_solved_sym_centers[i]] = 0;
 			count++;
 		}
@@ -33,7 +33,7 @@ public final class PruningStage3Cen extends PruningFull {
 	}
 
 	int do_move (int idx, int move){
-		int newCen = Tables.move_table_symCenterSTAGE3[idx][move];
+		int newCen = Tables.moveCenter3[idx][move];
 		int cenRep = newCen >> 4;
 
 		return cenRep;

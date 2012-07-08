@@ -18,10 +18,10 @@ public final class CubeStage5 {
 	}
 
 	public final void do_move (int sqs_move_code){
-		center = Tables.move_table_cenSTAGE5[center][sqs_move_code];
-		corner = Tables.move_table_cornerSTAGE5[corner][sqs_move_code];
+		center = Tables.moveCenter5[center][sqs_move_code];
+		corner = Tables.moveCorner5[corner][sqs_move_code];
 
-		int newEdge = Tables.move_table_symEdgeSTAGE5[edge][Symmetry.moveConjugate5[sqs_move_code][sym]];
+		int newEdge = Tables.moveEdge5[edge][Symmetry.moveConjugate5[sqs_move_code][sym]];
 
 		sym = Symmetry.symIdxCo4Multiply[sym][newEdge&0xFF];
 		edge = newEdge >> 8;
@@ -29,7 +29,7 @@ public final class CubeStage5 {
 
 	public boolean is_solved (){
 
-		if ( edge == 0 && Tables.move_table_cen_conjSTAGE5[center][sym] == 0 && Tables.move_table_corner_conjSTAGE5[corner][sym] == 0 ) {
+		if ( edge == 0 && Tables.conjCenter5[center][sym] == 0 && Tables.conjCorner5[corner][sym] == 0 ) {
 			return true;
 		}
 		return false;
@@ -37,7 +37,7 @@ public final class CubeStage5 {
 
 	public boolean edges_centers_solved (){
 
-		if (Tables.move_table_cen_conjSTAGE5[center][sym] == 0 && edge == 0) {
+		if (Tables.conjCenter5[center][sym] == 0 && edge == 0) {
 			return true;
 		}
 		return false;
@@ -46,12 +46,12 @@ public final class CubeStage5 {
 	/* Pruning functions */
 
 	public final int get_dist_edgcen (){
-		int idx = edge * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[center][sym];
+		int idx = edge * Constants.N_STAGE5_CENTERS + Tables.conjCenter5[center][sym];
 		return prune_table_edgcen.get_dist_packed(idx);
 	}
 
 	public final int new_dist_edgcen (int dist){
-		int idx = edge * Constants.N_STAGE5_CENTER_PERM + Tables.move_table_cen_conjSTAGE5[center][sym];
+		int idx = edge * Constants.N_STAGE5_CENTERS + Tables.conjCenter5[center][sym];
 		return prune_table_edgcen.new_dist(idx, dist);
 	}
 

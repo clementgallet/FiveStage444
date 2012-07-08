@@ -426,7 +426,7 @@ public final class CubeState{
 				minSym = sym;
 			}
 		}
-		return ( Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE1, minEdge) << 6 ) | minSym;
+		return ( Arrays.binarySearch(Tables.sym2rawEdge1, minEdge) << 6 ) | minSym;
 	}
 
 	public short convert_corners_to_stage1 (){
@@ -514,7 +514,7 @@ public final class CubeState{
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE2; sym++ ){
 			rightMultCenters(Symmetry.invSymIdx[sym], cube);
-			rep = Arrays.binarySearch(Tables.symCenterToCenterSTAGE2, cube.convert_centers_to_stage2(c));
+			rep = Arrays.binarySearch(Tables.sym2rawCenter2, cube.convert_centers_to_stage2(c));
 			if( rep >= 0 )
 				return (short)(( rep << 4 ) + sym);
 		}
@@ -577,7 +577,7 @@ public final class CubeState{
 			for (int cosym=0; cosym < 2; cosym++ ){
 				rightMultCenters(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube);
 				cube.leftMultCenters(sym);
-				rep = Arrays.binarySearch(Tables.symCenterToCenterSTAGE3, cube.convert_centers_to_stage3());
+				rep = Arrays.binarySearch(Tables.sym2rawCenter3, cube.convert_centers_to_stage3());
 				if( rep >= 0 )
 					return ( rep << 4 ) | ( sym << 1 ) | cosym;
 			}
@@ -702,7 +702,7 @@ public final class CubeState{
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE4; sym++ ){
 			conjugateEdges(sym, cube);
-			rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE4, cube.convert_edges_to_stage4() );
+			rep = Arrays.binarySearch(Tables.sym2rawEdge4, cube.convert_edges_to_stage4() );
 			if( rep >= 0 )
 				return ( rep << 4 ) | sym;
 		}
@@ -845,7 +845,7 @@ public final class CubeState{
 			cube.leftMultEdges(sym);
 			for (int cosym=0; cosym < 4; cosym++ ){
 				cube.rightMultEdges (Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
-				rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, cube2.convert_edges_to_stage5 ());
+				rep = Arrays.binarySearch(Tables.sym2rawEdge5, cube2.convert_edges_to_stage5 ());
 				if( rep >= 0 )
 					return ( rep << 8 ) | ( sym << 2 ) | cosym;
 			}

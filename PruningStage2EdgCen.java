@@ -9,7 +9,7 @@ public final class PruningStage2EdgCen extends PruningFull {
 	PruningStage2EdgCen(){
 
 		// Creation of the pruning table.
-		num_positions = N_SYMCENTER_COMBO4*N_STAGE2_EDGE_CONFIGS;
+		num_positions = N_STAGE2_SYMCENTER*N_STAGE2_EDGES;
 		ptable = new byte[num_positions];
 
 	}
@@ -25,10 +25,10 @@ public final class PruningStage2EdgCen extends PruningFull {
 		}
 
 		// Fill the (almost) solved states.
-		for (i=0; i < STAGE2_NUM_SOLVED_SYMCENTER_CONFIGS; i++){
-			ptable[stage2_solved_symcenters[i]*N_STAGE2_EDGE_CONFIGS + 414] = 0;
+		for (i=0; i < stage2_solved_symcenters.length; i++){
+			ptable[stage2_solved_symcenters[i]*N_STAGE2_EDGES + 414] = 0;
 			count++;
-			ptable[stage2_solved_symcenters[i]*N_STAGE2_EDGE_CONFIGS + 0  ] = 0;
+			ptable[stage2_solved_symcenters[i]*N_STAGE2_EDGES + 0  ] = 0;
 			count++;
 			unique_count++;
 		}
@@ -36,29 +36,29 @@ public final class PruningStage2EdgCen extends PruningFull {
 	}
 
 	int do_move (int idx, int move){
-		int edge = idx % N_STAGE2_EDGE_CONFIGS;
-		int cen = idx / N_STAGE2_EDGE_CONFIGS;
+		int edge = idx % N_STAGE2_EDGES;
+		int cen = idx / N_STAGE2_EDGES;
 
-		short newCen = Tables.move_table_symCenterSTAGE2[cen][move];
+		short newCen = Tables.moveCenter2[cen][move];
 		int sym = newCen & 0xF;
 		int cenRep = newCen >> 4;
 
-		edge = Tables.move_table_edgeSTAGE2[edge][move];
-		edge = Tables.move_table_edge_conjSTAGE2[edge][sym];
-		return cenRep*N_STAGE2_EDGE_CONFIGS + edge;
+		edge = Tables.moveEdge2[edge][move];
+		edge = Tables.conjEdge2[edge][sym];
+		return cenRep*N_STAGE2_EDGES + edge;
 	}
 
 	void saveIdxAndSyms (int idx, int dist){
 		ptable[idx] = (byte)dist;
 		count++;
-		int edge = idx % N_STAGE2_EDGE_CONFIGS;
-		int cen = idx / N_STAGE2_EDGE_CONFIGS;
+		int edge = idx % N_STAGE2_EDGES;
+		int cen = idx / N_STAGE2_EDGES;
 		int symI = 0;
 		int syms = Tables.hasSymCenterSTAGE2[cen];
 		while (syms != 0){
 			if(( syms & 0x1 ) == 1 ){
-				short edge2 = Tables.move_table_edge_conjSTAGE2[edge][symI];
-				ptable[cen*N_STAGE2_EDGE_CONFIGS + edge2] = (byte)dist;
+				short edge2 = Tables.conjEdge2[edge][symI];
+				ptable[cen*N_STAGE2_EDGES + edge2] = (byte)dist;
 				count++;
 			}
 			symI++;

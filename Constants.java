@@ -24,31 +24,30 @@ public final class Constants{
 	public static final int N_SYM_STAGE4 = 16;
 	public static final int N_SYM_STAGE5 = 48;
 
-	public static final int N_CORNER_ORIENT = 2187;
+	public static final int N_STAGE1_CORNERS = 2187;
 
-	public static final int N_EDGE_COMBO8 = 735471;	// 24!/(16!*8!)
-	public static final int N_SYMEDGE_COMBO8 = 15582;
+	public static final int N_STAGE1_EDGES = 735471;	// 24!/(16!*8!)
+	public static final int N_STAGE1_SYMEDGES = 15582;
 
-	public static final int N_STAGE2_EDGE_CONFIGS = 420;
-	public static final int N_STAGE2_CENTER_CONFIGS = 51482970;	// 24!/(16!*24*24)
-	public static final int N_CENTER_COMBO4 = 10626;
-	public static final int N_SYMCENTER_COMBO4 = 716;
+	public static final int N_STAGE2_EDGES = 420;
+	public static final int N_STAGE2_CENTERS = 51482970;	// 24!/(16!*24*24)
+	public static final int N_STAGE2_CENTER = 10626;
+	public static final int N_STAGE2_SYMCENTER = 716;
 
-	public static final int N_STAGE3_CENTER_CONFIGS = 900900;	//(16*15*14*13/24)*(12*11*10*9/24)
-	public static final int N_STAGE3_SYMCENTER_CONFIGS = 56980;
-	public static final int N_COMBO_16_8 = 12870;				//16!/(8!*8!)
+	public static final int N_STAGE3_CENTERS = 900900;	//(16*15*14*13/24)*(12*11*10*9/24)
+	public static final int N_STAGE3_SYMCENTERS = 56980;
 	public static final int N_STAGE3_EDGE_PAR = 2;
-	public static final int N_STAGE3_EDGE_CONFIGS = N_COMBO_16_8;	//16!/(8!*8!), does not include parity info
+	public static final int N_STAGE3_EDGES = 12870;	//16!/(8!*8!), does not include parity info
 
-	public static final int N_STAGE4_CENTER_CONFIGS = 70;	//8!/(4!*4!)
-	public static final int N_STAGE4_EDGE_CONFIGS = 88200;	//420*420/2
-	public static final int N_STAGE4_SYMEDGE_CONFIGS = 5968;
-	public static final int N_STAGE4_CORNER_CONFIGS = 420;	//8!/96
+	public static final int N_STAGE4_CENTERS = 70;	//8!/(4!*4!)
+	public static final int N_STAGE4_EDGES = 88200;	//420*420/2
+	public static final int N_STAGE4_SYMEDGES = 5968;
+	public static final int N_STAGE4_CORNERS = 420;	//8!/96
 
-	public static final int N_STAGE5_EDGE_PERM = 96*96*96;
-	public static final int N_STAGE5_SYMEDGE_PERM = 7444;
-	public static final int N_STAGE5_CENTER_PERM = 12*12*12;
-	public static final int N_STAGE5_CORNER_PERM = 96;
+	public static final int N_STAGE5_EDGES = 96*96*96;
+	public static final int N_STAGE5_SYMEDGES = 7444;
+	public static final int N_STAGE5_CENTERS = 12*12*12;
+	public static final int N_STAGE5_CORNERS = 96;
 
 //slice rotate codes
 	public static final int Uf  = 0;	//Up "face" (top slice) clockwise wrt top
@@ -492,19 +491,16 @@ public final class Constants{
 		}
 	}
 
-	public static final int STAGE2_NUM_SOLVED_SYMCENTER_CONFIGS = 6;
 	public static final int stage2_solved_symcenters[] = {
 	582, 606, 631, 641, 664, 673
 	};
 
-	public static final int STAGE3_NUM_SOLVED_SYM_CENTER_CONFIGS = 6;
 	public static final int stage3_solved_sym_centers[] = {
 	56966, 56974, 56975, 56977, 56978, 56979
 	};
 	// True solved centers, better not deleting. Edit: I'm so wise !
 	// 900830, 900844, 900850, 900853, 900857, 900858, 900871, 900872, 900876, 900879, 900885, 900899
 
-	public static final int STAGE4_NUM_SOLVED_CENTER_CONFIGS = 12;
 	public static final short stage4_solved_centers_bm[] = {
 	0x0F, 0xF0, 0x55, 0xAA, 0x5A, 0xA5, 0x69, 0x96, 0x66, 0x99, 0x3C, 0xC3
 	};

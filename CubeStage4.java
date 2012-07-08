@@ -19,10 +19,10 @@ public final class CubeStage4 {
 	}
 
 	public final void do_move (int move_code){
-		center = Tables.move_table_cenSTAGE4[center][move_code];
-		corner = Tables.move_table_cornerSTAGE4[corner][move_code];
+		center = Tables.moveCenter4[center][move_code];
+		corner = Tables.moveCorner4[corner][move_code];
 
-		int newEdge = Tables.move_table_symEdgeSTAGE4[edge][Symmetry.moveConjugate4[move_code][sym]];
+		int newEdge = Tables.moveEdge4[edge][Symmetry.moveConjugate4[move_code][sym]];
 
 		sym = Symmetry.symIdxMultiply[newEdge & 0xF][sym];
 		edge = newEdge >> 4;
@@ -37,7 +37,7 @@ public final class CubeStage4 {
 		if (edge != 0) {
 			return false;	//not solved if wrong edge value
 		}
-		for (i = 0; i < Constants.STAGE4_NUM_SOLVED_CENTER_CONFIGS; ++i)
+		for (i = 0; i < Constants.stage4_solved_centers_bm.length; ++i)
 			if (center == Tables.bm4of8_to_70[Constants.stage4_solved_centers_bm[i]])
 				return true;	//If we found a matching center value, then it is solved.
 
@@ -53,7 +53,7 @@ public final class CubeStage4 {
 	/* Pruning functions */
 
 	public final int get_idx (){
-		return (( edge * Constants.N_STAGE4_CORNER_CONFIGS + Tables.move_table_corner_conjSTAGE4[corner][sym] ) * Constants.N_STAGE4_CENTER_CONFIGS ) + Tables.move_table_cen_conjSTAGE4[center][sym];
+		return (( edge * Constants.N_STAGE4_CORNERS + Tables.conjCorner4[corner][sym] ) * Constants.N_STAGE4_CENTERS ) + Tables.conjCenter4[center][sym];
 	}
 
 	public final int get_dist (){
@@ -65,12 +65,12 @@ public final class CubeStage4 {
 	}
 
 	public final int get_dist_edgcor (){
-		int idx = edge * Constants.N_STAGE4_CORNER_CONFIGS + Tables.move_table_corner_conjSTAGE4[corner][sym];
+		int idx = edge * Constants.N_STAGE4_CORNERS + Tables.conjCorner4[corner][sym];
 		return prune_table_edgcor.get_dist_packed(idx);
 	}
 
 	public final int new_dist_edgcor (int dist){
-		int idx = edge * Constants.N_STAGE4_CORNER_CONFIGS + Tables.move_table_corner_conjSTAGE4[corner][sym];
+		int idx = edge * Constants.N_STAGE4_CORNERS + Tables.conjCorner4[corner][sym];
 		return prune_table_edgcor.new_dist(idx, dist);
 	}
 
