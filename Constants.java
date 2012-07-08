@@ -502,7 +502,7 @@ public final class Constants{
 	// 900830, 900844, 900850, 900853, 900857, 900858, 900871, 900872, 900876, 900879, 900885, 900899
 
 	public static final short stage4_solved_centers_bm[] = {
-	0x0F, 0xF0, 0x55, 0xAA, 0x5A, 0xA5, 0x69, 0x96, 0x66, 0x99, 0x3C, 0xC3
+	0, 14, 20, 23, 27, 28, 41, 42, 46, 49, 55, 69
 	};
 
 	public static String move_strings[] = {

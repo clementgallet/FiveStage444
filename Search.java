@@ -319,7 +319,7 @@ public final class Search {
 
 	public boolean search_stage3 (int center, int sym, int edge, boolean edge_odd, int depth, int moves_done, int last_move){
 		int mov_idx, j;
-		if(( !edge_odd ) && ( edge == 494 ))
+		if(( !edge_odd ) && ( edge == 12375 ))
 			for (int i = 0; i < Constants.stage3_solved_sym_centers.length; ++i)
 				if ( center == Constants.stage3_solved_sym_centers[i]){
 					if (depth == 0)

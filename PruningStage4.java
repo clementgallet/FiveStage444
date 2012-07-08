@@ -29,7 +29,7 @@ public final class PruningStage4 extends Pruning {
 
 		// Fill the solved states.
 		for (i = 0; i < stage4_solved_centers_bm.length; ++i) {
-			set_dist( Tables.bm4of8_to_70[stage4_solved_centers_bm[i]], 3);
+			set_dist( stage4_solved_centers_bm[i], 3);
 		}
 		unique_count = 5;
 		back_dist = ( METRIC == STM ) ? 12 : 13;

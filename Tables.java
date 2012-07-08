@@ -6,10 +6,8 @@ import java.util.Arrays;
 public final class Tables {
 
 	public static final void init (){
-		init4Of8();
 		initMap96();
 		initPerm420();
-		initE16Bm();
 		initSquaresCenterMap();
 	}
 
@@ -39,27 +37,6 @@ public final class Tables {
 		initCenterConjStage5();
 		initSymEdgeToEdgeStage5();
 		initSymEdgeStage5();
-	}
-
-	/*** init_4of8 ***/
-	public static final byte[] bm4of8_to_70 = new byte[256];
-	public static final short[] bm4of8 = new short[70]; // (256). Was 'byte', now 'short' :(
-
-	public static void init4Of8 (){
-		int a1, a2, a3, a4;
-		int i;
-		int count = 0;
-		for (a1 = 0; a1 < 8-3; ++a1) {
-			for (a2 = a1+1; a2 < 8-2; ++a2) {
-				for (a3 = a2+1; a3 < 8-1; ++a3) {
-					for (a4 = a3+1; a4 < 8; ++a4) {
-						bm4of8[count] = (short)((1 << a1) | (1 << a2) | (1 << a3) | (1 << a4));
-						bm4of8_to_70[bm4of8[count]] = (byte)count;
-						++count;
-					}
-				}
-			}
-		}
 	}
 
 	/*** init_parity_table ***/
@@ -137,24 +114,22 @@ public final class Tables {
 		byte[] t2 = new byte[8];
 		byte[] t3 = new byte[8];
 
-		for (u = 0; u < 40320; ++u) {
-			perm_to_420[u] = 999;
-		}
-		for (u = 0; u < 70; ++u) {
-			int bm = bm4of8[u];
-			for (v = 0; v < 6; ++v) {
-				perm_n_unpack (8, v, t, 0);
-					for (w = 0; w < 96; ++w) {
-					for (i = 0; i < 8; ++i) {
-						t2[i] = map96[w][t[i]];
-					}
+		for (v = 0; v < 6; ++v) {
+			perm_n_unpack (8, v, t, 0);
+			for (w = 0; w < 96; ++w) {
+				for (i = 0; i < 8; ++i)
+					t2[i] = map96[w][t[i]];
+				for (u = 0; u < 70; ++u) {
 					int f = 0;
 					int b = 4;
-					for (i = 0; i < 8; ++i) {
-						if ((bm & (1 << i)) == 0) {
-							t3[i] = t2[b++];
-						} else {
+					int p = u;
+					int r = 4;
+					for (i = 7; i >= 0; --i) {
+						if (p >= Cnk[i][r]) {
+							p -= Cnk[i][r--];
 							t3[i] = t2[f++];
+						} else {
+							t3[i] = t2[b++];
 						}
 					}
 					u2 = perm_n_pack (8, t3, 0);
@@ -333,40 +308,6 @@ public final class Tables {
 			}
 		}
 		System.out.println( "Finishing symCenter stage 2..." );
-	}
-
-	/*** init_stage3 ***/
-	public static final int[] e16bm2eloc = new int[256*256];
-	public static final int[] eloc2e16bm = new int[N_STAGE3_EDGES];
-
-	private static int POW2_16 = 256*256;
-
-	public static void initE16Bm (){
-		int a1, a2, a3, a4, a5, a6, a7, a8;
-
-		int count = 0;
-		for (a1 = 0; a1 < POW2_16; ++a1) {
-			e16bm2eloc[a1] = 999999;
-		}
-		for (a1 = 0; a1 < 16-7; ++a1) {
-		 for (a2 = a1 + 1; a2 < 16-6; ++a2) {
-		  for (a3 = a2 + 1; a3 < 16-5; ++a3) {
-		   for (a4 = a3 + 1; a4 < 16-4; ++a4) {
-		    for (a5 = a4 + 1; a5 < 16-3; ++a5) {
-		     for (a6 = a5 + 1; a6 < 16-2; ++a6) {
-		      for (a7 = a6 + 1; a7 < 16-1; ++a7) {
-		       for (a8 = a7 + 1; a8 < 16; ++a8) {
-		        eloc2e16bm[count] = (1 << a1) | (1 << a2) | (1 << a3) | (1 << a4) |
-		                            (1 << a5) | (1 << a6) | (1 << a7) | (1 << a8);
-		        e16bm2eloc[eloc2e16bm[count]] = count++;
-		       }
-		      }
-		     }
-		    }
-		   }
-		  }
-		 }
-		}
 	}
 
 	/*** init stage 3 symCenterToCenter ***/

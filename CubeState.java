@@ -467,18 +467,20 @@ public final class CubeState{
 	public void convert_edges2_to_std_cube (int edge){
 		int i;
 		byte[] t6 = new byte[4];
-		int edgeFbm = Tables.bm4of8[edge / 6];
+		int edgeFbm = edge / 6;
 		Constants.perm_n_unpack (4, edge % 6, t6, 0);
 		for (i = 0; i < 16; ++i)
 			m_edge[i] = (byte)i;
 
 		byte f = 16;
 		int b = 0;
-		for (i = 0; i < 8; ++i) {
-			if ((edgeFbm & (1 << i)) == 0) {
-				m_edge[16 + i] = (byte)(20 + t6[b++]);
-			} else {
+		int r = 4;
+		for (i = 7; i >= 0; i--) {
+			if ( edgeFbm >= Cnk[i][r] ) {
+				edgeFbm -= Cnk[i][r--];
 				m_edge[16 + i] = f++;
+			} else {
+				m_edge[16 + i] = (byte)(20 + t6[b++]);
 			}
 		}
 	}
@@ -589,23 +591,23 @@ public final class CubeState{
 	}
 
 	public short convert_edges_to_stage3 (){
-		int i;
-		int edge_bm = 0;
-		for (i = 0; i < 16; ++i) {
+		int idx = 0;
+		int r = 8;
+		for (int i=15; i>=0; i--) {
 			if (m_edge[i] < 4 || m_edge[i] >= 12) {
-				edge_bm |= (1 << i);
+				idx += Cnk[i][r--];
 			}
 		}
-		return (short)Tables.e16bm2eloc[edge_bm];
+		return (short)idx;
 	}
 
 	public void convert_edges3_to_std_cube (int edge){
-		int i;
-		int edge_bm = Tables.eloc2e16bm[edge];
 		byte e0 = 0;
 		byte e1 = 4;
-		for (i = 0; i < 16; ++i) {
-			if ((edge_bm & (1 << i)) != 0) {
+		int r = 8;
+		for (int i = 15; i >= 0; i--) {
+			if (edge >= Cnk[i][r]) {
+				edge -= Cnk[i][r--];
 				m_edge[i] = e0++;
 				if (e0 == 4) {
 					e0 = 12;		//skip numbers 4..11; those are used for e1
@@ -614,7 +616,7 @@ public final class CubeState{
 				m_edge[i] = e1++;
 			}
 		}
-		for (i = 16; i < 24; ++i) {
+		for (int i = 16; i < 24; ++i) {
 			m_edge[i] = (byte)i;
 		}
 	}
@@ -638,22 +640,23 @@ public final class CubeState{
 
 		int i_rl = 4;
 		int i_fb = 0;
-		for( int i=0; i<8;i++){
+		int r = 4;
+		for( int i=7; i>=0;i--){
 			if( m_edge[i+4] < 8 ){
-				ledge4of8 |= 1 << i;
+				ledge4of8 += Cnk[i][r--];
 				edges_rl[i_rl++] = m_edge[i+4];
 			}
 			else
 				edges_fb[i_fb++] = (byte)(m_edge[i+4] - 8);
 		}
 
-		int u;
 		i_rl = 0;
 		i_fb = 4;
-		for( int i=0; i<8;i++){
-			u = (i < 4) ? i : i + 8;
+		r = 4;
+		for( int i=7; i>=0;i--){
+			int u = (i < 4) ? i : i + 8;
 			if( m_edge[u] < 4 ){
-				redge4of8 |= 1 << i;
+				redge4of8 += Cnk[i][r--];
 				edges_rl[i_rl++] = m_edge[u];
 			}
 			else
@@ -663,14 +666,14 @@ public final class CubeState{
 		int perm6_rl = Tables.perm_to_420[perm_n_pack (8, edges_rl, 0)]%6;
 		int perm6_fb = Tables.perm_to_420[perm_n_pack (8, edges_fb, 0)]%6;
 
-		return ((( perm6_rl * 6 + perm6_fb ) * 70 + Tables.bm4of8_to_70[redge4of8] ) * 70 + Tables.bm4of8_to_70[ledge4of8] );
+		return ((( perm6_rl * 6 + perm6_fb ) * 70 + redge4of8 ) * 70 + ledge4of8 );
 	}
 
 	public void convert_edges4_to_std_cube (int edge){
 
-		short ledge4of8 = Tables.bm4of8[edge % 70];
+		int ledge4of8 = edge % 70;
 		edge /= 70;
-		short redge4of8 = Tables.bm4of8[edge % 70];
+		int redge4of8 = edge % 70;
 		edge /= 70;
 		int perm6_fb = edge % 6;
 		int perm6_rl = edge / 6;
@@ -678,20 +681,26 @@ public final class CubeState{
 
 		int i1 = 0;
 		int i2 = 0;
+		int r = 4;
 		Constants.perm_n_unpack( 4, perm6_rl, t, 0 );
-		for( int i=0; i < 8; i++ ){
-			if(( ledge4of8 & ( 1 << i )) != 0)
+		for( int i=7; i >= 0; i-- ){
+			if( ledge4of8 >= Cnk[i][r] ){
+				ledge4of8 -= Cnk[i][r--];
 				m_edge[i+4] = (byte)( t[i1++] + 4 );
+			}
 			else
 				m_edge[i+4] = (byte)( (i2++) + 8);
 		}
 
 		i1 = 0;
 		i2 = 0;
+		r = 4;
 		Constants.perm_n_unpack( 4, perm6_fb, t, 0 );
-		for( int i=0; i < 8; i++ ){
-			if(( redge4of8 & ( 1 << i )) != 0)
+		for( int i=7; i >= 0; i-- ){
+			if( redge4of8 >= Cnk[i][r] ){
+				redge4of8 -= Cnk[i][r--];
 				m_edge[( i < 4 ) ? i : i + 8] = (byte)(i1++);
+			}
 			else
 				m_edge[( i < 4 ) ? i : i + 8] = (byte)(t[i2++] + 12);
 		}
@@ -733,15 +742,17 @@ public final class CubeState{
 		//Note: for corners, "squares" style mapping is used in creating the "coordinate" value.
 		//But the do_move function for std_cube assumes "standard" mapping.
 		//Therefore the m_cor array must be converted accordingly using this conversion array.
-		int cor_bm = Tables.bm4of8[corner / 6];
+		int cor_bm = corner / 6;
 		Constants.perm_n_unpack (4, corner % 6, t6, 0);
 		int a = 0;
 		int b = 0;
-		for (i = 0; i < 8; ++i) {
-			if ((cor_bm & (1 << i)) == 0) {
-				t8[i] = (byte)(4 + t6[b++]);
-			} else {
+		int r = 4;
+		for (i = 7; i >= 0; i--) {
+			if (cor_bm >= Cnk[i][r] ) {
+				cor_bm -= Cnk[i][r--];
 				t8[i] = (byte)a++;
+			} else {
+				t8[i] = (byte)(4 + t6[b++]);
 			}
 		}
 		for (i = 0; i < 8; ++i) {
@@ -752,22 +763,24 @@ public final class CubeState{
 	public byte convert_centers_to_stage4 (){
 		int i;
 		int cenbm4of8 = 0;
-		for (i = 0; i < 8; ++i) {
+		int r = 4;
+		for (i = 7; i >= 0; i--) {
 			if (m_cen[i] == 0) {
-				cenbm4of8 |= (1 << i);
+				cenbm4of8 += Cnk[i][r--];
 			}
 		}
-		return Tables.bm4of8_to_70[cenbm4of8];
+		return (byte)cenbm4of8;
 	}
 
 	public void convert_centers4_to_std_cube (int center){
 		int i;
-		int cenbm = Tables.bm4of8[center];
-		for (i = 0; i < 8; ++i) {
-			if ((cenbm & (1 << i)) == 0) {
-				m_cen[i] = 1;
-			} else {
+		int r = 4;
+		for (i = 7; i >= 0; i--) {
+			if ( center >= Cnk[i][r] ) {
+				center -= Cnk[i][r--];
 				m_cen[i] = 0;
+			} else {
+				m_cen[i] = 1;
 			}
 		}
 		for (i = 8; i < 24; ++i) {

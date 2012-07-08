@@ -26,7 +26,7 @@ public final class PruningStage4EdgCen extends PruningFull {
 
 		// Fill the solved states.
 		for (i = 0; i < stage4_solved_centers_bm.length; ++i)
-			ptable[Tables.bm4of8_to_70[stage4_solved_centers_bm[i]]] = 0;
+			ptable[stage4_solved_centers_bm[i]] = 0;
 
 		count++;
 		back_dist = 11;

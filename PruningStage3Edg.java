@@ -25,7 +25,7 @@ public final class PruningStage3Edg extends PruningFull {
 		}
 
 		// Fill the solved states.
-		ptable[494 << 1] = 0;
+		ptable[12375 << 1] = 0;
 		count++;
 		back_dist = 7;
 	}

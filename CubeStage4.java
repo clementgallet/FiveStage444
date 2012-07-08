@@ -38,7 +38,7 @@ public final class CubeStage4 {
 			return false;	//not solved if wrong edge value
 		}
 		for (i = 0; i < Constants.stage4_solved_centers_bm.length; ++i)
-			if (center == Tables.bm4of8_to_70[Constants.stage4_solved_centers_bm[i]])
+			if (center == Constants.stage4_solved_centers_bm[i])
 				return true;	//If we found a matching center value, then it is solved.
 
 		return false;
