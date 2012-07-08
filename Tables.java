@@ -167,7 +167,7 @@ public final class Tables {
 	}
 
 	/*** init stage 1 symEdges ***/
-	public static int[][] moveEdge1 = new int[N_STAGE1_SYMEDGES][N_STAGE1_MOVES]; // (15582*64) 15582*36 = 560952
+	public static int[][] moveEdge1 = new int[N_STAGE1_SYMEDGES][N_STAGE1_MOVES];
 
 	public static void initSymEdgeStage1 (){
 
@@ -341,7 +341,7 @@ public final class Tables {
 	}
 
 	/*** init stage 3 symCenters ***/
-	public static int[][] moveCenter3 = new int[N_STAGE3_SYMCENTERS][N_STAGE3_MOVES]; // (906640) 113330*20=9MB
+	public static int[][] moveCenter3 = new int[N_STAGE3_SYMCENTERS][N_STAGE3_MOVES];
 
 	public static void initSymCenterStage3 (){
 
@@ -360,7 +360,7 @@ public final class Tables {
 	}
 
 	/*** init stage 3 edges ***/
-	public static short[][] moveEdge3 = new short[N_STAGE3_EDGES][N_STAGE3_MOVES]; // (12870) 12870*20
+	public static short[][] moveEdge3 = new short[N_STAGE3_EDGES][N_STAGE3_MOVES];
 
 	public static void initEdgeStage3 (){
 
@@ -561,7 +561,7 @@ public final class Tables {
 		}
 	}
 
-	public static short[][] moveCenter5 = new short[N_STAGE5_CENTERS][N_STAGE5_MOVES]; // TODO: (1728) 1728*12 = 20736
+	public static short[][] moveCenter5 = new short[N_STAGE5_CENTERS][N_STAGE5_MOVES];
 
 	public static void initCenterStage5 (){
 

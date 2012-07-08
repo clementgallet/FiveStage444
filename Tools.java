@@ -177,6 +177,7 @@ public class Tools {
 			//l.log(start.finishedNow());
 		}
 		inited = true;
+		if( ! checkTables() ) System.out.println( "There might be a problem with tables integrity...");
 	}
 	
 	public static boolean initFrom(DataInput in) {
@@ -225,42 +226,83 @@ public class Tools {
 	}
 
 	public static void initTo(DataOutput out) throws IOException {
-		write(Tables.sym2rawEdge1, out);
-		write(Tables.moveEdge1, out);
-		write(Tables.moveCorner1, out);
-		write(Tables.conjCorner1, out);
-		write(Tables.moveEdge2, out);
-		write(Tables.conjEdge2, out);
-		write(Tables.sym2rawCenter2, out);
-		write(Tables.moveCenter2, out);
-		write(Tables.sym2rawCenter3, out);
-		write(Tables.moveCenter3, out);
-		write(Tables.moveEdge3, out);
-		write(Tables.conjEdge3, out);
-		write(Tables.sym2rawEdge4, out);
-		write(Tables.moveEdge4, out);
-		write(Tables.moveCorner4, out);
-		write(Tables.conjCorner4, out);
-		write(Tables.moveCenter4, out);
-		write(Tables.conjCenter4, out);
-		write(Tables.moveCorner5, out);
-		write(Tables.conjCorner5, out);
-		write(Tables.moveCenter5, out);
-		write(Tables.conjCenter5, out);
-		write(Tables.sym2rawEdge5, out);
-		write(Tables.moveEdge5, out);
+		write(Tables.sym2rawEdge1, out); //         62,328 B
+		write(Tables.moveEdge1, out); //       + 2,243,808 B
+		write(Tables.moveCorner1, out); //     +    78,732 B
+		write(Tables.conjCorner1, out); //     +   209,952 B
+		write(Tables.moveEdge2, out); //       +    23,520 B
+		write(Tables.conjEdge2, out); //       +    13,440 B
+		write(Tables.sym2rawCenter2, out); //  +     1,432 B
+		write(Tables.moveCenter2, out); //     +    40,096 B
+		write(Tables.sym2rawCenter3, out); //  +   227,920 B
+		write(Tables.moveCenter3, out); //     + 4,558,400 B
+		write(Tables.moveEdge3, out); //       +   514,800 B
+		write(Tables.conjEdge3, out); //       +   411,840 B
+		write(Tables.sym2rawEdge4, out); //    +    23,872 B
+		write(Tables.moveEdge4, out); //       +   381,952 B
+		write(Tables.moveCorner4, out); //     +    13,440 B
+		write(Tables.conjCorner4, out); //     +    13,440 B
+		write(Tables.moveCenter4, out); //     +     1,120 B
+		write(Tables.conjCenter4, out); //     +     1,120 B
+		write(Tables.moveCorner5, out); //     +     1,152 B
+		write(Tables.conjCorner5, out); //     +    18,432 B
+		write(Tables.moveCenter5, out); //     +    41,472 B
+		write(Tables.conjCenter5, out); //     +   663,552 B
+		write(Tables.sym2rawEdge5, out); //    +    29,776 B
+		write(Tables.moveEdge5, out); //       +   357,312 B
+		//                     all move tables = 9,932,908 B
 
-		write(CubeStage1.prune_table.ptable_packed, out);
-		write(CubeStage2.prune_table_edgcen.ptable, out);
-		write(CubeStage3.prune_table_cen.ptable, out);
-		write(CubeStage3.prune_table_edg.ptable, out);
-		/** write(CubeStage4.prune_table.ptable_packed, out); **/
-		write(CubeStage4.prune_table_edgcor.ptable_packed, out);
-		write(CubeStage4.prune_table_edgcen.ptable, out);
-		write(CubeStage5.prune_table_edgcen.ptable_packed, out);
-		write(CubeStage5.prune_table_edgcor.ptable, out);
+		write(CubeStage1.prune_table.ptable_packed, out); //           6,815,567 B
+		write(CubeStage2.prune_table_edgcen.ptable, out); //        +    300,720 B
+		write(CubeStage3.prune_table_cen.ptable, out); //           +     56,980 B
+		write(CubeStage3.prune_table_edg.ptable, out); //           +     25,740 B
+		write(CubeStage4.prune_table_edgcor.ptable_packed, out); // +    501,313 B
+		write(CubeStage4.prune_table_edgcen.ptable, out); //        +    417,760 B
+		write(CubeStage5.prune_table_edgcen.ptable_packed, out); // +  2,572,647 B
+		write(CubeStage5.prune_table_edgcor.ptable, out); //        +    714,624 B
+		//                                       all pruning tables = 11,405,351 B
+		/** write(CubeStage4.prune_table.ptable_packed, out); //    + 35,091,841 B **/
 	}
 	
+	public static boolean checkTables() {
+		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawEdge1}) != -1678978030 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge1}) != -1836370822 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveCorner1}) != 53409135 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.conjCorner1}) != 1899376863 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge2}) != 1775527632 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.conjEdge2}) != -1576838944 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawCenter2}) != -382050577 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveCenter2}) != -1888070592 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawCenter3}) != -1020604492 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveCenter3}) != 622005811 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge3}) != 1927805216 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.conjEdge3}) != 773090752 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawEdge4}) != -190552920 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge4}) != 938076253 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveCorner4}) != 375889888 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.conjCorner4}) != -2082952064 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveCenter4}) != 688119576 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.conjCenter4}) != -1065647936 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveCorner5}) != -348572128 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.conjCorner5}) != 566954016 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveCenter5}) != 1392919328 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.conjCenter5}) != -1913154528 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawEdge5}) != -1356505928 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge5}) != -1518191552 ) return false;
+
+		if( Arrays.deepHashCode(new Object[]{CubeStage1.prune_table.ptable_packed}) != -1008636558 ) return false;
+		if( Arrays.deepHashCode(new Object[]{CubeStage2.prune_table_edgcen.ptable}) != -1962629242 ) return false;
+		if( Arrays.deepHashCode(new Object[]{CubeStage3.prune_table_cen.ptable}) != -1309504063 ) return false;
+		if( Arrays.deepHashCode(new Object[]{CubeStage3.prune_table_edg.ptable}) != -2007839488 ) return false;
+		/** if( Arrays.deepHashCode(new Object[]{CubeStage4.prune_table.ptable_packed}) != ) return false; **/
+		if( Arrays.deepHashCode(new Object[]{CubeStage4.prune_table_edgcor.ptable_packed}) != 1520100235 ) return false;
+		if( Arrays.deepHashCode(new Object[]{CubeStage4.prune_table_edgcen.ptable}) != 1168357152 ) return false;
+		if( Arrays.deepHashCode(new Object[]{CubeStage5.prune_table_edgcen.ptable_packed}) != 1661693585 ) return false;
+		if( Arrays.deepHashCode(new Object[]{CubeStage5.prune_table_edgcor.ptable}) != 1458653136 ) return false;
+
+		return true;
+	}
+
 	public static void main(String[] args) throws IOException {
 		System.out.println(Arrays.toString(args));
 		if(args.length != 1) {

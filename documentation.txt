@@ -216,6 +216,8 @@ stage 2 centers/edges         300,720              300,720
 stage 3 symcenters             56,980               56,980
 stage 3 edges                  25,740               25,740
 stage 4                   175,459,200           35,091,841
+stage 4 symedges/centers      417,760              417,760
+stage 4 symedges/corners    2,506,560              501,313
 stage 5 symedges/centers   12,863,232            2,572,647
 stage 5 symedges/corners      714,624              714,624
 
