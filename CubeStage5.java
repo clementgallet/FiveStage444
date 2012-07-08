@@ -27,22 +27,6 @@ public final class CubeStage5 {
 		edge = newEdge >> 8;
 	}
 
-	public boolean is_solved (){
-
-		if ( edge == 0 && Tables.conjCenter5[center][sym] == 0 && Tables.conjCorner5[corner][sym] == 0 ) {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean edges_centers_solved (){
-
-		if (Tables.conjCenter5[center][sym] == 0 && edge == 0) {
-			return true;
-		}
-		return false;
-	}
-
 	/* Pruning functions */
 
 	public final int get_dist_edgcen (){
@@ -65,13 +49,11 @@ public final class CubeStage5 {
 		dist1 = cube1.get_dist_edgcen();
 
 		while ( true ) {
-			//System.out.println(cube1.center+","+cube1.corner+","+cube1.edge+","+cube1.sym);
 			boolean noMoves=true;
 			for (mov_idx = 0; mov_idx < Constants.N_STAGE5_MOVES; ++mov_idx) {
 				cube1.copyTo (cube2);
 				cube2.do_move (mov_idx);
 				dist2 = cube2.get_dist_edgcen();
-				//System.out.println("dists:"+dist1+","+dist2);
 				if (((dist2+1) % 3) != dist1) continue;
 				cube2.copyTo (cube1);
 				nDist++;
@@ -79,10 +61,12 @@ public final class CubeStage5 {
 				noMoves=false;
 				break;
 			}
-			if( noMoves){
+			if( noMoves)
 				break;
-			}
 		}
+		/* Can be removed for speedup */
+		if( ( Tables.conjCenter5[cube1.center][cube1.sym] != 0 ) || ( cube1.edge != 0 ))
+			System.out.println("Wrong pruning distance for stage 5 edges+centers");
 		return nDist;
 	}
 }
