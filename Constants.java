@@ -356,10 +356,13 @@ public final class Constants{
 	}
 
 	public static final int Cnk [][] = new int[25][25];
+	public static final int fact [] = new int[26];
 	static {
+		fact[0] = 1;
 		for (int i=0; i<25; i++) {
 			Cnk[i][i] = 1;
 			Cnk[i][0] = 1;
+			fact[i+1] = fact[i] * (i+1);
 		}
 		for (int i=1; i<25; i++) {
 			for (int j=1; j<=i; j++) {
@@ -368,30 +371,6 @@ public final class Constants{
 		}
 	}
 
-	/**
-	 * Extract an element from a table that stores eight numbers per byte.
-	 * @param x	table index
-	 * @param p	table
-	 * @return	extracted value
-	 */
-	public static final byte get_value_1bit (int x, byte[] p)
-	{
-		int x2 = x >> 3;
-		int j = x & 0x7;
-		return (byte)((p[x2] >> j) & 0x1);
-	}
-
-	/**
-	 * Write a 1 into a table.
-	 * @param x	table index
-	 * @param p	table
-	 */
-	public static final void set_1_1bit (int x, byte[] p)
-	{
-		int x2 = x >> 3;
-		int j = x & 0x7;
-		p[x2] |= (0x1 << j);
-	}
 
 	/**
 	 * Converts an array of integers from 0 to n-1 into a corresponding number from 0 to n!-1.
@@ -420,16 +399,17 @@ public final class Constants{
 	}
 
 	/**
-	 * Faster version of perm_n_pack for n=4. Taken from Chen Shuang (min2phase).
+	 * Converts an array of integers from off to off+4-1 into a corresponding number from 0 to 4!-1.
+	 * Faster version. Taken from Chen Shuang (min2phase).
 	 * @param array_in	permutation
-	 * @param offset	index of the first element where the permutation starts in the table (can be >0)
+	 * @param offset	index of the first element where the permutation starts in the table
 	 * @return		an integer representing the permutation
 	 */
-	public static final int perm_4_pack (byte[] array_in, int offset){
+	public static final int get4Perm (byte[] array_in, int off){
 		int idx = 0;
 		int val = 0x3210;
 		for (int i=0; i<3; i++) {
-			int v = (array_in[i+offset]-offset) << 2;
+			int v = (array_in[i+off]-off) << 2;
 			idx = (4 - i) * idx + ((val >> v) & 07);
 			val -= 0x1110 << v;
 		}
@@ -437,58 +417,59 @@ public final class Constants{
 	}
 
 	/**
-	 * Converts an integer into a permutation represented as an array of integers from 0 to n-1.
-	 * @param n		cardinal of the permutation
-	 * @param idx		an integer representing the permutation
-	 * @param array_out	the permutation coded as an array of integers
-	 * @param offset	index of the first element where the permutation is written in the table (can be >0)
+	 * Converts an array of integers from off to off+8-1 into a corresponding number from 0 to 8!-1.
+	 * Faster version. Taken from Chen Shuang (min2phase).
+	 * @param array_in	permutation
+	 * @param offset	index of the first element where the permutation starts in the table
+	 * @return		an integer representing the permutation
 	 */
-	public static final void perm_n_unpack (int n, int idx, byte[] array_out, int offset)
-	{
-		int i, j;
-
-		for (i = n - 1; i >= 0; --i) {
-			array_out[i+offset] = (byte)(idx % (n - i));
-			idx /= (n - i);
-
-			for (j = i + 1; j < n; ++j) {
-				if (array_out[j+offset] >= array_out[i+offset]) {
-					array_out[j+offset]++;
-				}
-			}
+	public static final int get8Perm (byte[] array_in, int off){
+		int idx = 0;
+		int val = 0x76543210;
+		for (int i=0; i<7; i++) {
+			int v = (array_in[i+off]-off) << 2;
+			idx = (8 - i) * idx + ((val >> v) & 07);
+			val -= 0x11111110 << v;
 		}
+		return idx;
 	}
 
 	/**
-	 * Compute the next permutation of an array of integers.
-	 * @param array		array of integers representing the permutation
-	 * @param length	length of the array
-	 * @param offset	index of the first element where the permutation starts in the table (can be >0)
+	 * Converts an integer into a permutation represented as an array of integers from 0 to 3.
+	 * @param arr		the permutation coded as an array of integers
+	 * @param idx		an integer representing the permutation
 	 */
-
-	public static final void nextPerm (byte[] array, int length, int offset){
-		int j = length - 2;
-		while (j >= 0 && ( array[j+offset] >= array[j+1+offset] ))
-			--j;
-			
-		if (j < 0) return; // Already next perm.
-		
-		int m = length - 1;
-		while (array[j+offset] >= array[m+offset])
-			m--;
-		byte temp = array[j+offset];
-		array[j+offset] = array[m+offset];
-		array[m+offset] = temp;
-		
-		int k = j + 1;
-		m = length - 1;
-		while (k < m) {
-			temp = array[k+offset];
-			array[k+offset] = array[m+offset];
-			array[m+offset] = temp;
-			k++;
-			m--;
+	public static final void set4Perm (byte[] arr, int idx) {
+		int val = 0x3210;
+		for (int i=0; i<3; i++) {
+			int p = fact[3-i];
+			int v = idx / p;
+			idx -= v*p;
+			v <<= 2;
+			arr[i] = (byte) ((val >> v) & 07);
+			int m = (1 << v) - 1;
+			val = (val & m) + ((val >> 4) & ~m);
 		}
+		arr[3] = (byte)val;
+	}
+
+	/**
+	 * Converts an integer into a permutation represented as an array of integers from 0 to 7.
+	 * @param arr		the permutation coded as an array of integers
+	 * @param idx		an integer representing the permutation
+	 */
+	public static final void set8Perm (byte[] arr, int idx) {
+		int val = 0x76543210;
+		for (int i=0; i<7; i++) {
+			int p = fact[7-i];
+			int v = idx / p;
+			idx -= v*p;
+			v <<= 2;
+			arr[i] = (byte) ((val >> v) & 07);
+			int m = (1 << v) - 1;
+			val = (val & m) + ((val >> 4) & ~m);
+		}
+		arr[7] = (byte)val;
 	}
 
 	public static final int stage2_solved_symcenters[] = {

@@ -46,7 +46,7 @@ public final class Tables {
 		int i, j;
 		int parity = 0;
 		byte[] t = new byte[8];
-		perm_n_unpack (8, x, t, 0);
+		set8Perm (t, x);
 		for (i = 0; i < 7; ++i) {
 			if (t[i] == i) {
 				continue;
@@ -79,7 +79,7 @@ public final class Tables {
 		byte[] t = new byte[8];
 		byte f;
 		for (a1 = 0; a1 < 24; ++a1) {
-			perm_n_unpack (4, a1, t, 0); // TODO: Use nextPerm.
+			set4Perm (t, a1);
 			for (i = 0; i < 4; ++i) {
 				t[i+4] = (byte)(t[i] + 4);
 			}
@@ -115,7 +115,7 @@ public final class Tables {
 		byte[] t3 = new byte[8];
 
 		for (v = 0; v < 6; ++v) {
-			perm_n_unpack (8, v, t, 0);
+			set8Perm (t, v);
 			for (w = 0; w < 96; ++w) {
 				for (i = 0; i < 8; ++i)
 					t2[i] = map96[w][t[i]];
@@ -132,7 +132,7 @@ public final class Tables {
 							t3[i] = t2[b++];
 						}
 					}
-					u2 = perm_n_pack (8, t3, 0);
+					u2 = get8Perm (t3, 0);
 					perm_to_420[u2] = (short)(6*u + v);
 				}
 			}
@@ -152,12 +152,12 @@ public final class Tables {
 		byte[] isRepTable = new byte[(N_STAGE1_EDGES>>3) + 1];
 		hasSymEdgeSTAGE1 = new long[N_STAGE1_SYMEDGES];
 		for (int u = 0; u < N_STAGE1_EDGES; ++u) {
-			if( get_value_1bit(u, isRepTable) != 0 ) continue;
+			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
 			cube1.convert_edges1_to_std_cube(u);
 			for (int sym = 1; sym < N_SYM_STAGE1; ++sym) {
 				cube1.rightMultEdges (Symmetry.invSymIdx[sym], cube2);
 				int edge = cube2.convert_edges_to_stage1();
-				set_1_1bit( edge, isRepTable); // not a rep.
+				isRepTable[edge>>>3] |= 1<<(edge&0x7);
 				if( edge == u )
 					hasSymEdgeSTAGE1[repIdx] |= (0x1L << sym);
 			}
@@ -275,13 +275,13 @@ public final class Tables {
 		byte[] isRepTable = new byte[(N_STAGE2_CENTER>>3) + 1];
 		hasSymCenterSTAGE2 = new int[N_STAGE2_SYMCENTER];
 		for (int u = 0; u < N_STAGE2_CENTER; ++u) {
-			if( get_value_1bit(u, isRepTable) != 0 ) continue;
+			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
 			cube1.convert_centers2_to_std_cube( u );
 
 			for (int sym = 1; sym < N_SYM_STAGE2; ++sym) {
 				cube1.rightMultCenters (Symmetry.invSymIdx[sym], cube2);
 				short cen = cube2.convert_centers_to_stage2(5);
-				set_1_1bit( cen, isRepTable); // not a rep.
+				isRepTable[cen>>>3] |= 1<<(cen&0x7);
 				if( cen == u ){
 					hasSymCenterSTAGE2[repIdx] |= (1 << sym);
 				}
@@ -323,14 +323,14 @@ public final class Tables {
 		byte[] isRepTable = new byte[(N_STAGE3_CENTERS>>3) + 1];
 		hasSymCenterSTAGE3 = new int[N_STAGE3_SYMCENTERS];
 		for (int u = 0; u < N_STAGE3_CENTERS; ++u) {
-			if( get_value_1bit(u, isRepTable) != 0 ) continue;
+			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
 			cube1.convert_centers3_to_std_cube(u);
 			for (int sym = 0; sym < N_SYM_STAGE3; ++sym) {
 				for (int cosym = 0; cosym < 2; cosym++) {
 					cube1.rightMultCenters(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
 					cube2.leftMultCenters(sym);
 					int cen = cube2.convert_centers_to_stage3();
-					set_1_1bit( cen, isRepTable); // not a rep.
+					isRepTable[cen>>>3] |= 1<<(cen&0x7);
 					if( cen == u )
 						hasSymCenterSTAGE3[repIdx] |= (1 << ( sym<<1+cosym ));
 				}
@@ -414,22 +414,22 @@ public final class Tables {
 		byte[] isRepTable = new byte[((N_STAGE4_EDGES*2)>>3) + 1];
 		hasSymEdgeSTAGE4 = new int[N_STAGE4_SYMEDGES];
 		for (int u = 0; u < N_STAGE4_EDGES*2; ++u) { // *2 because you didn't take care of the parity.
-			if( get_value_1bit(u, isRepTable) != 0 ) continue;
+			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
 			cube1.convert_edges4_to_std_cube( u );
 
 			/* Only retain configs without parity */
-			int ul = perm_n_pack( 8, cube1.m_edge, 4 );
+			int ul = get8Perm( cube1.m_edge, 4 );
 			for (int i=0; i<4; i++)
-				t[i] = cube1.m_edge[i];
+				t[i] = ( cube1.m_edge[i] > 4 ) ? (byte)(cube1.m_edge[i]-8) : cube1.m_edge[i];
 			for (int i=4; i<8; i++)
-				t[i] = cube1.m_edge[i+8];
-			int uh = perm_n_pack( 8, t, 0 );
+				t[i] = ( cube1.m_edge[i+8] > 4 ) ? (byte)(cube1.m_edge[i+8]-8) : cube1.m_edge[i+8];
+			int uh = get8Perm( t, 0 );
 			if( parity_perm8_table[ul] != parity_perm8_table[uh] ) continue; // getting rid of the parity.
 
 			for (int sym = 0; sym < N_SYM_STAGE4; ++sym) {
 				cube1.conjugateEdges (sym, cube2);
 				int edge = cube2.convert_edges_to_stage4();
-				set_1_1bit( edge, isRepTable); // not a rep.
+				isRepTable[edge>>>3] |= 1<<(edge&0x7);
 				if( edge == u )
 					hasSymEdgeSTAGE4[repIdx] |= (1 << sym);
 			}
@@ -594,7 +594,7 @@ public final class Tables {
 		hasSymEdgeSTAGE5 = new long[N_STAGE5_SYMEDGES][4];
 
 		for (int u = 0; u < N_STAGE5_EDGES; ++u) {
-			if( get_value_1bit( u, isRepTable ) != 0 ) continue;
+			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
 			cube1.convert_edges5_to_std_cube (u);
 
 			for (int sym = 0; sym < N_SYM_STAGE5; ++sym) {
@@ -602,7 +602,7 @@ public final class Tables {
 					cube1.rightMultEdges(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
 					cube2.leftMultEdges(sym);
 					int edge = cube2.convert_edges_to_stage5 ();
-					set_1_1bit( edge, isRepTable ); // not a rep.
+					isRepTable[edge>>>3] |= 1<<(edge&0x7);
 					if( edge == u )
 						hasSymEdgeSTAGE5[repIdx][cosym] |= ( 0x1L << sym );
 				}

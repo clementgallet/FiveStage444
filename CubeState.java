@@ -460,7 +460,7 @@ public final class CubeState{
 	}
 
 	public short convert_edges_to_stage2 (){
-		int u = Constants.perm_n_pack (8, m_edge, 16);
+		int u = Constants.get8Perm (m_edge, 16);
 		return Tables.perm_to_420[u];
 	}
 
@@ -468,7 +468,7 @@ public final class CubeState{
 		int i;
 		byte[] t6 = new byte[4];
 		int edgeFbm = edge / 6;
-		Constants.perm_n_unpack (4, edge % 6, t6, 0);
+		Constants.set4Perm (t6, edge % 6);
 		for (i = 0; i < 16; ++i)
 			m_edge[i] = (byte)i;
 
@@ -663,8 +663,8 @@ public final class CubeState{
 				edges_fb[i_fb++] = (byte)(m_edge[u] - 8);
 		}
 
-		int perm6_rl = Tables.perm_to_420[perm_n_pack (8, edges_rl, 0)]%6;
-		int perm6_fb = Tables.perm_to_420[perm_n_pack (8, edges_fb, 0)]%6;
+		int perm6_rl = Tables.perm_to_420[get8Perm (edges_rl, 0)]%6;
+		int perm6_fb = Tables.perm_to_420[get8Perm (edges_fb, 0)]%6;
 
 		return ((( perm6_rl * 6 + perm6_fb ) * 70 + redge4of8 ) * 70 + ledge4of8 );
 	}
@@ -682,7 +682,7 @@ public final class CubeState{
 		int i1 = 0;
 		int i2 = 0;
 		int r = 4;
-		Constants.perm_n_unpack( 4, perm6_rl, t, 0 );
+		Constants.set4Perm( t, perm6_rl );
 		for( int i=7; i >= 0; i-- ){
 			if( ledge4of8 >= Cnk[i][r] ){
 				ledge4of8 -= Cnk[i][r--];
@@ -695,7 +695,7 @@ public final class CubeState{
 		i1 = 0;
 		i2 = 0;
 		r = 4;
-		Constants.perm_n_unpack( 4, perm6_fb, t, 0 );
+		Constants.set4Perm( t, perm6_fb );
 		for( int i=7; i >= 0; i-- ){
 			if( redge4of8 >= Cnk[i][r] ){
 				redge4of8 -= Cnk[i][r--];
@@ -731,7 +731,7 @@ public final class CubeState{
 		for (i = 0; i < 8; ++i) {
 			t6[std_to_sqs[i]] = std_to_sqs[m_cor[i]];
 		}
-		int u = Constants.perm_n_pack (8, t6, 0);
+		int u = Constants.get8Perm (t6, 0);
 		return Tables.perm_to_420[u];
 	}
 
@@ -743,7 +743,7 @@ public final class CubeState{
 		//But the do_move function for std_cube assumes "standard" mapping.
 		//Therefore the m_cor array must be converted accordingly using this conversion array.
 		int cor_bm = corner / 6;
-		Constants.perm_n_unpack (4, corner % 6, t6, 0);
+		Constants.set4Perm (t6, corner % 6);
 		int a = 0;
 		int b = 0;
 		int r = 4;
@@ -826,9 +826,9 @@ public final class CubeState{
 
 
 	public int convert_edges_to_stage5 (){
-		int ep1 = Constants.perm_4_pack (m_edge, 0);
-		int ep2 = Constants.perm_4_pack (m_edge, 8);
-		int ep3 = Constants.perm_4_pack (m_edge, 16);
+		int ep1 = Constants.get4Perm (m_edge, 0);
+		int ep2 = Constants.get4Perm (m_edge, 8);
+		int ep3 = Constants.get4Perm (m_edge, 16);
 		return 96*96*(4*ep3 + (m_edge[20] - 20)) + 96*(4*ep2 + (m_edge[12] - 12)) + 4*ep1 + (m_edge[4] - 4);
 	}
 
@@ -838,17 +838,32 @@ public final class CubeState{
 		int ep1 = edge % 96;
 		int ep2 = (edge/96) % 96;
 		int ep3 = edge/(96*96);
-		int rep = sqs_perm_to_rep[ep1/4];
-		Constants.perm_n_unpack (4, ep1/4, m_edge, 0);
-		Constants.perm_n_unpack (4, sqs_rep_to_perm[rep][ep1 % 4], m_edge, 4);
-		rep = sqs_perm_to_rep[ep2/4];
-		Constants.perm_n_unpack (4, ep2/4, m_edge, 8);
-		Constants.perm_n_unpack (4, sqs_rep_to_perm[rep][ep2 % 4], m_edge, 12);
-		rep = sqs_perm_to_rep[ep3/4];
-		Constants.perm_n_unpack (4, ep3/4, m_edge, 16);
-		Constants.perm_n_unpack (4, sqs_rep_to_perm[rep][ep3 % 4], m_edge, 20);
-		for (i = 0; i < 24; ++i) {
-			m_edge[i] += 4*(i/4);
+		byte[] t = new byte[4];
+		Constants.set4Perm (m_edge, ep1/4);
+
+		Constants.set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[ep1/4]][ep1 % 4]);
+		for (i = 0; i < 4; ++i) {
+			m_edge[i+4] = (byte)(t[i]+4);
+		}
+
+		Constants.set4Perm (t, ep2/4);
+		for (i = 0; i < 4; ++i) {
+			m_edge[i+8] = (byte)(t[i]+8);
+		}
+
+		Constants.set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[ep2/4]][ep2 % 4]);
+		for (i = 0; i < 4; ++i) {
+			m_edge[i+12] = (byte)(t[i]+12);
+		}
+
+		Constants.set4Perm (t, ep3/4);
+		for (i = 0; i < 4; ++i) {
+			m_edge[i+16] = (byte)(t[i]+16);
+		}
+
+		Constants.set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[ep3/4]][ep3 % 4]);
+		for (i = 0; i < 4; ++i) {
+			m_edge[i+20] = (byte)(t[i]+20);
 		}
 	}
 
@@ -925,18 +940,17 @@ public final class CubeState{
 			new_m_cor[std_to_sqs_cor[i]] = std_to_sqs_cor[m_cor[i]];
 		}
 
-		return (byte)(4*Constants.perm_n_pack (4, new_m_cor, 0) + (new_m_cor[4] - 4));
+		return (byte)(4*Constants.get4Perm (new_m_cor, 0) + (new_m_cor[4] - 4));
 	}
 
 	public void convert_corners5_to_std_cube (int corner){
 		int i;
 		byte[] old_m_cor = new byte[8];
-
-		int rep = sqs_perm_to_rep[corner/4];
-		Constants.perm_n_unpack (4, corner/4, old_m_cor, 0);
-		Constants.perm_n_unpack (4, sqs_rep_to_perm[rep][corner % 4], old_m_cor, 4);
-		for (i = 0; i < 8; ++i) {
-			old_m_cor[i] += (byte)(4*(i/4));
+		byte[] t = new byte[4];
+		Constants.set4Perm (old_m_cor, corner/4);
+		Constants.set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[corner/4]][corner % 4]);
+		for (i = 0; i < 4; ++i) {
+			old_m_cor[i+4] = (byte)(t[i]+4);
 		}
 
 		//We must convert between "standard"-style cubie numbering and the "square"-style
