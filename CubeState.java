@@ -484,27 +484,25 @@ public final class CubeState{
 	}
 
 	public short convert_centers_to_stage2 (int c){
-		int i, j;
-		byte[] t = new byte[8];
-		j = 0;
-		for (i = 0; i < 24; ++i) {
+		int idx = 0;
+		int r = 4;
+		for (int i=23; i>=0; i--) {
 			if (m_cen[i] == c) {
-				t[j++] = (byte)i;
+				idx += Cnk[i][r--];
 			}
 		}
-		int idx = 24*24*24*t[0] + 24*24*t[1] + 24*t[2] + t[3];
-		return (short)Tables.c4_to_cloc[idx];
+		return (short)idx;
 	}
 
 	public void convert_centers2_to_std_cube (int center){
-		int i;
-		int cbmb = Tables.cloc_to_bm[center];
-		int udlrf = 0;
-		for (i = 0; i < 24; ++i) {
-			if ((cbmb & (1 << i)) == 0) {
-				m_cen[i] = (byte)(udlrf++/4);
-			} else {
+		int r = 4;
+		byte udlrf = 0;
+		for (int i=23; i>=0; i--) {
+			if (center >= Cnk[i][r]) {
+				center -= Cnk[i][r--];
 				m_cen[i] = 5;
+			} else {
+				m_cen[i] = (byte)(udlrf++/4);
 			}
 		}
 	}
@@ -532,40 +530,45 @@ public final class CubeState{
 	}
 
 	public int convert_centers_to_stage3 (){
-		int i;
 		int cenbm = 0;
 		int cenbm4of8 = 0;
-		int j = 0;
-		for (i = 0; i < 16; ++i) {
+		int j = 7;
+		int r = 8;
+		int s = 4;
+		for (int i = 15; i >= 0; i--) {
 			if (m_cen[i] >= 2) {
-				cenbm |= (1 << i);
+				cenbm += Cnk[i][r--];
 				if (m_cen[i] == 2) {
-					cenbm4of8 |= (1 << j);
+					cenbm4of8 += Cnk[j][s--];
 				}
-				++j;
+				--j;
 			}
 		}
-		return 70*Tables.e16bm2eloc[cenbm] + Tables.bm4of8_to_70[cenbm4of8];
+		return 70*cenbm + cenbm4of8;
 	}
 
 	public void convert_centers3_to_std_cube (int center){
-		int i;
-		int cenbm = Tables.eloc2e16bm[center/70];
-		int cenbm4of8 = Tables.bm4of8[center % 70];
+		int cenbm = center/70;
+		int cenbm4of8 = center % 70;
 		int ud = 0;
-		int pos4of8 = 0;
-		for (i = 0; i < 16; ++i) {
-			if ((cenbm & (1 << i)) == 0) {
+		int j = 7;
+		int r = 8;
+		int s = 4;
+		for (int i = 15; i >= 0; --i) {
+			if (cenbm < Cnk[i][r] ) {
 				m_cen[i] = (byte)(ud++/4);
 			} else {
-				if ((cenbm4of8 & (1 << pos4of8++)) == 0) {
+				cenbm -= Cnk[i][r--];
+				if (cenbm4of8 < Cnk[j][s]) {
 					m_cen[i] = 3;
 				} else {
+					cenbm4of8 -= Cnk[j][s--];
 					m_cen[i] = 2;
 				}
+			j--;
 			}
 		}
-		for (i = 16; i < 24; ++i) {
+		for (int i = 16; i < 24; ++i) {
 			m_cen[i] = (byte)(i/4);
 		}
 	}

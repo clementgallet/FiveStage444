@@ -8,7 +8,6 @@ public final class Tables {
 	public static final void init (){
 		init4Of8();
 		initMap96();
-		initCloc();
 		initPerm420();
 		initE16Bm();
 		initSquaresCenterMap();
@@ -125,54 +124,6 @@ public final class Tables {
 			for (i = 0; i < 8; ++i) {
 				map96[4*a1 + 3][i] = t[i];
 			}
-		}
-	}
-
-	/*** init_cloc ***/
-	public static final int[] c4_to_cloc = new int[24*24*24*24];
-	public static final int[] cloc_to_bm = new int[N_STAGE2_CENTER];
-
-	private static void initCloc (){
-		int a1, a2, a3, a4; //, a5, a6, a7, a8;
-		int count = 0;
-
-		count = 0;
-		for (a1 = 0; a1 < 24-3; ++a1) {
-		 for (a2 = a1 + 1; a2 < 24-2; ++a2) {
-		  for (a3 = a2 + 1; a3 < 24-1; ++a3) {
-		   for (a4 = a3 + 1; a4 < 24; ++a4) {
-			cloc_to_bm[count] = (1 << a1) | (1 << a2) | (1 << a3) | (1 << a4);
-			c4_to_cloc[24*24*24*a1 + 24*24*a2 + 24*a3 + a4] = count;
-			c4_to_cloc[24*24*24*a1 + 24*24*a2 + 24*a4 + a3] = count;
-			c4_to_cloc[24*24*24*a1 + 24*24*a3 + 24*a2 + a4] = count;
-			c4_to_cloc[24*24*24*a1 + 24*24*a3 + 24*a4 + a2] = count;
-			c4_to_cloc[24*24*24*a1 + 24*24*a4 + 24*a2 + a3] = count;
-			c4_to_cloc[24*24*24*a1 + 24*24*a4 + 24*a3 + a2] = count;
-
-			c4_to_cloc[24*24*24*a2 + 24*24*a1 + 24*a3 + a4] = count;
-			c4_to_cloc[24*24*24*a2 + 24*24*a1 + 24*a4 + a3] = count;
-			c4_to_cloc[24*24*24*a2 + 24*24*a3 + 24*a1 + a4] = count;
-			c4_to_cloc[24*24*24*a2 + 24*24*a3 + 24*a4 + a1] = count;
-			c4_to_cloc[24*24*24*a2 + 24*24*a4 + 24*a1 + a3] = count;
-			c4_to_cloc[24*24*24*a2 + 24*24*a4 + 24*a3 + a1] = count;
-
-			c4_to_cloc[24*24*24*a3 + 24*24*a1 + 24*a2 + a4] = count;
-			c4_to_cloc[24*24*24*a3 + 24*24*a1 + 24*a4 + a2] = count;
-			c4_to_cloc[24*24*24*a3 + 24*24*a2 + 24*a1 + a4] = count;
-			c4_to_cloc[24*24*24*a3 + 24*24*a2 + 24*a4 + a1] = count;
-			c4_to_cloc[24*24*24*a3 + 24*24*a4 + 24*a1 + a2] = count;
-			c4_to_cloc[24*24*24*a3 + 24*24*a4 + 24*a2 + a1] = count;
-
-			c4_to_cloc[24*24*24*a4 + 24*24*a1 + 24*a2 + a3] = count;
-			c4_to_cloc[24*24*24*a4 + 24*24*a1 + 24*a3 + a2] = count;
-			c4_to_cloc[24*24*24*a4 + 24*24*a2 + 24*a1 + a3] = count;
-			c4_to_cloc[24*24*24*a4 + 24*24*a2 + 24*a3 + a1] = count;
-			c4_to_cloc[24*24*24*a4 + 24*24*a3 + 24*a1 + a2] = count;
-			c4_to_cloc[24*24*24*a4 + 24*24*a3 + 24*a2 + a1] = count;
-			++count;
-		   }
-		  }
-		 }
 		}
 	}
 

@@ -492,7 +492,7 @@ public final class Constants{
 	}
 
 	public static final int stage2_solved_symcenters[] = {
-	582, 606, 631, 641, 664, 673
+	122, 242, 243, 245, 246, 247
 	};
 
 	public static final int stage3_solved_sym_centers[] = {

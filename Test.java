@@ -12,7 +12,8 @@ public final class Test {
 		Random gen = new Random();
 		Tools.init();
 
-		testSolve3(10);
+		//testSolve2(10);
+		testSolve3(30);
 		//testMove4(10);
 		//testMove5(10);
 		
@@ -34,15 +35,15 @@ public final class Test {
 		}		
 	}
 
-	public static void testSolve3(int n){
+	public static void testSolve2(int n){
 
 		Random gen = new Random();
 		CubeState cube = new CubeState();
 		CubeStage2 cs1 = new CubeStage2();
 
-		for( int i=0; i < 100; i++ ){
+		for( int i=0; i < n; i++ ){
 
-			/* Generate a random cube in stage 3 subgroup and convert to CubeStage3 coordinates */
+			/* Generate a random cube in stage 3 subgroup and convert to CubeStage2 coordinates */
 			randomScramble( cube, Constants.stage3_slice_moves, Constants.N_STAGE3_MOVES, gen );
 			int rr = gen.nextInt(4);
 			for( int j=0; j<rr; j++){
@@ -52,6 +53,23 @@ public final class Test {
 			cube.convert_to_stage2(cs1);
 
 			System.out.println("edge: "+cs1.edge+", centerF: "+cs1.centerF+", centerB:"+cs1.centerB+", symF:"+cs1.symF+", symB:"+cs1.symB);
+
+		}
+	}
+
+	public static void testSolve3(int n){
+
+		Random gen = new Random();
+		CubeState cube = new CubeState();
+		CubeStage3 cs1 = new CubeStage3();
+
+		for( int i=0; i < n; i++ ){
+
+			/* Generate a random cube in stage 4 subgroup and convert to CubeStage3 coordinates */
+			randomScramble( cube, Constants.stage4_slice_moves, Constants.N_STAGE4_MOVES, gen );
+			cube.convert_to_stage3(cs1);
+
+			System.out.println("edge: "+cs1.edge+", center: "+cs1.center+", sym:"+cs1.sym);
 
 		}
 	}
