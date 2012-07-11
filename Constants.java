@@ -145,8 +145,8 @@ public final class Constants{
 
 	public static final int N_STAGE1_MOVES = 36;
 	public static final int N_STAGE1_SEARCH = ( METRIC == STM ) ? 36 : 27;
-	public static final int N_STAGE1_LAST = ( METRIC == STM ) ? 8 : 12;
-	//public static final int N_STAGE1_LAST = ( METRIC == STM ) ? 4 : 6;
+	//public static final int N_STAGE1_LAST = ( METRIC == STM ) ? 8 : 12;
+	public static final int N_STAGE1_LAST = ( METRIC == STM ) ? 4 : 6;
 
 	public static final byte stage1_slice_moves[];
 	static{

@@ -206,6 +206,7 @@ public class Tools {
 			read(Tables.conjCenter5, in);
 			read(Tables.sym2rawEdge5, in);
 			read(Tables.moveEdge5, in);
+			read(Tables.symHelper5, in);
 
 			read(CubeStage1.prune_table.ptable_packed, in);
 			read(CubeStage2.prune_table_edgcen.ptable, in);
@@ -250,6 +251,7 @@ public class Tools {
 		write(Tables.conjCenter5, out); //     +   663,552 B
 		write(Tables.sym2rawEdge5, out); //    +    29,776 B
 		write(Tables.moveEdge5, out); //       +   357,312 B
+		write(Tables.symHelper5, out); //      +   xxx,xxx B
 		//                     all move tables = 9,932,908 B
 
 		write(CubeStage1.prune_table.ptable_packed, out); //           6,815,567 B

@@ -871,16 +871,18 @@ public final class CubeState{
 		CubeState cube = new CubeState();
 		CubeState cube2 = new CubeState();
 		int rep;
-		for (int sym=0; sym < Constants.N_SYM_STAGE5; sym++ ){
+		for (int sym=Tables.symHelper5[convert_edges_to_stage5()]; sym < Constants.N_SYM_STAGE5; sym++ ){
 			System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
 			cube.leftMultEdges(sym);
 			for (int cosym=0; cosym < 4; cosym++ ){
 				cube.rightMultEdges (Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
 				rep = Arrays.binarySearch(Tables.sym2rawEdge5, cube2.convert_edges_to_stage5 ());
-				if( rep >= 0 )
+				if( rep >= 0 ){
 					return ( rep << 8 ) | ( sym << 2 ) | cosym;
+				}
 			}
 		}
+		System.out.println("Nope...");
 		return -1;
 	}
 

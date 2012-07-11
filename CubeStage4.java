@@ -69,11 +69,6 @@ public final class CubeStage4 {
 		return prune_table_edgcor.get_dist_packed(idx);
 	}
 
-	public final int new_dist_edgcor (int dist){
-		int idx = edge * Constants.N_STAGE4_CORNERS + Tables.conjCorner4[corner][sym];
-		return prune_table_edgcor.new_dist(idx, dist);
-	}
-
 	public int getDistance (){
 		CubeStage4 cube1 = new CubeStage4();
 		CubeStage4 cube2 = new CubeStage4();

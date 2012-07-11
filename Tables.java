@@ -582,6 +582,7 @@ public final class Tables {
 	/*** init stage 5 symEdgeToEdge ***/
 	public static int[] sym2rawEdge5 = new int[N_STAGE5_SYMEDGES];
 	public static long[][] hasSymEdgeSTAGE5;
+	public static byte[] symHelper5 = new byte[N_STAGE5_EDGES];
 
 	public static void initSymEdgeToEdgeStage5 (){
 
@@ -596,13 +597,15 @@ public final class Tables {
 		for (int u = 0; u < N_STAGE5_EDGES; ++u) {
 			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
 			cube1.convert_edges5_to_std_cube (u);
-
+			symHelper5[u] = 0;
 			for (int sym = 0; sym < N_SYM_STAGE5; ++sym) {
 				for (int cosym = 0; cosym < 4; ++cosym) {
 					cube1.rightMultEdges(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
 					cube2.leftMultEdges(sym);
 					int edge = cube2.convert_edges_to_stage5 ();
 					isRepTable[edge>>>3] |= 1<<(edge&0x7);
+					//symHelper5[edge] = (byte)sym;
+					symHelper5[edge] = (byte)(Symmetry.invSymIdx[sym]);
 					if( edge == u )
 						hasSymEdgeSTAGE5[repIdx][cosym] |= ( 0x1L << sym );
 				}
