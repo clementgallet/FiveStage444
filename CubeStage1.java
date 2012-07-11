@@ -39,11 +39,11 @@ public final class CubeStage1 {
 	}
 
 	public final int get_dist (){
-		return prune_table.get_dist_packed(get_idx());
+		return Tables.get_dist_packed(prune_table.ptable_packed, get_idx());
 	}
 
 	public final int new_dist (int dist){
-		return prune_table.new_dist(get_idx(), dist);
+		return Tables.new_dist(prune_table.ptable_packed, get_idx(), dist);
 	}
 
 	public int getDistance (){

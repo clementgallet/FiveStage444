@@ -142,6 +142,7 @@ public final class Tables {
 	/*** init stage 1 symEdgeToEdge ***/
 	public static int[] sym2rawEdge1 = new int[N_STAGE1_SYMEDGES];
 	public static long[] hasSymEdgeSTAGE1;
+	public static byte[] symHelper1;
 
 	public static void initSymEdgeToEdgeStage1 (){
 		System.out.println( "Starting symEdgeToEdge stage 1..." );
@@ -150,14 +151,17 @@ public final class Tables {
 		CubeState cube2 = new CubeState();
 
 		byte[] isRepTable = new byte[(N_STAGE1_EDGES>>3) + 1];
+		symHelper1 = new byte[N_STAGE1_EDGES];
 		hasSymEdgeSTAGE1 = new long[N_STAGE1_SYMEDGES];
 		for (int u = 0; u < N_STAGE1_EDGES; ++u) {
 			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
+			symHelper1[u] = 0;
 			cube1.convert_edges1_to_std_cube(u);
 			for (int sym = 1; sym < N_SYM_STAGE1; ++sym) {
 				cube1.rightMultEdges (Symmetry.invSymIdx[sym], cube2);
 				int edge = cube2.convert_edges_to_stage1();
 				isRepTable[edge>>>3] |= 1<<(edge&0x7);
+				symHelper1[edge] = (byte)(Symmetry.invSymIdx[sym]);
 				if( edge == u )
 					hasSymEdgeSTAGE1[repIdx] |= (0x1L << sym);
 			}
@@ -313,6 +317,7 @@ public final class Tables {
 	/*** init stage 3 symCenterToCenter ***/
 	public static int[] sym2rawCenter3 = new int[N_STAGE3_SYMCENTERS];
 	public static int[] hasSymCenterSTAGE3;
+	public static byte[] symHelper3;
 
 	public static void initSymCenterToCenterStage3 (){
 
@@ -322,8 +327,10 @@ public final class Tables {
 		CubeState cube2 = new CubeState();
 		byte[] isRepTable = new byte[(N_STAGE3_CENTERS>>3) + 1];
 		hasSymCenterSTAGE3 = new int[N_STAGE3_SYMCENTERS];
+		symHelper3 = new byte[N_STAGE3_CENTERS];
 		for (int u = 0; u < N_STAGE3_CENTERS; ++u) {
 			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
+			symHelper3[u] = 0;
 			cube1.convert_centers3_to_std_cube(u);
 			for (int sym = 0; sym < N_SYM_STAGE3; ++sym) {
 				for (int cosym = 0; cosym < 2; cosym++) {
@@ -331,6 +338,7 @@ public final class Tables {
 					cube2.leftMultCenters(sym);
 					int cen = cube2.convert_centers_to_stage3();
 					isRepTable[cen>>>3] |= 1<<(cen&0x7);
+					symHelper3[cen] = (byte)(Symmetry.invSymIdx[sym]);
 					if( cen == u )
 						hasSymCenterSTAGE3[repIdx] |= (1 << ( sym<<1+cosym ));
 				}
@@ -604,7 +612,6 @@ public final class Tables {
 					cube2.leftMultEdges(sym);
 					int edge = cube2.convert_edges_to_stage5 ();
 					isRepTable[edge>>>3] |= 1<<(edge&0x7);
-					//symHelper5[edge] = (byte)sym;
 					symHelper5[edge] = (byte)(Symmetry.invSymIdx[sym]);
 					if( edge == u )
 						hasSymEdgeSTAGE5[repIdx][cosym] |= ( 0x1L << sym );
@@ -675,5 +682,42 @@ public final class Tables {
 		}
 		System.out.println( "Finishing center conjugate stage 5..." );
 	}
+
+	/** Pruning functions **/
+
+	private static int[] nd = new int[30 * 4];
+	private static byte[] get_packed = new byte[243*8];
+	static {
+		for (int i=0; i<243; i++) {
+			for (int j=0; j<5; j++) {
+				int l = i;
+				for (int k=1; k<=j; k++)
+					l /= 3;
+				get_packed[i*8+j] = (byte)(l % 3);
+			}
+		}
+		for (int i=0; i<30; i++) {
+			for (int j=0; j<3; j++) {
+				nd[i*4+j] = i + (j - i + 30 + 1) % 3 - 1;
+			}
+		}
+	}
+
+	public static final int get_dist_packed(byte[] table, int idx) {
+		if (idx < table.length*4) {
+			int data = table[(int)(idx >>> 2)]&0x0FF;
+			return get_packed[(data<<3) | (int)(idx & 3)];
+		} else {
+			int data = table[(int)(idx-table.length*4)]&0x0FF;
+			return get_packed[(data<<3) | 4];
+		}
+	}
+
+	public static final int new_dist(byte[] table, int idx, int dist) {
+		return nd[(dist << 2) | get_dist_packed(table, idx)];
+	}
+
 }
+
+
 

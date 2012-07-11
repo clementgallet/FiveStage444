@@ -11,30 +11,13 @@ abstract class Pruning {
 	protected long num_positions;
 	protected int n_packed;
 	protected byte[] ptable;
-	protected byte[] ptable_packed;
+	public byte[] ptable_packed;
 	protected int num_moves;
 	protected long count = 0;
 	protected int unique_count = 0;
 	protected int back_dist = 30;
 
-	private static int[] nd = new int[30 * 4];
-	private static byte[] get_packed = new byte[243*8];
 
-	static {
-		for (int i=0; i<243; i++) {
-			for (int j=0; j<5; j++) {
-				int l = i;
-				for (int k=1; k<=j; k++)
-					l /= 3;
-				get_packed[i*8+j] = (byte)(l % 3);
-			}
-		}
-		for (int i=0; i<30; i++) {
-			for (int j=0; j<3; j++) {
-				nd[i*4+j] = i + (j - i + 30 + 1) % 3 - 1;
-			}
-		}
-	}
 
 	abstract void init ();
 
@@ -126,19 +109,5 @@ abstract class Pruning {
 		}
 		ptable = null;
 		System.gc();
-	}
-
-	public final int get_dist_packed(long idx) {
-		if (idx < n_packed*4L) {
-			int data = ptable_packed[(int)(idx >>> 2)]&0x0FF;
-			return get_packed[(data<<3) | (int)(idx & 3)];
-		} else {
-			int data = ptable_packed[(int)(idx-n_packed*4L)]&0x0FF;
-			return get_packed[(data<<3) | 4];
-		}
-	}
-
-	public final int new_dist(long idx, int dist) {
-		return nd[(dist << 2) | get_dist_packed(idx)];
 	}
 }

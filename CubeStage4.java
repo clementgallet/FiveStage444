@@ -52,6 +52,7 @@ public final class CubeStage4 {
 
 	/* Pruning functions */
 
+/*
 	public final int get_idx (){
 		return (( edge * Constants.N_STAGE4_CORNERS + Tables.conjCorner4[corner][sym] ) * Constants.N_STAGE4_CENTERS ) + Tables.conjCenter4[center][sym];
 	}
@@ -63,12 +64,12 @@ public final class CubeStage4 {
 	public final int new_dist (int dist){
 		return prune_table.new_dist(get_idx(), dist);
 	}
-
+*/
 	public final int get_dist_edgcor (){
 		int idx = edge * Constants.N_STAGE4_CORNERS + Tables.conjCorner4[corner][sym];
-		return prune_table_edgcor.get_dist_packed(idx);
+		return Tables.get_dist_packed(prune_table_edgcor.ptable_packed, idx);
 	}
-
+/*
 	public int getDistance (){
 		CubeStage4 cube1 = new CubeStage4();
 		CubeStage4 cube2 = new CubeStage4();
@@ -99,6 +100,7 @@ public final class CubeStage4 {
 		}
 		return nDist;
 	}
+*/
 	public int getDistanceEdgCor (){
 		CubeStage4 cube1 = new CubeStage4();
 		CubeStage4 cube2 = new CubeStage4();

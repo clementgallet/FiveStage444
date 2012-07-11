@@ -416,17 +416,14 @@ public final class CubeState{
 	public int convert_symedges_to_stage1 (){
 		CubeState cube = new CubeState();
 		int i;
-		int minEdge = 999999999;
-		int minSym = 0;
-		for (int sym=0; sym < Constants.N_SYM_STAGE1; sym++ ){
+		for (int sym=(Tables.symHelper1 == null)?0:Tables.symHelper1[convert_edges_to_stage1()]; sym < Constants.N_SYM_STAGE1; sym++ ){
 			rightMultEdges(Symmetry.invSymIdx[sym], cube);
 			int edge = cube.convert_edges_to_stage1();
-			if( edge < minEdge){
-				minEdge = edge;
-				minSym = sym;
-			}
+			int rep = Arrays.binarySearch(Tables.sym2rawEdge1, edge);
+			if( rep >= 0 )
+				return ( rep << 6 ) | sym;
 		}
-		return ( Arrays.binarySearch(Tables.sym2rawEdge1, minEdge) << 6 ) | minSym;
+		return -1;
 	}
 
 	public short convert_corners_to_stage1 (){
@@ -578,7 +575,7 @@ public final class CubeState{
 	public int convert_symcenters_to_stage3 (){
 		CubeState cube = new CubeState();
 		int rep;
-		for (int sym=0; sym < Constants.N_SYM_STAGE3; sym++ ){
+		for (int sym=(Tables.symHelper3 == null)?0:Tables.symHelper3[convert_centers_to_stage3()]; sym < Constants.N_SYM_STAGE3; sym++ ){
 			for (int cosym=0; cosym < 2; cosym++ ){
 				rightMultCenters(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube);
 				cube.leftMultCenters(sym);

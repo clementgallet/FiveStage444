@@ -31,12 +31,12 @@ public final class CubeStage5 {
 
 	public final int get_dist_edgcen (){
 		int idx = edge * Constants.N_STAGE5_CENTERS + Tables.conjCenter5[center][sym];
-		return prune_table_edgcen.get_dist_packed(idx);
+		return Tables.get_dist_packed(prune_table_edgcen.ptable_packed, idx);
 	}
 
 	public final int new_dist_edgcen (int dist){
 		int idx = edge * Constants.N_STAGE5_CENTERS + Tables.conjCenter5[center][sym];
-		return prune_table_edgcen.new_dist(idx, dist);
+		return Tables.new_dist(prune_table_edgcen.ptable_packed, idx, dist);
 	}
 
 	public int getDistanceEdgCen (){
@@ -46,7 +46,7 @@ public final class CubeStage5 {
 		int edge1 = edge;
 		int sym1 = sym;
 		int center1 = center;
-		dist1 = prune_table_edgcen.get_dist_packed(edge1*Constants.N_STAGE5_CENTERS+Tables.conjCenter5[center1][sym1]);
+		dist1 = Tables.get_dist_packed(prune_table_edgcen.ptable_packed, edge1*Constants.N_STAGE5_CENTERS+Tables.conjCenter5[center1][sym1]);
 
 		while ( true ) {
 			boolean noMoves=true;
@@ -55,7 +55,7 @@ public final class CubeStage5 {
 				int edge2 = Tables.moveEdge5[edge1][Symmetry.moveConjugate5[mov_idx][sym1]];
 				int sym2 = Symmetry.symIdxCo4Multiply[sym1][edge2&0xFF];
 				edge2 >>= 8;
-				dist2 = prune_table_edgcen.get_dist_packed(edge2*Constants.N_STAGE5_CENTERS+Tables.conjCenter5[center2][sym2]);
+				dist2 = Tables.get_dist_packed(prune_table_edgcen.ptable_packed, edge2*Constants.N_STAGE5_CENTERS+Tables.conjCenter5[center2][sym2]);
 				if (((dist2+1) % 3) != dist1) continue;
 				center1 = center2;
 				edge1 = edge2;

@@ -162,7 +162,7 @@ public final class Search {
 			list1[depth].edge = newEdge >> 6 ;
 
 			/* Compute new distance */
-			int newDist = CubeStage1.prune_table.new_dist(N_STAGE1_CORNERS * list1[depth].edge + Tables.conjCorner1[list1[depth].corner][list1[depth].sym], dist);
+			int newDist = Tables.new_dist(CubeStage1.prune_table.ptable_packed, N_STAGE1_CORNERS * list1[depth].edge + Tables.conjCorner1[list1[depth].corner][list1[depth].sym], dist);
 			if (newDist > depth-1) continue;
 			move_list_stage1[moves_done] = (byte)mov_idx;
 			if (search_stage1 (list1[depth], depth - 1, moves_done + 1, mov_idx, newDist, r)) return true;
@@ -391,7 +391,7 @@ public final class Search {
 			if (newDist > depth-1) continue; **/
 			int newDistEdgCen = CubeStage4.prune_table_edgcen.ptable[edgex*N_STAGE4_CENTERS+Tables.conjCenter4[centerx][symx]];
 			if (newDistEdgCen > depth-1) continue;
-			int newDist = CubeStage4.prune_table_edgcor.new_dist(edgex*Constants.N_STAGE4_CORNERS+Tables.conjCorner4[cornerx][symx], dist);
+			int newDist = Tables.new_dist(CubeStage4.prune_table_edgcor.ptable_packed, edgex*Constants.N_STAGE4_CORNERS+Tables.conjCorner4[cornerx][symx], dist);
 			if (newDist > depth-1) continue;
 			move_list_stage4[moves_done] = (byte)mov_idx;
 			if (search_stage4 (centerx, cornerx, edgex, symx, depth - 1, moves_done + 1, mov_idx, newDist)) return true;
@@ -458,7 +458,7 @@ public final class Search {
 
 			int newDistEdgCor = CubeStage5.prune_table_edgcor.ptable[edgex * N_STAGE5_CORNERS + Tables.conjCorner5[cornerx][symx]];
 			if (newDistEdgCor > depth-1) continue;
-			int newDistEdgCen = CubeStage5.prune_table_edgcen.new_dist(edgex * Constants.N_STAGE5_CENTERS + Tables.conjCenter5[centerx][symx], distEdgCen);
+			int newDistEdgCen = Tables.new_dist(CubeStage5.prune_table_edgcen.ptable_packed, edgex * Constants.N_STAGE5_CENTERS + Tables.conjCenter5[centerx][symx], distEdgCen);
 			if (newDistEdgCen > depth-1) continue;
 			move_list_stage5[moves_done] = (byte)mov_idx;
 			if (search_stage5 (edgex, symx, centerx, cornerx, depth - 1, moves_done + 1, mov_idx, newDistEdgCen)) return true;
