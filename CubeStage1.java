@@ -8,8 +8,6 @@ public final class CubeStage1 {
 	public int edge;
 	public int sym;
 
-	public static PruningStage1 prune_table;
-
 	public final void copyTo (CubeStage1 cube1){
 		cube1.corner = corner;
 		cube1.edge = edge;
@@ -32,48 +30,4 @@ public final class CubeStage1 {
 		return false;
 	}
 
-	/* Pruning functions */
-
-	private final int get_idx (){
-		return Constants.N_STAGE1_CORNERS * edge + Tables.conjCorner1[corner][sym];
-	}
-
-	public final int get_dist (){
-		return Tables.get_dist_packed(prune_table.ptable_packed, get_idx());
-	}
-
-	public final int new_dist (int dist){
-		return Tables.new_dist(prune_table.ptable_packed, get_idx(), dist);
-	}
-
-	public int getDistance (){
-		CubeStage1 cube1 = new CubeStage1();
-		CubeStage1 cube2 = new CubeStage1();
-		int mov_idx, j, dist1, dist2;
-		int nDist = 0;
-
-		copyTo (cube1);
-		dist1 = cube1.get_dist();
-
-		while( true ) {
-
-			boolean noMoves=true;
-			for (mov_idx = 0; mov_idx < Constants.N_STAGE1_MOVES; ++mov_idx) {
-				cube1.copyTo (cube2);
-				cube2.do_move (mov_idx);
-				dist2 = cube2.get_dist();
-				if (((dist2+1) % 3) != dist1) continue; // If distance is not lowered by 1, continue.
-				cube2.copyTo (cube1);
-				nDist++;
-				dist1 = dist2;
-				noMoves=false;
-				break;
-			}
-			if( noMoves){
-				break;
-
-			}
-		}
-		return nDist;
-	}
 }
