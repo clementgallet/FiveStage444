@@ -58,7 +58,7 @@ public final class PruningStage4 extends Pruning {
 		set_dist (idx, dist);
 
 		int edge = (int) ( idx / ( N_STAGE4_CORNERS * N_STAGE4_CENTERS ));
-		int syms = Tables.hasSymEdgeSTAGE4[edge];
+		int syms = (int)Tables.hasSymEdgeSTAGE4[edge][0];
 		if( syms == 0 ) return;
 
 		int cen = (int)(idx % N_STAGE4_CENTERS);

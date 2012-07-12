@@ -172,7 +172,10 @@ public final class Constants{
 	static {
 		for( int i = 0; i < N_STAGE1_MOVES; i++ ){
 			byte m = stage1_slice_moves[i];
-			basic_to_face[i] = ( m / 9 ) * 3 + ( m % 3 );
+			if((( m / 3 ) % 3 ) == 1 )
+				basic_to_face[i] = -1;
+			else
+				basic_to_face[i] = ( m / 9 ) * 3 + ( m % 3 );
 		}
 	};
 

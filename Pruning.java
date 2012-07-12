@@ -42,7 +42,7 @@ abstract class Pruning {
 
 		long new_count = count;
 		for (dist = 0; dist < max_dist && new_count > 0 && dist < back_dist; ++dist) {
-			System.out.println(" dist "+dist+": "+new_count+" positions.");
+			System.out.println(" dist "+dist+": "+count+" positions.");
 			old_count = count;
 			old_dist = ((dist + 2) % 3) + 1;
 			//new_dist = (dist % 3) + 1;
@@ -56,7 +56,7 @@ abstract class Pruning {
 		}
 		System.out.println("Switch to backward search");
 		for (; dist < max_dist && new_count > 0; ++dist) {
-			System.out.println(" dist "+dist+": "+new_count+" positions.");
+			System.out.println(" dist "+dist+": "+count+" positions.");
 			old_count = count;
 			old_dist = ((dist + 2) % 3) + 1;
 			new_dist = (dist % 3) + 1;
@@ -86,7 +86,7 @@ abstract class Pruning {
 				if ( dist == 0 )
 					saveIdxAndSyms( idx2, new_dist );
 				else {
-					saveIdxAndSyms( idx, new_dist );
+					set_dist( idx, new_dist );
 					break;
 				}
 			}

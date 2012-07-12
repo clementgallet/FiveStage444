@@ -52,7 +52,7 @@ public final class PruningStage4EdgCen extends PruningFull {
 		int cen = idx % N_STAGE4_CENTERS;
 		int edge = idx / N_STAGE4_CENTERS;
 		int symI = 0;
-		int syms = Tables.hasSymEdgeSTAGE4[edge];
+		int syms = (int)Tables.hasSymEdgeSTAGE4[edge][0];
 		while (syms != 0){
 			if(( syms & 0x1 ) == 1 ){
 				short cen2 = Tables.conjCenter4[cen][symI];

@@ -37,6 +37,10 @@ public final class Tables {
 		initCenterConjStage5();
 		initSymEdgeToEdgeStage5();
 		initSymEdgeStage5();
+
+		initPrun1();
+		initPrunEdgCor4();
+		initPrunEdgCen5();
 	}
 
 	/*** init_parity_table ***/
@@ -141,7 +145,7 @@ public final class Tables {
 
 	/*** init stage 1 symEdgeToEdge ***/
 	public static int[] sym2rawEdge1 = new int[N_STAGE1_SYMEDGES];
-	public static long[] hasSymEdgeSTAGE1;
+	public static long[][] hasSymEdgeSTAGE1;
 	public static byte[] symHelper1;
 
 	public static void initSymEdgeToEdgeStage1 (){
@@ -152,7 +156,7 @@ public final class Tables {
 
 		byte[] isRepTable = new byte[(N_STAGE1_EDGES>>3) + 1];
 		symHelper1 = new byte[N_STAGE1_EDGES];
-		hasSymEdgeSTAGE1 = new long[N_STAGE1_SYMEDGES];
+		hasSymEdgeSTAGE1 = new long[N_STAGE1_SYMEDGES][1];
 		for (int u = 0; u < N_STAGE1_EDGES; ++u) {
 			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
 			symHelper1[u] = 0;
@@ -163,7 +167,7 @@ public final class Tables {
 				isRepTable[edge>>>3] |= 1<<(edge&0x7);
 				symHelper1[edge] = (byte)(Symmetry.invSymIdx[sym]);
 				if( edge == u )
-					hasSymEdgeSTAGE1[repIdx] |= (0x1L << sym);
+					hasSymEdgeSTAGE1[repIdx][0] |= (0x1L << sym);
 			}
 			sym2rawEdge1[repIdx++] = u;
 		}
@@ -410,7 +414,7 @@ public final class Tables {
 	/*** init_stage4 ***/
 
 	public static int[] sym2rawEdge4 = new int[N_STAGE4_SYMEDGES]; // 5968
-	public static int[] hasSymEdgeSTAGE4;
+	public static long[][] hasSymEdgeSTAGE4;
 
 	public static void initSymEdgeToEdgeStage4 (){
 		System.out.println( "Starting symEdgeToEdge stage 4..." );
@@ -420,7 +424,7 @@ public final class Tables {
 		byte[] t = new byte[8];
 
 		byte[] isRepTable = new byte[((N_STAGE4_EDGES*2)>>3) + 1];
-		hasSymEdgeSTAGE4 = new int[N_STAGE4_SYMEDGES];
+		hasSymEdgeSTAGE4 = new long[N_STAGE4_SYMEDGES][1];
 		for (int u = 0; u < N_STAGE4_EDGES*2; ++u) { // *2 because you didn't take care of the parity.
 			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
 			cube1.convert_edges4_to_std_cube( u );
@@ -439,7 +443,7 @@ public final class Tables {
 				int edge = cube2.convert_edges_to_stage4();
 				isRepTable[edge>>>3] |= 1<<(edge&0x7);
 				if( edge == u )
-					hasSymEdgeSTAGE4[repIdx] |= (1 << sym);
+					hasSymEdgeSTAGE4[repIdx][0] |= (1 << sym);
 			}
 			sym2rawEdge4[repIdx++] = u;
 		}
@@ -716,6 +720,126 @@ public final class Tables {
 	public static final int new_dist(byte[] table, int idx, int dist) {
 		return nd[(dist << 2) | get_dist_packed(table, idx)];
 	}
+
+	public static final int getPrun4 (byte[] table, int idx){
+		return (table[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
+	}
+
+	public static final void setPrun4 (byte[] table, int idx, int value){
+		table[idx>>2] |= (byte)(value << ((idx & 0x3) << 1));
+	}
+
+
+	public static void initRawSymPrunPacked(byte[] prunTable, final int INV_DEPTH, 
+			final short[][] rawMove, final short[][] rawConj,
+			final int[][] symMove, final long[][] symState, 
+			final int[] solvedStates, final int[] moveMap, final int SYM_SHIFT) {
+
+		final int SYM_MASK = (1 << SYM_SHIFT) - 1;
+		final int N_RAW = rawMove.length;
+		final int N_SYM = symMove.length;
+		final int N_SIZE = N_RAW * N_SYM;
+		final int N_SIZE_PACKED = N_SIZE / 5 + 1;
+		final int N_MOVES = symMove[0].length;
+		final int N_COSYM = symState[0].length;
+
+		byte[] tempTable = new byte[(N_SIZE/4)+1];
+		for (int i=0; i<solvedStates.length; i++)
+			setPrun4( tempTable, solvedStates[i], 3 );
+
+		int depth = 0;
+		int done = 1;
+
+		while (done < N_SIZE) {
+//if(depth>2)return;
+			boolean inv = depth > INV_DEPTH;
+			int select = inv ? 0 : ((depth+2)%3)+1;
+			int check = inv ? ((depth+2)%3)+1 : 0;
+			int save = (depth % 3) + 1;
+			depth++;
+			for (int i=0; i<N_SIZE;) {
+				int val = tempTable[i>>2];
+				if (!inv && val == 0) {
+					i += 4;
+					continue;
+				}
+				for (int end=Math.min(i+4, N_SIZE); i<end; i++, val>>=2) {
+					if ((val & 0x3)/*getPrun4(tempTable, i)*/ != select) continue;
+					int raw = i % N_RAW;
+					int sym = i / N_RAW;
+					for (int m=0; m<N_MOVES; m++) {
+						int symx = symMove[sym][m];
+						int mm = ( moveMap == null ) ? m : moveMap[m];
+						int rawx = rawConj[mm>=0 ? rawMove[raw][mm] : raw][symx & SYM_MASK];
+						symx >>>= SYM_SHIFT;
+						int idx = symx * N_RAW + rawx;
+						if (getPrun4(tempTable, idx) != check) continue;
+						done++;
+						if (inv) {
+							setPrun4(tempTable, i, save);
+							break;
+						} else {
+							setPrun4(tempTable, idx, save);
+//System.out.println(depth+" - "+idx);
+							for (int j=0; j<N_COSYM; j++) {
+								long symS = symState[symx][j];
+								for (int k=0; symS != 0; symS>>=1, k++) {
+									if ((symS & 1) == 0) continue;
+									int idxx = symx * N_RAW + rawConj[rawx][j*N_COSYM+k];
+									if (getPrun4(tempTable, idxx) == 0) {
+										setPrun4(tempTable, idxx, save);
+//System.out.println(depth+" - "+idxx);
+										done++;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			System.out.println(String.format("%2d%10d", depth, done));
+		}
+
+		prunTable = new byte[N_SIZE_PACKED];
+		for (int i=0; i<N_SIZE_PACKED; i++) {
+			int n = 1;
+			int value = 0;
+			for (int j=0; j<4; j++){
+				value += n * (getPrun4(tempTable, (i<<2)+j) % 3);
+				n *= 3;
+			}
+			if ( ((N_SIZE_PACKED<<2)+i) < N_SIZE)
+				value += n * (getPrun4(tempTable, (N_SIZE_PACKED<<2)+i) % 3);
+			prunTable[i] = (byte)value;
+		}
+		tempTable = null;
+		System.gc();
+	}
+
+
+	static byte[] prunTable1;
+	public static void initPrun1(){
+		int[] solved = {1906};
+		initRawSymPrunPacked( prunTable1, 7, moveCorner1, conjCorner1, moveEdge1, hasSymEdgeSTAGE1, solved, Constants.basic_to_face, 6);
+	}
+
+	static byte[] prunTableEdgCor4;
+	public static void initPrunEdgCor4(){
+		int[] solved = {0};
+		initRawSymPrunPacked( prunTableEdgCor4, 9, moveCorner4, conjCorner4, moveEdge4, hasSymEdgeSTAGE4, solved, null, 4);
+	}
+
+	static byte[] prunTableEdgCen5;
+	public static void initPrunEdgCen5(){
+		int[] solved = {0};
+		initRawSymPrunPacked( prunTableEdgCen5, 9, moveCenter5, conjCenter5, moveEdge5, hasSymEdgeSTAGE5, solved, null, 8);
+	}
+
+
+
+
+
+
 
 }
 

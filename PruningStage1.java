@@ -49,15 +49,17 @@ public final class PruningStage1 extends Pruning {
 
 	final void saveIdxAndSyms (long idx, int dist){
 		set_dist (idx, dist);
-
 		short co = (short)(idx % N_STAGE1_CORNERS);
 		int edge = (int)(idx / N_STAGE1_CORNERS);
 		int symI = 0;
-		long syms = Tables.hasSymEdgeSTAGE1[edge];
+		long syms = Tables.hasSymEdgeSTAGE1[edge][0];
 		while (syms != 0){
 			if(( syms & 0x1L ) == 1 ){
 				short co2 = Tables.conjCorner1[co][symI];
-				set_dist (edge*N_STAGE1_CORNERS + co2, dist);
+				long idxx = edge*N_STAGE1_CORNERS + co2;
+				if( get_dist(idxx) == 0 ){
+					set_dist (idxx, dist);
+				}
 			}
 			symI++;
 			syms >>= 1;

@@ -51,7 +51,7 @@ public final class PruningStage4EdgCor extends Pruning {
 		int edge = (int)(idx / N_STAGE4_CORNERS);
 		int cor = (int)(idx % N_STAGE4_CORNERS);
 		int symI = 0;
-		int syms = Tables.hasSymEdgeSTAGE4[edge];
+		int syms = (int)Tables.hasSymEdgeSTAGE4[edge][0];
 		while (syms != 0){
 			if(( syms & 0x1 ) == 1 ){
 				short cor2 = Tables.conjCorner4[cor][symI];
