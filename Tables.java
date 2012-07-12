@@ -823,6 +823,81 @@ public final class Tables {
 		initRawSymPrunPacked( prunTable1, 7, moveCorner1, conjCorner1, moveEdge1, hasSymEdgeSTAGE1, solved, Constants.basic_to_face, 6);
 	}
 
+	public final static int prunDist1(int edge, int sym, int corner){
+
+		int idx = Constants.N_STAGE1_CORNERS*edge+conjCorner1[corner][sym];
+		int dist1 = get_dist_packed(prunTable1, idx);
+		int d;
+		for (d = 0; idx != 1906; d++){
+			for (int m = 0; m < Constants.N_STAGE1_MOVES; ++m) {
+				int mm = Constants.basic_to_face[m];
+				int cornerx = ( mm >= 0 ) ? moveCorner1[corner][mm] : corner;
+				int edgex = moveEdge1[edge][Symmetry.moveConjugate1[m][sym]];
+				int symx = Symmetry.symIdxMultiply[edgex & 0x3F][sym];
+				edgex >>= 6;
+				int idxx = Constants.N_STAGE1_CORNERS*edgex+conjCorner1[cornerx][symx];
+				int dist2 = get_dist_packed(prunTable1, idxx);
+				if (((dist2+1) % 3) != dist1) continue;
+				edge = edgex;
+				sym = symx;
+				corner = cornerx;
+				dist1 = dist2;
+				idx = idxx;
+				break;
+			}
+		}
+		return d;
+	}
+
+	public int prunDistEdgCor4 (int edge, int sym, int corner){
+		
+		int idx = edge*Constants.N_STAGE4_CORNERS+conjCorner4[corner][sym];
+		int dist1 = get_dist_packed(prunTableEdgCor4, idx);
+		int d;
+		for( d=0; idx != 0; d++)
+			for (m = 0; m < Constants.N_STAGE4_MOVES; ++m) {
+				int cornerx = moveCorner4[corner][m];
+				int edgex = moveEdge4[edge][Symmetry.moveConjugate4[m][sym]];
+				int symx = Symmetry.symIdxMultiply[edgex&0xF][sym];
+				edgex >>= 4;
+				int idxx = edgex*Constants.N_STAGE4_CORNERS+conjCorner4[cornerx][symx];
+				dist2 = get_dist_packed(prunTableEdgCor4, idxx);
+				if (((dist2+1) % 3) != dist1) continue;
+				corner = cornerx;
+				edge = edgex;
+				sym = symx;
+				dist1 = dist2;
+				idx = idxx;
+				break;
+			}
+		return d;
+	}
+
+	public int prunDistEdgCen5 (int edge, int sym, int center){
+		
+		int idx = edge*Constants.N_STAGE5_CENTERS+conjCenter5[center][sym];
+		int dist1 = get_dist_packed(prunTableEdgCen5, idx);
+		int d;
+		for( d=0; idx != 0; d++)
+			for (m = 0; m < Constants.N_STAGE5_MOVES; ++m) {
+				int centerx = moveCenter5[center][m];
+				int edgex = moveEdge5[edge][Symmetry.moveConjugate5[m][sym]];
+				int symx = Symmetry.symIdxCo4Multiply[sym][edgex&0xFF];
+				edgex >>= 8;
+				int idxx = edgex*Constants.N_STAGE5_CENTERS+conjCenter5[centerx][symx];
+				dist2 = get_dist_packed(prunTableEdgCen5, idxx);
+				if (((dist2+1) % 3) != dist1) continue;
+				center = centerx;
+				edge = edgex;
+				sym = symx;
+				dist1 = dist2;
+				idx = idxx;
+				break;
+			}
+		return d;
+	}
+
+
 	static byte[] prunTableEdgCor4;
 	public static void initPrunEdgCor4(){
 		int[] solved = {0};

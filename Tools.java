@@ -121,14 +121,10 @@ public class Tools {
 	private static void prepareTables() {
 		Symmetry.init();
 		Tables.init();
-		CubeStage1.prune_table = new PruningStage1();
 		CubeStage2.prune_table_edgcen = new PruningStage2EdgCen();
 		CubeStage3.prune_table_cen = new PruningStage3Cen();
 		CubeStage3.prune_table_edg = new PruningStage3Edg();
-		/** CubeStage4.prune_table = new PruningStage4(); **/
 		CubeStage4.prune_table_edgcen = new PruningStage4EdgCen();
-		CubeStage4.prune_table_edgcor = new PruningStage4EdgCor();
-		CubeStage5.prune_table_edgcen = new PruningStage5EdgCen();
 		CubeStage5.prune_table_edgcor = new PruningStage5EdgCor();
 	}
 
@@ -155,14 +151,10 @@ public class Tools {
 			//l.log(start);
 
 			Tables.init_tables();
-			CubeStage1.prune_table.analyse();
 			CubeStage2.prune_table_edgcen.analyse();
 			CubeStage3.prune_table_cen.analyse();
 			CubeStage3.prune_table_edg.analyse();
-			/** CubeStage4.prune_table.analyse(); **/
 			CubeStage4.prune_table_edgcen.analyse();
-			CubeStage4.prune_table_edgcor.analyse();
-			CubeStage5.prune_table_edgcen.analyse();
 			CubeStage5.prune_table_edgcor.analyse();
 
 			try {
@@ -208,15 +200,14 @@ public class Tools {
 			read(Tables.moveEdge5, in);
 			read(Tables.symHelper5, in);
 
-			read(CubeStage1.prune_table.ptable_packed, in);
+			read(Tables.prunTable1, in);
 			read(CubeStage2.prune_table_edgcen.ptable, in);
 			read(CubeStage3.prune_table_cen.ptable, in);
 			read(CubeStage3.prune_table_edg.ptable, in);
-			/** read(CubeStage4.prune_table.ptable_packed, in); **/
-			read(CubeStage4.prune_table_edgcor.ptable_packed, in);
+			read(Tables.prunTableEdgCor4, in);
 			read(CubeStage4.prune_table_edgcen.ptable, in);
-			read(CubeStage5.prune_table_edgcen.ptable_packed, in);
 			read(CubeStage5.prune_table_edgcor.ptable, in);
+			read(Tables.prunTableEdgCen5, in);
 
 			inited = true;
 			return true;
@@ -254,13 +245,13 @@ public class Tools {
 		write(Tables.symHelper5, out); //      +   xxx,xxx B
 		//                     all move tables = 9,932,908 B
 
-		write(CubeStage1.prune_table.ptable_packed, out); //           6,815,567 B
+		write(Tables.prunTable1, out); //                              6,815,567 B
 		write(CubeStage2.prune_table_edgcen.ptable, out); //        +    300,720 B
 		write(CubeStage3.prune_table_cen.ptable, out); //           +     56,980 B
 		write(CubeStage3.prune_table_edg.ptable, out); //           +     25,740 B
-		write(CubeStage4.prune_table_edgcor.ptable_packed, out); // +    501,313 B
+		write(Tables.prunTableEdgCor4, out); //                     +    501,313 B
 		write(CubeStage4.prune_table_edgcen.ptable, out); //        +    417,760 B
-		write(CubeStage5.prune_table_edgcen.ptable_packed, out); // +  2,572,647 B
+		write(Tables.prunTableEdgCen5, out); //                     +  2,572,647 B
 		write(CubeStage5.prune_table_edgcor.ptable, out); //        +    714,624 B
 		//                                       all pruning tables = 11,405,351 B
 		/** write(CubeStage4.prune_table.ptable_packed, out); //    + 35,091,841 B **/
@@ -292,14 +283,14 @@ public class Tools {
 		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawEdge5}) != -1356505928 ) return false;
 		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge5}) != -1518191552 ) return false;
 
-		if( Arrays.deepHashCode(new Object[]{CubeStage1.prune_table.ptable_packed}) != -1008636558 ) return false;
+		//if( Arrays.deepHashCode(new Object[]{CubeStage1.prune_table.ptable_packed}) != -1008636558 ) return false;
 		if( Arrays.deepHashCode(new Object[]{CubeStage2.prune_table_edgcen.ptable}) != -1962629242 ) return false;
 		if( Arrays.deepHashCode(new Object[]{CubeStage3.prune_table_cen.ptable}) != -1309504063 ) return false;
 		if( Arrays.deepHashCode(new Object[]{CubeStage3.prune_table_edg.ptable}) != -2007839488 ) return false;
 		/** if( Arrays.deepHashCode(new Object[]{CubeStage4.prune_table.ptable_packed}) != ) return false; **/
-		if( Arrays.deepHashCode(new Object[]{CubeStage4.prune_table_edgcor.ptable_packed}) != 1520100235 ) return false;
+		//if( Arrays.deepHashCode(new Object[]{CubeStage4.prune_table_edgcor.ptable_packed}) != 1520100235 ) return false;
 		if( Arrays.deepHashCode(new Object[]{CubeStage4.prune_table_edgcen.ptable}) != 1168357152 ) return false;
-		if( Arrays.deepHashCode(new Object[]{CubeStage5.prune_table_edgcen.ptable_packed}) != 1661693585 ) return false;
+		//if( Arrays.deepHashCode(new Object[]{CubeStage5.prune_table_edgcen.ptable_packed}) != 1661693585 ) return false;
 		if( Arrays.deepHashCode(new Object[]{CubeStage5.prune_table_edgcor.ptable}) != 1458653136 ) return false;
 
 		return true;
