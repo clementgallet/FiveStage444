@@ -49,7 +49,7 @@ public final class Search {
 	CubeStage1[] list1 = new CubeStage1[20];
 	// TODO: Use it for all stages or don't use it.
 
-	static int DEBUG_LEVEL = 1;
+	static int DEBUG_LEVEL = 0;
 
 	public String solve (CubeState cube, boolean inverse) {
 		int i, j;

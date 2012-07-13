@@ -251,8 +251,8 @@ public class Tools {
 		write(CubeStage3.prune_table_edg.ptable, out); //           +     25,740 B
 		write(Tables.prunTableEdgCor4, out); //                     +    501,313 B
 		write(CubeStage4.prune_table_edgcen.ptable, out); //        +    417,760 B
-		write(Tables.prunTableEdgCen5, out); //                     +  2,572,647 B
 		write(CubeStage5.prune_table_edgcor.ptable, out); //        +    714,624 B
+		write(Tables.prunTableEdgCen5, out); //                     +  2,572,647 B
 		//                                       all pruning tables = 11,405,351 B
 		/** write(CubeStage4.prune_table.ptable_packed, out); //    + 35,091,841 B **/
 	}

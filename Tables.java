@@ -781,8 +781,8 @@ public final class Tables {
 							for (int j=0; j<N_COSYM; j++) {
 								long symS = symState[symx][j];
 								for (int k=0; symS != 0; symS>>=1, k++) {
-									if ((symS & 1) == 0) continue;
-									int idxx = symx * N_RAW + rawConj[rawx][j*N_COSYM+k];
+									if ((symS & 0x1L) == 0) continue;
+									int idxx = symx * N_RAW + rawConj[rawx][k*N_COSYM+j];
 									if (getPrun4(tempTable, idxx) == 0) {
 										setPrun4(tempTable, idxx, save);
 										done++;
@@ -812,11 +812,10 @@ public final class Tables {
 	}
 
 
-	public static byte[] prunTable1 = new byte[N_STAGE1_EDGES*N_STAGE1_CORNERS/5+1];
+	public static byte[] prunTable1 = new byte[N_STAGE1_SYMEDGES*N_STAGE1_CORNERS/5+1];
 	public static void initPrun1(){
 		int[] solved = {1906};
 		initRawSymPrunPacked( prunTable1, 7, moveCorner1, conjCorner1, moveEdge1, hasSymEdgeSTAGE1, solved, Constants.basic_to_face, 6);
-		if( prunTable1 == null) System.out.println("Probem...");
 	}
 
 	public final static int prunDist1(int edge, int sym, int corner){
@@ -824,7 +823,7 @@ public final class Tables {
 		int idx = Constants.N_STAGE1_CORNERS*edge+conjCorner1[corner][sym];
 		int dist1 = get_dist_packed(prunTable1, idx);
 		int d;
-		for (d = 0; idx != 1906; d++){
+		for (d = 0; ( idx != 1906 ) && ( d < 20 ); d++){
 			for (int m = 0; m < Constants.N_STAGE1_MOVES; ++m) {
 				int mm = Constants.basic_to_face[m];
 				int cornerx = ( mm >= 0 ) ? moveCorner1[corner][mm] : corner;
@@ -874,7 +873,7 @@ public final class Tables {
 		int idx = edge*Constants.N_STAGE5_CENTERS+conjCenter5[center][sym];
 		int dist1 = get_dist_packed(prunTableEdgCen5, idx);
 		int d;
-		for( d=0; idx != 0; d++)
+		for( d=0; idx != 0; d++){
 			for (int m = 0; m < Constants.N_STAGE5_MOVES; ++m) {
 				int centerx = moveCenter5[center][m];
 				int edgex = moveEdge5[edge][Symmetry.moveConjugate5[m][sym]];
@@ -890,20 +889,21 @@ public final class Tables {
 				idx = idxx;
 				break;
 			}
+		}
 		return d;
 	}
 
 
-	public static byte[] prunTableEdgCor4 = new byte[N_STAGE4_EDGES*N_STAGE4_CORNERS/5+1];
+	public static byte[] prunTableEdgCor4 = new byte[N_STAGE4_SYMEDGES*N_STAGE4_CORNERS/5+1];
 	public static void initPrunEdgCor4(){
 		int[] solved = {0};
-		initRawSymPrunPacked( prunTableEdgCor4, 9, moveCorner4, conjCorner4, moveEdge4, hasSymEdgeSTAGE4, solved, null, 4);
+		initRawSymPrunPacked( prunTableEdgCor4, 11, moveCorner4, conjCorner4, moveEdge4, hasSymEdgeSTAGE4, solved, null, 4);
 	}
 
-	public static byte[] prunTableEdgCen5 = new byte[N_STAGE5_EDGES*N_STAGE5_CENTERS/5+1];
+	public static byte[] prunTableEdgCen5 = new byte[N_STAGE5_SYMEDGES*N_STAGE5_CENTERS/5+1];
 	public static void initPrunEdgCen5(){
 		int[] solved = {0};
-		initRawSymPrunPacked( prunTableEdgCen5, 9, moveCenter5, conjCenter5, moveEdge5, hasSymEdgeSTAGE5, solved, null, 8);
+		initRawSymPrunPacked( prunTableEdgCen5, 11, moveCenter5, conjCenter5, moveEdge5, hasSymEdgeSTAGE5, solved, null, 8);
 	}
 
 
