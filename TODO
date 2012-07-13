@@ -1,9 +1,8 @@
 TODO:
 
 - Cancel moves between stages.
-- Eventually get rid of all the CubeStagex classes, and use directly the coordinates
 - Eventually don't use the CubeState class anymore during the solve between stages, but generate all coordinates at the beginning and more move tables
-- Get rid of all the PruningTable classes, incorporate into Tables.java
+- Get rid of all the PruningTable classes, incorporate into Tables.java -> Halfway done !
 - Doc the code !
 
 - From Kociemba
@@ -15,9 +14,9 @@ TODO:
 -- Check if using int tables instead of byte tables is faster
 
 
-
 DONE:
 
++ Eventually get rid of all the CubeStagex classes, and use directly the coordinates
 + Check for tables integrity -> Used Arrays.deepHashCode()
 + Do not consider solutions that contain a strict prefix that is also a solution (how in practice ?) -> done
 + Try anti-symmetries (works for stage 5, might work for stage 4) -> Not working on centers.

@@ -449,13 +449,6 @@ public final class CubeState{
 		m_cor[7] = (byte)(7 + (((24 - orientcmod3) % 3) << 3));
 	}
 
-	public void convert_to_stage1 (CubeStage1 result_cube){
-		result_cube.corner = convert_corners_to_stage1();
-		int symedge = convert_symedges_to_stage1();
-		result_cube.edge = symedge >> 6;
-		result_cube.sym = symedge & 0x3F;
-	}
-
 	public short convert_edges_to_stage2 (){
 		int u = Constants.get8Perm (m_edge, 16);
 		return Tables.perm_to_420[u];
@@ -516,16 +509,6 @@ public final class CubeState{
 				return (short)(( rep << 4 ) + sym);
 		}
 		return -1;
-	}
-
-	public void convert_to_stage2 (CubeStage2 result_cube){
-		result_cube.edge = convert_edges_to_stage2();
-		int symcenF = convert_symcenters_to_stage2(4);
-		int symcenB = convert_symcenters_to_stage2(5);
-		result_cube.centerF = symcenF >> 4;
-		result_cube.symF = symcenF & 0xF;
-		result_cube.centerB = symcenB >> 4;
-		result_cube.symB = symcenB & 0xF;
 	}
 
 	public int convert_centers_to_stage3 (){
@@ -616,14 +599,6 @@ public final class CubeState{
 		for (int i = 16; i < 24; ++i) {
 			m_edge[i] = (byte)i;
 		}
-	}
-
-	public void convert_to_stage3 (CubeStage3 result_cube){
-		int symcen = convert_symcenters_to_stage3 ();
-		result_cube.center = symcen >> 4;
-		result_cube.sym = symcen & 0xF;
-		result_cube.edge = convert_edges_to_stage3 ();
-		result_cube.edge_odd = edgeUD_parity_odd ();
 	}
 
 	private static final byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
@@ -783,14 +758,6 @@ public final class CubeState{
 		for (i = 8; i < 24; ++i) {
 			m_cen[i] = (byte)(i/4);
 		}
-	}
-
-	public void convert_to_stage4 (CubeStage4 result_cube){
-		int symedge = convert_symedges_to_stage4();
-		result_cube.edge = symedge >> 4;
-		result_cube.sym = symedge & 0xF;
-		result_cube.corner = convert_corners_to_stage4();
-		result_cube.center = convert_centers_to_stage4();
 	}
 
 	private static final byte std_to_sqs_cor[] = { 0, 4, 1, 5, 6, 2, 7, 3 };

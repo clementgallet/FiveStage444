@@ -689,6 +689,12 @@ public final class Tables {
 
 	/** Pruning functions **/
 
+	public static PruningStage2EdgCen prune_table_edgcen2;
+	public static PruningStage3Cen prune_table_cen3;
+	public static PruningStage3Edg prune_table_edg3;
+	public static PruningStage4EdgCen prune_table_edgcen4;
+	public static PruningStage5EdgCor prune_table_edgcor5;
+
 	private static int[] nd = new int[30 * 4];
 	private static byte[] get_packed = new byte[243*8];
 	static {
