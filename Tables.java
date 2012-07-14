@@ -612,6 +612,7 @@ public final class Tables {
 			symHelper5[u] = 0;
 			for (int sym = 0; sym < N_SYM_STAGE5; ++sym) {
 				for (int cosym = 0; cosym < 4; ++cosym) {
+					if(sym==0 && cosym==0) continue;
 					cube1.rightMultEdges(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
 					cube2.leftMultEdges(sym);
 					int edge = cube2.convert_edges_to_stage5 ();

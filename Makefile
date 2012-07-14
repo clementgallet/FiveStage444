@@ -15,6 +15,9 @@ run:
 test:
 	$(JAVA) $(DIR)/Test
 
+analyze:
+	$(JAVA) $(DIR)/Analyze
+
 profile:
 	$(JAVA) -javaagent:../jip/profile.jar $(DIR)/Main
 
