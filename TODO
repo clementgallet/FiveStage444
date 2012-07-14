@@ -2,7 +2,7 @@ TODO:
 
 - Cancel moves between stages.
 - Eventually don't use the CubeState class anymore during the solve between stages, but generate all coordinates at the beginning and more move tables
-- Get rid of all the PruningTable classes, incorporate into Tables.java -> Halfway done !
+- Get rid of all the PruningTable classes, incorporate into Tables.java -> Almost done !
 - Doc the code !
 - Compute distance tables (unique and sym)
 

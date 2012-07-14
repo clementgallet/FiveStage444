@@ -121,11 +121,8 @@ public class Tools {
 	private static void prepareTables() {
 		Symmetry.init();
 		Tables.init();
-		Tables.prune_table_edgcen2 = new PruningStage2EdgCen();
 		Tables.prune_table_cen3 = new PruningStage3Cen();
 		Tables.prune_table_edg3 = new PruningStage3Edg();
-		Tables.prune_table_edgcen4 = new PruningStage4EdgCen();
-		Tables.prune_table_edgcor5 = new PruningStage5EdgCor();
 	}
 
 	private static synchronized void init(boolean tryToReadFile, File fivephase_tables) {
@@ -151,11 +148,8 @@ public class Tools {
 			//l.log(start);
 
 			Tables.init_tables();
-			Tables.prune_table_edgcen2.analyse();
 			Tables.prune_table_cen3.analyse();
 			Tables.prune_table_edg3.analyse();
-			Tables.prune_table_edgcen4.analyse();
-			Tables.prune_table_edgcor5.analyse();
 
 			try {
 				l.info("Writing to " + fivephase_tables);
@@ -201,12 +195,12 @@ public class Tools {
 			read(Tables.symHelper5, in);
 
 			read(Tables.prunTable1, in);
-			read(Tables.prune_table_edgcen2.ptable, in);
+			read(Tables.prunTableEdgCen2, in);
 			read(Tables.prune_table_cen3.ptable, in);
 			read(Tables.prune_table_edg3.ptable, in);
 			read(Tables.prunTableEdgCor4, in);
-			read(Tables.prune_table_edgcen4.ptable, in);
-			read(Tables.prune_table_edgcor5.ptable, in);
+			read(Tables.prunTableEdgCen4, in);
+			read(Tables.prunTableEdgCor5, in);
 			read(Tables.prunTableEdgCen5, in);
 
 			inited = true;
@@ -245,13 +239,14 @@ public class Tools {
 		write(Tables.symHelper5, out); //      +   xxx,xxx B
 		//                     all move tables = 9,932,908 B
 
+		// TODO: Wrong sizes
 		write(Tables.prunTable1, out); //                     6,815,567 B
-		write(Tables.prune_table_edgcen2.ptable, out); //   +    300,720 B
-		write(Tables.prune_table_cen3.ptable, out); //      +     56,980 B
-		write(Tables.prune_table_edg3.ptable, out); //      +     25,740 B
+		write(Tables.prunTableEdgCen2, out); //            +    300,720 B
+		write(Tables.prune_table_cen3.ptable, out); //     +     56,980 B
+		write(Tables.prune_table_edg3.ptable, out); //     +     25,740 B
 		write(Tables.prunTableEdgCor4, out); //            +    501,313 B
-		write(Tables.prune_table_edgcen4.ptable, out); //   +    417,760 B
-		write(Tables.prune_table_edgcor5.ptable, out); //   +    714,624 B
+		write(Tables.prunTableEdgCen4, out); //            +    417,760 B
+		write(Tables.prunTableEdgCor5, out); //            +    714,624 B
 		write(Tables.prunTableEdgCen5, out); //            +  2,572,647 B
 		//                              all pruning tables = 11,405,351 B
 	}
@@ -281,15 +276,6 @@ public class Tools {
 		if( Arrays.deepHashCode(new Object[]{Tables.conjCenter5}) != -1913154528 ) return false;
 		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawEdge5}) != -1356505928 ) return false;
 		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge5}) != -1518191552 ) return false;
-
-		//if( Arrays.deepHashCode(new Object[]{CubeStage1.prune_table.ptable_packed}) != -1008636558 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.prune_table_edgcen2.ptable}) != -1962629242 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.prune_table_cen3.ptable}) != -1309504063 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.prune_table_edg3.ptable}) != -2007839488 ) return false;
-		//if( Arrays.deepHashCode(new Object[]{CubeStage4.prune_table_edgcor.ptable_packed}) != 1520100235 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.prune_table_edgcen4.ptable}) != 1168357152 ) return false;
-		//if( Arrays.deepHashCode(new Object[]{CubeStage5.prune_table_edgcen.ptable_packed}) != 1661693585 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.prune_table_edgcor5.ptable}) != 1458653136 ) return false;
 
 		return true;
 	}

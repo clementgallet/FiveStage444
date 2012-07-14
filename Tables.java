@@ -38,6 +38,10 @@ public final class Tables {
 		initSymEdgeToEdgeStage5();
 		initSymEdgeStage5();
 
+		initPrunEdgCen2();
+		initPrunEdgCen4();
+		initPrunEdgCor5();
+
 		initPrun1();
 		initPrunEdgCor4();
 		initPrunEdgCen5();
@@ -272,7 +276,7 @@ public final class Tables {
 
 	/*** init stage 2 symCenterToCenter ***/
 	public static short[] sym2rawCenter2 = new short[N_STAGE2_SYMCENTER];
-	public static int[] hasSymCenterSTAGE2;
+	public static long[][] hasSymCenterSTAGE2;
 
 	public static void initSymCenterToCenterStage2 (){
 
@@ -281,7 +285,7 @@ public final class Tables {
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		byte[] isRepTable = new byte[(N_STAGE2_CENTER>>3) + 1];
-		hasSymCenterSTAGE2 = new int[N_STAGE2_SYMCENTER];
+		hasSymCenterSTAGE2 = new long[N_STAGE2_SYMCENTER][1];
 		for (int u = 0; u < N_STAGE2_CENTER; ++u) {
 			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
 			cube1.convert_centers2_to_std_cube( u );
@@ -291,7 +295,7 @@ public final class Tables {
 				short cen = cube2.convert_centers_to_stage2(5);
 				isRepTable[cen>>>3] |= 1<<(cen&0x7);
 				if( cen == u ){
-					hasSymCenterSTAGE2[repIdx] |= (1 << sym);
+					hasSymCenterSTAGE2[repIdx][0] |= (1 << sym);
 				}
 			}
 			sym2rawCenter2[repIdx++] = (short)u;
@@ -300,7 +304,7 @@ public final class Tables {
 	}
 
 	/*** init stage 2 symCenters ***/
-	public static short[][] moveCenter2 = new short[N_STAGE2_SYMCENTER][N_STAGE2_MOVES]; // (716*16) 716*28
+	public static int[][] moveCenter2 = new int[N_STAGE2_SYMCENTER][N_STAGE2_MOVES]; // (716*16) 716*28
 
 	public static void initSymCenterStage2 (){
 
@@ -503,7 +507,7 @@ public final class Tables {
 		System.out.println( "Finishing corner conj stage 4..." );
 	}
 
-	public static byte[][] moveCenter4 = new byte[N_STAGE4_CENTERS][N_STAGE4_MOVES]; // (70) 70*16.
+	public static short[][] moveCenter4 = new short[N_STAGE4_CENTERS][N_STAGE4_MOVES]; // (70) 70*16.
 
 	public static void initCenterStage4 (){
 
@@ -521,7 +525,7 @@ public final class Tables {
 		System.out.println( "Finishing center stage 4..." );
 	}
 
-	public static byte[][] conjCenter4 = new byte[N_STAGE4_CENTERS][N_SYM_STAGE4]; // (70) 70*16.
+	public static short[][] conjCenter4 = new short[N_STAGE4_CENTERS][N_SYM_STAGE4]; // (70) 70*16.
 
 	public static void initCenterConjStage4 (){
 
@@ -542,7 +546,7 @@ public final class Tables {
 
 	public static final short squares_cen_map[] = { 0x0F, 0x33, 0x3C, 0x55, 0x5A, 0x66, 0x99, 0xA5, 0xAA, 0xC3, 0xCC, 0xF0 };
 
-	public static byte[][] moveCorner5 = new byte[N_STAGE5_CORNERS][N_STAGE5_MOVES]; // (96) 96*12
+	public static short[][] moveCorner5 = new short[N_STAGE5_CORNERS][N_STAGE5_MOVES]; // (96) 96*12
 
 	public static void initSquaresMovemap (){
 
@@ -647,7 +651,7 @@ public final class Tables {
 	}
 
 	/*** init stage 5 corner conjugate ***/
-	public static byte[][] conjCorner5 = new byte[N_STAGE5_CORNERS][N_SYM_STAGE5*4]; // (96) 96*48
+	public static short[][] conjCorner5 = new short[N_STAGE5_CORNERS][N_SYM_STAGE5*4]; // (96) 96*48
 
 	public static void initCornerConjStage5 (){
 
@@ -690,11 +694,8 @@ public final class Tables {
 
 	/** Pruning functions **/
 
-	public static PruningStage2EdgCen prune_table_edgcen2;
 	public static PruningStage3Cen prune_table_cen3;
 	public static PruningStage3Edg prune_table_edg3;
-	public static PruningStage4EdgCen prune_table_edgcen4;
-	public static PruningStage5EdgCor prune_table_edgcor5;
 
 	private static int[] nd = new int[30 * 4];
 	private static byte[] get_packed = new byte[243*8];
@@ -736,6 +737,113 @@ public final class Tables {
 		table[idx>>2] |= (byte)(value << ((idx & 0x3) << 1));
 	}
 
+        public static final void setPrun2(int[] table, int index, int value) {
+                table[index >> 3] ^= (0x0f ^ value) << ((index & 7) << 2);
+        }
+
+        public static final int getPrun2(int[] table, int index) {
+                return (table[index >> 3] >> ((index & 7) << 2)) & 0x0f;
+        }
+
+	public static void initRawSymPrun(int[] prunTable, final int INV_DEPTH, 
+			final short[][] rawMove, final short[][] rawConj,
+			final int[][] symMove, final long[][] symState, 
+			final int[] solvedStates, final int SYM_SHIFT) {
+
+		final int SYM_MASK = (1 << SYM_SHIFT) - 1;
+		final int N_RAW = rawMove.length;
+		final int N_SYM = symMove.length;
+		final int N_SIZE = N_RAW * N_SYM;
+		final int N_MOVES = symMove[0].length;
+		final int N_COSYM = symState[0].length;
+
+		for (int i=0; i<(N_RAW*N_SYM+7)/8; i++)
+			prunTable[i] = -1;
+
+		for (int i=0; i<solvedStates.length; i++){
+			setPrun2( prunTable, solvedStates[i], 0 );
+		}
+		int depth = 0;
+		int done = solvedStates.length;
+		while (done < N_SIZE) {
+			boolean inv = depth > INV_DEPTH;
+			int select = inv ? 0x0f : depth;
+			int check = inv ? depth : 0x0f;
+			depth++;
+			int pos = 0;
+			int unique = 0;
+			for (int i=0; i<N_SIZE;) {
+				int val = prunTable[i>>3];
+				if (!inv && val == -1) {
+					i += 8;
+					continue;
+				}
+				for (int end=Math.min(i+8, N_SIZE); i<end; i++, val>>=4) {
+					if ((val & 0x0f)/*getPrun4(tempTable, i)*/ != select) continue;
+					int raw = i % N_RAW;
+					int sym = i / N_RAW;
+					for (int m=0; m<N_MOVES; m++) {
+						int symx = symMove[sym][m];
+						int rawx = rawConj[rawMove[raw][m]][symx & SYM_MASK];
+						symx >>>= SYM_SHIFT;
+						int idx = symx * N_RAW + rawx;
+						if (getPrun2(prunTable, idx) != check) continue;
+						done++;
+						if (inv) {
+							setPrun2(prunTable, i, depth);
+							break;
+						} else {
+							setPrun2(prunTable, idx, depth);
+							int nsym = 1;
+							unique++;
+							for (int j=0; j<N_COSYM; j++) {
+								long symS = symState[symx][j];
+								for (int k=0; symS != 0; symS>>=1, k++) {
+									if ((symS & 0x1L) == 0) continue;
+									int idxx = symx * N_RAW + rawConj[rawx][k*N_COSYM+j];
+									nsym++;
+									if (getPrun2(prunTable, idxx) == 0x0f) {
+										setPrun2(prunTable, idxx, depth);
+										done++;
+									}
+								}
+							}
+							//pos += 48/nsym;
+						}
+					}
+				}
+			}
+			System.out.println(String.format("%2d%12d%10d", depth, pos, unique));
+		}
+	}
+
+	public static int[] prunTableEdgCen2 = new int[(N_STAGE2_SYMCENTER*N_STAGE2_EDGES+7)/8];
+	public static void initPrunEdgCen2(){
+
+		int[] solved = new int [stage2_solved_symcenters.length*2];
+                for (int i=0; i < stage2_solved_symcenters.length; i++){
+                        solved[2*i] = stage2_solved_symcenters[i]*N_STAGE2_EDGES + 414;
+                        solved[2*i+1] = stage2_solved_symcenters[i]*N_STAGE2_EDGES + 0;
+		}
+		initRawSymPrun( prunTableEdgCen2, 18, moveEdge2, conjEdge2, moveCenter2, hasSymCenterSTAGE2, solved, 4);
+	}
+
+	public static int[] prunTableEdgCen4 = new int[(N_STAGE4_SYMEDGES*N_STAGE4_CENTERS+7)/8];
+	public static void initPrunEdgCen4(){
+
+		int[] solved = new int[stage4_solved_centers_bm.length];
+		for (int i=0; i < stage4_solved_centers_bm.length; i++)
+			solved[i] = stage4_solved_centers_bm[i];
+		initRawSymPrun( prunTableEdgCen4, 18, moveCenter4, conjCenter4, moveEdge4, hasSymEdgeSTAGE4, solved, 4);
+	}
+
+	public static int[] prunTableEdgCor5 = new int[(N_STAGE5_SYMEDGES*N_STAGE5_CORNERS+7)/8];
+	public static void initPrunEdgCor5(){
+
+		int[] solved = {0};
+		initRawSymPrun( prunTableEdgCor5, 18, moveCorner5, conjCorner5, moveEdge5, hasSymEdgeSTAGE5, solved, 8);
+	}
+
 	public static void initRawSymPrunPacked(byte[] prunTable, final int INV_DEPTH, 
 			final short[][] rawMove, final short[][] rawConj,
 			final int[][] symMove, final long[][] symState, 
@@ -754,7 +862,7 @@ public final class Tables {
 			setPrun4( tempTable, solvedStates[i], 3 );
 		}
 		int depth = 0;
-		int done = 1;
+		int done = solvedStates.length;
 		while (done < N_SIZE) {
 			boolean inv = depth > INV_DEPTH;
 			int select = inv ? 0 : ((depth+2)%3)+1;
