@@ -4,6 +4,8 @@ TODO:
 - Eventually don't use the CubeState class anymore during the solve between stages, but generate all coordinates at the beginning and more move tables
 - Get rid of all the PruningTable classes, incorporate into Tables.java -> Halfway done !
 - Doc the code !
+- Compute distance tables (unique and sym)
+
 
 - From Kociemba
 -- Filter last move possibilities (is it efficient ?)

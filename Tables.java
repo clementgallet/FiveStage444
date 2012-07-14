@@ -749,18 +749,19 @@ public final class Tables {
 		final int N_COSYM = symState[0].length;
 
 		byte[] tempTable = new byte[(N_SIZE/4)+1];
-		for (int i=0; i<solvedStates.length; i++)
+		for (int i=0; i<solvedStates.length; i++){
 			setPrun4( tempTable, solvedStates[i], 3 );
-
+		}
 		int depth = 0;
 		int done = 1;
-
 		while (done < N_SIZE) {
 			boolean inv = depth > INV_DEPTH;
 			int select = inv ? 0 : ((depth+2)%3)+1;
 			int check = inv ? ((depth+2)%3)+1 : 0;
 			int save = (depth % 3) + 1;
 			depth++;
+			int pos = 0;
+			int unique = 0;
 			for (int i=0; i<N_SIZE;) {
 				int val = tempTable[i>>2];
 				if (!inv && val == 0) {
@@ -784,22 +785,26 @@ public final class Tables {
 							break;
 						} else {
 							setPrun4(tempTable, idx, save);
+							int nsym = 1;
+							unique++;
 							for (int j=0; j<N_COSYM; j++) {
 								long symS = symState[symx][j];
 								for (int k=0; symS != 0; symS>>=1, k++) {
 									if ((symS & 0x1L) == 0) continue;
 									int idxx = symx * N_RAW + rawConj[rawx][k*N_COSYM+j];
+									nsym++;
 									if (getPrun4(tempTable, idxx) == 0) {
 										setPrun4(tempTable, idxx, save);
 										done++;
 									}
 								}
 							}
+							pos += 48/nsym;
 						}
 					}
 				}
 			}
-			System.out.println(String.format("%2d%10d", depth, done));
+			System.out.println(String.format("%2d%12d%10d", depth, pos, unique));
 		}
 
 		for (int i=0; i<N_SIZE_PACKED; i++) {

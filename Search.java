@@ -109,10 +109,6 @@ public final class Search {
 	}
 
 	public void init_stage1 () {
-		CubeStage1 s1 = new CubeStage1();
-		CubeStage1 s2 = new CubeStage1();
-		CubeStage1 s3 = new CubeStage1();
-
 		int edge1 = init_cube[0].convert_symedges_to_stage1();
 		int edge2 = init_cube[1].convert_symedges_to_stage1();
 		int edge3 = init_cube[2].convert_symedges_to_stage1();

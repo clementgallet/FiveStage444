@@ -926,14 +926,6 @@ public final class CubeState{
 		}
 	}
 
-	public void convert_to_stage5 (CubeStage5 result_cube){
-		result_cube.corner = convert_corners_to_stage5 ();
-		result_cube.center = convert_centers_to_stage5 ();
-		int symedge = convert_symedges_to_stage5 ();
-		result_cube.sym = symedge & 0xFF;
-		result_cube.edge = symedge >> 8;
-	}
-
 	public void print (){
 		System.out.print("Edges: ");
 		for (int i=0; i<24; i++)
