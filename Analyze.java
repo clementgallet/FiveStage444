@@ -10,6 +10,7 @@ public final class Analyze {
 	static byte[] move_list_stage4 = new byte[30];
 
 	static byte[] allPos5 = new byte[N_STAGE5_SYMEDGES*N_STAGE5_CORNERS*N_STAGE5_CENTERS>>>3];
+	static byte[] allPos5_2 = new byte[N_STAGE5_SYMEDGES*N_STAGE5_CORNERS*N_STAGE5_CENTERS>>>3];
 
 	public static void main(String[] args){
 		Tools.init();
@@ -23,17 +24,28 @@ public final class Analyze {
 		int corner = (coset / N_STAGE4_CENTERS) % N_STAGE4_CORNERS;
 		int center = coset % (N_STAGE4_CORNERS*N_STAGE4_CENTERS);
 	
+		/*
 		cube.convert_edges4_to_std_cube(Tables.sym2rawEdge4[edge]);
 		cube.convert_corners4_to_std_cube(corner);
 		cube.convert_centers4_to_std_cube(center);
+		*/
 
+		cube.init();
 		int cubeDistEdgCor = Tables.prunDistEdgCor4(edge, 0, corner);
 
 		done = 0;
 		for (length4 = 0; length4 < 19; ++length4) {
 			unique = 0;
 			pos = 0;
+			move_stage5();
+			/* Copy from allPos5_2 to allPos5 */
+			for( int idx=0; idx<N_STAGE5_SYMEDGES*N_STAGE5_CORNERS*N_STAGE5_CENTERS>>>3; idx++ )
+				allPos5[idx] |= allPos5_2[idx];
+			if(length4==0)
 			search_stage4 (center, corner, edge, 0, length4, 0, N_STAGE4_MOVES, cubeDistEdgCor );
+			/* Copy from allPos5 to allPos5_2 */
+			for( int idx=0; idx<N_STAGE5_SYMEDGES*N_STAGE5_CORNERS*N_STAGE5_CENTERS>>>3; idx++ )
+				allPos5_2[idx] |= allPos5[idx];
 			System.out.println(String.format("%2d%12d%10d", length4, pos, unique));
 		}
 	}
@@ -64,6 +76,8 @@ public final class Analyze {
 			if (newDistEdgCen > depth-1) continue;
 			int newDist = Tables.new_dist(Tables.prunTableEdgCor4, edgex*Constants.N_STAGE4_CORNERS+Tables.conjCorner4[cornerx][symx], dist);
 			if (newDist > depth-1) continue;
+			int dist4 = Math.max(newDistEdgCen, newDist);
+			if( ( depth!=dist4 ) && (depth+dist4<5) ) continue;
 			move_list_stage4[moves_done] = (byte)mov_idx;
 			search_stage4 (centerx, cornerx, edgex, symx, depth - 1, moves_done + 1, mov_idx, newDist);
 		}
@@ -102,4 +116,51 @@ public final class Analyze {
 			pos += 192/nsym;
 		}
 	}
+
+	public static void move_stage5 (){
+		int i;
+
+		for( long idx=0; idx<N_STAGE5_SYMEDGES*N_STAGE5_CORNERS*N_STAGE5_CENTERS; idx++ ){
+			int val = allPos5[(int)(idx>>>3)];
+			if( val == 0){
+				idx += 8;
+				continue;
+			}
+			for (long end=Math.min(idx+8, N_STAGE5_SYMEDGES*N_STAGE5_CORNERS*N_STAGE5_CENTERS); idx<end; idx++, val>>=1){
+				if ((val&1) == 0) continue;
+				int center = (int)(idx % N_STAGE5_CENTERS);
+				int edge = (int)(idx / (N_STAGE5_CORNERS*N_STAGE5_CENTERS));
+				int corner = (int)(( idx / N_STAGE5_CENTERS ) % N_STAGE5_CORNERS);
+				for (int m=0; m<N_STAGE5_MOVES; m++){
+					int edgex = Tables.moveEdge5[edge][m];
+					int centerx = Tables.conjCenter5[Tables.moveCenter5[center][m]][edgex&0xFF];
+					int cornerx = Tables.conjCorner5[Tables.moveCorner5[corner][m]][edgex&0xFF];
+					edgex >>>= 8;
+					long idxx = ((long)edgex*N_STAGE5_CORNERS+cornerx)*N_STAGE5_CENTERS+centerx;
+					if(( allPos5_2[(int)(idxx>>>3)] >>> (int)(idxx & 0x7) & 1 ) == 0 ){
+						unique++;
+						int nsym = 1;
+						allPos5_2[(int)(idxx>>>3)] |= 1 << (idxx & 0x7);
+						for (int j=0; j<4; j++) {
+							long symS = Tables.hasSymEdgeSTAGE5[edgex][j];
+							for (int k=0; symS != 0; symS>>=1, k++) {
+								if ((symS & 0x1L) == 0) continue;
+								long idxxx = ((long)edgex*N_STAGE5_CORNERS+Tables.conjCorner5[cornerx][(k<<2)+j])*N_STAGE5_CENTERS+Tables.conjCenter5[centerx][(k<<2)+j];
+								if(( allPos5_2[(int)(idxxx>>>3)] >>> (int)(idxxx & 0x7) & 1 ) == 0 ){
+									allPos5_2[(int)(idxxx>>>3)] |= 1 << (idxxx & 0x7);
+									done++;
+								}
+								nsym++;
+							}
+						}
+						pos += 192/nsym;
+					}
+				}
+			}
+		}
+
+	
+	}
+
+
 }
