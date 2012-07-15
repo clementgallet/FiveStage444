@@ -299,7 +299,7 @@ public final class Search {
 
 		int min3 = Math.min( MAX_STAGE3 + 1, total_length - length1 - length2 - MIN_STAGE4 - MIN_STAGE5 );
 
-		int cubeDistCen = Tables.prune_table_cen3.ptable[center];
+		int cubeDistCen = Tables.prune_table_cen3.ptable[(center<<1)+(edge_odd?1:0)];
 		if( cubeDistCen >= min3 ) return false;
 		int cubeDistEdg = Tables.prune_table_edg3.ptable[( edge<<1 ) + (edge_odd?1:0)];
 		int d3 = Math.max(cubeDistCen, cubeDistEdg);
@@ -337,7 +337,7 @@ public final class Search {
 			int symx = Symmetry.symIdxCo2Multiply[sym][centerx&0xF];
 			centerx >>= 4;
 
-			int newDistCen = Tables.prune_table_cen3.ptable[centerx];
+			int newDistCen = Tables.prune_table_cen3.ptable[(centerx<<1)+(edge_oddx?1:0)];
 			if (newDistCen > depth-1) continue;
 			int newDistEdg = Tables.prune_table_edg3.ptable[( edgex<<1 ) + (edge_oddx?1:0)];
 			if (newDistEdg > depth-1) continue;
