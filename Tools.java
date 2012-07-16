@@ -16,14 +16,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Random;
 
-//import net.gnehzr.tnoodle.utils.Utils;
-//import net.gnehzr.tnoodle.utils.TimedLogRecordStart;
+import net.gnehzr.tnoodle.utils.Utils;
+import net.gnehzr.tnoodle.utils.TimedLogRecordStart;
 
 public class Tools {
 	private static final Logger l = Logger.getLogger(Tools.class.getName());
 
-	static boolean inited = false;
-	
 	static void read(byte[] arr, DataInput in) throws IOException {
 		in.readFully(arr);
 	}
@@ -125,13 +123,26 @@ public class Tools {
 		Tables.prune_table_edg3 = new PruningStage3Edg();
 	}
 
+	public static enum InitializationState {
+		UNINITIALIZED,
+		INITING_TABLES,
+		INITIALIZED;
+	}
+
+	public static InitializationState getInitializationState() {
+		return inited;
+	}
+
+	static volatile InitializationState inited = InitializationState.UNINITIALIZED;
+
 	private static synchronized void init(boolean tryToReadFile, File fivephase_tables) {
-		if (inited)
+		if(inited != InitializationState.UNINITIALIZED) {
 			return;
-		
+		}
+
 		if(fivephase_tables == null) {
-			//fivephase_tables = new File(Utils.getResourceDirectory(), "fivephase_tables");
-			fivephase_tables = new File("cg/fivestage444/fivephase_tables_"+METRIC_STR);
+			fivephase_tables = new File(Utils.getResourceDirectory(), "fivephase_tables");
+			//fivephase_tables = new File("cg/fivestage444/fivephase_tables_"+METRIC_STR);
 		}
 
 		prepareTables();
@@ -143,10 +154,11 @@ public class Tools {
 				l.info("Couldn't find " + fivephase_tables + ", going to create it.");
 			}
 		}
-		if(!inited) {
-			//TimedLogRecordStart start = new TimedLogRecordStart("Generating fivephase tables");
-			//l.log(start);
+		if(inited == InitializationState.UNINITIALIZED) {
+			TimedLogRecordStart start = new TimedLogRecordStart("Generating fivephase tables");
+			l.log(start);
 
+			inited = InitializationState.INITING_TABLES;
 			Tables.init_tables();
 			Tables.prune_table_cen3.analyse();
 			Tables.prune_table_edg3.analyse();
@@ -160,10 +172,10 @@ public class Tools {
 				l.log(Level.INFO, "Failed to write to " + fivephase_tables, e);
 			}
 			
-			//l.log(start.finishedNow());
+			l.log(start.finishedNow());
 		}
-		inited = true;
-		if( ! checkTables() ) System.out.println( "There might be a problem with tables integrity...");
+		inited = InitializationState.INITIALIZED;
+		// if( ! checkTables() ) System.out.println( "There might be a problem with tables integrity...");
 	}
 	
 	public static boolean initFrom(DataInput in) {
@@ -205,9 +217,7 @@ public class Tools {
 				read(Tables.prunTable4, in);
 			else
 				read(Tables.prunTableEdgCor4, in);
-			
 
-			inited = true;
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
