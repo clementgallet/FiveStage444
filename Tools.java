@@ -149,7 +149,9 @@ public class Tools {
 		if(tryToReadFile) {
 			try {
 				FileInputStream is = new FileInputStream(fivephase_tables);
-				inited = initFrom(new DataInputStream(is));
+				if(initFrom(new DataInputStream(is))) {
+					inited = InitializationState.INITIALIZED;
+				}
 			} catch (FileNotFoundException e) {
 				l.info("Couldn't find " + fivephase_tables + ", going to create it.");
 			}
