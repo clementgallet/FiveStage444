@@ -31,7 +31,12 @@ public final class Analyze {
 		*/
 
 		cube.init();
-		int cubeDistEdgCor = Tables.prunDistEdgCor4(edge, 0, corner);
+		int cubeDist;
+		if( FULL_PRUNING_STAGE4 )
+			cubeDist = Tables.prunDist4(edge, 0, corner, center);
+		else
+			cubeDist = Tables.prunDistEdgCor4(edge, 0, corner);
+
 
 		done = 0;
 		for (length4 = 0; length4 < 19; ++length4) {
@@ -42,7 +47,7 @@ public final class Analyze {
 			for( int idx=0; idx<N_STAGE5_SYMEDGES*N_STAGE5_CORNERS*N_STAGE5_CENTERS>>>3; idx++ )
 				allPos5[idx] |= allPos5_2[idx];
 			//if(length4==0)
-			search_stage4 (center, corner, edge, 0, length4, 0, N_STAGE4_MOVES, cubeDistEdgCor );
+			search_stage4 (center, corner, edge, 0, length4, 0, N_STAGE4_MOVES, cubeDist );
 			/* Copy from allPos5 to allPos5_2 */
 			for( int idx=0; idx<N_STAGE5_SYMEDGES*N_STAGE5_CORNERS*N_STAGE5_CENTERS>>>3; idx++ )
 				allPos5_2[idx] |= allPos5[idx];
@@ -74,10 +79,14 @@ public final class Analyze {
 			/* Compute new distance */
 			int newDistEdgCen = Tables.getPrun2(Tables.prunTableEdgCen4, edgex*N_STAGE4_CENTERS+Tables.conjCenter4[centerx][symx]);
 			if (newDistEdgCen > depth-1) continue;
-			int newDist = Tables.new_dist(Tables.prunTableEdgCor4, edgex*Constants.N_STAGE4_CORNERS+Tables.conjCorner4[cornerx][symx], dist);
+			int newDist;
+			if( FULL_PRUNING_STAGE4 )
+				newDist = Tables.new_dist(Tables.prunTable4, ((long)edgex*Constants.N_STAGE4_CORNERS+Tables.conjCorner4[cornerx][symx])*Constants.N_STAGE4_CENTERS+Tables.conjCenter4[centerx][symx], dist);
+			else
+				newDist = Tables.new_dist(Tables.prunTableEdgCor4, edgex*Constants.N_STAGE4_CORNERS+Tables.conjCorner4[cornerx][symx], dist);
 			if (newDist > depth-1) continue;
 			int dist4 = Math.max(newDistEdgCen, newDist);
-			if( ( depth!=dist4 ) && (depth+dist4<5) ) continue;
+			if( ( (depth-1)!=dist4 ) && (depth+dist4<6) ) continue;
 			move_list_stage4[moves_done] = (byte)mov_idx;
 			search_stage4 (centerx, cornerx, edgex, symx, depth - 1, moves_done + 1, mov_idx, newDist);
 		}

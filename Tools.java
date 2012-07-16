@@ -198,10 +198,14 @@ public class Tools {
 			read(Tables.prunTableEdgCen2, in);
 			read(Tables.prune_table_cen3.ptable, in);
 			read(Tables.prune_table_edg3.ptable, in);
-			read(Tables.prunTableEdgCor4, in);
 			read(Tables.prunTableEdgCen4, in);
 			read(Tables.prunTableEdgCor5, in);
 			read(Tables.prunTableEdgCen5, in);
+			if( FULL_PRUNING_STAGE4 )
+				read(Tables.prunTable4, in);
+			else
+				read(Tables.prunTableEdgCor4, in);
+			
 
 			inited = true;
 			return true;
@@ -244,11 +248,15 @@ public class Tools {
 		write(Tables.prunTableEdgCen2, out); //            +    300,720 B
 		write(Tables.prune_table_cen3.ptable, out); //     +     56,980 B
 		write(Tables.prune_table_edg3.ptable, out); //     +     25,740 B
-		write(Tables.prunTableEdgCor4, out); //            +    501,313 B
 		write(Tables.prunTableEdgCen4, out); //            +    417,760 B
 		write(Tables.prunTableEdgCor5, out); //            +    714,624 B
 		write(Tables.prunTableEdgCen5, out); //            +  2,572,647 B
 		//                              all pruning tables = 11,405,351 B
+		if( FULL_PRUNING_STAGE4 )
+			write(Tables.prunTable4, out); //             xxxxxxxxx B
+		else
+			write(Tables.prunTableEdgCor4, out); //            +    501,313 B
+			
 	}
 	
 	public static boolean checkTables() {
