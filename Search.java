@@ -48,7 +48,7 @@ public final class Search {
 
 	static int DEBUG_LEVEL = 0;
 
-	public String solve (CubeState cube, boolean inverse) {
+	public String solve (CubeState cube, int max_turns, boolean inverse) {
 		int i, j;
 
 		Tools.init();
@@ -63,7 +63,7 @@ public final class Search {
 			c.leftMult ( 16 );
 		}
 
-		init_stage1 ();
+		init_stage1 ( max_turns );
 
 		/* Transform rotations before outputing the solution */
 		for (i = 0; i < length1_sub; ++i)
@@ -119,7 +119,7 @@ public final class Search {
 		return sb.toString();
 	}
 
-	public void init_stage1 () {
+	public void init_stage1 ( int max_turns ) {
 		int edge1 = init_cube[0].convert_symedges_to_stage1();
 		int edge2 = init_cube[1].convert_symedges_to_stage1();
 		int edge3 = init_cube[2].convert_symedges_to_stage1();
@@ -141,7 +141,7 @@ public final class Search {
 		int d3 = Tables.prunDist1(edge3, sym3, corner3);
 		int d = Math.min(Math.min(d1, d2), d3);
 
-		total_length = 48;
+		total_length = max_turns+1;
 		found_sol = false;
 		for (length1 = d; length1 < total_length; ++length1) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "Stage 1 - length "+length1 );
