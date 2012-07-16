@@ -13,6 +13,8 @@ public final class Symmetry {
 		initSymTables();
 		initInvSymIdx();
 		initSymIdxMultiply();
+		initSymIdxCo2Multiply();
+		initSymIdxCo4Multiply();
 		initMoveConjugate();
 		initMoveConjugateStage();
 	}
@@ -51,20 +53,20 @@ public final class Symmetry {
 							symCornersOrient[idx+4][i] = (byte)(3 + (cube.m_cor[symRLCorners[i]] / 8));
 						}
 						idx += 1;
-						cube.do_move (Us2, FTM);
-						cube.do_move (Ds2, FTM);
+						cube.do_move (Uw2);
+						cube.do_move (Dw2);
 					}
-					cube.do_move (Fs2, FTM);
-					cube.do_move (Bs2, FTM);
+					cube.do_move (Fw2);
+					cube.do_move (Bw2);
 				}
 				idx += 4;
-				cube.do_move (Us, FTM);
-				cube.do_move (Ds3, FTM);
+				cube.do_move (Uw);
+				cube.do_move (Dw3);
 			}
-			cube.do_move (Us3, FTM);
-			cube.do_move (Ds, FTM);
-			cube.do_move (Rs3, FTM);
-			cube.do_move (Ls, FTM);
+			cube.do_move (Uw3);
+			cube.do_move (Dw);
+			cube.do_move (Rw3);
+			cube.do_move (Lw);
 		}
 	}
 
@@ -96,7 +98,25 @@ public final class Symmetry {
 					}
 	}
 
-	static int[][] moveConjugate = new int[N_BASIC_MOVES][N_SYM];
+	static int[][] symIdxCo2Multiply = new int[N_SYM*2][N_SYM*2];
+
+	static void initSymIdxCo2Multiply(){
+
+		for (int i=0; i<N_SYM*2; i++)
+			for (int j=0; j<N_SYM*2; j++)
+				symIdxCo2Multiply[i][j] = symIdxMultiply[symIdxMultiply[invSymIdx[i>>1]][j&1]][symIdxMultiply[i>>1][i&1]] + ( symIdxMultiply[j>>1][i>>1] << 1 );
+	}
+
+	static int[][] symIdxCo4Multiply = new int[N_SYM*4][N_SYM*4];
+
+	static void initSymIdxCo4Multiply(){
+
+		for (int i=0; i<N_SYM*4; i++)
+			for (int j=0; j<N_SYM*4; j++)
+				symIdxCo4Multiply[i][j] = symIdxMultiply[symIdxMultiply[invSymIdx[i>>2]][j&3]][symIdxMultiply[i>>2][i&3]] + ( symIdxMultiply[j>>2][i>>2] << 2 );
+	}
+
+	static byte[][] moveConjugate = new byte[N_MOVES][N_SYM];
 
 	static void initMoveConjugate(){
 
@@ -104,13 +124,12 @@ public final class Symmetry {
 		CubeState cube2 = new CubeState();
 		CubeState cube3 = new CubeState();
 
-		for (int i=0; i<N_BASIC_MOVES; i++){
+		for (int i=0; i<N_MOVES; i++){
 			cube.init();
 			cube.do_move(i);
 			for (int j=0; j<N_SYM; j++){
-				cube.copyTo(cube2);
-				cube2.conjugate(j);
-				for (int k=0; k<N_BASIC_MOVES; k++){
+				cube.conjugateEdges(j, cube2);
+				for (int k=0; k<N_MOVES; k++){
 					cube3.init();
 					cube3.do_move(k);
 					boolean isMove = true;
@@ -121,7 +140,7 @@ public final class Symmetry {
 						}
 					}
 					if( isMove ){
-						moveConjugate[i][j] = k;
+						moveConjugate[i][j] = (byte)k;
 						break;
 					}
 				}
@@ -129,29 +148,34 @@ public final class Symmetry {
 		}
 	}
 
-	static int[][] moveConjugate2 = new int[N_STAGE2_SLICE_MOVES][N_SYM_STAGE2];
-	static int[][] moveConjugate3 = new int[N_STAGE3_SLICE_MOVES][N_SYM_STAGE3];
-	static int[][] moveConjugate4 = new int[N_STAGE4_SLICE_MOVES][N_SYM_STAGE4];
-	static int[][] moveConjugate5 = new int[N_STAGE5_MOVES][N_SYM_STAGE5];
+	static int[][] moveConjugate1 = new int[N_STAGE1_MOVES][N_SYM_STAGE1];
+	static int[][] moveConjugate2 = new int[N_STAGE2_MOVES][N_SYM_STAGE2];
+	static int[][] moveConjugate3 = new int[N_STAGE3_MOVES][N_SYM_STAGE3*2];
+	static int[][] moveConjugate4 = new int[N_STAGE4_MOVES][N_SYM_STAGE4];
+	static int[][] moveConjugate5 = new int[N_STAGE5_MOVES][N_SYM_STAGE5*4];
 
 	static void initMoveConjugateStage(){
 
 		int i, j;
 
-		for (i=0; i<N_STAGE2_SLICE_MOVES; i++)
+		for (i=0; i<N_STAGE1_MOVES; i++)
+			for (j=0; j<N_SYM_STAGE1; j++)
+				moveConjugate1[i][j] = stage1_inv_slice_moves[moveConjugate[stage1_slice_moves[i]][j]];
+
+		for (i=0; i<N_STAGE2_MOVES; i++)
 			for (j=0; j<N_SYM_STAGE2; j++)
 				moveConjugate2[i][j] = stage2_inv_slice_moves[moveConjugate[stage2_slice_moves[i]][j]];
 
-		for (i=0; i<N_STAGE3_SLICE_MOVES; i++)
-			for (j=0; j<N_SYM_STAGE3; j++)
-				moveConjugate3[i][j] = stage3_inv_slice_moves[moveConjugate[stage3_slice_moves[i]][j]];
+		for (i=0; i<N_STAGE3_MOVES; i++)
+			for (j=0; j<N_SYM_STAGE3*2; j++)
+				moveConjugate3[i][j] = stage3_inv_slice_moves[moveConjugate[stage3_slice_moves[i]][symIdxMultiply[j>>1][j&1]]];
 
-		for (i=0; i<N_STAGE4_SLICE_MOVES; i++)
+		for (i=0; i<N_STAGE4_MOVES; i++)
 			for (j=0; j<N_SYM_STAGE4; j++)
 				moveConjugate4[i][j] = stage4_inv_slice_moves[moveConjugate[stage4_slice_moves[i]][j]];
 
 		for (i=0; i<N_STAGE5_MOVES; i++)
-			for (j=0; j<N_SYM_STAGE5; j++)
-				moveConjugate5[i][j] = stage5_inv_slice_moves[moveConjugate[stage5_slice_moves[i]][j]];
+			for (j=0; j<N_SYM_STAGE5*4; j++)
+				moveConjugate5[i][j] = stage5_inv_slice_moves[moveConjugate[stage5_slice_moves[i]][symIdxMultiply[j>>2][j&3]]];
 	}
 }

@@ -98,16 +98,47 @@ public final class CubeState{
 		}
 	}
 
-	public final void do_move (int move_code){
-		rotate_sliceEDGE (move_code, METRIC);
-		rotate_sliceCORNER (move_code, METRIC);
-		rotate_sliceCENTER (move_code, METRIC);
+	public int is_solved (){
+		int sym;
+		byte i;
+
+		CubeState cube = new CubeState();
+		for (sym=0; sym<48; sym++){
+			copyTo( cube );
+			cube.leftMultEdges  ( sym );
+			cube.leftMultCenters( sym );
+			cube.leftMultCorners( sym );
+
+			boolean solved = true;
+			for (i = 0; i < 24; ++i)
+				if( cube.m_edge[i] != i ){
+					solved = false;
+					break;
+				}
+			if( ! solved ) continue;
+
+			for (i = 0; i < 8; ++i)
+				if( cube.m_cor[i] != i ){
+					solved = false;
+					break;
+				}
+			if( ! solved ) continue;
+
+			for (i = 0; i < 24; ++i)
+				if( cube.m_cen[i] != (byte)(i/4) ){
+					solved = false;
+					break;
+			}
+			if( solved ) return sym;
+		}
+
+		return -1;
 	}
 
-	public final void do_move (int move_code, int metric){
-		rotate_sliceEDGE (move_code, metric);
-		rotate_sliceCORNER (move_code, metric);
-		rotate_sliceCENTER (move_code, metric);
+	public final void do_move (int move_code){
+		rotate_sliceEDGE (move_code);
+		rotate_sliceCORNER (move_code);
+		rotate_sliceCENTER (move_code);
 	}
 
 	public void scramble (int move_count, byte[] move_arr){
@@ -124,75 +155,32 @@ public final class CubeState{
 		}
 	}
 
-	public void scramble (int move_count, byte[] move_arr, byte[] move_trans, int metric_switch){
-		int i;
-		byte m;
-		for (i = 0; i < move_count; ++i) {
-			m = move_trans[move_arr[i]];
-			do_move (m, (( m > metric_switch ) && (( m % 3 ) < 2 )) ? STM : METRIC);
-		}
-	}
-
 	public void copyTo (CubeState cube){
 		System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
 		System.arraycopy(m_cor, 0, cube.m_cor, 0, 8);
 		System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
 	}
 
-	public void inverseTo( CubeState c) {
-		int i;
-		int[] t = new int[24];
-
-		/* Corner inverse taken from http://cube20.org/src/cubepos.w */
-		for (i = 0; i < 8; ++i) {
-			int cval = m_cor[i];
-			c.m_cor[cval & 0x7] = (byte)( i + 8 * (( 3 - ( cval>>3 )) % 3 ));
-		}
-
-		/* Edge inverse */
-		for (i = 0; i < 24; ++i) {
-			c.m_edge[m_edge[i]] = (byte)i;
-		}
-
-		/* Center inverse. Need to convert to unique facelets */
-		int[] cenN = new int[6];
-		for (i = 0; i < 6; ++i) cenN[i] = 0;
-
-		for (i = 0; i < 24; ++i){
-			t[i] = m_cen[i] * 4 + cenN[m_cen[i]]++;
-		}
-		for (i = 0; i < 24; ++i) {
-			c.m_cen[t[i]] = (byte)(i/4);
-		}
-	}
-
-	public void inverse() {
-		CubeState temp = new CubeState();
-		copyTo(temp);
-		temp.inverseTo(this);
-	}
-
 	public void leftMultEdges (int symIdx){
 		int i;
+		byte[] sym = Symmetry.symEdges[symIdx];
 		for (i = 0; i < 24; ++i){
-			m_edge[i] = Symmetry.symEdges[symIdx][m_edge[i]];
+			m_edge[i] = sym[m_edge[i]];
 		}
 	}
 
-	public void rightMultEdges (int symIdx){
+	public void rightMultEdges (int symIdx, CubeState c){
 		int i;
-		byte[] edge = new byte[24];
-
-		System.arraycopy(m_edge, 0, edge, 0, 24);
+		byte[] sym = Symmetry.symEdges[symIdx];
 
 		for (i = 0; i < 24; ++i){
-			m_edge[i] = edge[Symmetry.symEdges[symIdx][i]];
+			c.m_edge[i] = m_edge[sym[i]];
 		}
 	}
 
-	public void conjugateEdges (int symIdx){
-		rightMultEdges( Symmetry.invSymIdx[symIdx] );
-		leftMultEdges( symIdx );
+	public void conjugateEdges (int symIdx, CubeState c){
+		rightMultEdges( Symmetry.invSymIdx[symIdx], c );
+		c.leftMultEdges( symIdx );
 	}
 
 	public void leftMultCenters (int symIdx){
@@ -207,8 +195,9 @@ public final class CubeState{
 		}
 
 		// Multiply.
+		byte[] sym = Symmetry.symCenters[symIdx];
 		for (i = 0; i < 24; ++i){
-			m_cen[i] = Symmetry.symCenters[symIdx][m_cen[i]];
+			m_cen[i] = sym[m_cen[i]];
 		}
 
 		// Transform centers back.
@@ -217,21 +206,19 @@ public final class CubeState{
 		}
 	}
 
-	public void rightMultCenters (int symIdx){
+	public void rightMultCenters (int symIdx, CubeState c){
 		int i;
-		byte[] cen = new byte[24];
-
-		System.arraycopy(m_cen, 0, cen, 0, 24);
+		byte[] sym = Symmetry.symCenters[symIdx];
 
 		// Conjugate edges and centers.
 		for (i = 0; i < 24; ++i){
-			m_cen[i] = cen[Symmetry.symCenters[symIdx][i]];
+			c.m_cen[i] = m_cen[sym[i]];
 		}
 	}
 
-	public void conjugateCenters (int symIdx){
-		rightMultCenters( Symmetry.invSymIdx[symIdx] );
-		leftMultCenters( symIdx );
+	public void conjugateCenters (int symIdx, CubeState c){
+		rightMultCenters( Symmetry.invSymIdx[symIdx], c );
+		c.leftMultCenters( symIdx );
 	}
 
 	private byte multD3( byte oriA, byte oriB){
@@ -262,24 +249,26 @@ public final class CubeState{
 	public void leftMultCorners (int symIdx){
 		int i;
 		byte orientA, orientB;
+		byte symO[] = Symmetry.symCornersOrient[symIdx];
+		byte symP[] = Symmetry.symCornersPerm[symIdx];
 
 		for (i = 0; i < 8; ++i){
-			orientA = Symmetry.symCornersOrient[symIdx][(m_cor[i] & 0x7)];
+			orientA = symO[(m_cor[i] & 0x7)];
 			orientB = (byte)(m_cor[i] >> 3);
-			m_cor[i] = (byte) ((multD3(orientA, orientB) << 3 ) + Symmetry.symCornersPerm[symIdx][(m_cor[i] & 0x7)]);
+			m_cor[i] = (byte) ((multD3(orientA, orientB) << 3 ) + symP[(m_cor[i] & 0x7)]);
 		}
 	}
 
-	public void rightMultCorners (int symIdx){
+	public void rightMultCorners (int symIdx, CubeState c){
 		int i;
 		byte orientA, orientB;
-		byte[] cor = new byte[8];
-		System.arraycopy(m_cor, 0, cor, 0, 8);
+		byte symO[] = Symmetry.symCornersOrient[symIdx];
+		byte symP[] = Symmetry.symCornersPerm[symIdx];
 
 		for (i = 0; i < 8; ++i){
-			orientA = (byte) (cor[Symmetry.symCornersPerm[symIdx][i]] >> 3);
-			orientB = Symmetry.symCornersOrient[symIdx][i];
-			m_cor[i] = (byte) (( multD3(orientA, orientB) << 3 ) + (cor[Symmetry.symCornersPerm[symIdx][i]] & 0x7));
+			orientA = (byte) (m_cor[symP[i]] >> 3);
+			orientB = symO[i];
+			c.m_cor[i] = (byte) (( multD3(orientA, orientB) << 3 ) + (m_cor[symP[i]] & 0x7));
 		}
 	}
 
@@ -294,15 +283,23 @@ public final class CubeState{
 		}
 	}
 
-	public void conjugateCorners (int symIdx){
-		rightMultCorners( Symmetry.invSymIdx[symIdx] );
-		leftMultCorners( symIdx );
+	public void conjugateCorners (int symIdx, CubeState c){
+		rightMultCorners( Symmetry.invSymIdx[symIdx], c );
+		c.leftMultCorners( symIdx );
 	}
 
-	public void conjugate (int symIdx){
-		conjugateEdges (symIdx);
-		conjugateCenters (symIdx);
-		conjugateCorners (symIdx);
+	public void leftMult (int symIdx){
+		leftMultEdges (symIdx);
+		leftMultCenters (symIdx);
+		leftMultCorners (symIdx);
+	}
+
+	public void rightMult (int symIdx){
+		CubeState c = new CubeState();
+		copyTo(c);
+		c.rightMultEdges (symIdx, this);
+		c.rightMultCenters (symIdx, this);
+		c.rightMultCorners (symIdx, this);
 	}
 
 	public boolean edgeUD_parity_odd (){
@@ -329,28 +326,22 @@ public final class CubeState{
 		return parity != 0;
 	}
 
-	public void rotate_sliceCORNER (int move_code, int metric){
+	public void rotate_sliceCORNER (int move_code){
 		int i;
-		if (move_code % 6 >= 3) {
-			if( metric == STM ) 
-				return;		//inner slice turn, no corners affected
-			if( metric == FTM )
-				move_code -= 3; //only do the inner slice
-		}
-		int mc6 = move_code/6;
-		int mc = 3*mc6 + move_code % 3;
+		if (( move_code / 3 ) % 3 == 1 )
+			return;		//inner slice turn, no corners affected
+
+		int mc = 3*(move_code/9) + ( move_code % 3 );
 		int fidx = rotateCOR_fidx[mc];
 		int tidx = rotateCOR_tidx[mc];
 		byte[] old_m_cor = new byte[8];
 		System.arraycopy(m_cor, 0, old_m_cor, 0, 8);
-		if (mc % 3 != 2) {	//avoid doing "if" inside loop, for speed
+		if (( mc % 3 != 2 ) && ( mc >= 6 )) { // single L, R, F or B face turn
 			for (i = 0; i < 4; ++i) {
 				byte tmpface = old_m_cor[rotateCOR_ft[fidx + i]];
-				if (mc >= 6) {	//L,R,F,B face turns
-					byte new_ori = (byte)((tmpface >> 3) + rotateCOR_ori[i]);
-					new_ori %= 3;
-					tmpface = (byte)((tmpface & 0x7) + (new_ori << 3));
-				}
+				byte new_ori = (byte)((tmpface >> 3) + rotateCOR_ori[i]);
+				new_ori %= 3;
+				tmpface = (byte)((tmpface & 0x7) + (new_ori << 3));
 				m_cor[rotateCOR_ft[tidx + i]] = tmpface;
 			}
 		} else {
@@ -360,22 +351,15 @@ public final class CubeState{
 		}
 	}
 
-	public void rotate_sliceEDGE (int move_code, int metric, int metric_switch){
-		if(( move_code > metric_switch ) && ( move_code % 3 < 2 ))
-			rotate_sliceEDGE ( move_code, STM );
-		else
-			rotate_sliceEDGE ( move_code, metric );
-	}
-
-	public void rotate_sliceEDGE (int move_code, int metric){
+	public void rotate_sliceEDGE (int move_code){
 		byte[] old_m_edge = new byte[24];
 		int i, j;
 		System.arraycopy(m_edge, 0, old_m_edge, 0, 24);
-		int mc3 = move_code/3;
 		int movdir = move_code % 3;
-		int mcx = 3*(mc3/2);
+		int mcx = 3*(move_code/9);
+		int layer = (move_code/3)%3; // 0: face, 1: slice, 2: face+slice
 		for (j = 0; j < 3; ++j) { // j = 0, 1: face turn. j = 2: slice turn
-			if((( metric == STM ) && ( ( (mc3 & 0x1) != 0 ) ^ ( j == 2 ) )) || (( metric == FTM ) && ( (mc3 & 0x1) == 0 ) && ( j == 2 )))
+			if(((layer==1) && (j<2)) || ((layer==0) && (j==2)))
 				continue;
 			int fidx = rotateEDGE_fidx[3*(mcx+j) + movdir];
 			int tidx = rotateEDGE_tidx[3*(mcx+j) + movdir];
@@ -385,22 +369,15 @@ public final class CubeState{
 		}
 	}
 
-	public void rotate_sliceCENTER (int move_code, int metric, int metric_switch){
-		if(( move_code > metric_switch ) && ( move_code % 3 < 2 ))
-			rotate_sliceCENTER ( move_code, STM );
-		else
-			rotate_sliceCENTER ( move_code, metric );
-	}
-
-	public void rotate_sliceCENTER (int move_code, int metric){
+	public void rotate_sliceCENTER (int move_code){
 		byte[] old_m_cen = new byte[24];
 		int i, j;
 		System.arraycopy(m_cen, 0, old_m_cen, 0, 24);
-		int mc3 = move_code/3;
 		int movdir = move_code % 3;
-		int mcx = 3*(mc3/2);
+		int mcx = 3*(move_code/9);
+		int layer = (move_code/3)%3; // 0: face, 1: slice, 2: face+slice
 		for (j = 0; j < 3; ++j) { // j = 0: face turn. j = 1, 2: slice turn
-			if((( metric == STM ) && ( ( (mc3 & 0x1) != 0 ) ^ ( j > 0 ) )) || (( metric == FTM ) && ( (mc3 & 0x1) == 0 ) && ( j > 0 )))
+			if(((layer==1) && (j==0)) || ((layer==0) && (j>0)))
 				continue;
 			int fidx = rotateEDGE_fidx[3*(mcx+j) + movdir]; // rotateCEN_fidx = rotateEDGE_fidx
 			int tidx = rotateEDGE_tidx[3*(mcx+j) + movdir]; // rotateCEN_tidx = rotateEDGE_tidx
@@ -421,21 +398,32 @@ public final class CubeState{
 		return idx;
 	}
 
+	public void convert_edges1_to_std_cube (int edge)
+	{
+		int r = 8;
+		byte lrfb = 0;
+		byte ud = 16;
+		for (int i=23; i>=0; i--) {
+			if (edge >= Cnk[i][r]) {
+				edge -= Cnk[i][r--];
+				m_edge[i] = ud++;
+			} else {
+				m_edge[i] = lrfb++;
+			}
+		}
+	}
+
 	public int convert_symedges_to_stage1 (){
 		CubeState cube = new CubeState();
 		int i;
-		int minEdge = 999999999;
-		int minSym = 0;
-		for (int sym=0; sym < Constants.N_SYM_STAGE1; sym++ ){
-			copyTo (cube);
-			cube.rightMultEdges(Symmetry.invSymIdx[sym]);
+		for (int sym=(Tables.symHelper1 == null)?0:Tables.symHelper1[convert_edges_to_stage1()]; sym < Constants.N_SYM_STAGE1; sym++ ){
+			rightMultEdges(Symmetry.invSymIdx[sym], cube);
 			int edge = cube.convert_edges_to_stage1();
-			if( edge < minEdge){
-				minEdge = edge;
-				minSym = sym;
-			}
+			int rep = Arrays.binarySearch(Tables.sym2rawEdge1, edge);
+			if( rep >= 0 )
+				return ( rep << 6 ) | sym;
 		}
-		return ( Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE1, minEdge) << 6 ) + minSym;
+		return -1;
 	}
 
 	public short convert_corners_to_stage1 (){
@@ -446,108 +434,175 @@ public final class CubeState{
 		return (short)orientc;
 	}
 
-	public void convert_to_stage1 (CubeStage1 result_cube){
-		result_cube.corner = convert_corners_to_stage1();
-		int symedge = convert_symedges_to_stage1();
-		result_cube.edge = symedge >> 6;
-		result_cube.sym = symedge & 0x3F;
+	public void convert_corners1_to_std_cube (int corner)
+	{
+		int i;
+
+		int orientc = corner;
+		int orientcmod3 = 0;
+		for (i = 6; i >= 0; --i) {	//don't want 8th edge orientation
+			byte fo = (byte)(orientc % 3);
+			m_cor[i] = (byte)(i + (fo << 3));
+			orientcmod3 += fo;
+			orientc /= 3;
+		}
+		m_cor[7] = (byte)(7 + (((24 - orientcmod3) % 3) << 3));
 	}
 
 	public short convert_edges_to_stage2 (){
-		int u = Constants.perm_n_pack (8, m_edge, 16);
+		int u = Constants.get8Perm (m_edge, 16);
 		return Tables.perm_to_420[u];
 	}
 
-	public short convert_centers_to_stage2 (int c){
-		int i, j;
-		byte[] t = new byte[8];
-		j = 0;
-		for (i = 0; i < 24; ++i) {
-			if (m_cen[i] == c) {
-				t[j++] = (byte)i;
+	public void convert_edges2_to_std_cube (int edge){
+		int i;
+		byte[] t6 = new byte[4];
+		int edgeFbm = edge / 6;
+		Constants.set4Perm (t6, edge % 6);
+		for (i = 0; i < 16; ++i)
+			m_edge[i] = (byte)i;
+
+		byte f = 16;
+		int b = 0;
+		int r = 4;
+		for (i = 7; i >= 0; i--) {
+			if ( edgeFbm >= Cnk[i][r] ) {
+				edgeFbm -= Cnk[i][r--];
+				m_edge[16 + i] = f++;
+			} else {
+				m_edge[16 + i] = (byte)(20 + t6[b++]);
 			}
 		}
-		int idx = 24*24*24*t[0] + 24*24*t[1] + 24*t[2] + t[3];
-		return (short)Tables.c4_to_cloc[idx];
+	}
+
+	public short convert_centers_to_stage2 (int c){
+		int idx = 0;
+		int r = 4;
+		for (int i=23; i>=0; i--) {
+			if (m_cen[i] == c) {
+				idx += Cnk[i][r--];
+			}
+		}
+		return (short)idx;
+	}
+
+	public void convert_centers2_to_std_cube (int center){
+		int r = 4;
+		byte udlrf = 0;
+		for (int i=23; i>=0; i--) {
+			if (center >= Cnk[i][r]) {
+				center -= Cnk[i][r--];
+				m_cen[i] = 5;
+			} else {
+				m_cen[i] = (byte)(udlrf++/4);
+			}
+		}
 	}
 
 	public short convert_symcenters_to_stage2 (int c){
 		CubeState cube = new CubeState();
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE2; sym++ ){
-			copyTo (cube);
-			cube.rightMultCenters(Symmetry.invSymIdx[sym]);
-			rep = Arrays.binarySearch(Tables.symCenterToCenterSTAGE2, cube.convert_centers_to_stage2(c));
+			rightMultCenters(Symmetry.invSymIdx[sym], cube);
+			rep = Arrays.binarySearch(Tables.sym2rawCenter2, cube.convert_centers_to_stage2(c));
 			if( rep >= 0 )
 				return (short)(( rep << 4 ) + sym);
 		}
 		return -1;
 	}
 
-	public void convert_to_stage2 (CubeStage2 result_cube){
-		result_cube.edge = convert_edges_to_stage2();
-		int symcenF = convert_symcenters_to_stage2(4);
-		int symcenB = convert_symcenters_to_stage2(5);
-		result_cube.centerF = symcenF >> 4;
-		result_cube.symF = symcenF & 0xF;
-		result_cube.centerB = symcenB >> 4;
-		result_cube.symB = symcenB & 0xF;
-	}
-
 	public int convert_centers_to_stage3 (){
-		int i;
 		int cenbm = 0;
 		int cenbm4of8 = 0;
-		int j = 0;
-		for (i = 0; i < 16; ++i) {
+		int j = 7;
+		int r = 8;
+		int s = 4;
+		for (int i = 15; i >= 0; i--) {
 			if (m_cen[i] >= 2) {
-				cenbm |= (1 << i);
+				cenbm += Cnk[i][r--];
 				if (m_cen[i] == 2) {
-					cenbm4of8 |= (1 << j);
+					cenbm4of8 += Cnk[j][s--];
 				}
-				++j;
+				--j;
 			}
 		}
-		return 70*Tables.e16bm2eloc[cenbm] + Tables.bm4of8_to_70[cenbm4of8];
+		return 70*cenbm + cenbm4of8;
+	}
+
+	public void convert_centers3_to_std_cube (int center){
+		int cenbm = center/70;
+		int cenbm4of8 = center % 70;
+		int ud = 0;
+		int j = 7;
+		int r = 8;
+		int s = 4;
+		for (int i = 15; i >= 0; --i) {
+			if (cenbm < Cnk[i][r] ) {
+				m_cen[i] = (byte)(ud++/4);
+			} else {
+				cenbm -= Cnk[i][r--];
+				if (cenbm4of8 < Cnk[j][s]) {
+					m_cen[i] = 3;
+				} else {
+					cenbm4of8 -= Cnk[j][s--];
+					m_cen[i] = 2;
+				}
+			j--;
+			}
+		}
+		for (int i = 16; i < 24; ++i) {
+			m_cen[i] = (byte)(i/4);
+		}
 	}
 
 	public int convert_symcenters_to_stage3 (){
 		CubeState cube = new CubeState();
 		int rep;
-		for (int sym=0; sym < Constants.N_SYM_STAGE3; sym++ ){
+		for (int sym=(Tables.symHelper3 == null)?0:Tables.symHelper3[convert_centers_to_stage3()]; sym < Constants.N_SYM_STAGE3; sym++ ){
 			for (int cosym=0; cosym < 2; cosym++ ){
-				System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
-				cube.rightMultCenters(Symmetry.invSymIdx[cosym]);
-				cube.conjugateCenters(sym);
-				rep = Arrays.binarySearch(Tables.symCenterToCenterSTAGE3, cube.convert_centers_to_stage3());
+				rightMultCenters(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube);
+				cube.leftMultCenters(sym);
+				rep = Arrays.binarySearch(Tables.sym2rawCenter3, cube.convert_centers_to_stage3());
 				if( rep >= 0 )
-					return ( rep << 4 ) + ( sym << 1 ) + cosym;
+					return ( rep << 4 ) | ( sym << 1 ) | cosym;
 			}
 		}
 		return -1;
 	}
 
 	public short convert_edges_to_stage3 (){
-		int i;
-		int edge_bm = 0;
-		for (i = 0; i < 16; ++i) {
+		int idx = 0;
+		int r = 8;
+		for (int i=15; i>=0; i--) {
 			if (m_edge[i] < 4 || m_edge[i] >= 12) {
-				edge_bm |= (1 << i);
+				idx += Cnk[i][r--];
 			}
 		}
-		return (short)Tables.e16bm2eloc[edge_bm];
+		return (short)idx;
 	}
 
-	public void convert_to_stage3 (CubeStage3 result_cube){
-		int symcen = convert_symcenters_to_stage3 ();
-		result_cube.center = symcen >> 4;
-		result_cube.sym = ( symcen & 0xF ) >> 1;
-		result_cube.cosym = symcen & 0x1;
-		result_cube.edge = convert_edges_to_stage3 ();
-		result_cube.edge_odd = edgeUD_parity_odd ();
+	public void convert_edges3_to_std_cube (int edge){
+		byte e0 = 0;
+		byte e1 = 4;
+		int r = 8;
+		for (int i = 15; i >= 0; i--) {
+			if (edge >= Cnk[i][r]) {
+				edge -= Cnk[i][r--];
+				m_edge[i] = e0++;
+				if (e0 == 4) {
+					e0 = 12;		//skip numbers 4..11; those are used for e1
+				}
+			} else {
+				m_edge[i] = e1++;
+			}
+		}
+		for (int i = 16; i < 24; ++i) {
+			m_edge[i] = (byte)i;
+		}
 	}
 
-	private static byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
+	private static final byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
+	private static final byte sqs_to_std[] = { 0, 2, 5, 7, 1, 3, 4, 6 };
 
 	public int convert_edges_to_stage4 (){
 		int redge4of8 = 0;
@@ -557,43 +612,83 @@ public final class CubeState{
 
 		int i_rl = 4;
 		int i_fb = 0;
-		for( int i=0; i<8;i++){
+		int r = 4;
+		for( int i=7; i>=0;i--){
 			if( m_edge[i+4] < 8 ){
-				ledge4of8 |= 1 << i;
+				ledge4of8 += Cnk[i][r--];
 				edges_rl[i_rl++] = m_edge[i+4];
 			}
 			else
 				edges_fb[i_fb++] = (byte)(m_edge[i+4] - 8);
 		}
 
-		int u;
 		i_rl = 0;
 		i_fb = 4;
-		for( int i=0; i<8;i++){
-			u = (i < 4) ? i : i + 8;
+		r = 4;
+		for( int i=7; i>=0;i--){
+			int u = (i < 4) ? i : i + 8;
 			if( m_edge[u] < 4 ){
-				redge4of8 |= 1 << i;
+				redge4of8 += Cnk[i][r--];
 				edges_rl[i_rl++] = m_edge[u];
 			}
 			else
 				edges_fb[i_fb++] = (byte)(m_edge[u] - 8);
 		}
 
-		int perm6_rl = Tables.perm_to_420[perm_n_pack (8, edges_rl, 0)]%6;
-		int perm6_fb = Tables.perm_to_420[perm_n_pack (8, edges_fb, 0)]%6;
+		int perm6_rl = Tables.perm_to_420[get8Perm (edges_rl, 0)]%6;
+		int perm6_fb = Tables.perm_to_420[get8Perm (edges_fb, 0)]%6;
 
-		return ((( perm6_rl * 6 + perm6_fb ) * 70 + Tables.bm4of8_to_70[redge4of8] ) * 70 + Tables.bm4of8_to_70[ledge4of8] );
+		return ((( perm6_rl * 6 + perm6_fb ) * 70 + redge4of8 ) * 70 + ledge4of8 );
+	}
+
+	public void convert_edges4_to_std_cube (int edge){
+
+		int ledge4of8 = edge % 70;
+		edge /= 70;
+		int redge4of8 = edge % 70;
+		edge /= 70;
+		int perm6_fb = edge % 6;
+		int perm6_rl = edge / 6;
+		byte[] t = new byte[4];
+
+		int i1 = 0;
+		int i2 = 0;
+		int r = 4;
+		Constants.set4Perm( t, perm6_rl );
+		for( int i=7; i >= 0; i-- ){
+			if( ledge4of8 >= Cnk[i][r] ){
+				ledge4of8 -= Cnk[i][r--];
+				m_edge[i+4] = (byte)( t[i1++] + 4 );
+			}
+			else
+				m_edge[i+4] = (byte)( (i2++) + 8);
+		}
+
+		i1 = 0;
+		i2 = 0;
+		r = 4;
+		Constants.set4Perm( t, perm6_fb );
+		for( int i=7; i >= 0; i-- ){
+			if( redge4of8 >= Cnk[i][r] ){
+				redge4of8 -= Cnk[i][r--];
+				m_edge[( i < 4 ) ? i : i + 8] = (byte)(i1++);
+			}
+			else
+				m_edge[( i < 4 ) ? i : i + 8] = (byte)(t[i2++] + 12);
+		}
+
+		for( int i=16; i < 24; i++ )
+			m_edge[i] = (byte)i;
 	}
 
 	public int convert_symedges_to_stage4 (){
 		CubeState cube = new CubeState();
 		int rep;
 		for (int sym=0; sym < Constants.N_SYM_STAGE4; sym++ ){
-			copyTo (cube);
-			cube.conjugateEdges(sym);
-			rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE4, cube.convert_edges_to_stage4() );
+			conjugateEdges(sym, cube);
+			rep = Arrays.binarySearch(Tables.sym2rawEdge4, cube.convert_edges_to_stage4() );
 			if( rep >= 0 )
-				return ( rep << 4 ) + sym;
+				return ( rep << 4 ) | sym;
 		}
 		return -1;
 	}
@@ -608,57 +703,150 @@ public final class CubeState{
 		for (i = 0; i < 8; ++i) {
 			t6[std_to_sqs[i]] = std_to_sqs[m_cor[i]];
 		}
-		int u = Constants.perm_n_pack (8, t6, 0);
+		int u = Constants.get8Perm (t6, 0);
 		return Tables.perm_to_420[u];
+	}
+
+	public void convert_corners4_to_std_cube (int corner){
+		int i;
+		byte[] t6 = new byte[4];
+		byte[] t8 = new byte[8];
+		//Note: for corners, "squares" style mapping is used in creating the "coordinate" value.
+		//But the do_move function for std_cube assumes "standard" mapping.
+		//Therefore the m_cor array must be converted accordingly using this conversion array.
+		int cor_bm = corner / 6;
+		Constants.set4Perm (t6, corner % 6);
+		int a = 0;
+		int b = 0;
+		int r = 4;
+		for (i = 7; i >= 0; i--) {
+			if (cor_bm >= Cnk[i][r] ) {
+				cor_bm -= Cnk[i][r--];
+				t8[i] = (byte)a++;
+			} else {
+				t8[i] = (byte)(4 + t6[b++]);
+			}
+		}
+		for (i = 0; i < 8; ++i) {
+			m_cor[sqs_to_std[i]] = sqs_to_std[t8[i]];
+		}
 	}
 
 	public byte convert_centers_to_stage4 (){
 		int i;
 		int cenbm4of8 = 0;
-		for (i = 0; i < 8; ++i) {
+		int r = 4;
+		for (i = 7; i >= 0; i--) {
 			if (m_cen[i] == 0) {
-				cenbm4of8 |= (1 << i);
+				cenbm4of8 += Cnk[i][r--];
 			}
 		}
-		return Tables.bm4of8_to_70[cenbm4of8];
+		return (byte)cenbm4of8;
 	}
 
-	public void convert_to_stage4 (CubeStage4 result_cube){
-		int symedge = convert_symedges_to_stage4();
-		result_cube.edge = symedge >> 4;
-		result_cube.sym = symedge & 0xF;
-		result_cube.corner = convert_corners_to_stage4();
-		result_cube.center = convert_centers_to_stage4();
+	public void convert_centers4_to_std_cube (int center){
+		int i;
+		int r = 4;
+		for (i = 7; i >= 0; i--) {
+			if ( center >= Cnk[i][r] ) {
+				center -= Cnk[i][r--];
+				m_cen[i] = 0;
+			} else {
+				m_cen[i] = 1;
+			}
+		}
+		for (i = 8; i < 24; ++i) {
+			m_cen[i] = (byte)(i/4);
+		}
 	}
 
-	private static byte std_to_sqs_cor[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
-	private static byte std_to_sqs_cen[] = {
+	private static final byte std_to_sqs_cor[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
+	private static final byte sqs_to_std_cor[] = { 0, 2, 5, 7, 1, 3, 4, 6 };
+	private static final byte std_to_sqs_cen[] = {
 		0,  3,  1,  2,  5,  6,  4,  7,
 		8, 11,  9, 10, 13, 14, 12, 15,
 		16, 19, 17, 18, 21, 22, 20, 23
 	};
+	private static final byte sqs_to_std_cen[] = {
+		0,  2,  3,  1,  6,  4,  5,  7,
+		8, 10, 11,  9, 14, 12, 13, 15,
+		16, 18, 19, 17, 22, 20, 21, 23
+	};
+	private static final int sqs_rep_to_perm[][] = {
+		{  0,  7, 16, 23 },
+		{  1,  6, 17, 22 },
+		{  2, 10, 13, 21 },
+		{  3, 11, 12, 20 },
+		{  4,  8, 15, 19 },
+		{  5,  9, 14, 18 }
+	};
+
+	private static final int sqs_perm_to_rep[] = {
+		0, 1, 2, 3, 4, 5,
+		1, 0, 4, 5, 2, 3,
+		3, 2, 5, 4, 0, 1,
+		5, 4, 3, 2, 1, 0
+	};
+
 
 	public int convert_edges_to_stage5 (){
-		int ep1 = Constants.perm_n_pack (4, m_edge, 0);
-		int ep2 = Constants.perm_n_pack (4, m_edge, 8);
-		int ep3 = Constants.perm_n_pack (4, m_edge, 16);
-		return 96*96*(4*ep3 + (m_edge[20] - 20)) + 96*(4*ep2 + (m_edge[12] - 12)) +
-			4*ep1 + (m_edge[4] - 4);
+		int ep1 = Constants.get4Perm (m_edge, 0);
+		int ep2 = Constants.get4Perm (m_edge, 8);
+		int ep3 = Constants.get4Perm (m_edge, 16);
+		return 96*96*(4*ep3 + (m_edge[20] - 20)) + 96*(4*ep2 + (m_edge[12] - 12)) + 4*ep1 + (m_edge[4] - 4);
+	}
+
+	public void convert_edges5_to_std_cube (int edge){
+		int i;
+
+		int ep1 = edge % 96;
+		int ep2 = (edge/96) % 96;
+		int ep3 = edge/(96*96);
+		byte[] t = new byte[4];
+		Constants.set4Perm (m_edge, ep1/4);
+
+		Constants.set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[ep1/4]][ep1 % 4]);
+		for (i = 0; i < 4; ++i) {
+			m_edge[i+4] = (byte)(t[i]+4);
+		}
+
+		Constants.set4Perm (t, ep2/4);
+		for (i = 0; i < 4; ++i) {
+			m_edge[i+8] = (byte)(t[i]+8);
+		}
+
+		Constants.set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[ep2/4]][ep2 % 4]);
+		for (i = 0; i < 4; ++i) {
+			m_edge[i+12] = (byte)(t[i]+12);
+		}
+
+		Constants.set4Perm (t, ep3/4);
+		for (i = 0; i < 4; ++i) {
+			m_edge[i+16] = (byte)(t[i]+16);
+		}
+
+		Constants.set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[ep3/4]][ep3 % 4]);
+		for (i = 0; i < 4; ++i) {
+			m_edge[i+20] = (byte)(t[i]+20);
+		}
 	}
 
 	public int convert_symedges_to_stage5 (){
 		CubeState cube = new CubeState();
+		CubeState cube2 = new CubeState();
 		int rep;
-		for (int sym=0; sym < Constants.N_SYM_STAGE5; sym++ ){
+		for (int sym=Tables.symHelper5[convert_edges_to_stage5()]; sym < Constants.N_SYM_STAGE5; sym++ ){
+			System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
+			cube.leftMultEdges(sym);
 			for (int cosym=0; cosym < 4; cosym++ ){
-				System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
-				cube.rightMultEdges (Symmetry.invSymIdx[cosym]);
-				cube.conjugateEdges(sym);
-				rep = Arrays.binarySearch(Tables.symEdgeToEdgeSTAGE5, cube.convert_edges_to_stage5 ());
-				if( rep >= 0 )
-					return ( rep << 8 ) + ( sym << 2 ) + cosym;
+				cube.rightMultEdges (Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
+				rep = Arrays.binarySearch(Tables.sym2rawEdge5, cube2.convert_edges_to_stage5 ());
+				if( rep >= 0 ){
+					return ( rep << 8 ) | ( sym << 2 ) | cosym;
+				}
 			}
 		}
+		System.out.println("Nope...");
 		return -1;
 	}
 
@@ -687,6 +875,27 @@ public final class CubeState{
 		return cen;
 	}
 
+	public void convert_centers5_to_std_cube (int center){
+		int i;
+		byte[] old_m_cen = new byte[24];
+
+		int cen1 = center % 12;
+		int cen2 = (center/12) % 12;
+		int cen3 = center/(12*12);
+		int x = (Tables.squares_cen_map[cen1] << 16) | (Tables.squares_cen_map[cen2] << 8) | Tables.squares_cen_map[cen3];
+		int b = 0x800000;
+		for (i = 0; i < 24; ++i) {
+			old_m_cen[i] = (byte) (2*(i/8) + ((x & b) == 0 ? 0 : 1));
+			b >>= 1;
+		}
+
+		//We must convert between "standard"-style cubie numbering and the "square"-style
+		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
+		for (i = 0; i < 24; ++i) {
+			m_cen[sqs_to_std_cen[i]] = (byte)(sqs_to_std_cen[4*old_m_cen[i]]/4);
+		}
+	}
+
 	public byte convert_corners_to_stage5 (){
 		int i;
 		//We must convert between "squares"-style cubie numbering and the "standard"-style
@@ -697,17 +906,24 @@ public final class CubeState{
 			new_m_cor[std_to_sqs_cor[i]] = std_to_sqs_cor[m_cor[i]];
 		}
 
-		return (byte)(4*Constants.perm_n_pack (4, new_m_cor, 0) + (new_m_cor[4] - 4));
+		return (byte)(4*Constants.get4Perm (new_m_cor, 0) + (new_m_cor[4] - 4));
 	}
 
-	public void convert_to_stage5 (CubeStage5 result_cube){
-		result_cube.corner = convert_corners_to_stage5 ();
-		result_cube.center = convert_centers_to_stage5 ();
-		int symedge = convert_symedges_to_stage5 ();
-		result_cube.cosym = symedge & 0x03;
-		symedge >>= 2;
-		result_cube.sym = symedge & 0x3F;
-		result_cube.edge = symedge >> 6;
+	public void convert_corners5_to_std_cube (int corner){
+		int i;
+		byte[] old_m_cor = new byte[8];
+		byte[] t = new byte[4];
+		Constants.set4Perm (old_m_cor, corner/4);
+		Constants.set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[corner/4]][corner % 4]);
+		for (i = 0; i < 4; ++i) {
+			old_m_cor[i+4] = (byte)(t[i]+4);
+		}
+
+		//We must convert between "standard"-style cubie numbering and the "square"-style
+		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
+		for (i = 0; i < 8; ++i) {
+			m_cor[sqs_to_std_cor[i]] = sqs_to_std_cor[old_m_cor[i]];
+		}
 	}
 
 	public void print (){

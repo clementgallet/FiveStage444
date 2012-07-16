@@ -119,25 +119,13 @@ public class Tools {
 	private static void prepareTables() {
 		Symmetry.init();
 		Tables.init();
-		CubeStage1.prune_table = new PruningStage1();
-		CubeStage2.prune_table_edgcen = new PruningStage2EdgCen();
-		CubeStage3.prune_table_cen = new PruningStage3Cen();
-		CubeStage3.prune_table_edg = new PruningStage3Edg();
-		/** CubeStage4.prune_table = new PruningStage4(); **/
-		CubeStage4.prune_table_edgcen = new PruningStage4EdgCen();
-		CubeStage4.prune_table_edgcor = new PruningStage4EdgCor();
-		CubeStage5.prune_table_edgcen = new PruningStage5EdgCen();
-		CubeStage5.prune_table_edgcor = new PruningStage5EdgCor();
+		Tables.prune_table_cen3 = new PruningStage3Cen();
+		Tables.prune_table_edg3 = new PruningStage3Edg();
 	}
 
 	public static enum InitializationState {
 		UNINITIALIZED,
 		INITING_TABLES,
-		STAGE1A,
-		STAGE2A,
-		STAGE3A, STAGE3B,
-		STAGE4A, STAGE4B,
-		STAGE5A, STAGE5B,
 		INITIALIZED;
 	}
 
@@ -146,15 +134,15 @@ public class Tools {
 	}
 
 	static volatile InitializationState inited = InitializationState.UNINITIALIZED;
-	
+
 	private static synchronized void init(boolean tryToReadFile, File fivephase_tables) {
 		if(inited != InitializationState.UNINITIALIZED) {
 			return;
 		}
-		
+
 		if(fivephase_tables == null) {
 			fivephase_tables = new File(Utils.getResourceDirectory(), "fivephase_tables");
-			//fivephase_tables = new File("cg/fivestage444/fivephase_tables_ftm");
+			//fivephase_tables = new File("cg/fivestage444/fivephase_tables_"+METRIC_STR);
 		}
 
 		prepareTables();
@@ -171,27 +159,11 @@ public class Tools {
 		if(inited == InitializationState.UNINITIALIZED) {
 			TimedLogRecordStart start = new TimedLogRecordStart("Generating fivephase tables");
 			l.log(start);
-			
+
 			inited = InitializationState.INITING_TABLES;
 			Tables.init_tables();
-
-			inited = InitializationState.STAGE1A;
-			CubeStage1.prune_table.analyse();
-			inited = InitializationState.STAGE2A;
-			CubeStage2.prune_table_edgcen.analyse();
-			inited = InitializationState.STAGE3A;
-			CubeStage3.prune_table_cen.analyse();
-			inited = InitializationState.STAGE3B;
-			CubeStage3.prune_table_edg.analyse();
-			/** CubeStage4.prune_table.analyse(); **/
-			inited = InitializationState.STAGE4A;
-			CubeStage4.prune_table_edgcen.analyse();
-			inited = InitializationState.STAGE4B;
-			CubeStage4.prune_table_edgcor.analyse();
-			inited = InitializationState.STAGE5A;
-			CubeStage5.prune_table_edgcen.analyse();
-			inited = InitializationState.STAGE5B;
-			CubeStage5.prune_table_edgcor.analyse();
+			Tables.prune_table_cen3.analyse();
+			Tables.prune_table_edg3.analyse();
 
 			try {
 				l.info("Writing to " + fivephase_tables);
@@ -205,44 +177,48 @@ public class Tools {
 			l.log(start.finishedNow());
 		}
 		inited = InitializationState.INITIALIZED;
+		// if( ! checkTables() ) System.out.println( "There might be a problem with tables integrity...");
 	}
 	
 	public static boolean initFrom(DataInput in) {
 		try {
-			read(Tables.symEdgeToEdgeSTAGE1, in);
-			read(Tables.move_table_symEdgeSTAGE1, in);
-			read(Tables.move_table_co, in);
-			read(Tables.move_table_co_conj, in);
-			read(Tables.move_table_edgeSTAGE2, in);
-			read(Tables.move_table_edge_conjSTAGE2, in);
-			read(Tables.symCenterToCenterSTAGE2, in);
-			read(Tables.move_table_symCenterSTAGE2, in);
-			read(Tables.symCenterToCenterSTAGE3, in);
-			read(Tables.move_table_symCenterSTAGE3, in);
-			read(Tables.move_table_edgeSTAGE3, in);
-			read(Tables.move_table_edge_conjSTAGE3, in);
-			read(Tables.symEdgeToEdgeSTAGE4, in);
-			read(Tables.move_table_symEdgeSTAGE4, in);
-			read(Tables.move_table_cornerSTAGE4, in);
-			read(Tables.move_table_corner_conjSTAGE4, in);
-			read(Tables.move_table_cenSTAGE4, in);
-			read(Tables.move_table_cen_conjSTAGE4, in);
-			read(Tables.move_table_cornerSTAGE5, in);
-			read(Tables.move_table_corner_conjSTAGE5, in);
-			read(Tables.move_table_cenSTAGE5, in);
-			read(Tables.move_table_cen_conjSTAGE5, in);
-			read(Tables.symEdgeToEdgeSTAGE5, in);
-			read(Tables.move_table_symEdgeSTAGE5, in);
+			read(Tables.sym2rawEdge1, in);
+			read(Tables.moveEdge1, in);
+			read(Tables.moveCorner1, in);
+			read(Tables.conjCorner1, in);
+			read(Tables.moveEdge2, in);
+			read(Tables.conjEdge2, in);
+			read(Tables.sym2rawCenter2, in);
+			read(Tables.moveCenter2, in);
+			read(Tables.sym2rawCenter3, in);
+			read(Tables.moveCenter3, in);
+			read(Tables.moveEdge3, in);
+			read(Tables.conjEdge3, in);
+			read(Tables.sym2rawEdge4, in);
+			read(Tables.moveEdge4, in);
+			read(Tables.moveCorner4, in);
+			read(Tables.conjCorner4, in);
+			read(Tables.moveCenter4, in);
+			read(Tables.conjCenter4, in);
+			read(Tables.moveCorner5, in);
+			read(Tables.conjCorner5, in);
+			read(Tables.moveCenter5, in);
+			read(Tables.conjCenter5, in);
+			read(Tables.sym2rawEdge5, in);
+			read(Tables.moveEdge5, in);
+			read(Tables.symHelper5, in);
 
-			read(CubeStage1.prune_table.ptable_packed, in);
-			read(CubeStage2.prune_table_edgcen.ptable, in);
-			read(CubeStage3.prune_table_cen.ptable, in);
-			read(CubeStage3.prune_table_edg.ptable, in);
-			/** read(CubeStage4.prune_table.ptable_packed, in); **/
-			read(CubeStage4.prune_table_edgcor.ptable_packed, in);
-			read(CubeStage4.prune_table_edgcen.ptable, in);
-			read(CubeStage5.prune_table_edgcen.ptable_packed, in);
-			read(CubeStage5.prune_table_edgcor.ptable, in);
+			read(Tables.prunTable1, in);
+			read(Tables.prunTableEdgCen2, in);
+			read(Tables.prune_table_cen3.ptable, in);
+			read(Tables.prune_table_edg3.ptable, in);
+			read(Tables.prunTableEdgCen4, in);
+			read(Tables.prunTableEdgCor5, in);
+			read(Tables.prunTableEdgCen5, in);
+			if( FULL_PRUNING_STAGE4 )
+				read(Tables.prunTable4, in);
+			else
+				read(Tables.prunTableEdgCor4, in);
 
 			return true;
 		} catch (Exception e) {
@@ -252,42 +228,78 @@ public class Tools {
 	}
 
 	public static void initTo(DataOutput out) throws IOException {
-		write(Tables.symEdgeToEdgeSTAGE1, out);
-		write(Tables.move_table_symEdgeSTAGE1, out);
-		write(Tables.move_table_co, out);
-		write(Tables.move_table_co_conj, out);
-		write(Tables.move_table_edgeSTAGE2, out);
-		write(Tables.move_table_edge_conjSTAGE2, out);
-		write(Tables.symCenterToCenterSTAGE2, out);
-		write(Tables.move_table_symCenterSTAGE2, out);
-		write(Tables.symCenterToCenterSTAGE3, out);
-		write(Tables.move_table_symCenterSTAGE3, out);
-		write(Tables.move_table_edgeSTAGE3, out);
-		write(Tables.move_table_edge_conjSTAGE3, out);
-		write(Tables.symEdgeToEdgeSTAGE4, out);
-		write(Tables.move_table_symEdgeSTAGE4, out);
-		write(Tables.move_table_cornerSTAGE4, out);
-		write(Tables.move_table_corner_conjSTAGE4, out);
-		write(Tables.move_table_cenSTAGE4, out);
-		write(Tables.move_table_cen_conjSTAGE4, out);
-		write(Tables.move_table_cornerSTAGE5, out);
-		write(Tables.move_table_corner_conjSTAGE5, out);
-		write(Tables.move_table_cenSTAGE5, out);
-		write(Tables.move_table_cen_conjSTAGE5, out);
-		write(Tables.symEdgeToEdgeSTAGE5, out);
-		write(Tables.move_table_symEdgeSTAGE5, out);
+		write(Tables.sym2rawEdge1, out); //         62,328 B
+		write(Tables.moveEdge1, out); //       + 2,243,808 B
+		write(Tables.moveCorner1, out); //     +    78,732 B
+		write(Tables.conjCorner1, out); //     +   209,952 B
+		write(Tables.moveEdge2, out); //       +    23,520 B
+		write(Tables.conjEdge2, out); //       +    13,440 B
+		write(Tables.sym2rawCenter2, out); //  +     1,432 B
+		write(Tables.moveCenter2, out); //     +    40,096 B
+		write(Tables.sym2rawCenter3, out); //  +   227,920 B
+		write(Tables.moveCenter3, out); //     + 4,558,400 B
+		write(Tables.moveEdge3, out); //       +   514,800 B
+		write(Tables.conjEdge3, out); //       +   411,840 B
+		write(Tables.sym2rawEdge4, out); //    +    23,872 B
+		write(Tables.moveEdge4, out); //       +   381,952 B
+		write(Tables.moveCorner4, out); //     +    13,440 B
+		write(Tables.conjCorner4, out); //     +    13,440 B
+		write(Tables.moveCenter4, out); //     +     1,120 B
+		write(Tables.conjCenter4, out); //     +     1,120 B
+		write(Tables.moveCorner5, out); //     +     1,152 B
+		write(Tables.conjCorner5, out); //     +    18,432 B
+		write(Tables.moveCenter5, out); //     +    41,472 B
+		write(Tables.conjCenter5, out); //     +   663,552 B
+		write(Tables.sym2rawEdge5, out); //    +    29,776 B
+		write(Tables.moveEdge5, out); //       +   357,312 B
+		write(Tables.symHelper5, out); //      +   xxx,xxx B
+		//                     all move tables = 9,932,908 B
 
-		write(CubeStage1.prune_table.ptable_packed, out);
-		write(CubeStage2.prune_table_edgcen.ptable, out);
-		write(CubeStage3.prune_table_cen.ptable, out);
-		write(CubeStage3.prune_table_edg.ptable, out);
-		/** write(CubeStage4.prune_table.ptable_packed, out); **/
-		write(CubeStage4.prune_table_edgcor.ptable_packed, out);
-		write(CubeStage4.prune_table_edgcen.ptable, out);
-		write(CubeStage5.prune_table_edgcen.ptable_packed, out);
-		write(CubeStage5.prune_table_edgcor.ptable, out);
+		// TODO: Wrong sizes
+		write(Tables.prunTable1, out); //                     6,815,567 B
+		write(Tables.prunTableEdgCen2, out); //            +    300,720 B
+		write(Tables.prune_table_cen3.ptable, out); //     +     56,980 B
+		write(Tables.prune_table_edg3.ptable, out); //     +     25,740 B
+		write(Tables.prunTableEdgCen4, out); //            +    417,760 B
+		write(Tables.prunTableEdgCor5, out); //            +    714,624 B
+		write(Tables.prunTableEdgCen5, out); //            +  2,572,647 B
+		//                              all pruning tables = 11,405,351 B
+		if( FULL_PRUNING_STAGE4 )
+			write(Tables.prunTable4, out); //             xxxxxxxxx B
+		else
+			write(Tables.prunTableEdgCor4, out); //            +    501,313 B
+			
 	}
 	
+	public static boolean checkTables() {
+		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawEdge1}) != -1678978030 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge1}) != -1836370822 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveCorner1}) != 53409135 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.conjCorner1}) != 1899376863 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge2}) != 1775527632 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.conjEdge2}) != -1576838944 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawCenter2}) != -382050577 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveCenter2}) != -1888070592 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawCenter3}) != -1020604492 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveCenter3}) != 622005811 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge3}) != 1927805216 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.conjEdge3}) != 773090752 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawEdge4}) != -190552920 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge4}) != 938076253 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveCorner4}) != 375889888 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.conjCorner4}) != -2082952064 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveCenter4}) != 688119576 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.conjCenter4}) != -1065647936 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveCorner5}) != -348572128 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.conjCorner5}) != 566954016 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveCenter5}) != 1392919328 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.conjCenter5}) != -1913154528 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawEdge5}) != -1356505928 ) return false;
+		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge5}) != -1518191552 ) return false;
+
+		return true;
+	}
+
 	public static void main(String[] args) throws IOException {
 		System.out.println(Arrays.toString(args));
 		if(args.length != 1) {
@@ -328,6 +340,38 @@ public class Tools {
 		randomPerm(r, cube.m_edge, 24);
 
 		return cube;
+	}
+
+	public static int checkSolution(CubeState cube, byte[] moves){
+
+		for (int i=moves.length-1; i>=0; i--){
+			int themove = moves[i] + ((( moves[i] + 2 ) % 3 ) - 1);
+			cube.do_move(themove);
+		}
+		return cube.is_solved();
+	}
+
+	public static int checkSolution(CubeState cube, String scramble){
+
+		String[] moves = scramble.split("\\s+");
+		for (int i=moves.length-1; i>=0; i--){
+			if( moves[i].isEmpty() ) continue;
+			/* Do it the lazy way... */
+			int themove = -1;
+			for(int m=0; m < Constants.N_MOVES; m++){
+				if( moves[i].equals( Constants.move_strings[m] )){
+					themove = m;
+					break;
+				}
+			}
+			if( themove == -1 ){
+				System.out.println("Unknown move");
+				return -1;
+			}
+			themove = themove + ((( themove + 2 ) % 3 ) - 1);
+			cube.do_move(themove);
+		}
+		return cube.is_solved();
 	}
 
 	/* Fisher-Yates shuffle */

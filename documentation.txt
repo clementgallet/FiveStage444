@@ -1,0 +1,348 @@
+=========================
+Description of the stages
+=========================
+
+Stage 1
+-------
+
+Orient the corner cubies, and put the u- and d-layer edges into those two layers. (A d-layer edge may be in u layer, and a u-layer edge may be in the d layer.)
+STM turns allowed:
+  U, U', U2, u, u', u2, D, D', D2, d, d', d2,
+  L, L', L2, l, l', l2, R, R', R2, r, r', r2,
+  F, F', F2, f, f', f2, B, B', B2, b, b', b2
+FTM turns allowed:
+  U, U', U2, Uw, Uw', Uw2, D, D', D2, Dw, Dw', Dw2,
+  L, L', L2, Lw, Lw', Lw2, R, R', R2, Rw, Rw', Rw2,
+  F, F', F2, Fw, Fw', Fw2, B, B', B2, Bw, Bw', Bw2
+One-time whole cube rotations allowed:
+120-degree turns (either direction) about the UFL-DBR axis.
+
+Stage 2
+-------
+
+Put front and back centers onto the front and back faces into one of the twelve configurations that can be solved using only half-turn moves. Arrange u- and d-layer edges within the u- and d-layers so that they will be in one of the 96 configurations that can be solved using only half-turn moves.
+STM turns allowed:
+  U, U', U2, u, u', u2, D, D', D2, d, d', d2,
+         L2, l, l', l2,        R2, r, r', r2,
+         F2, f, f', f2,        B2, b, b', b2
+FTM turns allowed:
+  U, U', U2, Uw, Uw', Uw2, D, D', D2, Dw, Dw', Dw2,
+         L2, l,  l',  Lw2,        R2, r,  r',  Rw2,
+         F2, f,  f',  Fw2,        B2, b,  b',  Bw2
+Some STM turns are needed on this stage as the outer layer quarter turns are not allowed.
+One-time whole cube rotations allowed:
+90-degree turn about U-D axis.
+
+Stage 3
+-------
+
+Put centers for left and right faces into the left and right faces so that they are in one of the 12 configurations that can be solved using only half-turn moves. This leaves the centers for the U and D faces arbitrarily arranged in the U and D faces. Put top and bottom layer edges into positions such that the U or D facelet is facing either up or down. Also, put these edges into an even permutation.
+STM turns allowed:
+  U, U', U2,        u2, D, D', D2,        d2,
+         L2,        l2,        R2,        r2,
+         F2, f, f', f2,        B2, b, b', b2
+FTM turns allowed:
+  U, U', U2,        Uw2, D, D', D2,        Dw2,
+         L2,        Lw2,        R2,        Rw2,
+         F2, f, f', Fw2,        B2, b, b', Bw2
+Same comment as for stage 2.
+
+Stage 4
+-------
+
+Put corners into one of the 96 configurations that can be solved using only half-turn moves. Put U and D centers into one of the 12 configurations that can be solved using only half-turn moves. Put all U- and D-layer edges into a configuration that can be solved using only half-turn moves. This consists of 96 possible configurations for the l- and r-layer edges, and 96 for the f- and b-layer edges.
+STM turns allowed:
+  U, U',U2, u2, D, D', D2, d2,
+        L2, l2,        R2, r2,
+        F2, f2,        B2, b2
+FTM turns allowed:
+  U, U',U2, Uw2, D, D', D2, Dw2,
+        L2, Lw2,        R2, Rw2,
+        F2, Fw2,        B2, Bw2
+
+Stage 5
+-------
+
+Put all cubies into their solved position.
+STM turns allowed:
+  U2, u2, D2, d2,
+  L2, l2, R2, r2,
+  F2, f2, B2, b2
+FTM turns allowed:
+  U2, Uw2, D2, Dw2,
+  L2, Lw2, R2, Rw2,
+  F2, Fw2, B2, Bw2
+One-time whole cube rotations allowed:
+180-degree turns about U-D, F-B, L-R axes.
+
+==============
+Cube structure
+==============
+
+ EDGE CONVENTION:
+
+ There are 24 "edge" cubies, numbered 0 to 23.
+ The home positions of these cubies are labeled in the diagram below.
+ Each edge cubie has two exposed faces, so there are two faces labelled with
+ each number.
+
+             -------------
+             |    5  1   |
+             |12   U   10|
+             | 8       14|
+             |    0  4   |
+ -------------------------------------------------
+ |   12  8   |    0  4   |   14 10   |    1  5   |
+ |22   L   16|16   F   21|21   R   19|19   B   22|
+ |18       20|20       17|17       23|23       18|
+ |    9 13   |    6  2   |   11 15   |    7  3   |
+ -------------------------------------------------
+             |    6  2   |
+             |13   D   11|
+             | 9       15|
+             |    3  7   |
+             -------------
+
+
+ There are 8 "corner" cubies, numbered 0 to 7.
+ The home positions of these cubies are labeled in the diagram below.
+ Each corner cubie has three exposed faces, so there are three faces labelled
+ with each number. Asterisks mark the primary facelet position. Orientation
+ will be the number of clockwise rotations the primary facelet is from the
+ primary facelet position where it is located.
+
+            +----------+
+            |*3*    *2*|
+            |    U     |
+            |*0*    *1*|
+ +----------+----------+----------+----------+
+ | 7      0 | 0      1 | 1      2 | 2      3 |
+ |     L    |    F     |    R     |    B     |
+ | 7      4 | 4      5 | 5      6 | 6      7 |
+ +----------+----------+----------+----------+
+            |*4*    *5*|
+            |    D     |
+            |*7*    *6*|
+            +----------+
+
+For squares calculation, corners are numbered as given below.
+This makes the corners look much like a set of 8 edges of a
+given pair of inner slices.
+            +----------+
+            | 5      1 |
+            |    U    |
+            | 0      4 |
+ +----------+----------+----------+----------+
+ | 5      0 | 0      4 | 4      1 | 1      5 |
+ |     L    |    F     |    R     |    B     |
+ | 3      6 | 6      2 | 2      7 | 7      3 |
+ +----------+----------+----------+----------+
+            | 6      2 |
+            |    D     |
+            | 3      7 |
+            +----------+
+
+ There are 24 "center" cubies. For the squares analysis, they are numbered 0 to 23 as shown.
+             -------------
+             |           |
+             |    2  3   |
+             |    0  1   |
+             |           |
+ -------------------------------------------------
+ |           |           |           |           |
+ |    9  8   |   16 18   |   12 13   |   22 20   |
+ |   11 10   |   17 19   |   14 15   |   23 21   |
+ |           |           |           |           |
+ -------------------------------------------------
+             |           |
+             |    4  5   |
+             |    6  7   |
+             |           |
+             -------------
+
+ For the other analyses, they are numbered 0 to 23 as shown.
+             -------------
+             |           |
+             |    3  1   |
+             |    0  2   |
+             |           |
+ -------------------------------------------------
+ |           |           |           |           |
+ |   10  8   |   16 19   |   14 12   |   21 22   |
+ |    9 11   |   18 17   |   13 15   |   23 20   |
+ |           |           |           |           |
+ -------------------------------------------------
+             |           |
+             |    6  4   |
+             |    5  7   |
+             |           |
+             -------------
+
+
+===============
+Distance tables
+===============
+
+Stage 1 - 48 symmetries
+
+                Slice turns
+          ------------------------
+distance  positions         unique
+--------  ---------         ------
+   0              3              1
+   1              6              1
+   2            144              4
+   3          2,796             66
+   4         48,324          1,033
+   5        745,302         15,620
+   6     10,030,470        209,273
+   7    103,416,912      2,155,397
+   8    575,138,592     11,984,424
+   9    826,559,202     17,222,730
+  10     92,489,544      1,927,399
+  11         43,782            916
+      -------------    -----------
+      1,608,475,077     33,516,864
+
+
+Stage 2 - *** not updated ***
+
+                Slice turns
+          ------------------------
+distance  positions         unique
+--------  ---------         ------
+   0             24             14
+   1             48             11
+   2            684             99
+   3          7,338            997
+   4         68,276          8,824
+   5        614,616         78,097
+   6      5,372,580        675,305
+   7     41,587,696      5,206,350
+   8    264,525,432     33,076,413
+   9  1,173,434,250    146,693,452
+  10  2,891,653,248    361,482,039
+  11  4,023,107,440    502,932,549
+  12  4,610,360,196    576,354,995
+  13  4,818,898,672    602,411,843
+  14  2,904,398,972    363,077,183
+  15    804,769,384    100,607,241
+  16     82,031,496     10,256,713
+  17      2,007,656        251,493
+  18          9,392          1,192
+       ------------  -------------
+     21,622,847,400  2,703,114,810
+
+Stage 3 - *** not updated ***
+
+                 Slice turns
+           ------------------------
+distance   positions         unique
+--------   ---------         ------
+   0              12              7
+   1              24              6
+   2             300             47
+   3           3,112            427
+   4          32,620          4,241
+   5         338,480         42,806
+   6       3,434,920        430,920
+   7      33,776,210      4,227,153
+   8     311,683,476     38,977,409
+   9   2,439,504,410    304,981,049
+  10  10,729,223,804  1,341,243,036
+  11   9,375,305,144  1,171,989,581
+  12     295,853,444     36,991,377
+  13          10,042          1,360
+  14               2              1
+      --------------  -------------
+      23,189,166,000  2,898,889,420
+
+
+Stage 4
+
+                 Slice turns
+           ------------------------
+distance   positions         unique
+--------   ---------         ------
+   0              12              5
+   1              24              4
+   2             204             19
+   3           1,280             97
+   4           7,548            527
+   5          40,964          2,783
+   6         227,816         14,852
+   7       1,259,844         80,308
+   8       6,912,088        436,088
+   9      35,259,020      2,214,786
+  10     152,072,296      9,531,856
+  11     466,530,500     29,208,755
+  12     759,591,796     47,546,251
+  13     738,648,672     46,237,953
+  14     387,337,472     24,256,088
+  15      45,079,256      2,833,318
+  16         111,144          7,430
+  17              64             12
+       -------------    -----------
+       2,593,080,000    162,371,132
+
+Stage 5 ("Squares Coset") - 192 symmetries
+
+                 Slice turns
+           --------------------------
+distance    positions          unique
+--------    ---------          ------
+   0                4               1
+   1               48               2
+   2              420               7
+   3            3,456              36
+   4           27,168             228
+   5          203,752           1,429
+   6        1,451,996           9,127
+   7        9,527,856          55,967
+   8       56,528,036         320,517
+   9      295,097,696       1,636,219
+  10    1,306,291,304       7,145,262
+  11    4,761,203,264      25,797,686
+  12   13,820,728,272      74,257,367
+  13   29,956,341,744     159,930,965
+  14   43,427,866,752     231,079,243
+  15   36,297,535,208     193,022,572
+  16   14,711,566,720      78,368,608
+  17    2,063,584,704      11,055,492
+  18       59,082,112         320,252
+  19           45,056             244
+      ---------------   -------------
+      146,767,085,568     783,001,224
+
+
+======
+Memory
+======
+
+Move tables          Positions        Moves        Size        Memory (byte)
+----------------------------------------------------------------------------
+stage 1 symedges        15,582           36           4            2,243,808
+stage 1 corners          2,187           18           2               78,732
+stage 2 symcenters         716           28           2               40,096
+stage 2 edges              420           28           2               23,520
+stage 3 symcenters      56,980           20           4            4,558,400
+stage 3 edges           12,870           20           2              514,800
+stage 4 symedges         5,968           16           4              381,952
+stage 4 corners            420           16           2               13,440
+stage 4 centers             70           16           1                1,120
+stage 5 symedges         7,444           12           4              357,312
+stage 5 corners             96           12           1                1,152
+stage 5 centers          1,728           12           2               41,472
+
+Pruning tables              Positions        Memory (byte)
+----------------------------------------------------------
+stage 1                    34,077,834            6,815,567
+stage 2 centers/edges         300,720              300,720
+stage 3 symcenters             56,980               56,980
+stage 3 edges                  25,740               25,740
+stage 4                   175,459,200           35,091,841
+stage 4 symedges/centers      417,760              417,760
+stage 4 symedges/corners    2,506,560              501,313
+stage 5 symedges/centers   12,863,232            2,572,647
+stage 5 symedges/corners      714,624              714,624
+
