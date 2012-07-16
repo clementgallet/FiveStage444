@@ -41,7 +41,7 @@ public final class Analyze {
 			/* Copy from allPos5_2 to allPos5 */
 			for( int idx=0; idx<N_STAGE5_SYMEDGES*N_STAGE5_CORNERS*N_STAGE5_CENTERS>>>3; idx++ )
 				allPos5[idx] |= allPos5_2[idx];
-			if(length4==0)
+			//if(length4==0)
 			search_stage4 (center, corner, edge, 0, length4, 0, N_STAGE4_MOVES, cubeDistEdgCor );
 			/* Copy from allPos5 to allPos5_2 */
 			for( int idx=0; idx<N_STAGE5_SYMEDGES*N_STAGE5_CORNERS*N_STAGE5_CENTERS>>>3; idx++ )
@@ -101,6 +101,7 @@ public final class Analyze {
 			unique++;
 			int nsym = 1;
 			allPos5[(int)(idx>>>3)] |= 1 << (idx & 0x7);
+			done++;
 			for (int j=0; j<4; j++) {
 				long symS = Tables.hasSymEdgeSTAGE5[edge][j];
 				for (int k=0; symS != 0; symS>>=1, k++) {
@@ -110,7 +111,8 @@ public final class Analyze {
 						allPos5[(int)(idxx>>>3)] |= 1 << (idxx & 0x7);
 						done++;
 					}
-					nsym++;
+					if (idxx == idx)
+						nsym++;
 				}
 			}
 			pos += 192/nsym;
@@ -120,7 +122,7 @@ public final class Analyze {
 	public static void move_stage5 (){
 		int i;
 
-		for( long idx=0; idx<N_STAGE5_SYMEDGES*N_STAGE5_CORNERS*N_STAGE5_CENTERS; idx++ ){
+		for( long idx=0; idx<N_STAGE5_SYMEDGES*N_STAGE5_CORNERS*N_STAGE5_CENTERS;){
 			int val = allPos5[(int)(idx>>>3)];
 			if( val == 0){
 				idx += 8;
@@ -137,10 +139,11 @@ public final class Analyze {
 					int cornerx = Tables.conjCorner5[Tables.moveCorner5[corner][m]][edgex&0xFF];
 					edgex >>>= 8;
 					long idxx = ((long)edgex*N_STAGE5_CORNERS+cornerx)*N_STAGE5_CENTERS+centerx;
-					if(( allPos5_2[(int)(idxx>>>3)] >>> (int)(idxx & 0x7) & 1 ) == 0 ){
+					if(( allPos5_2[(int)(idxx>>>3)] >>> (int)(idxx & 0x7L) & 1 ) == 0 ){
 						unique++;
+						done++;
 						int nsym = 1;
-						allPos5_2[(int)(idxx>>>3)] |= 1 << (idxx & 0x7);
+						allPos5_2[(int)(idxx>>>3)] |= 1 << (idxx & 0x7L);
 						for (int j=0; j<4; j++) {
 							long symS = Tables.hasSymEdgeSTAGE5[edgex][j];
 							for (int k=0; symS != 0; symS>>=1, k++) {
@@ -150,7 +153,8 @@ public final class Analyze {
 									allPos5_2[(int)(idxxx>>>3)] |= 1 << (idxxx & 0x7);
 									done++;
 								}
-								nsym++;
+								if( idxxx == idxx)
+									nsym++;
 							}
 						}
 						pos += 192/nsym;

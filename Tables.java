@@ -38,15 +38,16 @@ public final class Tables {
 		initSymEdgeToEdgeStage5();
 		initSymEdgeStage5();
 
-		initPrun5();
-
 		initPrunEdgCen2();
 		initPrunEdgCen4();
 		initPrunEdgCor5();
 
-		initPrun1();
+		//initPrun1();
 		initPrunEdgCor4();
 		initPrunEdgCen5();
+
+		//initPrun4();
+		initPrun5();
 	}
 
 	/*** init_parity_table ***/
@@ -824,7 +825,7 @@ public final class Tables {
 		}
 	}
 
-	public static final int get_dist_packed(byte[] table, int idx) {
+	public static final int get_dist_packed(final byte[] table, int idx) {
 		if (idx < table.length*4) {
 			int data = table[(int)(idx >>> 2)]&0x0FF;
 			return get_packed[(data<<3) | (int)(idx & 3)];
@@ -834,11 +835,11 @@ public final class Tables {
 		}
 	}
 
-	public static final int new_dist(byte[] table, int idx, int dist) {
+	public static final int new_dist(final byte[] table, int idx, int dist) {
 		return nd[(dist << 2) | get_dist_packed(table, idx)];
 	}
 
-	public static final int getPrun4 (byte[] table, int idx){
+	public static final int getPrun4 (final byte[] table, int idx){
 		return (table[idx>>2] >> ((idx & 0x3) << 1)) & 0x3;
 	}
 
@@ -859,6 +860,19 @@ public final class Tables {
 		final int N_SIZE_PACKED = N_SIZE / 5 + 1;
 		final int N_MOVES = symMove[0].length;
 		final int N_COSYM = symState[0].length;
+
+		long maxSym = 0;
+		for (int i=0; i<N_SYM; i++)
+			if(symState[i][0]>maxSym)
+				maxSym = symState[i][0];
+		int N_SSYM = 0;
+		while(maxSym!=0){
+			maxSym >>>= 1;
+			N_SSYM++;
+		}
+		N_SSYM *= N_COSYM;
+
+		System.out.println("Has "+N_SSYM+" symmetries");
 
 		byte[] tempTable = new byte[(N_SIZE/4)+1];
 		for (int i=0; i<solvedStates.length; i++){
@@ -904,14 +918,15 @@ public final class Tables {
 								for (int k=0; symS != 0; symS>>=1, k++) {
 									if ((symS & 0x1L) == 0) continue;
 									int idxx = symx * N_RAW + rawConj[rawx][k*N_COSYM+j];
-									nsym++;
+									if( idxx == idx )
+										nsym++;
 									if (getPrun4(tempTable, idxx) == 0) {
 										setPrun4(tempTable, idxx, save);
 										done++;
 									}
 								}
 							}
-							pos += 48/nsym;
+							pos += N_SSYM/nsym;
 						}
 					}
 				}
@@ -937,7 +952,7 @@ public final class Tables {
 	public static byte[] prunTable1 = new byte[N_STAGE1_SYMEDGES*N_STAGE1_CORNERS/5+1];
 	public static void initPrun1(){
 		int[] solved = {1906};
-		initRawSymPrunPacked( prunTable1, 7, moveCorner1, conjCorner1, moveEdge1, hasSymEdgeSTAGE1, solved, Constants.basic_to_face, 6);
+		initRawSymPrunPacked( prunTable1, 30, moveCorner1, conjCorner1, moveEdge1, hasSymEdgeSTAGE1, solved, Constants.basic_to_face, 6);
 	}
 
 	public final static int prunDist1(int edge, int sym, int corner){
@@ -1027,7 +1042,7 @@ public final class Tables {
 		return d;
 	}
 
-	public static final int getPrun4 (byte[] table, long idx){
+	public static final int getPrun4 (final byte[] table, long idx){
 		return (table[(int)(idx>>2)] >> ((idx & 0x3) << 1)) & 0x3;
 	}
 
@@ -1062,6 +1077,7 @@ public final class Tables {
 			N_SSYM++;
 		}
 		N_SSYM *= N_COSYM;
+		System.out.println("Has "+N_SSYM+" symmetries");
 
 		byte[] tempTable = new byte[(int)(N_SIZE/4)+1];
 		for (int i=0; i<solvedStates.length; i++){
@@ -1075,7 +1091,7 @@ public final class Tables {
 			int check = inv ? ((depth+2)%3)+1 : 0;
 			int save = (depth % 3) + 1;
 			depth++;
-			long pos = 0;
+			double pos = 0;
 			long unique = 0;
 			for (long i=0; i<N_SIZE;) {
 				int val = tempTable[(int)(i>>2)];
@@ -1101,6 +1117,7 @@ public final class Tables {
 							break;
 						} else {
 							setPrun4(tempTable, idx, save);
+System.out.println(idx);
 							int nsym = 1;
 							unique++;
 							for (int j=0; j<N_COSYM; j++) {
@@ -1108,19 +1125,22 @@ public final class Tables {
 								for (int k=0; symS != 0; symS>>=1, k++) {
 									if ((symS & 0x1L) == 0) continue;
 									long idxx = ((long)symx*N_RAW2+raw2Conj[raw2x][k*N_COSYM+j])*N_RAW1+raw1Conj[raw1x][k*N_COSYM+j];
-									nsym++;
+									if( idxx == idx )
+										nsym++;
 									if (getPrun4(tempTable, idxx) == 0) {
 										setPrun4(tempTable, idxx, save);
 										done++;
+System.out.println(idxx);
 									}
 								}
 							}
-							pos += N_SSYM/nsym;
+							//if( (N_SSYM/nsym)*nsym != N_SSYM) System.out.println(nsym);
+							pos += ((double)N_SSYM)/nsym;
 						}
 					}
 				}
 			}
-			System.out.println(String.format("%2d%12d%10d", depth, pos, unique));
+			System.out.println(String.format("%2d%12d%10d", depth, (int)pos, unique));
 		}
 
 		for (long i=0; i<N_SIZE_PACKED; i++) {
@@ -1139,10 +1159,18 @@ public final class Tables {
 	}
 
 
+	public static byte[] prunTable4 = new byte[N_STAGE4_SYMEDGES*N_STAGE4_CENTERS*N_STAGE4_CORNERS/5+1];
+	public static void initPrun4(){
+		int[] solved = new int[stage4_solved_centers_bm.length];
+		for (int i=0; i < stage4_solved_centers_bm.length; i++)
+			solved[i] = stage4_solved_centers_bm[i];
+		initRawRawSymPrunPacked( prunTable4, 30, moveCenter4, conjCenter4, moveCorner4, conjCorner4, moveEdge4, hasSymEdgeSTAGE4, solved, 4);
+	}
+
 	public static byte[] prunTable5 = new byte[N_STAGE5_SYMEDGES*N_STAGE5_CENTERS*N_STAGE5_CORNERS/5+1];
 	public static void initPrun5(){
 		int[] solved = {0};
-		initRawRawSymPrunPacked( prunTableEdgCen5, 11, moveCenter5, conjCenter5, moveCorner5, conjCorner5, moveEdge5, hasSymEdgeSTAGE5, solved, 8);
+		initRawRawSymPrunPacked( prunTable5, 30, moveCenter5, conjCenter5, moveCorner5, conjCorner5, moveEdge5, hasSymEdgeSTAGE5, solved, 8);
 	}
 
 }
