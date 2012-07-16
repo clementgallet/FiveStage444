@@ -98,7 +98,7 @@ public final class CubeState{
 		}
 	}
 
-	public boolean is_solved (){
+	public int is_solved (){
 		int sym;
 		byte i;
 
@@ -129,10 +129,10 @@ public final class CubeState{
 					solved = false;
 					break;
 			}
-			if( solved ) return true;
+			if( solved ) return sym;
 		}
 
-		return false;
+		return -1;
 	}
 
 	public final void do_move (int move_code){

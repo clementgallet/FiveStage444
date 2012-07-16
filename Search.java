@@ -52,7 +52,7 @@ public final class Search {
 		int i, j;
 
 		Tools.init();
-
+cube.print();
 		StringBuffer sb = new StringBuffer();
 		String sol = "";
 		CubeState c = new CubeState();
@@ -79,32 +79,44 @@ public final class Search {
 			move_list_sub_stage5[i] = Symmetry.moveConjugate[stage5_slice_moves[move_list_sub_stage5[i]]][rotate2_sub];
 
 		if( inverse ){
+
+			cube.scramble(length1_sub, move_list_sub_stage1);
+			cube.scramble(length2_sub, move_list_sub_stage2);
+			cube.scramble(length3_sub, move_list_sub_stage3);
+			cube.scramble(length4_sub, move_list_sub_stage4);
+			cube.scramble(length5_sub, move_list_sub_stage5);
+
+			int final_ori = cube.is_solved();
+			System.out.println(final_ori);
+			if( final_ori == -1 ){
+				System.out.println("Not a solution !!!!!!");
+				return "";
+			}
+			for (i = 0; i < length1_sub; ++i)
+				move_list_sub_stage1[i] = Symmetry.moveConjugate[move_list_sub_stage1[i]][final_ori];
+			for (i = 0; i < length2_sub; ++i)
+				move_list_sub_stage2[i] = Symmetry.moveConjugate[move_list_sub_stage2[i]][final_ori];
+			for (i = 0; i < length3_sub; ++i)
+				move_list_sub_stage3[i] = Symmetry.moveConjugate[move_list_sub_stage3[i]][final_ori];
+			for (i = 0; i < length4_sub; ++i)
+				move_list_sub_stage4[i] = Symmetry.moveConjugate[move_list_sub_stage4[i]][final_ori];
+			for (i = 0; i < length5_sub; ++i)
+				move_list_sub_stage5[i] = Symmetry.moveConjugate[move_list_sub_stage5[i]][final_ori];
+
 			sb.append(print_move_list (length5_sub, move_list_sub_stage5, true));
-			//sb.append("* ");
 			sb.append(print_move_list (length4_sub, move_list_sub_stage4, true));
-			//sb.append("* ");
 			sb.append(print_move_list (length3_sub, move_list_sub_stage3, true));
-			//sb.append("* ");
 			sb.append(print_move_list (length2_sub, move_list_sub_stage2, true));
-			//sb.append("* ");
 			sb.append(print_move_list (length1_sub, move_list_sub_stage1, true));
 		}
 		else{
 			sb.append(print_move_list (length1_sub, move_list_sub_stage1, false));
-			//sb.append("* ");
 			sb.append(print_move_list (length2_sub, move_list_sub_stage2, false));
-			//sb.append("* ");
 			sb.append(print_move_list (length3_sub, move_list_sub_stage3, false));
-			//sb.append("* ");
 			sb.append(print_move_list (length4_sub, move_list_sub_stage4, false));
-			//sb.append("* ");
 			sb.append(print_move_list (length5_sub, move_list_sub_stage5, false));
 		}
-		//System.out.print(length1_sub + length2_sub + length3_sub + length4_sub + length5_sub);
-		//System.out.print("\t");
-		/* Check the solution */
-		if( ! Tools.checkSolution(cube, sb.toString()))
-			System.out.println("Not a solution !!!!!!");
+		//System.out.print(length1_sub + length2_sub + length3_sub + length4_sub + length5_sub + "\t");
 		return sb.toString();
 	}
 
@@ -233,14 +245,14 @@ public final class Search {
 	public boolean search_stage2 (int edge, int centerF, int symF, int centerB, int symB, int depth, int moves_done, int last_move, int r ){
 		int mov_idx, mc, j;
 
+		if (depth == 0){
 		if( ( centerF == centerB ) && (( symF & 0x8 ) == ( symB & 0x8 )) && ((( edge == 0 ) && (( symF & 0x8 ) != 0 )) || (( edge == 414 ) && (( symF & 0x8 ) == 0 ))))
 			for (int i=0; i < Constants.stage2_solved_symcenters.length; i++)
-				if (centerF == Constants.stage2_solved_symcenters[i]){
-					if (depth == 0) 
+				if (centerF == Constants.stage2_solved_symcenters[i])
+					//if (depth == 0) 
 						return init_stage3 (r);
-					else
-						return false;
-				}
+		return false;
+		}
 
 		int end = ( depth == 1 ) ? N_STAGE2_LAST : N_STAGE2_SEARCH;
 		for (mov_idx = 0; mov_idx < end; ++mov_idx) {
@@ -248,16 +260,18 @@ public final class Search {
 				continue;
 
 			/* Move cube1 to list2[depth] */
+			int edgex = Tables.moveEdge2[edge][mov_idx];
 			int centerFx = Tables.moveCenter2[centerF][Symmetry.moveConjugate2[mov_idx][symF]];
 			int symFx = Symmetry.symIdxMultiply[centerFx & 0xF][symF];
 			centerFx >>= 4;
-			int centerBx = Tables.moveCenter2[centerB][Symmetry.moveConjugate2[mov_idx][symB]];
-			int symBx = Symmetry.symIdxMultiply[centerBx & 0xF][symB];
-			centerBx >>= 4;
-			int edgex = Tables.moveEdge2[edge][mov_idx];
 
 			int newDistCenF = Tables.getPrun2(Tables.prunTableEdgCen2, N_STAGE2_EDGES*centerFx+Tables.conjEdge2[edgex][symFx]);
 			if (newDistCenF > depth-1) continue;
+
+			int centerBx = Tables.moveCenter2[centerB][Symmetry.moveConjugate2[mov_idx][symB]];
+			int symBx = Symmetry.symIdxMultiply[centerBx & 0xF][symB];
+			centerBx >>= 4;
+
 			int newDistCenB = Tables.getPrun2(Tables.prunTableEdgCen2, N_STAGE2_EDGES*centerBx+Tables.conjEdge2[edgex][symBx]);
 			if (newDistCenB > depth-1) continue;
 			move_list_stage2[moves_done] = (byte)mov_idx;

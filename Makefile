@@ -2,7 +2,7 @@ JFLAGS = -g
 JC = javac
 JAVA = java
 DIR = cg/fivestage444
-TABLES = $(DIR)/fivephase_tables_stm
+TABLES = $(DIR)/fivephase_tables_ftm
 
 default:
 	mkdir -p $(DIR)

@@ -330,7 +330,16 @@ public class Tools {
 		return cube;
 	}
 
-	public static boolean checkSolution(CubeState cube, String scramble){
+	public static int checkSolution(CubeState cube, byte[] moves){
+
+		for (int i=moves.length-1; i>=0; i--){
+			int themove = moves[i] + ((( moves[i] + 2 ) % 3 ) - 1);
+			cube.do_move(themove);
+		}
+		return cube.is_solved();
+	}
+
+	public static int checkSolution(CubeState cube, String scramble){
 
 		String[] moves = scramble.split("\\s+");
 		for (int i=moves.length-1; i>=0; i--){
@@ -345,7 +354,7 @@ public class Tools {
 			}
 			if( themove == -1 ){
 				System.out.println("Unknown move");
-				return false;
+				return -1;
 			}
 			themove = themove + ((( themove + 2 ) % 3 ) - 1);
 			cube.do_move(themove);

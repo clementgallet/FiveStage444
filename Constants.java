@@ -14,7 +14,7 @@ public final class Constants{
 
 	public static final int STM = 0;
 	public static final int FTM = 1;
-	public static int METRIC = STM;
+	public static int METRIC = FTM;
 	public static String METRIC_STR = (METRIC == STM) ? "stm" : "ftm";
 
 	public static boolean FULL_PRUNING_STAGE4 = true;
