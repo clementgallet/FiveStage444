@@ -741,8 +741,8 @@ public final class CubeState{
 		int i;
 		int cenbm4of8 = 0;
 		int r = 4;
-		for (i = 7; i >= 0; i--) {
-			if (m_cen[i] == 0) {
+		for (i = 6; i >= 0; i--) {
+			if (m_cen[i] != m_cen[7]) {
 				cenbm4of8 += Cnk[i][r--];
 			}
 		}
@@ -752,7 +752,8 @@ public final class CubeState{
 	public void convert_centers4_to_std_cube (int center){
 		int i;
 		int r = 4;
-		for (i = 7; i >= 0; i--) {
+		m_cen[7] = 1;
+		for (i = 6; i >= 0; i--) {
 			if ( center >= Cnk[i][r] ) {
 				center -= Cnk[i][r--];
 				m_cen[i] = 0;

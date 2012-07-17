@@ -13,8 +13,8 @@ public final class Test {
 		Tools.init();
 
 		//testSolve2(10);
-		testSolve3(30);
-		//testSolve4(30);
+		//testSolve3(30);
+		testSolve4(30);
 		//testMove4(10);
 		//testMove5(10);
 		
@@ -86,9 +86,13 @@ public final class Test {
 
 			/* Generate a random cube in stage 5 subgroup and convert to CubeStage4 coordinates */
 			randomScramble( cube, Constants.stage5_slice_moves, Constants.N_STAGE5_MOVES, gen );
-			//cube.convert_to_stage4(cs1);
+			int edge = cube.convert_symedges_to_stage4();
+			int sym = edge & 0xF;
+			edge >>>= 4;
+			int corner = cube.convert_corners_to_stage4();
+			int center = cube.convert_centers_to_stage4();
 
-			//System.out.println("edge: "+cs1.edge+", center: "+cs1.center+", corner:"+cs1.corner);
+			System.out.println("edge: "+edge+", center: "+center+", corner:"+corner);
 
 		}
 	}

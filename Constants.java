@@ -42,7 +42,7 @@ public final class Constants{
 	public static final int N_STAGE3_EDGE_PAR = 2;
 	public static final int N_STAGE3_EDGES = 12870;	//16!/(8!*8!), does not include parity info
 
-	public static final int N_STAGE4_CENTERS = 70;	//8!/(4!*4!)
+	public static final int N_STAGE4_CENTERS = 35;	//8!/(4!*4!)
 	public static final int N_STAGE4_EDGES = 88200;	//420*420/2
 	public static final int N_STAGE4_SYMEDGES = 5968;
 	public static final int N_STAGE4_CORNERS = 420;	//8!/96
@@ -485,11 +485,9 @@ public final class Constants{
 	public static final int stage3_solved_sym_centers[] = {
 	56966, 56974, 56975, 56977, 56978, 56979
 	};
-	// True solved centers, better not deleting. Edit: I'm so wise !
-	// 900830, 900844, 900850, 900853, 900857, 900858, 900871, 900872, 900876, 900879, 900885, 900899
 
 	public static final short stage4_solved_centers_bm[] = {
-	0, 14, 20, 23, 27, 28, 41, 42, 46, 49, 55, 69
+	0, 14, 20, 23, 27, 28
 	};
 
 	public static String move_strings[] = {
