@@ -17,7 +17,7 @@ public final class Constants{
 	public static int METRIC = FTM;
 	public static String METRIC_STR = (METRIC == STM) ? "stm" : "ftm";
 
-	public static boolean FULL_PRUNING_STAGE4 = false;
+	public static boolean FULL_PRUNING_STAGE4 = true;
 	public static boolean FULL_PRUNING_STAGE5 = false;
 
 	public static final int N_SYM = 48;

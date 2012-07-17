@@ -43,12 +43,17 @@ public final class Tables {
 		initPrunEdgCor5();
 
 		initPrun1();
-		initPrunEdgCor4();
-		initPrunEdgCen5();
 
 		if( FULL_PRUNING_STAGE4 )
 			initPrun4();
-		//initPrun5();
+		else
+			initPrunEdgCor4();
+
+		if( FULL_PRUNING_STAGE5 )
+			initPrun5();
+		else
+			initPrunEdgCen5();
+
 	}
 
 	/*** init_parity_table ***/
@@ -505,7 +510,7 @@ public final class Tables {
 		System.out.println( "Finishing corner conj stage 4..." );
 	}
 
-	public static short[][] moveCenter4 = new short[N_STAGE4_CENTERS][N_STAGE4_MOVES]; // (70) 70*16.
+	public static short[][] moveCenter4 = new short[N_STAGE4_CENTERS][N_STAGE4_MOVES];
 
 	public static void initCenterStage4 (){
 
@@ -523,7 +528,7 @@ public final class Tables {
 		System.out.println( "Finishing center stage 4..." );
 	}
 
-	public static short[][] conjCenter4 = new short[N_STAGE4_CENTERS][N_SYM_STAGE4]; // (70) 70*16.
+	public static short[][] conjCenter4 = new short[N_STAGE4_CENTERS][N_SYM_STAGE4];
 
 	public static void initCenterConjStage4 (){
 
@@ -1162,7 +1167,7 @@ public final class Tables {
 		int[] solved = new int[stage4_solved_centers_bm.length];
 		for (int i=0; i < stage4_solved_centers_bm.length; i++)
 			solved[i] = stage4_solved_centers_bm[i];
-		initRawRawSymPrunPacked( prunTable4, 12, moveCenter4, conjCenter4, moveCorner4, conjCorner4, moveEdge4, hasSymEdgeSTAGE4, solved, 4);
+		initRawRawSymPrunPacked( prunTable4, 20, moveCenter4, conjCenter4, moveCorner4, conjCorner4, moveEdge4, hasSymEdgeSTAGE4, solved, 4);
 	}
 
 	public static final int prunDist4 (int edge, int sym, int corner, int center){
