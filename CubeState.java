@@ -517,30 +517,38 @@ public final class CubeState{
 		int j = 7;
 		int r = 8;
 		int s = 4;
+		int last_c = -1;
 		for (int i = 15; i >= 0; i--) {
 			if (m_cen[i] >= 2) {
+				if (last_c == -1)
+					last_c = i;
 				cenbm += Cnk[i][r--];
-				if (m_cen[i] == 2) {
+				if (m_cen[i] != m_cen[last_c]) {
 					cenbm4of8 += Cnk[j][s--];
 				}
 				--j;
 			}
 		}
-		return 70*cenbm + cenbm4of8;
+		return 35*cenbm + cenbm4of8;
 	}
 
 	public void convert_centers3_to_std_cube (int center){
-		int cenbm = center/70;
-		int cenbm4of8 = center % 70;
+		int cenbm = center/35;
+		int cenbm4of8 = center % 35;
 		int ud = 0;
 		int j = 7;
 		int r = 8;
 		int s = 4;
+		int last_c = -1;
 		for (int i = 15; i >= 0; --i) {
 			if (cenbm < Cnk[i][r] ) {
 				m_cen[i] = (byte)(ud++/4);
 			} else {
 				cenbm -= Cnk[i][r--];
+				if (last_c == -1){
+					m_cen[i] = 3;
+					last_c = i;
+				}
 				if (cenbm4of8 < Cnk[j][s]) {
 					m_cen[i] = 3;
 				} else {
@@ -559,13 +567,10 @@ public final class CubeState{
 		CubeState cube = new CubeState();
 		int rep;
 		for (int sym=(Tables.symHelper3 == null)?0:Tables.symHelper3[convert_centers_to_stage3()]; sym < Constants.N_SYM_STAGE3; sym++ ){
-			for (int cosym=0; cosym < 2; cosym++ ){
-				rightMultCenters(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube);
-				cube.leftMultCenters(sym);
-				rep = Arrays.binarySearch(Tables.sym2rawCenter3, cube.convert_centers_to_stage3());
-				if( rep >= 0 )
-					return ( rep << 4 ) | ( sym << 1 ) | cosym;
-			}
+			rightMultCenters(Symmetry.invSymIdx[sym], cube);
+			rep = Arrays.binarySearch(Tables.sym2rawCenter3, cube.convert_centers_to_stage3());
+			if( rep >= 0 )
+				return ( rep << 3 ) | sym;
 		}
 		return -1;
 	}

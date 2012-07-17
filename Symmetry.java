@@ -13,7 +13,6 @@ public final class Symmetry {
 		initSymTables();
 		initInvSymIdx();
 		initSymIdxMultiply();
-		initSymIdxCo2Multiply();
 		initSymIdxCo4Multiply();
 		initMoveConjugate();
 		initMoveConjugateStage();
@@ -98,15 +97,6 @@ public final class Symmetry {
 					}
 	}
 
-	static int[][] symIdxCo2Multiply = new int[N_SYM*2][N_SYM*2];
-
-	static void initSymIdxCo2Multiply(){
-
-		for (int i=0; i<N_SYM*2; i++)
-			for (int j=0; j<N_SYM*2; j++)
-				symIdxCo2Multiply[i][j] = symIdxMultiply[symIdxMultiply[invSymIdx[i>>1]][j&1]][symIdxMultiply[i>>1][i&1]] + ( symIdxMultiply[j>>1][i>>1] << 1 );
-	}
-
 	static int[][] symIdxCo4Multiply = new int[N_SYM*4][N_SYM*4];
 
 	static void initSymIdxCo4Multiply(){
@@ -167,8 +157,8 @@ public final class Symmetry {
 				moveConjugate2[i][j] = stage2_inv_slice_moves[moveConjugate[stage2_slice_moves[i]][j]];
 
 		for (i=0; i<N_STAGE3_MOVES; i++)
-			for (j=0; j<N_SYM_STAGE3*2; j++)
-				moveConjugate3[i][j] = stage3_inv_slice_moves[moveConjugate[stage3_slice_moves[i]][symIdxMultiply[j>>1][j&1]]];
+			for (j=0; j<N_SYM_STAGE3; j++)
+				moveConjugate3[i][j] = stage3_inv_slice_moves[moveConjugate[stage3_slice_moves[i]][j]];
 
 		for (i=0; i<N_STAGE4_MOVES; i++)
 			for (j=0; j<N_SYM_STAGE4; j++)

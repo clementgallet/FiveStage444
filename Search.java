@@ -52,7 +52,6 @@ public final class Search {
 		int i, j;
 
 		Tools.init();
-cube.print();
 		StringBuffer sb = new StringBuffer();
 		String sol = "";
 		CubeState c = new CubeState();
@@ -87,7 +86,6 @@ cube.print();
 			cube.scramble(length5_sub, move_list_sub_stage5);
 
 			int final_ori = cube.is_solved();
-			System.out.println(final_ori);
 			if( final_ori == -1 ){
 				System.out.println("Not a solution !!!!!!");
 				return "";
@@ -306,8 +304,8 @@ cube.print();
 		}
 
 		int center = c2.convert_symcenters_to_stage3();
-		int sym = center & 0xF;
-		center >>>= 4;
+		int sym = center & 0x7;
+		center >>>= 3;
 		int edge = c2.convert_edges_to_stage3();
 		boolean edge_odd = c2.edgeUD_parity_odd();
 
@@ -348,8 +346,8 @@ cube.print();
 			int edgex = Tables.moveEdge3[edge][mov_idx];
 			boolean edge_oddx = edge_odd ^ stage3_move_parity[mov_idx];
 			int centerx = Tables.moveCenter3[center][Symmetry.moveConjugate3[mov_idx][sym]];
-			int symx = Symmetry.symIdxCo2Multiply[sym][centerx&0xF];
-			centerx >>= 4;
+			int symx = Symmetry.symIdxMultiply[sym][centerx&0x7];
+			centerx >>= 3;
 
 			int newDistCen = Tables.prune_table_cen3.ptable[(centerx<<1)+(edge_oddx?1:0)];
 			if (newDistCen > depth-1) continue;

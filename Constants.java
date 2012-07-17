@@ -37,7 +37,7 @@ public final class Constants{
 	public static final int N_STAGE2_CENTER = 10626;
 	public static final int N_STAGE2_SYMCENTER = 716;
 
-	public static final int N_STAGE3_CENTERS = 900900;	//(16*15*14*13/24)*(12*11*10*9/24)
+	public static final int N_STAGE3_CENTERS = 450450;	//(16*15*14*13/24)*(12*11*10*9/24)/2
 	public static final int N_STAGE3_SYMCENTERS = 56980;
 	public static final int N_STAGE3_EDGE_PAR = 2;
 	public static final int N_STAGE3_EDGES = 12870;	//16!/(8!*8!), does not include parity info

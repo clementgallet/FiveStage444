@@ -345,15 +345,12 @@ public final class Tables {
 			symHelper3[u] = 0;
 			cube1.convert_centers3_to_std_cube(u);
 			for (int sym = 0; sym < N_SYM_STAGE3; ++sym) {
-				for (int cosym = 0; cosym < 2; cosym++) {
-					cube1.rightMultCenters(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
-					cube2.leftMultCenters(sym);
-					int cen = cube2.convert_centers_to_stage3();
-					isRepTable[cen>>>3] |= 1<<(cen&0x7);
-					symHelper3[cen] = (byte)(Symmetry.invSymIdx[sym]);
-					if( cen == u )
-						hasSymCenterSTAGE3[repIdx] |= (1 << ( sym<<1+cosym ));
-				}
+				cube1.rightMultCenters(Symmetry.invSymIdx[sym], cube2);
+				int cen = cube2.convert_centers_to_stage3();
+				isRepTable[cen>>>3] |= 1<<(cen&0x7);
+				symHelper3[cen] = (byte)(Symmetry.invSymIdx[sym]);
+				if( cen == u )
+					hasSymCenterSTAGE3[repIdx] |= (1 << sym );
 			}
 			sym2rawCenter3[repIdx++] = u;
 		}
@@ -399,7 +396,7 @@ public final class Tables {
 	}
 
 	/*** init stage 3 edge conjugate ***/
-	public static short[][] conjEdge3 = new short[N_STAGE3_EDGES][N_SYM_STAGE3*2];
+	public static short[][] conjEdge3 = new short[N_STAGE3_EDGES][N_SYM_STAGE3];
 
 	public static void initEdgeConjStage3 (){
 
@@ -409,11 +406,8 @@ public final class Tables {
 		for (int u = 0; u < N_STAGE3_EDGES; ++u) {
 			cube1.convert_edges3_to_std_cube (u);
 			for (int sym = 0; sym < N_SYM_STAGE3; ++sym) {
-				for (int cosym = 0; cosym < 2; ++cosym) {
-					cube1.rightMultEdges(Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube2);
-					cube2.leftMultEdges(sym);
-					conjEdge3[u][(sym<<1)+cosym] = cube2.convert_edges_to_stage3();
-				}
+				cube1.rightMultEdges(Symmetry.invSymIdx[sym], cube2);
+				conjEdge3[u][sym] = cube2.convert_edges_to_stage3();
 			}
 		}
 		System.out.println( "Finishing edge conjugate stage 3..." );
