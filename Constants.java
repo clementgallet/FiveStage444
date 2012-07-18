@@ -128,237 +128,95 @@ public final class Constants{
 	public static final int N_MOVES  = Bw2 + 1;	//last rotate code plus one
 
 
-	/** Filter certain combinaisons of moves:
-	  * Same slice. For example, Rf Rf2 is not permitted because Rf Rf2 = Rf3.
-	  * Same face, only a specific order is allowed. Rf Ls2 is allowed but not Ls2 Rf.
-	  * For STM only, if two successive moves are from the same face and the same rotation, the first one should be either Ufx, Rfx or Ffx.
-	  *   for example Rf Ls3 is ok but Lf2 Rs2 is not permitted because Lf2 Rs2 = Rf2 Ls2.
-	  **/
 
-	public static final boolean slice_moves_to_try [][] = new boolean[N_MOVES][N_MOVES];
-	static{
-		for (int i=0; i<N_MOVES; i++) {
-			for (int j=0; j<N_MOVES; j++) {
-				slice_moves_to_try[i][j] = (i/3 == j/3) || ((i/18 == j/18) && (i>j));
-				if( METRIC == STM )
-					slice_moves_to_try[i][j] |= (i/16 == j/16) && ((i%3) == (j%3)) && ((i%12) >= 3);
-			}
-		}
-	}
+	/** Don't use the actual numbering of rotation, but use another one sorted by the different stages. **/
 
 	public static final int N_STAGE1_MOVES = 36;
-	public static final int N_STAGE1_SEARCH = ( METRIC == STM ) ? 36 : 27;
-	//public static final int N_STAGE1_LAST = ( METRIC == STM ) ? 8 : 12;
-	public static final int N_STAGE1_LAST = ( METRIC == STM ) ? 4 : 6;
+	public static final int N_STAGE2_MOVES = 28;
+	public static final int N_STAGE3_MOVES = 20;
+	public static final int N_STAGE4_MOVES = 16;
+	public static final int N_STAGE5_MOVES = 12;
 
-	public static final byte stage1_slice_moves[];
+	public static final byte stage2moves[];
 	static{
 		if( METRIC == STM )
-			stage1_slice_moves = new byte[]{
-				Lf, Rf, Ff, Bf, Lf3, Rf3, Ff3, Bf3, // moves that will be tried for the last move
-				Uf, Uf3, Uf2, Us, Us3, Us2, Df, Df3, Df2, Ds, Ds3, Ds2,
-				         Lf2, Ls, Ls3, Ls2,          Rf2, Rs, Rs3, Rs2,
-				         Ff2, Fs, Fs3, Fs2,          Bf2, Bs, Bs3, Bs2
+			stage2moves = new byte[]{
+				Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2 // Stage 5 moves
+				Uf, Df,	Uf3, Df3, // Stage 4 moves
+				Fs, Bs, Fs3, Bs3, // Stage 3 moves
+				Us, Ds, Ls, Rs, Us3, Ds3, Ls3, Rs3, // Stage 2 moves
+				Lf, Rf, Ff, Bf, Lf3, Rf3, Ff3, Bf3, // Stage 1 moves
 			};
 		else
-			stage1_slice_moves = new byte[]{
-				Lf, Rf, Ff, Bf, Lw, Fw, Lf3, Rf3, Ff3, Bf3, Lw3, Fw3, // moves that will be tried for the last move
-				Uf, Uf3, Uf2, Uw, Uw3, Uw2, Df, Df3, Df2,
-				         Lf2,          Lw2,          Rf2,
-				         Ff2,          Fw2,          Bf2,
-				Dw, Dw3, Dw2, Rw, Rw3, Rw2, Bw, Bw3, Bw2
+			stage2moves = new byte[]{
+				Uf2, Uw2, Df2, Dw2, Lf2, Lw2, Rf2, Rw2, Ff2, Fw2, Bf2, Bw2 // Stage 5 moves
+				Uf, Df,	Uf3, Df3, // Stage 4 moves
+				Fs, Bs, Fs3, Bs3, // Stage 3 moves
+				Uw, Dw, Ls, Rs, Uw3, Dw3, Ls3, Rs3, // Stage 2 moves
+				Lf, Rf, Ff, Bf, Lf3, Rf3, Ff3, Bf3, // Stage 1 moves
 			};
+	}
+
+	public static final byte moves2stage[] = new byte[N_MOVES];
+	static {
+		for (byte i=0; i<N_MOVES; i++) {
+			moves2stage[stage2moves[i]] = i;
+		}
 	}
 
 	public static final int N_FACE_MOVES = 18;
-	public static final int basic_to_face[] = new int[N_MOVES];
+	public static final byte moves2face[] = new byte[N_MOVES];
 	static {
-		for( int i = 0; i < N_STAGE1_MOVES; i++ ){
-			byte m = stage1_slice_moves[i];
+		for( int m = 0; m < N_MOVES; m++ ){
 			if((( m / 3 ) % 3 ) == 1 )
-				basic_to_face[i] = -1;
+				moves2face[moves2stage[m]] = -1;
 			else
-				basic_to_face[i] = ( m / 9 ) * 3 + ( m % 3 );
+				moves2face[moves2stage[m]] = (byte)( m / 9 ) * 3 + ( m % 3 );
 		}
 	};
 
-	public static final int stage1_inv_slice_moves[] = new int[N_MOVES];
-	static {
-		for (int i=0; i<N_STAGE1_MOVES; i++) {
-			stage1_inv_slice_moves[stage1_slice_moves[i]] = i;
-		}
-	}
-
-	public static final boolean stage1_slice_moves_to_try [][] = new boolean[N_STAGE1_MOVES + 1][N_STAGE1_MOVES];
-	static{
-		for (int i=0; i<N_STAGE1_MOVES; i++) {
-			for (int j=0; j<N_STAGE1_MOVES; j++) {
-				stage1_slice_moves_to_try[i][j] = slice_moves_to_try[stage1_slice_moves[i]][stage1_slice_moves[j]];
-			}
-			stage1_slice_moves_to_try[N_STAGE1_MOVES][i] = false;
-		}
-	}
-
-	public static final int N_STAGE2_MOVES = 28;
-	public static final int N_STAGE2_SEARCH = ( METRIC == STM ) ? 28 : 23;
-	public static final int N_STAGE2_LAST = ( METRIC == STM ) ? 8 : 6;
-	//public static final int N_STAGE2_LAST = ( METRIC == STM ) ? 4 : 3;
-
-	public static final byte stage2_slice_moves[];
-	static {
-		if( METRIC == STM )
-			stage2_slice_moves = new byte[]{
-				Us, Ds, Ls, Rs, Us3, Ds3, Ls3, Rs3,
-				Uf, Uf3, Uf2,          Us2, Df, Df3, Df2,          Ds2,
-				         Lf2,          Ls2,          Rf2,          Rs2,
-				         Ff2, Fs, Fs3, Fs2,          Bf2, Bs, Bs3, Bs2
-			};
-		else
-			stage2_slice_moves = new byte[]{
-				Uw, Ls, Rs, Uw3, Ls3, Rs3,
-				Uf, Uf3, Uf2,          Uw2, Df, Df3, Df2,
-				         Lf2,          Lw2,          Rf2,
-				         Ff2, Fs, Fs3, Fw2,          Bf2, Bs, Bs3,
-				Dw, Dw3, Dw2, Rw2, Bw2
-			};
-	}
-
-	public static final int stage2_inv_slice_moves[] = new int[N_MOVES];
-	static {
-		for (int i=0; i<N_STAGE2_MOVES; i++) {
-			stage2_inv_slice_moves[stage2_slice_moves[i]] = i;
-		}
-	}
-
-	public static final boolean stage2_slice_moves_to_try [][] = new boolean[N_STAGE2_MOVES + 1][N_STAGE2_MOVES];
-	static{
-		for (int i=0; i<N_STAGE2_MOVES; i++) {
-			for (int j=0; j<N_STAGE2_MOVES; j++) {
-				stage2_slice_moves_to_try[i][j] = slice_moves_to_try[stage2_slice_moves[i]][stage2_slice_moves[j]];
-			}
-			stage2_slice_moves_to_try[N_STAGE2_MOVES][i] = false;
-		}
-	}
-
-	public static final int N_STAGE3_MOVES = 20;
-	public static final int N_STAGE3_SEARCH = ( METRIC == STM ) ? 20 : 17;
-	public static final int N_STAGE3_LAST = 4;
-	//public static final int N_STAGE3_LAST = 2;
-
-	public static final byte stage3_slice_moves[];
-	static {
-		if( METRIC == STM )
-			stage3_slice_moves = new byte[]{
-				Fs, Bs, Fs3, Bs3,
-				Uf, Uf3, Uf2, Us2, Df, Df3, Df2, Ds2,
-				         Lf2, Ls2,          Rf2, Rs2,
-				         Ff2, Fs2,          Bf2, Bs2
-			};
-		else
-			stage3_slice_moves = new byte[]{
-				Fs, Bs, Fs3, Bs3,
-				Uf, Uf3, Uf2, Uw2, Df, Df3, Df2,
-				         Lf2, Lw2,          Rf2,
-				         Ff2, Fw2,          Bf2,
-				Dw2, Rw2, Bw2
-			};
-	}
-
-	public static final int stage3_inv_slice_moves[] = new int[N_MOVES];
-	static {
-		for (int i=0; i<N_STAGE3_MOVES; i++) {
-			stage3_inv_slice_moves[stage3_slice_moves[i]] = i;
-		}
-	}
-
-	public static final boolean stage3_slice_moves_to_try [][] = new boolean[N_STAGE3_MOVES + 1][N_STAGE3_MOVES];
-	static{
-		for (int i=0; i<N_STAGE3_MOVES; i++) {
-			for (int j=0; j<N_STAGE3_MOVES; j++) {
-				stage3_slice_moves_to_try[i][j] = slice_moves_to_try[stage3_slice_moves[i]][stage3_slice_moves[j]];
-			}
-			stage3_slice_moves_to_try[N_STAGE3_MOVES][i] = false;
-		}
-	}
-
-	public static boolean stage3_move_parity[] = new boolean[N_STAGE3_MOVES];
+	public static int stage3_move_parity = 0;
 	static {
 		for( int i = 0; i < N_STAGE3_MOVES; i++)
-			stage3_move_parity[i] = ((( stage3_slice_moves[i] / 3 ) % 3 ) == 1 ) && (( stage3_slice_moves[i] % 3 ) < 2 );
+			if (((( i / 3 ) % 3 ) == 1 ) && (( i % 3 ) < 2 ))
+				stage3_move_parity |= 1 << moves2stage[i];
 	}
 
-	public static final int N_STAGE4_MOVES = 16;
-	public static final int N_STAGE4_SEARCH = ( METRIC == STM ) ? 16 : 13;
-	public static final int N_STAGE4_LAST = 4;
-	//public static final int N_STAGE4_LAST = 2;
+	/** Filter certain combinaisons of moves:
+	  **/
 
-	public static final byte stage4_slice_moves[];
-	static {
-		if( METRIC == STM )
-			stage4_slice_moves = new byte[]{
-				Uf, Df,	Uf3, Df3,
-				Uf2, Us2, Df2, Ds2,
-				Lf2, Ls2, Rf2, Rs2,
-				Ff2, Fs2, Bf2, Bs2
-			};
-		else
-			stage4_slice_moves = new byte[]{
-				Uf, Df,	Uf3, Df3,
-				Uf2, Uw2, Df2,
-				Lf2, Lw2, Rf2,
-				Ff2, Fw2, Bf2,
-				Dw2, Rw2, Bw2
-			};
-	}
-
-	public static final int stage4_inv_slice_moves[] = new int[N_MOVES];
-	static {
-		for (int i=0; i<N_STAGE4_MOVES; i++) {
-			stage4_inv_slice_moves[stage4_slice_moves[i]] = i;
-		}
-	}
-
-	public static final boolean stage4_slice_moves_to_try [][] = new boolean[N_STAGE4_MOVES + 1][N_STAGE4_MOVES];
+	public static final long moves_to_try [] = new long[N_MOVES+1];
 	static{
-		for (int i=0; i<N_STAGE4_MOVES; i++) {
-			for (int j=0; j<N_STAGE4_MOVES; j++) {
-				stage4_slice_moves_to_try[i][j] = slice_moves_to_try[stage4_slice_moves[i]][stage4_slice_moves[j]];
+		for (int i=0; i<N_MOVES; i++) {
+			moves_to_try[moves2stage[i]] = ( 1 << N_MOVES ) - 1;
+			for (int j=0; j<N_MOVES; j++) {
+
+	  			/* Same slice. For example, Rf Rf2 is not permitted because Rf Rf2 = Rf3. */
+				if (i/3 == j/3)
+					moves_to_try[moves2stage[i]] &= -1 ^ ( 1 << moves2stage[j] );
+
+	  			/* Same face, only a specific order is allowed. Rf Ls2 is allowed but not Ls2 Rf. */
+				if ( (i/18 == j/18) && (i>j) )
+					moves_to_try[moves2stage[i]] &= -1 ^ ( 1 << moves2stage[j] );
+
+	  			/* For STM only, if two successive moves are from the same face and the same rotation, the first one should be either Ufx, Rfx or Ffx.
+	  			 *   for example Rf Ls3 is ok but Lf2 Rs2 is not permitted because Lf2 Rs2 = Rf2 Ls2. */
+				if( METRIC == STM )
+					if ((i/16 == j/16) && ((i%3) == (j%3)) && ((i%12) >= 3));
+						moves_to_try[moves2stage[i]] &= -1 ^ ( 1 << moves2stage[j] );
+
+				/* One of each double layer turn of the same plane is allowed, the other one not (Uw is ok, not Dw). */
+				if(( j%18 ) >= 15 )
+					moves_to_try[moves2stage[i]] &= -1 ^ ( 1 << moves2stage[j] );
 			}
-			stage4_slice_moves_to_try[N_STAGE4_MOVES][i] = false;
 		}
-	}
 
-	public static final int N_STAGE5_MOVES = 12;
-	public static final int N_STAGE5_SEARCH = ( METRIC == STM ) ? 12 : 9;
-
-	public static final byte stage5_slice_moves[];
-	static {
-		if( METRIC == STM )
-			stage5_slice_moves = new byte[]{
-				Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2
-			};
-		else
-			stage5_slice_moves = new byte[]{
-				Uf2, Uw2, Df2, Lf2, Lw2, Rf2, Ff2, Fw2, Bf2,
-				Dw2, Rw2, Bw2
-			};
-	}
-
-	public static final int stage5_inv_slice_moves[] = new int[N_MOVES];
-	static {
-		for (int i=0; i<N_STAGE5_MOVES; i++) {
-			stage5_inv_slice_moves[stage5_slice_moves[i]] = i;
-		}
-	}
-
-	public static final boolean stage5_slice_moves_to_try [][] = new boolean[N_STAGE5_MOVES + 1][N_STAGE5_MOVES];
-	static{
-		for (int i=0; i<N_STAGE5_MOVES; i++) {
-			for (int j=0; j<N_STAGE5_MOVES; j++) {
-				stage5_slice_moves_to_try[i][j] = slice_moves_to_try[stage5_slice_moves[i]][stage5_slice_moves[j]];
-			}
-			stage5_slice_moves_to_try[N_STAGE5_MOVES][i] = false;
-		}
+		/* The index N_MOVES correspond to the beginning of the solve, where no moves has been done yet.
+		 * Everything is allowed except for the double layer thing. */
+		moves_to_try[N_MOVES] = ( 1 << N_MOVES ) - 1;
+		for (int j=0; j<N_MOVES; j++)
+			if(( j%18 ) >= 15 )
+				moves_to_try[N_MOVES] &= -1 ^ ( 1 << moves2stage[j] );
 	}
 
 	public static final int Cnk [][] = new int[25][25];
@@ -375,33 +233,6 @@ public final class Constants{
 				Cnk[i][j] = Cnk[i-1][j] + Cnk[i-1][j-1];
 			}
 		}
-	}
-
-
-	/**
-	 * Converts an array of integers from 0 to n-1 into a corresponding number from 0 to n!-1.
-	 * @param n		cardinal of the permutation
-	 * @param array_in	permutation
-	 * @param offset	index of the first element where the permutation starts in the table (can be >0)
-	 * @return		an integer representing the permutation
-	 */
-	public static final int perm_n_pack (int n, byte[] array_in, int offset)
-	{
-		int idx;
-		int i, j;
-
-		idx = 0;
-
-		for (i = 0; i < n; ++i) {
-			idx *= (n - i);
-
-			for (j = i + 1; j < n; ++j) {
-				if (array_in[j+offset] < array_in[i+offset]) {
-					++idx;
-				}
-			}
-		}
-		return idx;
 	}
 
 	/**
