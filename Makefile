@@ -8,6 +8,7 @@ default:
 	mkdir -p $(DIR)
 	cp *.java $(DIR)
 	$(JC) $(JFLAGS) $(DIR)/*.java
+	ctags -f ~/.tags -R ./ $(JAVA_HOME)src
 
 run:
 	$(JAVA) $(DIR)/Main

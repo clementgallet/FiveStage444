@@ -3,6 +3,9 @@ package cg.fivestage444;
 import static cg.fivestage444.Constants.*; 
 
 import java.util.Random;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
 
 public final class Test {
 
@@ -12,12 +15,96 @@ public final class Test {
 		Random gen = new Random();
 		Tools.init();
 
+		testCenter35();
+
 		//testSolve2(10);
 		//testSolve3(30);
-		testSolve4(30);
+		//testSolve4(30);
 		//testMove4(10);
 		//testMove5(10);
 		
+	}
+
+	public static void testCenter35(){
+
+	Set[] centerSets = new Set[34];
+
+	for (int i=0; i < 34; i++)
+		for (int j=i+1; j<35; j++){
+
+			/* Initialisation */
+			centerSets[0] = new HashSet<Integer>();
+			centerSets[0].add(i);
+			centerSets[0].add(j);
+			int l=1;
+			for (int k=0; k<35; k++)
+				if( k!=i && k!=j ){
+					centerSets[l] = new HashSet<Integer>();
+					centerSets[l++].add(k);
+				}
+
+			int size = 34;
+			boolean did=true;
+			while(( size > 1 ) && did){
+				did = false;
+				//printSets(centerSets, size);
+				/* Loop through all sets */
+				for (int s=0; s<size; s++){
+					/* We pass if the current set is a singleton */
+					if( centerSets[s].size() < 2 ) continue;
+
+					Set curr = new HashSet<Integer>(centerSets[s]);
+					Iterator<Integer> it = curr.iterator();
+					int first_elem = it.next();
+					while (it.hasNext()) {
+						int other_elem = it.next();
+						for (int m=0; m<16; m++){
+							if( merge2Sets(centerSets, size, Tables.moveCenter4[first_elem][m], Tables.moveCenter4[other_elem][m])){
+								size--;
+								did = true;
+								//printSets(centerSets, size);
+							}
+						}
+					}
+				}
+			}
+			if( size == 1 ) System.out.print("");
+			else System.out.println("Yeah !");
+		}
+	}
+
+	public static boolean merge2Sets (Set[] centerSets, int size, int a, int b){
+		int idx_a = -1;
+		int idx_b = -1;
+		for( int i=0; i < size; i++ ){
+			if( centerSets[i].contains(a))
+				idx_a = i;
+			if( centerSets[i].contains(b))
+				idx_b = i;
+		}
+		if(idx_a == idx_b)
+			return false;
+		centerSets[Math.min(idx_a,idx_b)].addAll(centerSets[Math.max(idx_a,idx_b)]);
+		centerSets[Math.max(idx_a,idx_b)] = centerSets[size-1];
+		return true;
+
+	}
+
+	public static void printSets (Set[] centerSets, int size){
+
+		for (int s=0; s<size; s++){
+		/*
+			Iterator it = centerSets[s].iterator();
+			
+			System.out.println("{"+it.next());
+			while (it.hasNext()) {
+				System.out.println(","+it.next());
+			}
+			System.out.println("} ");*/
+			System.out.print(centerSets[s]);
+			System.out.print(",");
+		}
+	System.out.println("");
 	}
 
 	public static void randomScramble(CubeState cube, Random gen){

@@ -518,11 +518,14 @@ public final class Tables {
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		for (int u = 0; u < N_STAGE4_CENTERS; ++u) {
+System.out.println("Center "+u);
 			cube1.convert_centers4_to_std_cube (u);
 			for (int mc = 0; mc < N_STAGE4_MOVES; ++mc) {
+				if ((stage4_slice_moves[mc] % 3 ) == 2) continue;
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
 				cube2.rotate_sliceCENTER (stage4_slice_moves[mc]);
 				moveCenter4[u][mc] = cube2.convert_centers_to_stage4();
+System.out.println("move "+cube2.convert_centers_to_stage4());
 			}
 		}
 		System.out.println( "Finishing center stage 4..." );
