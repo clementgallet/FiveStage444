@@ -138,34 +138,19 @@ public final class Symmetry {
 		}
 	}
 
-	static int[][] moveConjugate1 = new int[N_STAGE1_MOVES][N_SYM_STAGE1];
-	static int[][] moveConjugate2 = new int[N_STAGE2_MOVES][N_SYM_STAGE2];
-	static int[][] moveConjugate3 = new int[N_STAGE3_MOVES][N_SYM_STAGE3*2];
-	static int[][] moveConjugate4 = new int[N_STAGE4_MOVES][N_SYM_STAGE4];
-	static int[][] moveConjugate5 = new int[N_STAGE5_MOVES][N_SYM_STAGE5*4];
+	static int[][] moveConjugateStage = new int[N_MOVES][N_SYM];
+	static int[][] moveConjugateCo4Stage = new int[N_MOVES][N_SYM*4];
 
 	static void initMoveConjugateStage(){
 
 		int i, j;
 
-		for (i=0; i<N_STAGE1_MOVES; i++)
-			for (j=0; j<N_SYM_STAGE1; j++)
-				moveConjugate1[i][j] = stage1_inv_slice_moves[moveConjugate[stage1_slice_moves[i]][j]];
+		for (i=0; i<N_MOVES; i++)
+			for (j=0; j<N_SYM; j++)
+				moveConjugateStage[i][j] = moves2stage[moveConjugate[stage2moves[i]][j]];
 
-		for (i=0; i<N_STAGE2_MOVES; i++)
-			for (j=0; j<N_SYM_STAGE2; j++)
-				moveConjugate2[i][j] = stage2_inv_slice_moves[moveConjugate[stage2_slice_moves[i]][j]];
-
-		for (i=0; i<N_STAGE3_MOVES; i++)
-			for (j=0; j<N_SYM_STAGE3; j++)
-				moveConjugate3[i][j] = stage3_inv_slice_moves[moveConjugate[stage3_slice_moves[i]][j]];
-
-		for (i=0; i<N_STAGE4_MOVES; i++)
-			for (j=0; j<N_SYM_STAGE4; j++)
-				moveConjugate4[i][j] = stage4_inv_slice_moves[moveConjugate[stage4_slice_moves[i]][j]];
-
-		for (i=0; i<N_STAGE5_MOVES; i++)
-			for (j=0; j<N_SYM_STAGE5*4; j++)
-				moveConjugate5[i][j] = stage5_inv_slice_moves[moveConjugate[stage5_slice_moves[i]][symIdxMultiply[j>>2][j&3]]];
+		for (i=0; i<N_MOVES; i++)
+			for (j=0; j<N_SYM*4; j++)
+				moveConjugateCo4Stage[i][j] = moves2stage[moveConjugate[stage2moves[i]][symIdxMultiply[j>>2][j&3]]];
 	}
 }

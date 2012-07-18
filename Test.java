@@ -27,7 +27,11 @@ public final class Test {
 
 	public static void testCenter35(){
 
-	Set[] centerSets = new Set[34];
+	/* Use:
+	 * ArrayList<Set<Integer>> centerSets = new ArrayList<Set<Integer>>();
+	 * instead. */
+
+	Set<Integer>[] centerSets = new Set[34];
 
 	for (int i=0; i < 34; i++)
 		for (int j=i+1; j<35; j++){
@@ -53,7 +57,7 @@ public final class Test {
 					/* We pass if the current set is a singleton */
 					if( centerSets[s].size() < 2 ) continue;
 
-					Set curr = new HashSet<Integer>(centerSets[s]);
+					Set<Integer> curr = new HashSet<Integer>(centerSets[s]);
 					Iterator<Integer> it = curr.iterator();
 					int first_elem = it.next();
 					while (it.hasNext()) {
@@ -73,7 +77,7 @@ public final class Test {
 		}
 	}
 
-	public static boolean merge2Sets (Set[] centerSets, int size, int a, int b){
+	public static boolean merge2Sets (Set<Integer>[] centerSets, int size, int a, int b){
 		int idx_a = -1;
 		int idx_b = -1;
 		for( int i=0; i < size; i++ ){
@@ -93,14 +97,6 @@ public final class Test {
 	public static void printSets (Set[] centerSets, int size){
 
 		for (int s=0; s<size; s++){
-		/*
-			Iterator it = centerSets[s].iterator();
-			
-			System.out.println("{"+it.next());
-			while (it.hasNext()) {
-				System.out.println(","+it.next());
-			}
-			System.out.println("} ");*/
 			System.out.print(centerSets[s]);
 			System.out.print(",");
 		}
@@ -131,7 +127,7 @@ public final class Test {
 		for( int i=0; i < n; i++ ){
 
 			/* Generate a random cube in stage 3 subgroup and convert to CubeStage2 coordinates */
-			randomScramble( cube, Constants.stage3_slice_moves, Constants.N_STAGE3_MOVES, gen );
+			randomScramble( cube, Constants.stage2moves, Constants.N_STAGE3_MOVES, gen );
 			int rr = gen.nextInt(4);
 			for( int j=0; j<rr; j++){
 				cube.do_move(Uw);
@@ -152,7 +148,7 @@ public final class Test {
 		for( int i=0; i < n; i++ ){
 
 			/* Generate a random cube in stage 4 subgroup and convert to CubeStage3 coordinates */
-			randomScramble( cube, Constants.stage4_slice_moves, Constants.N_STAGE4_MOVES, gen );
+			randomScramble( cube, Constants.stage2moves, Constants.N_STAGE4_MOVES, gen );
 			int center = cube.convert_symcenters_to_stage3();
 			int sym = center & 0x7;
 			center >>>= 3;
@@ -172,7 +168,7 @@ public final class Test {
 		for( int i=0; i < n; i++ ){
 
 			/* Generate a random cube in stage 5 subgroup and convert to CubeStage4 coordinates */
-			randomScramble( cube, Constants.stage5_slice_moves, Constants.N_STAGE5_MOVES, gen );
+			randomScramble( cube, Constants.stage2moves, Constants.N_STAGE5_MOVES, gen );
 			int edge = cube.convert_symedges_to_stage4();
 			int sym = edge & 0xF;
 			edge >>>= 4;
@@ -194,13 +190,13 @@ public final class Test {
 		for( int i=0; i < 100; i++ ){
 
 			/* Generate a random cube in stage 4 subgroup and convert to CubeStage5 coordinates */
-			randomScramble( cube, Constants.stage4_slice_moves, Constants.N_STAGE4_MOVES, gen );
+			randomScramble( cube, Constants.stage2moves, Constants.N_STAGE4_MOVES, gen );
 			//cube.convert_to_stage4(cs1);
 
 			/* Apply n random moves from both the cube and the CubeStage5 coordinates */
 			for( int j=0; j<n; j++ ){
 				move = gen.nextInt(Constants.N_STAGE4_MOVES);
-				cube.do_move( Constants.stage4_slice_moves[move] );
+				cube.do_move( Constants.stage2moves[move] );
 				//cs1.do_move(move);
 			}
 
@@ -233,13 +229,13 @@ public final class Test {
 		for( int i=0; i < 100; i++ ){
 
 			/* Generate a random cube in stage 5 subgroup and convert to CubeStage5 coordinates */
-			randomScramble( cube, Constants.stage5_slice_moves, Constants.N_STAGE5_MOVES, gen );
+			randomScramble( cube, Constants.stage2moves, Constants.N_STAGE5_MOVES, gen );
 			//cube.convert_to_stage5(cs1);
 
 			/* Apply n random moves from both the cube and the CubeStage5 coordinates */
 			for( int j=0; j<n; j++ ){
 				move = gen.nextInt(Constants.N_STAGE5_MOVES);
-				cube.do_move( Constants.stage5_slice_moves[move] );
+				cube.do_move( Constants.stage2moves[move] );
 				//cs1.do_move(move);
 			}
 

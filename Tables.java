@@ -199,7 +199,7 @@ public final class Tables {
 			cube1.convert_edges1_to_std_cube( sym2rawEdge1[u] );
 			for (int mc = 0; mc < N_STAGE1_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.rotate_sliceEDGE (stage1_slice_moves[mc]);
+				cube2.rotate_sliceEDGE (stage2moves[mc]);
 				moveEdge1[u][mc] = cube2.convert_symedges_to_stage1();
 			}
 		}
@@ -217,11 +217,11 @@ public final class Tables {
 		for (int u = 0; u < N_STAGE1_CORNERS; ++u) {
 			cube1.convert_corners1_to_std_cube (u);
 			for (int mc = 0; mc < N_STAGE1_MOVES; ++mc) {
-				if((stage1_slice_moves[mc]/3)%3 == 1 )
+				if((stage2moves[mc]/3)%3 == 1 )
 					continue;
 				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
-				cube2.rotate_sliceCORNER (stage1_slice_moves[mc]);
-				moveCorner1[u][basic_to_face[mc]] = cube2.convert_corners_to_stage1();
+				cube2.rotate_sliceCORNER (stage2moves[mc]);
+				moveCorner1[u][stage2face[mc]] = cube2.convert_corners_to_stage1();
 			}
 		}
 		System.out.println( "Finishing corner stage 1..." );
@@ -258,7 +258,7 @@ public final class Tables {
 			cube1.convert_edges2_to_std_cube(u);
 			for (int mc = 0; mc < N_STAGE2_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.rotate_sliceEDGE (stage2_slice_moves[mc]);
+				cube2.rotate_sliceEDGE (stage2moves[mc]);
 				moveEdge2[u][mc] = cube2.convert_edges_to_stage2();
 			}
 		}
@@ -324,7 +324,7 @@ public final class Tables {
 			cube1.convert_centers2_to_std_cube( sym2rawCenter2[u] );
 			for (int mc = 0; mc < N_STAGE2_MOVES; ++mc) {
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-				cube2.rotate_sliceCENTER (stage2_slice_moves[mc]);
+				cube2.rotate_sliceCENTER (stage2moves[mc]);
 				moveCenter2[u][mc] = cube2.convert_symcenters_to_stage2(5);
 			}
 		}
@@ -374,7 +374,7 @@ public final class Tables {
 			cube1.convert_centers3_to_std_cube(sym2rawCenter3[u]);
 			for (int mc = 0; mc < N_STAGE3_MOVES; ++mc) {
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-				cube2.rotate_sliceCENTER (stage3_slice_moves[mc]);
+				cube2.rotate_sliceCENTER (stage2moves[mc]);
 				moveCenter3[u][mc] = cube2.convert_symcenters_to_stage3();
 			}
 		}
@@ -393,7 +393,7 @@ public final class Tables {
 			cube1.convert_edges3_to_std_cube(u);
 			for (int mc = 0; mc < N_STAGE3_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.rotate_sliceEDGE (stage3_slice_moves[mc]);
+				cube2.rotate_sliceEDGE (stage2moves[mc]);
 				moveEdge3[u][mc] = cube2.convert_edges_to_stage3();
 			}
 		}
@@ -468,7 +468,7 @@ public final class Tables {
 			cube1.convert_edges4_to_std_cube( sym2rawEdge4[u] );
 			for (int mc = 0; mc < N_STAGE4_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.rotate_sliceEDGE (stage4_slice_moves[mc]);
+				cube2.rotate_sliceEDGE (stage2moves[mc]);
 				moveEdge4[u][mc] = cube2.convert_symedges_to_stage4();
 			}
 		}
@@ -486,7 +486,7 @@ public final class Tables {
 			cube1.convert_corners4_to_std_cube (u);
 			for (int mc = 0; mc < N_STAGE4_MOVES; ++mc) {
 				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
-				cube2.rotate_sliceCORNER (stage4_slice_moves[mc]);
+				cube2.rotate_sliceCORNER (stage2moves[mc]);
 				moveCorner4[u][mc] = cube2.convert_corners_to_stage4();
 			}
 		}
@@ -518,14 +518,12 @@ public final class Tables {
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		for (int u = 0; u < N_STAGE4_CENTERS; ++u) {
-System.out.println("Center "+u);
 			cube1.convert_centers4_to_std_cube (u);
 			for (int mc = 0; mc < N_STAGE4_MOVES; ++mc) {
-				if ((stage4_slice_moves[mc] % 3 ) == 2) continue;
+				if ((stage2moves[mc] % 3 ) == 2) continue;
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-				cube2.rotate_sliceCENTER (stage4_slice_moves[mc]);
+				cube2.rotate_sliceCENTER (stage2moves[mc]);
 				moveCenter4[u][mc] = cube2.convert_centers_to_stage4();
-System.out.println("move "+cube2.convert_centers_to_stage4());
 			}
 		}
 		System.out.println( "Finishing center stage 4..." );
@@ -563,7 +561,7 @@ System.out.println("move "+cube2.convert_centers_to_stage4());
 			cube1.convert_corners5_to_std_cube (u);
 			for (int m = 0; m < N_STAGE5_MOVES; ++m) {
 				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
-				cube2.rotate_sliceCORNER (stage5_slice_moves[m]);
+				cube2.rotate_sliceCORNER (stage2moves[m]);
 				moveCorner5[u][m] = cube2.convert_corners_to_stage5();
 			}
 		}
@@ -594,7 +592,7 @@ System.out.println("move "+cube2.convert_centers_to_stage4());
 			cube1.convert_centers5_to_std_cube (u);
 			for (int m = 0; m < N_STAGE5_MOVES; ++m) {
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
-				cube2.rotate_sliceCENTER (stage5_slice_moves[m]);
+				cube2.rotate_sliceCENTER (stage2moves[m]);
 				moveCenter5[u][m]= cube2.convert_centers_to_stage5();
 			}
 		}
@@ -649,7 +647,7 @@ System.out.println("move "+cube2.convert_centers_to_stage4());
 			cube1.convert_edges5_to_std_cube (sym2rawEdge5[u]);
 			for (int mc = 0; mc < N_STAGE5_MOVES; ++mc) {
 				System.arraycopy(cube1.m_edge, 0, cube2.m_edge, 0, 24);
-				cube2.rotate_sliceEDGE (stage5_slice_moves[mc]);
+				cube2.rotate_sliceEDGE (stage2moves[mc]);
 				moveEdge5[u][mc] = cube2.convert_symedges_to_stage5();
 			}
 		}
@@ -854,7 +852,7 @@ System.out.println("move "+cube2.convert_centers_to_stage4());
 	public static void initRawSymPrunPacked(byte[] prunTable, final int INV_DEPTH, 
 			final short[][] rawMove, final short[][] rawConj,
 			final int[][] symMove, final long[][] symState, 
-			final int[] solvedStates, final int[] moveMap, final int SYM_SHIFT) {
+			final int[] solvedStates, final byte[] moveMap, final int SYM_SHIFT) {
 
 		final int SYM_MASK = (1 << SYM_SHIFT) - 1;
 		final int N_RAW = rawMove.length;
@@ -955,7 +953,7 @@ System.out.println("move "+cube2.convert_centers_to_stage4());
 	public static byte[] prunTable1 = new byte[N_STAGE1_SYMEDGES*N_STAGE1_CORNERS/5+1];
 	public static void initPrun1(){
 		int[] solved = {1906};
-		initRawSymPrunPacked( prunTable1, 9, moveCorner1, conjCorner1, moveEdge1, hasSymEdgeSTAGE1, solved, Constants.basic_to_face, 6);
+		initRawSymPrunPacked( prunTable1, 9, moveCorner1, conjCorner1, moveEdge1, hasSymEdgeSTAGE1, solved, Constants.stage2face, 6);
 	}
 
 	public final static int prunDist1(int edge, int sym, int corner){
@@ -965,9 +963,9 @@ System.out.println("move "+cube2.convert_centers_to_stage4());
 		int d;
 		for (d = 0; ( idx != 1906 ) && ( d < 20 ); d++){
 			for (int m = 0; m < Constants.N_STAGE1_MOVES; ++m) {
-				int mm = Constants.basic_to_face[m];
+				int mm = Constants.stage2face[m];
 				int cornerx = ( mm >= 0 ) ? moveCorner1[corner][mm] : corner;
-				int edgex = moveEdge1[edge][Symmetry.moveConjugate1[m][sym]];
+				int edgex = moveEdge1[edge][Symmetry.moveConjugateStage[m][sym]];
 				int symx = Symmetry.symIdxMultiply[edgex & 0x3F][sym];
 				edgex >>= 6;
 				int idxx = Constants.N_STAGE1_CORNERS*edgex+conjCorner1[cornerx][symx];
@@ -998,7 +996,7 @@ System.out.println("move "+cube2.convert_centers_to_stage4());
 		for( d=0; idx != 0; d++)
 			for (int m = 0; m < Constants.N_STAGE4_MOVES; ++m) {
 				int cornerx = moveCorner4[corner][m];
-				int edgex = moveEdge4[edge][Symmetry.moveConjugate4[m][sym]];
+				int edgex = moveEdge4[edge][Symmetry.moveConjugateStage[m][sym]];
 				int symx = Symmetry.symIdxMultiply[edgex&0xF][sym];
 				edgex >>= 4;
 				int idxx = edgex*Constants.N_STAGE4_CORNERS+conjCorner4[cornerx][symx];
@@ -1028,7 +1026,7 @@ System.out.println("move "+cube2.convert_centers_to_stage4());
 		for( d=0; idx != 0; d++){
 			for (int m = 0; m < Constants.N_STAGE5_MOVES; ++m) {
 				int centerx = moveCenter5[center][m];
-				int edgex = moveEdge5[edge][Symmetry.moveConjugate5[m][sym]];
+				int edgex = moveEdge5[edge][Symmetry.moveConjugateCo4Stage[m][sym]];
 				int symx = Symmetry.symIdxCo4Multiply[sym][edgex&0xFF];
 				edgex >>= 8;
 				int idxx = edgex*Constants.N_STAGE5_CENTERS+conjCenter5[centerx][symx];
@@ -1184,7 +1182,7 @@ System.out.println("move "+cube2.convert_centers_to_stage4());
 			for (int m = 0; m < Constants.N_STAGE4_MOVES; ++m) {
 				int cornerx = moveCorner4[corner][m];
 				int centerx = moveCenter4[center][m];
-				int edgex = moveEdge4[edge][Symmetry.moveConjugate4[m][sym]];
+				int edgex = moveEdge4[edge][Symmetry.moveConjugateStage[m][sym]];
 				int symx = Symmetry.symIdxMultiply[edgex&0xF][sym];
 				edgex >>= 4;
 				long idxx = (long)(edgex*Constants.N_STAGE4_CORNERS+conjCorner4[cornerx][symx])*N_STAGE4_CENTERS+conjCenter4[centerx][symx];

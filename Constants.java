@@ -131,6 +131,8 @@ public final class Constants{
 
 	/** Don't use the actual numbering of rotation, but use another one sorted by the different stages. **/
 
+	public static final int N_STAGE_MOVES = 36;
+
 	public static final int N_STAGE1_MOVES = 36;
 	public static final int N_STAGE2_MOVES = 28;
 	public static final int N_STAGE3_MOVES = 20;
@@ -141,37 +143,37 @@ public final class Constants{
 	static{
 		if( METRIC == STM )
 			stage2moves = new byte[]{
-				Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2 // Stage 5 moves
+				Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2, // Stage 5 moves
 				Uf, Df,	Uf3, Df3, // Stage 4 moves
 				Fs, Bs, Fs3, Bs3, // Stage 3 moves
 				Us, Ds, Ls, Rs, Us3, Ds3, Ls3, Rs3, // Stage 2 moves
-				Lf, Rf, Ff, Bf, Lf3, Rf3, Ff3, Bf3, // Stage 1 moves
+				Lf, Rf, Ff, Bf, Lf3, Rf3, Ff3, Bf3 // Stage 1 moves
 			};
 		else
 			stage2moves = new byte[]{
-				Uf2, Uw2, Df2, Dw2, Lf2, Lw2, Rf2, Rw2, Ff2, Fw2, Bf2, Bw2 // Stage 5 moves
+				Uf2, Uw2, Df2, Dw2, Lf2, Lw2, Rf2, Rw2, Ff2, Fw2, Bf2, Bw2, // Stage 5 moves
 				Uf, Df,	Uf3, Df3, // Stage 4 moves
 				Fs, Bs, Fs3, Bs3, // Stage 3 moves
 				Uw, Dw, Ls, Rs, Uw3, Dw3, Ls3, Rs3, // Stage 2 moves
-				Lf, Rf, Ff, Bf, Lf3, Rf3, Ff3, Bf3, // Stage 1 moves
+				Lf, Rf, Ff, Bf, Lf3, Rf3, Ff3, Bf3 // Stage 1 moves
 			};
 	}
 
 	public static final byte moves2stage[] = new byte[N_MOVES];
 	static {
-		for (byte i=0; i<N_MOVES; i++) {
+		for (byte i=0; i<N_STAGE_MOVES; i++) {
 			moves2stage[stage2moves[i]] = i;
 		}
 	}
 
 	public static final int N_FACE_MOVES = 18;
-	public static final byte moves2face[] = new byte[N_MOVES];
+	public static final byte stage2face[] = new byte[N_MOVES];
 	static {
 		for( int m = 0; m < N_MOVES; m++ ){
 			if((( m / 3 ) % 3 ) == 1 )
-				moves2face[moves2stage[m]] = -1;
+				stage2face[moves2stage[m]] = -1;
 			else
-				moves2face[moves2stage[m]] = (byte)( m / 9 ) * 3 + ( m % 3 );
+				stage2face[moves2stage[m]] = (byte)(( m / 9 ) * 3 + ( m % 3 ));
 		}
 	};
 
@@ -185,38 +187,38 @@ public final class Constants{
 	/** Filter certain combinaisons of moves:
 	  **/
 
-	public static final long moves_to_try [] = new long[N_MOVES+1];
+	public static final long moves_mask [] = new long[N_MOVES+1];
 	static{
 		for (int i=0; i<N_MOVES; i++) {
-			moves_to_try[moves2stage[i]] = ( 1 << N_MOVES ) - 1;
+			moves_mask[moves2stage[i]] = ( 1 << N_MOVES ) - 1;
 			for (int j=0; j<N_MOVES; j++) {
 
 	  			/* Same slice. For example, Rf Rf2 is not permitted because Rf Rf2 = Rf3. */
 				if (i/3 == j/3)
-					moves_to_try[moves2stage[i]] &= -1 ^ ( 1 << moves2stage[j] );
+					moves_mask[moves2stage[i]] &= -1 ^ ( 1 << moves2stage[j] );
 
 	  			/* Same face, only a specific order is allowed. Rf Ls2 is allowed but not Ls2 Rf. */
 				if ( (i/18 == j/18) && (i>j) )
-					moves_to_try[moves2stage[i]] &= -1 ^ ( 1 << moves2stage[j] );
+					moves_mask[moves2stage[i]] &= -1 ^ ( 1 << moves2stage[j] );
 
 	  			/* For STM only, if two successive moves are from the same face and the same rotation, the first one should be either Ufx, Rfx or Ffx.
 	  			 *   for example Rf Ls3 is ok but Lf2 Rs2 is not permitted because Lf2 Rs2 = Rf2 Ls2. */
 				if( METRIC == STM )
 					if ((i/16 == j/16) && ((i%3) == (j%3)) && ((i%12) >= 3));
-						moves_to_try[moves2stage[i]] &= -1 ^ ( 1 << moves2stage[j] );
+						moves_mask[moves2stage[i]] &= -1 ^ ( 1 << moves2stage[j] );
 
 				/* One of each double layer turn of the same plane is allowed, the other one not (Uw is ok, not Dw). */
 				if(( j%18 ) >= 15 )
-					moves_to_try[moves2stage[i]] &= -1 ^ ( 1 << moves2stage[j] );
+					moves_mask[moves2stage[i]] &= -1 ^ ( 1 << moves2stage[j] );
 			}
 		}
 
 		/* The index N_MOVES correspond to the beginning of the solve, where no moves has been done yet.
 		 * Everything is allowed except for the double layer thing. */
-		moves_to_try[N_MOVES] = ( 1 << N_MOVES ) - 1;
+		moves_mask[N_MOVES] = ( 1 << N_MOVES ) - 1;
 		for (int j=0; j<N_MOVES; j++)
 			if(( j%18 ) >= 15 )
-				moves_to_try[N_MOVES] &= -1 ^ ( 1 << moves2stage[j] );
+				moves_mask[N_MOVES] &= -1 ^ ( 1 << moves2stage[j] );
 	}
 
 	public static final int Cnk [][] = new int[25][25];
