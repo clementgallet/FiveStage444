@@ -217,7 +217,7 @@ public final class Tables {
 		for (int u = 0; u < N_STAGE1_CORNERS; ++u) {
 			cube1.convert_corners1_to_std_cube (u);
 			for (int mc = 0; mc < N_STAGE1_MOVES; ++mc) {
-				if((stage2moves[mc]/3)%3 == 1 )
+				if((stage2face[mc] == -1 )
 					continue;
 				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
 				cube2.rotate_sliceCORNER (stage2moves[mc]);
@@ -520,7 +520,6 @@ public final class Tables {
 		for (int u = 0; u < N_STAGE4_CENTERS; ++u) {
 			cube1.convert_centers4_to_std_cube (u);
 			for (int mc = 0; mc < N_STAGE4_MOVES; ++mc) {
-				if ((stage2moves[mc] % 3 ) == 2) continue;
 				System.arraycopy(cube1.m_cen, 0, cube2.m_cen, 0, 24);
 				cube2.rotate_sliceCENTER (stage2moves[mc]);
 				moveCenter4[u][mc] = cube2.convert_centers_to_stage4();

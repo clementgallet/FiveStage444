@@ -46,7 +46,7 @@ public final class Search {
 	CubeState c3 = new CubeState();
 	CubeState c4 = new CubeState();
 
-	static int DEBUG_LEVEL = 0;
+	static int DEBUG_LEVEL = 1;
 
 	public String solve (CubeState cube, int max_turns, boolean inverse) {
 		int i, j;
@@ -144,9 +144,9 @@ public final class Search {
 		found_sol = false;
 		for (length1 = d; length1 < total_length; ++length1) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "Stage 1 - length "+length1 );
-			if ( search_stage1 (edge1, sym1, corner1, length1, 0, N_MOVES, d1, 0 )
-			  || search_stage1 (edge2, sym2, corner2, length1, 0, N_MOVES, d2, 1 )
-			  || search_stage1 (edge3, sym3, corner3, length1, 0, N_MOVES, d3, 2 ))
+			if ( search_stage1 (edge1, sym1, corner1, length1, 0, N_STAGE_MOVES, d1, 0 )
+			  || search_stage1 (edge2, sym2, corner2, length1, 0, N_STAGE_MOVES, d2, 1 )
+			  || search_stage1 (edge3, sym3, corner3, length1, 0, N_STAGE_MOVES, d3, 2 ))
 				return;
 		}
 	}
@@ -230,8 +230,8 @@ public final class Search {
 
 		for (length2 = Math.min(d21, d22); length2 < min2; ++length2) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "  Stage 2 - length "+length2 );
-			if((( length2 >= d21 ) && search_stage2 (edge1, centerF1, symF1, centerB1, symB1, length2, 0, N_MOVES, 0 )) ||
-			   (( length2 >= d22 ) && search_stage2 (edge2, centerF2, symF2, centerB2, symB2, length2, 0, N_MOVES, 1 ))){
+			if((( length2 >= d21 ) && search_stage2 (edge1, centerF1, symF1, centerB1, symB1, length2, 0, N_STAGE_MOVES, 0 )) ||
+			   (( length2 >= d22 ) && search_stage2 (edge2, centerF2, symF2, centerB2, symB2, length2, 0, N_STAGE_MOVES, 1 ))){
 				return true;
 			}
 			min2 = Math.min( MAX_STAGE2 + 1, total_length - length1 - MIN_STAGE3 - MIN_STAGE4 - MIN_STAGE5);
@@ -315,7 +315,7 @@ public final class Search {
 
 		for (length3 = d3; length3 < min3; ++length3) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "    Stage 3 - length "+length3 );
-			if( search_stage3 (center, sym, edge, edge_odd, length3, 0, N_MOVES )){
+			if( search_stage3 (center, sym, edge, edge_odd, length3, 0, N_STAGE_MOVES )){
 				return true;
 			}
 			min3 = Math.min( MAX_STAGE3 + 1, total_length - length1 - length2 - MIN_STAGE4 - MIN_STAGE5 );
@@ -378,7 +378,7 @@ public final class Search {
 
 		for (length4 = d4; length4 < min4; ++length4) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "      Stage 4 - length "+length4 );
-			if( search_stage4 (center, corner, edge, sym, length4, 0, N_MOVES, cubeDistEdgCor )) {
+			if( search_stage4 (center, corner, edge, sym, length4, 0, N_STAGE_MOVES, cubeDistEdgCor )) {
 				return true;
 			}
 			min4 = Math.min( MAX_STAGE4 + 1, total_length - length1 - length2 - length3 - MIN_STAGE5 );
@@ -440,7 +440,7 @@ public final class Search {
 		int d5 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
 
 		for (length5 = d5; length5 < total_length-length4-length3-length2-length1; ++length5) {
-			if( search_stage5 (edge, sym, center, corner, length5, 0, N_MOVES, cubeDistEdgCen)){
+			if( search_stage5 (edge, sym, center, corner, length5, 0, N_STAGE_MOVES, cubeDistEdgCen)){
 				if( DEBUG_LEVEL >= 1 ) System.out.println( "        Stage 5 - length "+length5 );
 				total_length = length1+length2+length3+length4+length5;
 				/* Save current solution */

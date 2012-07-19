@@ -167,13 +167,14 @@ public final class Constants{
 	}
 
 	public static final int N_FACE_MOVES = 18;
-	public static final byte stage2face[] = new byte[N_MOVES];
+	public static final byte stage2face[] = new byte[N_STAGE_MOVES];
 	static {
-		for( int m = 0; m < N_MOVES; m++ ){
+		for( int s = 0; s < N_STAGE_MOVES; s++ ){
+			int m = stage2moves[s];
 			if((( m / 3 ) % 3 ) == 1 )
-				stage2face[moves2stage[m]] = -1;
+				stage2face[s] = -1;
 			else
-				stage2face[moves2stage[m]] = (byte)(( m / 9 ) * 3 + ( m % 3 ));
+				stage2face[s] = (byte)(( m / 9 ) * 3 + ( m % 3 ));
 		}
 	};
 
@@ -187,38 +188,40 @@ public final class Constants{
 	/** Filter certain combinaisons of moves:
 	  **/
 
-	public static final long moves_mask [] = new long[N_MOVES+1];
+	public static final long moves_mask [] = new long[N_STAGE_MOVES+1];
 	static{
-		for (int i=0; i<N_MOVES; i++) {
-			moves_mask[moves2stage[i]] = ( 1 << N_MOVES ) - 1;
-			for (int j=0; j<N_MOVES; j++) {
+		for (int i=0; i<N_STAGE_MOVES; i++) {
+			moves_mask[i] = ( 1 << N_STAGE_MOVES ) - 1;
+			for (int j=0; j<N_STAGE_MOVES; j++) {
+				int m = stage2moves[i];
+				int n = stage2moves[j];
 
 	  			/* Same slice. For example, Rf Rf2 is not permitted because Rf Rf2 = Rf3. */
-				if (i/3 == j/3)
-					moves_mask[moves2stage[i]] &= -1 ^ ( 1 << moves2stage[j] );
+				if (m/3 == n/3)
+					moves_mask[i] &= -1 ^ ( 1 << j );
 
 	  			/* Same face, only a specific order is allowed. Rf Ls2 is allowed but not Ls2 Rf. */
-				if ( (i/18 == j/18) && (i>j) )
-					moves_mask[moves2stage[i]] &= -1 ^ ( 1 << moves2stage[j] );
+				if ( (m/18 == n/18) && (m>n) )
+					moves_mask[i] &= -1 ^ ( 1 << j );
 
 	  			/* For STM only, if two successive moves are from the same face and the same rotation, the first one should be either Ufx, Rfx or Ffx.
 	  			 *   for example Rf Ls3 is ok but Lf2 Rs2 is not permitted because Lf2 Rs2 = Rf2 Ls2. */
 				if( METRIC == STM )
-					if ((i/16 == j/16) && ((i%3) == (j%3)) && ((i%12) >= 3));
-						moves_mask[moves2stage[i]] &= -1 ^ ( 1 << moves2stage[j] );
+					if ((m/16 == n/16) && ((m%3) == (n%3)) && ((m%12) >= 3));
+						moves_mask[i] &= -1 ^ ( 1 << j );
 
 				/* One of each double layer turn of the same plane is allowed, the other one not (Uw is ok, not Dw). */
-				if(( j%18 ) >= 15 )
-					moves_mask[moves2stage[i]] &= -1 ^ ( 1 << moves2stage[j] );
+				if(( n%18 ) >= 15 )
+					moves_mask[i] &= -1 ^ ( 1 << j );
 			}
 		}
 
 		/* The index N_MOVES correspond to the beginning of the solve, where no moves has been done yet.
 		 * Everything is allowed except for the double layer thing. */
-		moves_mask[N_MOVES] = ( 1 << N_MOVES ) - 1;
-		for (int j=0; j<N_MOVES; j++)
-			if(( j%18 ) >= 15 )
-				moves_mask[N_MOVES] &= -1 ^ ( 1 << moves2stage[j] );
+		moves_mask[N_STAGE_MOVES] = ( 1 << N_STAGE_MOVES ) - 1;
+		for (int j=0; j<N_STAGE_MOVES; j++)
+			if(( stage2moves[j]%18 ) >= 15 )
+				moves_mask[N_STAGE_MOVES] &= -1 ^ ( 1 << j );
 	}
 
 	public static final int Cnk [][] = new int[25][25];

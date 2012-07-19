@@ -138,18 +138,18 @@ public final class Symmetry {
 		}
 	}
 
-	static int[][] moveConjugateStage = new int[N_MOVES][N_SYM];
-	static int[][] moveConjugateCo4Stage = new int[N_MOVES][N_SYM*4];
+	static int[][] moveConjugateStage = new int[N_STAGE_MOVES][N_SYM];
+	static int[][] moveConjugateCo4Stage = new int[N_STAGE_MOVES][N_SYM*4];
 
 	static void initMoveConjugateStage(){
 
 		int i, j;
 
-		for (i=0; i<N_MOVES; i++)
+		for (i=0; i<N_STAGE_MOVES; i++)
 			for (j=0; j<N_SYM; j++)
 				moveConjugateStage[i][j] = moves2stage[moveConjugate[stage2moves[i]][j]];
 
-		for (i=0; i<N_MOVES; i++)
+		for (i=0; i<N_STAGE_MOVES; i++)
 			for (j=0; j<N_SYM*4; j++)
 				moveConjugateCo4Stage[i][j] = moves2stage[moveConjugate[stage2moves[i]][symIdxMultiply[j>>2][j&3]]];
 	}
