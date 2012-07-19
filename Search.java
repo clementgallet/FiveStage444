@@ -46,7 +46,7 @@ public final class Search {
 	CubeState c3 = new CubeState();
 	CubeState c4 = new CubeState();
 
-	static int DEBUG_LEVEL = 1;
+	static int DEBUG_LEVEL = 0;
 
 	public String solve (CubeState cube, int max_turns, boolean inverse) {
 		int i, j;
@@ -160,9 +160,8 @@ public final class Search {
 		}
 		long mask = moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < N_STAGE1_MOVES; move++, mask >>>= 1) {
-			if (( mask & 1 ) == 0)
+			if (( mask & 1L ) == 0)
 				continue;
-
 			/* Move */
 			int face_move = stage2face[move];
 			int newCorner = ( face_move >= 0 ) ? Tables.moveCorner1[corner][face_move] : corner;
@@ -180,7 +179,6 @@ public final class Search {
 	}
 
 	public boolean init_stage2 (int r){
-		int i;
 		if( found_sol ) return true;
 		r1 = r;
 		init_cube[r1].copyTo(c1);
@@ -340,7 +338,7 @@ public final class Search {
 
 			/* Move cube1 to cube2 */
 			int edgex = Tables.moveEdge3[edge][move];
-			boolean edge_oddx = edge_odd ^ (( stage3_move_parity>>move & 1 ) != 0);
+			boolean edge_oddx = edge_odd ^ ((( stage3_move_parity>>move ) & 1 ) != 0);
 			int centerx = Tables.moveCenter3[center][Symmetry.moveConjugateStage[move][sym]];
 			int symx = Symmetry.symIdxMultiply[sym][centerx&0x7];
 			centerx >>= 3;
@@ -470,7 +468,7 @@ public final class Search {
 			return( edge == 0 && Tables.conjCenter5[center][sym] == 0 && Tables.conjCorner5[corner][sym] == 0 );
 		}
 		long mask = moves_mask[last_move];
-		for (int move = 0; mask != 0 && move < N_STAGE4_MOVES; move++, mask >>>= 1) {
+		for (int move = 0; mask != 0 && move < N_STAGE5_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;
 
