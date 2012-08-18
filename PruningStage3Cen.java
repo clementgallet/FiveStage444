@@ -34,8 +34,8 @@ public final class PruningStage3Cen extends PruningFull {
 
 	int do_move (int idx, int move){
 		int newCen = Tables.moveCenter3[idx>>1][move];
-		int cenRep = newCen >> 4;
-                int par =  Constants.stage3_move_parity[move] ? 1 - (idx&1) : idx&1;
+		int cenRep = newCen >>> 3;
+                int par = (idx&1) ^ (( Constants.stage3_move_parity >>> move ) & 1 );
 
 		return cenRep<<1 | par;
 	}

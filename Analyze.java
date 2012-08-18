@@ -47,7 +47,7 @@ public final class Analyze {
 			for( int idx=0; idx<N_STAGE5_SYMEDGES*N_STAGE5_CORNERS*N_STAGE5_CENTERS>>>3; idx++ )
 				allPos5[idx] |= allPos5_2[idx];
 			//if(length4==0)
-			search_stage4 (center, corner, edge, 0, length4, 0, N_STAGE4_MOVES, cubeDist );
+			search_stage4 (center, corner, edge, 0, length4, 0, N_MOVES, cubeDist );
 			/* Copy from allPos5 to allPos5_2 */
 			for( int idx=0; idx<N_STAGE5_SYMEDGES*N_STAGE5_CORNERS*N_STAGE5_CENTERS>>>3; idx++ )
 				allPos5_2[idx] |= allPos5[idx];
@@ -64,15 +64,15 @@ public final class Analyze {
 						save_stage5 ();
 						return;
 					}
-
-		for (mov_idx = 0; mov_idx < N_STAGE4_SEARCH; ++mov_idx) {
-			if (stage4_slice_moves_to_try[last_move][mov_idx])
+		long mask = moves_mask[last_move];
+		for (int move = 0; mask != 0 && move < N_STAGE4_MOVES; move++, mask >>>= 1) {
+			if (( mask & 1 ) == 0)
 				continue;
 
 			/* Move */
-			int centerx = Tables.moveCenter4[center][mov_idx];
-			int cornerx = Tables.moveCorner4[corner][mov_idx];
-			int edgex = Tables.moveEdge4[edge][Symmetry.moveConjugate4[mov_idx][sym]];
+			int centerx = Tables.moveCenter4[center][move];
+			int cornerx = Tables.moveCorner4[corner][move];
+			int edgex = Tables.moveEdge4[edge][Symmetry.moveConjugateStage[move][sym]];
 			int symx = Symmetry.symIdxMultiply[edgex & 0xF][sym];
 			edgex >>= 4;
 
@@ -87,8 +87,8 @@ public final class Analyze {
 			if (newDist > depth-1) continue;
 			int dist4 = Math.max(newDistEdgCen, newDist);
 			if( ( (depth-1)!=dist4 ) && (depth+dist4<6) ) continue;
-			move_list_stage4[moves_done] = (byte)mov_idx;
-			search_stage4 (centerx, cornerx, edgex, symx, depth - 1, moves_done + 1, mov_idx, newDist);
+			move_list_stage4[moves_done] = (byte)move;
+			search_stage4 (centerx, cornerx, edgex, symx, depth - 1, moves_done + 1, move, newDist);
 		}
 	}
 
@@ -97,7 +97,7 @@ public final class Analyze {
 
 		CubeState c = new CubeState();
 		cube.copyTo(c);
-		c.scramble( length4, move_list_stage4, stage4_slice_moves );
+		c.scramble( length4, move_list_stage4, stage2moves );
 
 		int edge = c.convert_symedges_to_stage5();
 		int sym = edge & 0xFF;

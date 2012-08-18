@@ -35,8 +35,7 @@ public final class PruningStage3Edg extends PruningFull {
 		int par = idx & 0x1;
 
 		int newEdge = Tables.moveEdge3[edge][move];
-		if( Constants.stage3_move_parity[move] )
-			par = 1 - par;
+                par = par ^ (( Constants.stage3_move_parity >>> move ) & 1 );
 		return (newEdge << 1) + par;
 	}
 
