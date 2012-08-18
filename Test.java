@@ -3,6 +3,9 @@ package cg.fivestage444;
 import static cg.fivestage444.Constants.*; 
 
 import java.util.Random;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
 
 public final class Test {
 
@@ -12,12 +15,92 @@ public final class Test {
 		Random gen = new Random();
 		Tools.init();
 
+		testCenter35();
+
 		//testSolve2(10);
 		//testSolve3(30);
-		testSolve4(30);
+		//testSolve4(30);
 		//testMove4(10);
 		//testMove5(10);
 		
+	}
+
+	public static void testCenter35(){
+
+	/* Use:
+	 * ArrayList<Set<Integer>> centerSets = new ArrayList<Set<Integer>>();
+	 * instead. */
+
+	Set<Integer>[] centerSets = new Set[34];
+
+	for (int i=0; i < 34; i++)
+		for (int j=i+1; j<35; j++){
+
+			/* Initialisation */
+			centerSets[0] = new HashSet<Integer>();
+			centerSets[0].add(i);
+			centerSets[0].add(j);
+			int l=1;
+			for (int k=0; k<35; k++)
+				if( k!=i && k!=j ){
+					centerSets[l] = new HashSet<Integer>();
+					centerSets[l++].add(k);
+				}
+
+			int size = 34;
+			boolean did=true;
+			while(( size > 1 ) && did){
+				did = false;
+				//printSets(centerSets, size);
+				/* Loop through all sets */
+				for (int s=0; s<size; s++){
+					/* We pass if the current set is a singleton */
+					if( centerSets[s].size() < 2 ) continue;
+
+					Set<Integer> curr = new HashSet<Integer>(centerSets[s]);
+					Iterator<Integer> it = curr.iterator();
+					int first_elem = it.next();
+					while (it.hasNext()) {
+						int other_elem = it.next();
+						for (int m=0; m<16; m++){
+							if( merge2Sets(centerSets, size, Tables.moveCenter4[first_elem][m], Tables.moveCenter4[other_elem][m])){
+								size--;
+								did = true;
+								//printSets(centerSets, size);
+							}
+						}
+					}
+				}
+			}
+			if( size == 1 ) System.out.print("");
+			else System.out.println("Yeah !");
+		}
+	}
+
+	public static boolean merge2Sets (Set<Integer>[] centerSets, int size, int a, int b){
+		int idx_a = -1;
+		int idx_b = -1;
+		for( int i=0; i < size; i++ ){
+			if( centerSets[i].contains(a))
+				idx_a = i;
+			if( centerSets[i].contains(b))
+				idx_b = i;
+		}
+		if(idx_a == idx_b)
+			return false;
+		centerSets[Math.min(idx_a,idx_b)].addAll(centerSets[Math.max(idx_a,idx_b)]);
+		centerSets[Math.max(idx_a,idx_b)] = centerSets[size-1];
+		return true;
+
+	}
+
+	public static void printSets (Set[] centerSets, int size){
+
+		for (int s=0; s<size; s++){
+			System.out.print(centerSets[s]);
+			System.out.print(",");
+		}
+	System.out.println("");
 	}
 
 	public static void randomScramble(CubeState cube, Random gen){
@@ -44,7 +127,7 @@ public final class Test {
 		for( int i=0; i < n; i++ ){
 
 			/* Generate a random cube in stage 3 subgroup and convert to CubeStage2 coordinates */
-			randomScramble( cube, Constants.stage3_slice_moves, Constants.N_STAGE3_MOVES, gen );
+			randomScramble( cube, Constants.stage2moves, Constants.N_STAGE3_MOVES, gen );
 			int rr = gen.nextInt(4);
 			for( int j=0; j<rr; j++){
 				cube.do_move(Uw);
@@ -65,10 +148,14 @@ public final class Test {
 		for( int i=0; i < n; i++ ){
 
 			/* Generate a random cube in stage 4 subgroup and convert to CubeStage3 coordinates */
-			randomScramble( cube, Constants.stage4_slice_moves, Constants.N_STAGE4_MOVES, gen );
-			//cube.convert_to_stage3(cs1);
+			randomScramble( cube, Constants.stage2moves, Constants.N_STAGE4_MOVES, gen );
+			int center = cube.convert_symcenters_to_stage3();
+			int sym = center & 0x7;
+			center >>>= 3;
+			int edge = cube.convert_edges_to_stage3();
+			boolean edge_odd = cube.edgeUD_parity_odd();
 
-			//System.out.println("edge: "+cs1.edge+", center: "+cs1.center+", sym:"+cs1.sym);
+			System.out.println("edge: "+edge+", center: "+center+", sym:"+sym);
 
 		}
 	}
@@ -81,10 +168,14 @@ public final class Test {
 		for( int i=0; i < n; i++ ){
 
 			/* Generate a random cube in stage 5 subgroup and convert to CubeStage4 coordinates */
-			randomScramble( cube, Constants.stage5_slice_moves, Constants.N_STAGE5_MOVES, gen );
-			//cube.convert_to_stage4(cs1);
+			randomScramble( cube, Constants.stage2moves, Constants.N_STAGE5_MOVES, gen );
+			int edge = cube.convert_symedges_to_stage4();
+			int sym = edge & 0xF;
+			edge >>>= 4;
+			int corner = cube.convert_corners_to_stage4();
+			int center = cube.convert_centers_to_stage4();
 
-			//System.out.println("edge: "+cs1.edge+", center: "+cs1.center+", corner:"+cs1.corner);
+			System.out.println("edge: "+edge+", center: "+center+", corner:"+corner);
 
 		}
 	}
@@ -99,13 +190,13 @@ public final class Test {
 		for( int i=0; i < 100; i++ ){
 
 			/* Generate a random cube in stage 4 subgroup and convert to CubeStage5 coordinates */
-			randomScramble( cube, Constants.stage4_slice_moves, Constants.N_STAGE4_MOVES, gen );
+			randomScramble( cube, Constants.stage2moves, Constants.N_STAGE4_MOVES, gen );
 			//cube.convert_to_stage4(cs1);
 
 			/* Apply n random moves from both the cube and the CubeStage5 coordinates */
 			for( int j=0; j<n; j++ ){
 				move = gen.nextInt(Constants.N_STAGE4_MOVES);
-				cube.do_move( Constants.stage4_slice_moves[move] );
+				cube.do_move( Constants.stage2moves[move] );
 				//cs1.do_move(move);
 			}
 
@@ -138,13 +229,13 @@ public final class Test {
 		for( int i=0; i < 100; i++ ){
 
 			/* Generate a random cube in stage 5 subgroup and convert to CubeStage5 coordinates */
-			randomScramble( cube, Constants.stage5_slice_moves, Constants.N_STAGE5_MOVES, gen );
+			randomScramble( cube, Constants.stage2moves, Constants.N_STAGE5_MOVES, gen );
 			//cube.convert_to_stage5(cs1);
 
 			/* Apply n random moves from both the cube and the CubeStage5 coordinates */
 			for( int j=0; j<n; j++ ){
 				move = gen.nextInt(Constants.N_STAGE5_MOVES);
-				cube.do_move( Constants.stage5_slice_moves[move] );
+				cube.do_move( Constants.stage2moves[move] );
 				//cs1.do_move(move);
 			}
 

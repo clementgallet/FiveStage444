@@ -16,8 +16,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Random;
 
-import net.gnehzr.tnoodle.utils.Utils;
-import net.gnehzr.tnoodle.utils.TimedLogRecordStart;
+//import net.gnehzr.tnoodle.utils.Utils;
+//import net.gnehzr.tnoodle.utils.TimedLogRecordStart;
 
 public class Tools {
 	private static final Logger l = Logger.getLogger(Tools.class.getName());
@@ -141,8 +141,8 @@ public class Tools {
 		}
 
 		if(fivephase_tables == null) {
-			fivephase_tables = new File(Utils.getResourceDirectory(), "fivephase_tables");
-			//fivephase_tables = new File("cg/fivestage444/fivephase_tables_"+METRIC_STR);
+			//fivephase_tables = new File(Utils.getResourceDirectory(), "fivephase_tables");
+			fivephase_tables = new File("cg/fivestage444/fivephase_tables_"+METRIC_STR);
 		}
 
 		prepareTables();
@@ -157,8 +157,8 @@ public class Tools {
 			}
 		}
 		if(inited == InitializationState.UNINITIALIZED) {
-			TimedLogRecordStart start = new TimedLogRecordStart("Generating fivephase tables");
-			l.log(start);
+			//TimedLogRecordStart start = new TimedLogRecordStart("Generating fivephase tables");
+			//l.log(start);
 
 			inited = InitializationState.INITING_TABLES;
 			Tables.init_tables();
@@ -174,7 +174,7 @@ public class Tools {
 				l.log(Level.INFO, "Failed to write to " + fivephase_tables, e);
 			}
 			
-			l.log(start.finishedNow());
+			//l.log(start.finishedNow());
 		}
 		inited = InitializationState.INITIALIZED;
 		// if( ! checkTables() ) System.out.println( "There might be a problem with tables integrity...");
@@ -235,39 +235,41 @@ public class Tools {
 		write(Tables.moveEdge2, out); //       +    23,520 B
 		write(Tables.conjEdge2, out); //       +    13,440 B
 		write(Tables.sym2rawCenter2, out); //  +     1,432 B
-		write(Tables.moveCenter2, out); //     +    40,096 B
+		write(Tables.moveCenter2, out); //     +    80,192 B
 		write(Tables.sym2rawCenter3, out); //  +   227,920 B
 		write(Tables.moveCenter3, out); //     + 4,558,400 B
 		write(Tables.moveEdge3, out); //       +   514,800 B
-		write(Tables.conjEdge3, out); //       +   411,840 B
+		write(Tables.conjEdge3, out); //       +   205,920 B
 		write(Tables.sym2rawEdge4, out); //    +    23,872 B
 		write(Tables.moveEdge4, out); //       +   381,952 B
 		write(Tables.moveCorner4, out); //     +    13,440 B
 		write(Tables.conjCorner4, out); //     +    13,440 B
 		write(Tables.moveCenter4, out); //     +     1,120 B
 		write(Tables.conjCenter4, out); //     +     1,120 B
-		write(Tables.moveCorner5, out); //     +     1,152 B
-		write(Tables.conjCorner5, out); //     +    18,432 B
+		write(Tables.moveCorner5, out); //     +     2,304 B
+		write(Tables.conjCorner5, out); //     +    36,864 B
 		write(Tables.moveCenter5, out); //     +    41,472 B
 		write(Tables.conjCenter5, out); //     +   663,552 B
 		write(Tables.sym2rawEdge5, out); //    +    29,776 B
 		write(Tables.moveEdge5, out); //       +   357,312 B
-		write(Tables.symHelper5, out); //      +   xxx,xxx B
-		//                     all move tables = 9,932,908 B
+		write(Tables.symHelper5, out); //      +   884,736 B
+		//                    all move tables = 10,671,404 B
 
 		// TODO: Wrong sizes
 		write(Tables.prunTable1, out); //                     6,815,567 B
-		write(Tables.prunTableEdgCen2, out); //            +    300,720 B
+		write(Tables.prunTableEdgCen2, out); //            +    150,360 B
 		write(Tables.prune_table_cen3.ptable, out); //     +     56,980 B
-		write(Tables.prune_table_edg3.ptable, out); //     +     25,740 B
-		write(Tables.prunTableEdgCen4, out); //            +    417,760 B
-		write(Tables.prunTableEdgCor5, out); //            +    714,624 B
+		write(Tables.prune_table_edg3.ptable, out); //     +     12,870 B
+		write(Tables.prunTableEdgCen4, out); //            +    104,440 B
+		write(Tables.prunTableEdgCor5, out); //            +    357,312 B
 		write(Tables.prunTableEdgCen5, out); //            +  2,572,647 B
-		//                              all pruning tables = 11,405,351 B
 		if( FULL_PRUNING_STAGE4 )
-			write(Tables.prunTable4, out); //             xxxxxxxxx B
+			write(Tables.prunTable4, out); //          + 17,545,921 B
 		else
-			write(Tables.prunTableEdgCor4, out); //            +    501,313 B
+			write(Tables.prunTableEdgCor4, out); //    +    501,313 B
+
+		//                        all basic pruning tables = 10,571,489 B
+		//                       with full pruning stage 4 = 27,616,097 B
 			
 	}
 	
