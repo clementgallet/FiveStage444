@@ -218,12 +218,12 @@ public final class Constants{
 			}
 		}
 
-		/* The index N_MOVES correspond to the beginning of the solve, where no moves has been done yet.
+		/* The index N_STAGE_MOVES correspond to the beginning of the solve, where no moves has been done yet.
 		 * Everything is allowed except for the double layer thing. */
 		moves_mask[N_STAGE_MOVES] = ( 1L << N_STAGE_MOVES ) - 1L;
 		for (int j=0; j<N_STAGE_MOVES; j++)
 			if(( stage2moves[j]%18 ) >= 15 )
-				moves_mask[N_STAGE_MOVES] &= -1L ^ ( 1 << j );
+				moves_mask[N_STAGE_MOVES] &= -1L ^ ( 1L << j );
 	}
 
 	public static final int Cnk [][] = new int[25][25];
