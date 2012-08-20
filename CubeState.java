@@ -387,68 +387,6 @@ public final class CubeState{
 		}
 	}
 
-	public int convert_edges_to_stage1 (){
-		int idx = 0;
-		int r = 8;
-		for (int i=23; i>=0; i--) {
-			if (m_edge[i] >= 16) {
-				idx += Cnk[i][r--];
-			}
-		}
-		return idx;
-	}
-
-	public void convert_edges1_to_std_cube (int edge)
-	{
-		int r = 8;
-		byte lrfb = 0;
-		byte ud = 16;
-		for (int i=23; i>=0; i--) {
-			if (edge >= Cnk[i][r]) {
-				edge -= Cnk[i][r--];
-				m_edge[i] = ud++;
-			} else {
-				m_edge[i] = lrfb++;
-			}
-		}
-	}
-
-	public int convert_symedges_to_stage1 (){
-		CubeState cube = new CubeState();
-		int i;
-		for (int sym=(Tables.symHelper1 == null)?0:Tables.symHelper1[convert_edges_to_stage1()]; sym < Constants.N_SYM_STAGE1; sym++ ){
-			rightMultEdges(Symmetry.invSymIdx[sym], cube);
-			int edge = cube.convert_edges_to_stage1();
-			int rep = Arrays.binarySearch(Tables.sym2rawEdge1, edge);
-			if( rep >= 0 )
-				return ( rep << 6 ) | sym;
-		}
-		return -1;
-	}
-
-	public short convert_corners_to_stage1 (){
-		int i, orientc = 0;
-		for (i = 0; i < 7; ++i) {	//don't want 8th edge orientation
-			orientc = 3*orientc + (m_cor[i] >> 3);
-		}
-		return (short)orientc;
-	}
-
-	public void convert_corners1_to_std_cube (int corner)
-	{
-		int i;
-
-		int orientc = corner;
-		int orientcmod3 = 0;
-		for (i = 6; i >= 0; --i) {	//don't want 8th edge orientation
-			byte fo = (byte)(orientc % 3);
-			m_cor[i] = (byte)(i + (fo << 3));
-			orientcmod3 += fo;
-			orientc /= 3;
-		}
-		m_cor[7] = (byte)(7 + (((24 - orientcmod3) % 3) << 3));
-	}
-
 	public short convert_edges_to_stage2 (){
 		int u = Constants.get8Perm (m_edge, 16);
 		return Tables.perm_to_420[u];
