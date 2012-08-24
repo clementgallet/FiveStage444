@@ -4,14 +4,17 @@ import static cg.fivestage444.Constants.*;
 
 public final class Corner1 {
 
-	static int MAX_COORD = 2187;
+	final static int N_COORD = 2187;
+	final static int N_SYM = 48;
+	final static int N_MOVES = 36;
+	final static int N_FACE_MOVES = 18;
 
 	/* Coordinates */
 	int coord;
 
 	/* Tables */
 	public static short[][] move = new short[MAX_COORD][N_FACE_MOVES];
-	public static short[][] conj = new short[MAX_COORD][N_SYM_STAGE1]; // (2187) 2187*48
+	public static short[][] conj = new short[MAX_COORD][N_SYM]; // (2187) 2187*48
 
 	/* Check if solved */
 	public boolean isSolved(int sym){
@@ -25,7 +28,7 @@ public final class Corner1 {
 	}
 
 	/* Unpack a coord to a cube */
-	public void toCube (CubeState cube)
+	public void unpack (CubeState cube)
 	{
 		int i;
 		int orientc = this.coord;
@@ -40,10 +43,10 @@ public final class Corner1 {
 	}
 
 	/* Pack a cube into the coord */
-	public void pack (CubeState c){
+	public void pack (CubeState cube){
 		this.coord = 0;
 		for (int i = 0; i < 7; ++i) {
-			this.coord = 3 * this.coord + (c.m_cor[i] >> 3);
+			this.coord = 3 * this.coord + (cube.m_cor[i] >> 3);
 		}
 	}
 
@@ -57,14 +60,13 @@ public final class Corner1 {
 
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		for (int u = 0; u < MAX_COORD; ++u) {
+		for (int u = 0; u < N_COORD; ++u) {
 			this.coord = u;
-			this.toCube( cube1 );
-			for (int mc = 0; mc < N_STAGE1_MOVES; ++mc) {
-				if(stage2face[mc] == -1 )
+			this.unpack( cube1 );
+			for (int m = 0; m < N_MOVES; ++m) {
+				if(stage2face[m] == -1 )
 					continue;
-				System.arraycopy(cube1.m_cor, 0, cube2.m_cor, 0, 8);
-				cube2.rotate_sliceCORNER (stage2moves[mc]);
+				cube1.rotate_sliceCORNER (stage2moves[mc], cube2);
 				this.pack( cube2 );
 				move[u][stage2face[mc]] = coord;
 			}
@@ -74,10 +76,10 @@ public final class Corner1 {
 	public static void initConj (){
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		for (int u = 0; u < MAX_COORD; ++u) {
+		for (int u = 0; u < N_COORD; ++u) {
 			this.coord = u;
-			this.toCube( cube1 );
-			for (int sym = 0; sym < N_SYM_STAGE1; ++sym) {
+			this.unpack( cube1 );
+			for (int sym = 0; sym < N_SYM; ++sym) {
 				cube1.rightMultCorners (Symmetry.invSymIdx[sym], cube2);
 				cube2.deMirrorCorners ();
 				this.pack( cube2 );

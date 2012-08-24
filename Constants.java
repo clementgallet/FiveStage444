@@ -316,17 +316,7 @@ public final class Constants{
 		arr[7] = (byte)val;
 	}
 
-	public static final int stage2_solved_symcenters[] = {
-	122, 242, 243, 245, 246, 247
-	};
 
-	public static final int stage3_solved_sym_centers[] = {
-	56966, 56974, 56975, 56977, 56978, 56979
-	};
-
-	public static final short stage4_solved_centers_bm[] = {
-	0, 14, 20, 23, 27, 28
-	};
 
 	public static String move_strings[] = {
 	"U", "U'", "U2", "u", "u'", "u2", "Uw", "Uw'", "Uw2",
