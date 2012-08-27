@@ -103,7 +103,7 @@ public final class Symmetry {
 
 		for (int i=0; i<N_SYM*4; i++)
 			for (int j=0; j<N_SYM*4; j++)
-				symIdxCo4Multiply[i][j] = symIdxMultiply[symIdxMultiply[invSymIdx[i>>2]][j&3]][symIdxMultiply[i>>2][i&3]] + ( symIdxMultiply[j>>2][i>>2] << 2 );
+				symIdxCo4Multiply[i][j] = symIdxMultiply[symIdxMultiply[invSymIdx[j>>2]][i&3]][symIdxMultiply[j>>2][j&3]] + ( symIdxMultiply[i>>2][j>>2] << 2 );
 	}
 
 	static byte[][] moveConjugate = new byte[N_MOVES][N_SYM];
