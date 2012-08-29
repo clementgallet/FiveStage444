@@ -13,8 +13,8 @@ public final class Corner1 {
 	int coord;
 
 	/* Tables */
-	public static short[][] move = new short[MAX_COORD][N_FACE_MOVES];
-	public static short[][] conj = new short[MAX_COORD][N_SYM]; // (2187) 2187*48
+	private static short[][] move = new short[MAX_COORD][N_FACE_MOVES];
+	private static short[][] conj = new short[MAX_COORD][N_SYM]; // (2187) 2187*48
 
 	/* Check if solved */
 	public boolean isSolved(int sym){
@@ -25,6 +25,11 @@ public final class Corner1 {
 	public void moveTo( int m, Corner1 c ){
 		int face_move = stage2face[m];
 		c.coord = ( face_move >= 0 ) ? move[coord][face_move] : coord;
+	}
+
+	/* Get the conjugated coordinate */
+	public int conjugate( int sym ){
+		return conj[coord][sym];
 	}
 
 	/* Unpack a coord to a cube */
