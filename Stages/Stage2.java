@@ -51,6 +51,11 @@ public final class Stage2 {
 		centerB.moveTo( m, s.centerB );
 	}
 
+	/* Get pruning */
+	public int pruning(){
+		return Math.max( getPrun2( prunTable, this.get(true)), getPrun2( prunTable, this.get(false)));
+	}
+
 	/* Init pruning table */
 	public void initPruningTable(){
 		final static int N_SIZE = Edge2.N_COORD * Center2.N_COORD;
@@ -99,10 +104,10 @@ public final class Stage2 {
 							setPrun2(prunTable, idx, depth);
 							int nsym = 1;
 							unique++;
-							long symS = symState[symx];
+							int symS = Center2.hasSym[symx];
 							for (int k=0; symS != 0; symS>>=1, k++) {
-								if ((symS & 0x1L) == 0) continue;
-								s.edge.sym = k;
+								if ((symS & 1) == 0) continue;
+								s.centerF.sym = k;
 								int idxx = s.get(true);
 								if( idxx == idx )
 									nsym++;

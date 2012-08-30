@@ -25,6 +25,11 @@ public final class Corner5 {
 		c.coord =  move[coord][m];
 	}
 
+	/* Get the conjugated coordinate */
+	public int conjugate( int sym ){
+		return conj[coord][sym];
+	}
+
 	/* Unpack a coord to a cube */
 	public void unpack (CubeState cube)
 	{

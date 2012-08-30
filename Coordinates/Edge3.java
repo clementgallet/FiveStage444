@@ -25,6 +25,11 @@ public final class Edge2 {
 		e.coord = ( move[coord>>>1][m] << 1 ) | (( coord & 1 ) ^ (( stage3_move_parity >>> m ) & 1 ));
 	}
 
+	/* Get the conjugated coordinate */
+	public int conjugate( int sym ){
+		return conj[coord][sym];
+	}
+
 	/* Unpack a coord to a cube */
 	public void unpack (CubeState cube)
 	{

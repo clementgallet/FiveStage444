@@ -1,44 +1,50 @@
 package cg.fivestage444.Stages;
 
 import static cg.fivestage444.Constants.*;
-import cg.fivestage444.Coordinates.Edge1;
-import cg.fivestage444.Coordinates.Corner1;
+import cg.fivestage444.Coordinates.Edge4;
+import cg.fivestage444.Coordinates.Corner4;
+import cg.fivestage444.Coordinates.Center4;
 
-public final class Stage1 {
+public final class Stage4 {
 
-	final static int N_MOVES = 36;
+	final static int N_MOVES = 16;
 
-	Edge1 edge;
-	Corner1 corner;
+	Edge4 edge;
+	Corner4 corner;
+	Center4 center;
 
 	int[] prunTable;
 
-	Stage1(){
-		edge = new Edge1();
-		corner = new Corner1();
+	Stage4(){
+		edge = new Edge4();
+		corner = new Corner4();
+		center = new Center4();
 	}
 
 	/* Set from an index */
 	void set( int idx ){
-		corner.coord = idx % Corner1.N_COORD;
-		edge.coord = idx / Corner1.N_COORD;
+		center.coord = idx % Center4.N_COORD;
+		idx /= Center4.N_COORD;
+		corner.coord = idx % Corner4.N_COORD;
+		edge.coord = idx / Corner4.N_COORD;
 		edge.sym = 0;
 	}
 
 	/* Get an index from this */
 	int get(){
-		return edge.coord * Corner1.N_COORD + corner.conjugate(edge.sym);
+		return ( edge.coord * Corner4.N_COORD + corner.conjugate(edge.sym) ) * Center4.N_COORD + center.conjugate(edge.sym);
 	}
 
 	/* Check if solved */
 	public boolean isSolved(){
-		return edge.isSolved() && corner.isSolved( edge.sym );
+		return edge.isSolved() && corner.isSolved() && center.isSolved();
 	}
 
 	/* Move */
-	public void moveTo( int m, Stage1 s ){
+	public void moveTo( int m, Stage4 s ){
 		edge.moveTo( m, s.edge );
 		corner.moveTo( m, s.corner );
+		center.moveTo( m, s.center );
 	}
 
 	/* Get pruning */
@@ -48,15 +54,16 @@ public final class Stage1 {
 
 	/* Init pruning table */
 	public void initPruningTable(){
-		final static int N_SIZE = Edge1.N_COORD * Corner1.N_COORD;
+		final static int N_SIZE = Edge4.N_COORD * Corner4.N_COORD * Center4.N_COORD;
 		final static int INV_DEPTH = 7;
-		Stage1 s = new Stage1();
+		Stage4 s = new Stage4();
 
 		prunTable = new int[(N_SIZE+7)/8];
 
 		/* Set the solved states */
-		setPrun2( prunTable, 1906, 0 );
-		int done = 1;
+		for( int a=0; a<Center4.SOLVED.length; a++)
+			setPrun2( prunTable, Center4.SOLVED[a], 0 );
+		int done = Center4.SOLVED.length;
 
 		int depth = 0;
 		while (done < N_SIZE) {
@@ -87,9 +94,9 @@ public final class Stage1 {
 							setPrun2(prunTable, idx, depth);
 							int nsym = 1;
 							unique++;
-							long symS = Edge1.hasSym[symx];
+							int symS = Edge4.hasSym[symx];
 							for (int k=0; symS != 0; symS>>=1, k++) {
-								if ((symS & 0x1L) == 0) continue;
+								if ((symS & 1) == 0) continue;
 								s.edge.sym = k;
 								int idxx = s.get();
 								if( idxx == idx )
@@ -99,7 +106,7 @@ public final class Stage1 {
 									done++;
 								}
 							}
-							pos += 48/nsym;
+							pos += 16/nsym;
 						}
 					}
 				}
