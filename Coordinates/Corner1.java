@@ -8,6 +8,7 @@ public final class Corner1 {
 	final static int N_SYM = 48;
 	final static int N_MOVES = 36;
 	final static int N_FACE_MOVES = 18;
+	private static byte stage2face[] = new byte[N_MOVES];
 
 	/* Coordinates */
 	int coord;
@@ -57,6 +58,15 @@ public final class Corner1 {
 
 	/* Initialisations */
 	public static void init(){
+		/* Initialize stage2face table */
+		for( int s = 0; s < N_MOVES; s++ ){
+			int m = stage2moves[s];
+			if((( m / 3 ) % 3 ) == 1 )
+				stage2face[s] = -1;
+			else
+				stage2face[s] = (byte)(( m / 9 ) * 3 + ( m % 3 ));
+		}
+
 		initMove();
 		initConj();
 	}

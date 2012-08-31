@@ -119,8 +119,6 @@ public class Tools {
 	private static void prepareTables() {
 		Symmetry.init();
 		Tables.init();
-		Tables.prune_table_cen3 = new PruningStage3Cen();
-		Tables.prune_table_edg3 = new PruningStage3Edg();
 	}
 
 	public static enum InitializationState {
@@ -142,7 +140,7 @@ public class Tools {
 
 		if(fivephase_tables == null) {
 			//fivephase_tables = new File(Utils.getResourceDirectory(), "fivephase_tables");
-			fivephase_tables = new File("cg/fivestage444/fivephase_tables_"+METRIC_STR);
+			fivephase_tables = new File("cg/fivestage444/fivephase_tables");
 		}
 
 		prepareTables();
@@ -162,8 +160,6 @@ public class Tools {
 
 			inited = InitializationState.INITING_TABLES;
 			Tables.init_tables();
-			Tables.prune_table_cen3.analyse();
-			Tables.prune_table_edg3.analyse();
 
 			try {
 				l.info("Writing to " + fivephase_tables);
@@ -182,43 +178,8 @@ public class Tools {
 	
 	public static boolean initFrom(DataInput in) {
 		try {
-			read(Tables.sym2rawEdge1, in);
-			read(Tables.moveEdge1, in);
-			read(Tables.moveCorner1, in);
-			read(Tables.conjCorner1, in);
-			read(Tables.moveEdge2, in);
-			read(Tables.conjEdge2, in);
-			read(Tables.sym2rawCenter2, in);
-			read(Tables.moveCenter2, in);
-			read(Tables.sym2rawCenter3, in);
-			read(Tables.moveCenter3, in);
-			read(Tables.moveEdge3, in);
-			read(Tables.conjEdge3, in);
-			read(Tables.sym2rawEdge4, in);
-			read(Tables.moveEdge4, in);
-			read(Tables.moveCorner4, in);
-			read(Tables.conjCorner4, in);
-			read(Tables.moveCenter4, in);
-			read(Tables.conjCenter4, in);
-			read(Tables.moveCorner5, in);
-			read(Tables.conjCorner5, in);
-			read(Tables.moveCenter5, in);
-			read(Tables.conjCenter5, in);
-			read(Tables.sym2rawEdge5, in);
-			read(Tables.moveEdge5, in);
-			read(Tables.symHelper5, in);
-
-			read(Tables.prunTable1, in);
-			read(Tables.prunTableEdgCen2, in);
-			read(Tables.prune_table_cen3.ptable, in);
-			read(Tables.prune_table_edg3.ptable, in);
-			read(Tables.prunTableEdgCen4, in);
 			read(Tables.prunTableEdgCor5, in);
 			read(Tables.prunTableEdgCen5, in);
-			if( FULL_PRUNING_STAGE4 )
-				read(Tables.prunTable4, in);
-			else
-				read(Tables.prunTableEdgCor4, in);
 
 			return true;
 		} catch (Exception e) {
@@ -228,78 +189,8 @@ public class Tools {
 	}
 
 	public static void initTo(DataOutput out) throws IOException {
-		write(Tables.sym2rawEdge1, out); //         62,328 B
-		write(Tables.moveEdge1, out); //       + 2,243,808 B
-		write(Tables.moveCorner1, out); //     +    78,732 B
-		write(Tables.conjCorner1, out); //     +   209,952 B
-		write(Tables.moveEdge2, out); //       +    23,520 B
-		write(Tables.conjEdge2, out); //       +    13,440 B
-		write(Tables.sym2rawCenter2, out); //  +     1,432 B
-		write(Tables.moveCenter2, out); //     +    80,192 B
-		write(Tables.sym2rawCenter3, out); //  +   227,920 B
-		write(Tables.moveCenter3, out); //     + 4,558,400 B
-		write(Tables.moveEdge3, out); //       +   514,800 B
-		write(Tables.conjEdge3, out); //       +   205,920 B
-		write(Tables.sym2rawEdge4, out); //    +    23,872 B
-		write(Tables.moveEdge4, out); //       +   381,952 B
-		write(Tables.moveCorner4, out); //     +    13,440 B
-		write(Tables.conjCorner4, out); //     +    13,440 B
-		write(Tables.moveCenter4, out); //     +     1,120 B
-		write(Tables.conjCenter4, out); //     +     1,120 B
-		write(Tables.moveCorner5, out); //     +     2,304 B
-		write(Tables.conjCorner5, out); //     +    36,864 B
-		write(Tables.moveCenter5, out); //     +    41,472 B
-		write(Tables.conjCenter5, out); //     +   663,552 B
-		write(Tables.sym2rawEdge5, out); //    +    29,776 B
-		write(Tables.moveEdge5, out); //       +   357,312 B
-		write(Tables.symHelper5, out); //      +   884,736 B
-		//                    all move tables = 10,671,404 B
-
-		// TODO: Wrong sizes
-		write(Tables.prunTable1, out); //                     6,815,567 B
-		write(Tables.prunTableEdgCen2, out); //            +    150,360 B
-		write(Tables.prune_table_cen3.ptable, out); //     +     56,980 B
-		write(Tables.prune_table_edg3.ptable, out); //     +     12,870 B
 		write(Tables.prunTableEdgCen4, out); //            +    104,440 B
 		write(Tables.prunTableEdgCor5, out); //            +    357,312 B
-		write(Tables.prunTableEdgCen5, out); //            +  2,572,647 B
-		if( FULL_PRUNING_STAGE4 )
-			write(Tables.prunTable4, out); //          + 17,545,921 B
-		else
-			write(Tables.prunTableEdgCor4, out); //    +    501,313 B
-
-		//                        all basic pruning tables = 10,571,489 B
-		//                       with full pruning stage 4 = 27,616,097 B
-			
-	}
-	
-	public static boolean checkTables() {
-		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawEdge1}) != -1678978030 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge1}) != -1836370822 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.moveCorner1}) != 53409135 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.conjCorner1}) != 1899376863 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge2}) != 1775527632 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.conjEdge2}) != -1576838944 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawCenter2}) != -382050577 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.moveCenter2}) != -1888070592 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawCenter3}) != -1020604492 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.moveCenter3}) != 622005811 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge3}) != 1927805216 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.conjEdge3}) != 773090752 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawEdge4}) != -190552920 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge4}) != 938076253 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.moveCorner4}) != 375889888 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.conjCorner4}) != -2082952064 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.moveCenter4}) != 688119576 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.conjCenter4}) != -1065647936 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.moveCorner5}) != -348572128 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.conjCorner5}) != 566954016 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.moveCenter5}) != 1392919328 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.conjCenter5}) != -1913154528 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.sym2rawEdge5}) != -1356505928 ) return false;
-		if( Arrays.deepHashCode(new Object[]{Tables.moveEdge5}) != -1518191552 ) return false;
-
-		return true;
 	}
 
 	public static void main(String[] args) throws IOException {

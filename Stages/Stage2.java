@@ -7,32 +7,16 @@ import cg.fivestage444.Coordinates.Center2;
 public final class Stage2 {
 
 	final static int N_MOVES = 28;
+	static int[] prunTable;
 
 	Edge2 edge;
 	Center2 centerF;
 	Center2 centerB;
 
-	int[] prunTable;
-
 	Stage2(){
 		edge = new Edge2();
 		centerF = new Center2();
 		centerB = new Center2();
-	}
-
-	/* Set from an index */
-	void set( int idx ){
-		edge.coord = idx % Edge2.N_COORD;
-		centerF.coord = idx / Edge2.N_COORD;
-		centerF.sym = 0;
-	}
-
-	/* Get an index from this */
-	int get(boolean centerF){
-		if( centerF )
-			return centerF.coord * Edge2.N_COORD + edge.conjugate(centerF.sym);
-		else
-			return centerB.coord * Edge2.N_COORD + edge.conjugate(centerB.sym);
 	}
 
 	/* Check if solved */
@@ -51,13 +35,37 @@ public final class Stage2 {
 		centerB.moveTo( m, s.centerB );
 	}
 
+	/* Init */
+	public static void init(){
+		Edge2.init();
+		Center2.init();
+		initPruningTable();
+	}
+
+	/** Pruning functions **/
+
+	/* Set from an index */
+	void set( int idx ){
+		edge.coord = idx % Edge2.N_COORD;
+		centerF.coord = idx / Edge2.N_COORD;
+		centerF.sym = 0;
+	}
+
+	/* Get an index from this */
+	int get(boolean centerF){
+		if( centerF )
+			return centerF.coord * Edge2.N_COORD + edge.conjugate(centerF.sym);
+		else
+			return centerB.coord * Edge2.N_COORD + edge.conjugate(centerB.sym);
+	}
+
 	/* Get pruning */
 	public int pruning(){
 		return Math.max( getPrun2( prunTable, this.get(true)), getPrun2( prunTable, this.get(false)));
 	}
 
 	/* Init pruning table */
-	public void initPruningTable(){
+	public static void initPruningTable(){
 		final static int N_SIZE = Edge2.N_COORD * Center2.N_COORD;
 		final static int INV_DEPTH = 7;
 		Stage2 s = new Stage2();

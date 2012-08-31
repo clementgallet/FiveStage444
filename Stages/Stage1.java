@@ -7,27 +7,14 @@ import cg.fivestage444.Coordinates.Corner1;
 public final class Stage1 {
 
 	final static int N_MOVES = 36;
+	static int[] prunTable;
 
 	Edge1 edge;
 	Corner1 corner;
 
-	int[] prunTable;
-
 	Stage1(){
 		edge = new Edge1();
 		corner = new Corner1();
-	}
-
-	/* Set from an index */
-	void set( int idx ){
-		corner.coord = idx % Corner1.N_COORD;
-		edge.coord = idx / Corner1.N_COORD;
-		edge.sym = 0;
-	}
-
-	/* Get an index from this */
-	int get(){
-		return edge.coord * Corner1.N_COORD + corner.conjugate(edge.sym);
 	}
 
 	/* Check if solved */
@@ -41,13 +28,34 @@ public final class Stage1 {
 		corner.moveTo( m, s.corner );
 	}
 
+	/* Init */
+	public static void init(){
+		Edge1.init();
+		Corner1.init();
+		initPruningTable();
+	}
+
+	/** Pruning functions **/
+
+	/* Set from an index */
+	void set( int idx ){
+		corner.coord = idx % Corner1.N_COORD;
+		edge.coord = idx / Corner1.N_COORD;
+		edge.sym = 0;
+	}
+
+	/* Get an index from this */
+	int get(){
+		return edge.coord * Corner1.N_COORD + corner.conjugate(edge.sym);
+	}
+
 	/* Get pruning */
 	public int pruning(){
 		return getPrun2( prunTable, this.get());
 	}
 
 	/* Init pruning table */
-	public void initPruningTable(){
+	public static void initPruningTable(){
 		final static int N_SIZE = Edge1.N_COORD * Corner1.N_COORD;
 		final static int INV_DEPTH = 7;
 		Stage1 s = new Stage1();

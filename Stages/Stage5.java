@@ -8,19 +8,41 @@ import cg.fivestage444.Coordinates.Corner5;
 public final class Stage5 {
 
 	final static int N_MOVES = 12;
+	static int[] prunTableEdgeCenter;
+	static int[] prunTableEdgeCorner;
 
 	Edge5 edge;
 	Center5 center;
 	Corner5 corner;
-
-	int[] prunTableEdgeCenter;
-	int[] prunTableEdgeCorner;
 
 	Stage5(){
 		edge = new Edge5();
 		center = new Center5();
 		corner = new Corner5();
 	}
+
+	/* Check if solved */
+	public boolean isSolved(){
+		return edge.isSolved() && corner.isSolved(edge.sym) && center.isSolved(edge.sym);
+	}
+
+	/* Move */
+	public void moveTo( int m, Stage5 s ){
+		edge.moveTo( m, s.edge );
+		center.moveTo( m, s.center );
+		corner.moveTo( m, s.corner );
+	}
+
+	/* Init */
+	public void init(){
+		Edge5.init();
+		Center5.init();
+		Corner5.init();
+		initPruningTable(true);
+		initPruningTable(false);
+	}
+
+	/** Pruning functions **/
 
 	/* Set from an index */
 	void set( int idx, boolean useCenter ){
@@ -43,25 +65,13 @@ public final class Stage5 {
 			return edge.coord * Corner5.N_COORD + corner.conjugate(edge.sym);
 	}
 
-	/* Check if solved */
-	public boolean isSolved(){
-		return edge.isSolved() && corner.isSolved(edge.sym) && center.isSolved(edge.sym);
-	}
-
-	/* Move */
-	public void moveTo( int m, Stage5 s ){
-		edge.moveTo( m, s.edge );
-		center.moveTo( m, s.center );
-		corner.moveTo( m, s.corner );
-	}
-
 	/* Get pruning */
 	public int pruning(){
 		return Math.max( getPrun2( prunTableEdgeCenter, this.get(true)), getPrun2( prunTableEdgeCorner, this.get(false)));
 	}
 
 	/* Init pruning table */
-	public void initPruningTable(boolean useCenter){
+	public static void initPruningTable(boolean useCenter){
 		final static int N_SIZE = Edge5.N_COORD * (useCenter ? Center5.N_COORD : Corner5.N_COORD);
 		final static int INV_DEPTH = 7;
 		Stage5 s = new Stage5();

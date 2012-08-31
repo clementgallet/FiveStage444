@@ -12,46 +12,6 @@ import java.io.ObjectInputStream;
  */
 public final class Constants{
 
-	public static final int STM = 0;
-	public static final int FTM = 1;
-	public static int METRIC = STM;
-	public static String METRIC_STR = (METRIC == STM) ? "stm" : "ftm";
-
-	public static boolean FULL_PRUNING_STAGE4 = false;
-	public static boolean FULL_PRUNING_STAGE5 = false;
-
-	public static final int N_SYM = 48;
-	public static final int N_SYM_STAGE1 = 48;
-	public static final int N_SYM_STAGE2 = 16;
-	public static final int N_SYM_STAGE3 = 8;
-	public static final int N_SYM_STAGE4 = 16;
-	public static final int N_SYM_STAGE5 = 48;
-
-	public static final int N_STAGE1_CORNERS = 2187;
-
-	public static final int N_STAGE1_EDGES = 735471;	// 24!/(16!*8!)
-	public static final int N_STAGE1_SYMEDGES = 15582;
-
-	public static final int N_STAGE2_EDGES = 420;
-	public static final int N_STAGE2_CENTERS = 51482970;	// 24!/(16!*24*24)
-	public static final int N_STAGE2_CENTER = 10626;
-	public static final int N_STAGE2_SYMCENTER = 716;
-
-	public static final int N_STAGE3_CENTERS = 450450;	//(16*15*14*13/24)*(12*11*10*9/24)/2
-	public static final int N_STAGE3_SYMCENTERS = 56980;
-	public static final int N_STAGE3_EDGE_PAR = 2;
-	public static final int N_STAGE3_EDGES = 12870;	//16!/(8!*8!), does not include parity info
-
-	public static final int N_STAGE4_CENTERS = 35;	//8!/(4!*4!)
-	public static final int N_STAGE4_EDGES = 88200;	//420*420/2
-	public static final int N_STAGE4_SYMEDGES = 5968;
-	public static final int N_STAGE4_CORNERS = 420;	//8!/96
-
-	public static final int N_STAGE5_EDGES = 96*96*96;
-	public static final int N_STAGE5_SYMEDGES = 7444;
-	public static final int N_STAGE5_CENTERS = 12*12*12;
-	public static final int N_STAGE5_CORNERS = 96;
-
 //slice rotate codes
 	public static final int Uf  = 0;	//Up "face" (top slice) clockwise wrt top
 	public static final int Uf3 = 1;	//Up "face" counter-clockwise
@@ -127,63 +87,22 @@ public final class Constants{
 
 	public static final int N_MOVES  = Bw2 + 1;	//last rotate code plus one
 
-
-
 	/** Don't use the actual numbering of rotation, but use another one sorted by the different stages. **/
 
 	public static final int N_STAGE_MOVES = 36;
 
-	public static final int N_STAGE1_MOVES = 36;
-	public static final int N_STAGE2_MOVES = 28;
-	public static final int N_STAGE3_MOVES = 20;
-	public static final int N_STAGE4_MOVES = 16;
-	public static final int N_STAGE5_MOVES = 12;
-
-	public static final byte stage2moves[];
-	static{
-		if( METRIC == STM )
-			stage2moves = new byte[]{
-				Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2, // Stage 5 moves
-				Uf, Df,	Uf3, Df3, // Stage 4 moves
-				Fs, Bs, Fs3, Bs3, // Stage 3 moves
-				Us, Ds, Ls, Rs, Us3, Ds3, Ls3, Rs3, // Stage 2 moves
-				Lf, Rf, Ff, Bf, Lf3, Rf3, Ff3, Bf3 // Stage 1 moves
-			};
-		else
-			stage2moves = new byte[]{
-				Uf2, Uw2, Df2, Dw2, Lf2, Lw2, Rf2, Rw2, Ff2, Fw2, Bf2, Bw2, // Stage 5 moves
-				Uf, Df,	Uf3, Df3, // Stage 4 moves
-				Fs, Bs, Fs3, Bs3, // Stage 3 moves
-				Uw, Dw, Ls, Rs, Uw3, Dw3, Ls3, Rs3, // Stage 2 moves
-				Lf, Rf, Ff, Bf, Lf3, Rf3, Ff3, Bf3 // Stage 1 moves
-			};
-	}
+	public static final byte[] stage2moves = {
+		Uf2, Us2, Df2, Ds2, Lf2, Ls2, Rf2, Rs2, Ff2, Fs2, Bf2, Bs2, // Stage 5 moves
+		Uf, Df,	Uf3, Df3, // Stage 4 moves
+		Fs, Bs, Fs3, Bs3, // Stage 3 moves
+		Us, Ds, Ls, Rs, Us3, Ds3, Ls3, Rs3, // Stage 2 moves
+		Lf, Rf, Ff, Bf, Lf3, Rf3, Ff3, Bf3 // Stage 1 moves
+	};
 
 	public static final byte moves2stage[] = new byte[N_MOVES];
 	static {
 		for (byte i=0; i<N_STAGE_MOVES; i++) {
 			moves2stage[stage2moves[i]] = i;
-		}
-	}
-
-	public static final int N_FACE_MOVES = 18;
-	public static final byte stage2face[] = new byte[N_STAGE_MOVES];
-	static {
-		for( int s = 0; s < N_STAGE_MOVES; s++ ){
-			int m = stage2moves[s];
-			if((( m / 3 ) % 3 ) == 1 )
-				stage2face[s] = -1;
-			else
-				stage2face[s] = (byte)(( m / 9 ) * 3 + ( m % 3 ));
-		}
-	};
-
-	public static int stage3_move_parity = 0;
-	static {
-		for( int i = 0; i < N_STAGE3_MOVES; i++){
-			int m = stage2moves[i];
-			if (((( m / 3 ) % 3 ) == 1 ) && (( m % 3 ) < 2 ))
-				stage3_move_parity |= 1 << i;
 		}
 	}
 
@@ -316,7 +235,13 @@ public final class Constants{
 		arr[7] = (byte)val;
 	}
 
+        public static final void setPrun2(int[] table, int index, int value) {
+                table[index >> 3] ^= (0x0f ^ value) << ((index & 7) << 2);
+        }
 
+        public static final int getPrun2(int[] table, int index) {
+                return (table[index >> 3] >> ((index & 7) << 2)) & 0x0f;
+        }
 
 	public static String move_strings[] = {
 	"U", "U'", "U2", "u", "u'", "u2", "Uw", "Uw'", "Uw2",

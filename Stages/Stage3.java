@@ -7,12 +7,11 @@ import cg.fivestage444.Coordinates.Center3;
 public final class Stage3 {
 
 	final static int N_MOVES = 20;
+	static int[] prunTableEdge;
+	static int[] prunTableCenter;
 
 	Edge3 edge;
 	Center3 center;
-
-	int[] prunTableEdge;
-	int[] prunTableCenter;
 
 	Stage3(){
 		edge = new Edge3();
@@ -30,13 +29,23 @@ public final class Stage3 {
 		center.moveTo( m, s.center );
 	}
 
+	/* Init */
+	public void init(){
+		Edge3.init();
+		Center3.init();
+		initPruningTableEdge();
+		initPruningTableCenter();
+	}
+
+	/** Pruning functions **/
+
 	/* Get pruning */
 	public int pruning(){
 		return Math.max( getPrun2( prunTableEdge, edge.coord ), getPrun2( prunTableCenter, center.coord ));
 	}
 
 	/* Init pruning table */
-	public void initPruningTableEdge(){
+	public static void initPruningTableEdge(){
 		final static int N_SIZE = Edge3.N_COORD;
 		final static int INV_DEPTH = 7;
 		Edge3 e = new Edge3();
@@ -79,7 +88,7 @@ public final class Stage3 {
 		}
 	}
 
-	public void initPruningTableCenter(){
+	public static void initPruningTableCenter(){
 		final static int N_SIZE = Center3.N_COORD;
 		final static int INV_DEPTH = 7;
 		Center3 e = new Center3();

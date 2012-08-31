@@ -7,6 +7,7 @@ public final class Edge2 {
 	final static int N_COORD = 12870*2;
 	final static int N_SYM = 8;
 	final static int N_MOVES = 20;
+	private static int moveParity;
 
 	/* Coordinates */
 	int coord;
@@ -22,7 +23,7 @@ public final class Edge2 {
 
 	/* Move */
 	public void moveTo( int m, Edge3 e ){
-		e.coord = ( move[coord>>>1][m] << 1 ) | (( coord & 1 ) ^ (( stage3_move_parity >>> m ) & 1 ));
+		e.coord = ( move[coord>>>1][m] << 1 ) | (( coord & 1 ) ^ (( moveParity >>> m ) & 1 ));
 	}
 
 	/* Get the conjugated coordinate */
@@ -67,6 +68,12 @@ public final class Edge2 {
 
 	/* Initialisations */
 	public static void init(){
+		/* Initialize move parity */
+		for( int i = 0; i < N_MOVES; i++){
+			int m = stage2moves[i];
+			if (((( m / 3 ) % 3 ) == 1 ) && (( m % 3 ) < 2 ))
+				moveParity |= 1 << i;
+		}
 		initMove();
 		initConj();
 	}
