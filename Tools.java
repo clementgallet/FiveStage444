@@ -1,6 +1,11 @@
 package cg.fivestage444;
 
 import static cg.fivestage444.Constants.*;
+import cg.fivestage444.Stage1;
+import cg.fivestage444.Stage2;
+import cg.fivestage444.Stage3;
+import cg.fivestage444.Stage4;
+import cg.fivestage444.Stage5;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -16,22 +21,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Random;
 
-//import net.gnehzr.tnoodle.utils.Utils;
-//import net.gnehzr.tnoodle.utils.TimedLogRecordStart;
-
 public class Tools {
 	private static final Logger l = Logger.getLogger(Tools.class.getName());
-
-	static void read(byte[] arr, DataInput in) throws IOException {
-		in.readFully(arr);
-	}
-
-	static void read(short[] arr, DataInput in) throws IOException {
-		final int length = arr.length;
-		for (int i=0; i<length; i++) {
-			arr[i] = in.readShort();
-		}
-	}
 
 	static void read(int[] arr, DataInput in) throws IOException {
 		final int length = arr.length;
@@ -40,76 +31,11 @@ public class Tools {
 		}
 	}
 
-	static void read(byte[][] arr, DataInput in) throws IOException {
-		final int length = arr.length;
-		for (char i=0; i<length; i++) {
-			in.readFully(arr[i]);
-		}
-	}
-
-	static void read(short[][] arr, DataInput in) throws IOException {
-		final int length = arr.length;
-		for (int i=0; i<length; i++) {
-			final int len = arr[i].length;
-			for (int j=0; j<len; j++) {
-				arr[i][j] = in.readShort();
-			}
-		}	
-	}
-
-	static void read(int[][] arr, DataInput in) throws IOException {
-		final int length = arr.length;
-		for (int i=0; i<length; i++) {
-			final int len = arr[i].length;
-			for (int j=0; j<len; j++) {
-				arr[i][j] = in.readInt();
-			}
-		}	
-	}
-
-	static void write(byte[] arr, DataOutput out) throws IOException {
-		out.write(arr);
-	}
-
-	static void write(short[] arr, DataOutput out) throws IOException {
-		final int length = arr.length;
-		for (int i=0; i<length; i++) {
-			out.writeShort(arr[i]);
-		}
-	}
-
 	static void write(int[] arr, DataOutput out) throws IOException {
 		final int length = arr.length;
 		for (int i=0; i<length; i++) {
 			out.writeInt(arr[i]);
 		}
-	}
-
-	static void write(byte[][] arr, DataOutput out) throws IOException {
-		final int length = arr.length;
-		for (char i=0; i<length; i++) {
-			out.write(arr[i]);
-		}
-	}
-
-	static void write(short[][] arr, DataOutput out) throws IOException {
-		final int length = arr.length;
-		for (int i=0; i<length; i++) {
-			final int len = arr[i].length;
-			for (int j=0; j<len; j++) {
-				out.writeShort(arr[i][j]);
-			}
-		}	
-	}
-	
-	static void write(int[][] arr, DataOutput out) throws IOException {
-		final int length = arr.length;
-		for (int i=0; i<length; i++) {
-			final int len = arr[i].length;
-			for (int j=0; j<len; j++) {
-				out.writeInt(arr[i][j]);
-			}
-		}	
 	}
 	
 	public static synchronized void init() {
@@ -121,25 +47,14 @@ public class Tools {
 		Tables.init();
 	}
 
-	public static enum InitializationState {
-		UNINITIALIZED,
-		INITING_TABLES,
-		INITIALIZED;
-	}
-
-	public static InitializationState getInitializationState() {
-		return inited;
-	}
-
-	static volatile InitializationState inited = InitializationState.UNINITIALIZED;
+	static volatile boolean inited = false;
 
 	private static synchronized void init(boolean tryToReadFile, File fivephase_tables) {
-		if(inited != InitializationState.UNINITIALIZED) {
+		if( inited ) {
 			return;
 		}
 
 		if(fivephase_tables == null) {
-			//fivephase_tables = new File(Utils.getResourceDirectory(), "fivephase_tables");
 			fivephase_tables = new File("cg/fivestage444/fivephase_tables");
 		}
 
@@ -148,18 +63,15 @@ public class Tools {
 			try {
 				FileInputStream is = new FileInputStream(fivephase_tables);
 				if(initFrom(new DataInputStream(is))) {
-					inited = InitializationState.INITIALIZED;
+					inited = true;
 				}
 			} catch (FileNotFoundException e) {
 				l.info("Couldn't find " + fivephase_tables + ", going to create it.");
 			}
 		}
-		if(inited == InitializationState.UNINITIALIZED) {
-			//TimedLogRecordStart start = new TimedLogRecordStart("Generating fivephase tables");
-			//l.log(start);
-
-			inited = InitializationState.INITING_TABLES;
-			Tables.init_tables();
+		if( ! inited ) {
+			Stage1.init();
+			Stage4.init();
 
 			try {
 				l.info("Writing to " + fivephase_tables);
@@ -170,16 +82,21 @@ public class Tools {
 				l.log(Level.INFO, "Failed to write to " + fivephase_tables, e);
 			}
 			
-			//l.log(start.finishedNow());
 		}
-		inited = InitializationState.INITIALIZED;
-		// if( ! checkTables() ) System.out.println( "There might be a problem with tables integrity...");
+		Stage2.init();
+		Stage3.init();
+		Stage5.init();
+		inited = true;
 	}
 	
 	public static boolean initFrom(DataInput in) {
 		try {
-			read(Tables.prunTableEdgCor5, in);
-			read(Tables.prunTableEdgCen5, in);
+			Stage1.prunTable = new int[(Edge1.N_COORD * Corner1.N_COORD+7)/8];
+			read(Stage1.prunTable, in);
+			Stage1.init();
+			Stage4.prunTable = new int[(Edge4.N_COORD * Corner4.N_COORD * Center4.N_COORD+7)/8];
+			read(Stage4.prunTable, in);
+			Stage4.init();
 
 			return true;
 		} catch (Exception e) {
@@ -189,17 +106,8 @@ public class Tools {
 	}
 
 	public static void initTo(DataOutput out) throws IOException {
-		write(Tables.prunTableEdgCen4, out); //            +    104,440 B
-		write(Tables.prunTableEdgCor5, out); //            +    357,312 B
-	}
-
-	public static void main(String[] args) throws IOException {
-		System.out.println(Arrays.toString(args));
-		if(args.length != 1) {
-			System.out.println("Please provide 1 argument: the file to store the tables in");
-			System.exit(1);
-		}
-		init(false, new File(args[0]));
+		write(Stage1.prunTable, out); //            +    104,440 B
+		write(Stage4.prunTable, out); //            +    357,312 B
 	}
 
 	/**

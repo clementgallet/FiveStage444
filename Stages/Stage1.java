@@ -56,6 +56,7 @@ public final class Stage1 {
 
 	/* Init pruning table */
 	public static void initPruningTable(){
+		if( prunTable != null ) return;
 		final static int N_SIZE = Edge1.N_COORD * Corner1.N_COORD;
 		final static int INV_DEPTH = 7;
 		Stage1 s = new Stage1();
