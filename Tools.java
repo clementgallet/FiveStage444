@@ -101,6 +101,8 @@ public class Tools {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
+			Stage1.prunTable = null;
+			Stage4.prunTable = null;
 			return false;
 		}
 	}

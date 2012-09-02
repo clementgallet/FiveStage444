@@ -21,6 +21,13 @@ public final class Stage5 {
 		corner = new Corner5();
 	}
 
+	/* Pack from CubeState */
+	public void pack(CubeState cube){
+		edge.pack(cube);
+		center.pack(cube);
+		corner.pack(cube);
+	}
+
 	/* Check if solved */
 	public boolean isSolved(){
 		return edge.isSolved() && corner.isSolved(edge.sym) && center.isSolved(edge.sym);

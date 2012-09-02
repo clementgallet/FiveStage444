@@ -1,6 +1,11 @@
 package cg.fivestage444;
 
 import static cg.fivestage444.Constants.*;
+import cg.fivestage444.Stages.Stage1;
+import cg.fivestage444.Stages.Stage2;
+import cg.fivestage444.Stages.Stage3;
+import cg.fivestage444.Stages.Stage4;
+import cg.fivestage444.Stages.Stage5;
 
 import java.util.Random;
 import java.io.ObjectOutputStream;
@@ -31,9 +36,9 @@ public final class Search {
 	int r1, r2;
 	int r1_sub, r2_sub;
 
-	static int MAX_STAGE2 = (METRIC == STM) ? 6 : 7;
-	static int MAX_STAGE3 = (METRIC == STM) ? 9 : 10;
-	static int MAX_STAGE4 = (METRIC == STM) ? 11 : 12;
+	static int MAX_STAGE2 = 6;
+	static int MAX_STAGE3 = 9;
+	static int MAX_STAGE4 = 11;
 
 	static int MIN_STAGE3 = 7;
 	static int MIN_STAGE4 = 8;
@@ -119,61 +124,46 @@ public final class Search {
 	}
 
 	public void init_stage1 ( int max_turns ) {
-		int edge1 = init_cube[0].convert_symedges_to_stage1();
-		int edge2 = init_cube[1].convert_symedges_to_stage1();
-		int edge3 = init_cube[2].convert_symedges_to_stage1();
+		Stage1 s1 = new Stage1();
+		Stage1 s2 = new Stage1();
+		Stage1 s3 = new Stage1();
 
-		int sym1 = edge1 & 0x3F;
-		int sym2 = edge2 & 0x3F;
-		int sym3 = edge3 & 0x3F;
+		s1.pack(init_cube[0]);
+		s2.pack(init_cube[1]);
+		s3.pack(init_cube[2]);
 
-		edge1 >>>= 6;
-		edge2 >>>= 6;
-		edge3 >>>= 6;
-
-		int corner1 = init_cube[0].convert_corners_to_stage1();
-		int corner2 = init_cube[1].convert_corners_to_stage1();
-		int corner3 = init_cube[2].convert_corners_to_stage1();
-
-		int d1 = Tables.prunDist1(edge1, sym1, corner1);
-		int d2 = Tables.prunDist1(edge2, sym2, corner2);
-		int d3 = Tables.prunDist1(edge3, sym3, corner3);
+		int d1 = s1.pruning();
+		int d2 = s2.pruning();
+		int d3 = s3.pruning();
 		int d = Math.min(Math.min(d1, d2), d3);
 
 		total_length = max_turns+1;
 		found_sol = false;
 		for (length1 = d; length1 < total_length; ++length1) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "Stage 1 - length "+length1 );
-			if ( search_stage1 (edge1, sym1, corner1, length1, 0, N_STAGE_MOVES, d1, 0 )
-			  || search_stage1 (edge2, sym2, corner2, length1, 0, N_STAGE_MOVES, d2, 1 )
-			  || search_stage1 (edge3, sym3, corner3, length1, 0, N_STAGE_MOVES, d3, 2 ))
+			if ( search_stage1 (s1, length1, 0, N_STAGE_MOVES, 0 )
+			  || search_stage1 (s2, length1, 0, N_STAGE_MOVES, 1 )
+			  || search_stage1 (s3, length1, 0, N_STAGE_MOVES, 2 ))
 				return;
 		}
 	}
 
-	public boolean search_stage1 (int edge, int sym, int corner, int depth, int moves_done, int last_move, int dist, int r){
-		if ( ( edge == 0 ) && Tables.conjCorner1[corner][sym] == 1906 ){
+	public boolean search_stage1 (Stage1 s, int depth, int moves_done, int last_move, int r){
+		if ( s.isSolved() ){
 			if (depth == 0)
 				return init_stage2 (r);
 			else
 				return false;
 		}
+		Stage1 t = new Stage1();
 		long mask = moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < N_STAGE1_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1L ) == 0)
 				continue;
-			/* Move */
-			int face_move = stage2face[move];
-			int newCorner = ( face_move >= 0 ) ? Tables.moveCorner1[corner][face_move] : corner;
-			int newEdge = Tables.moveEdge1[edge][Symmetry.moveConjugateStage[move][sym]];
-			int newSym = Symmetry.symIdxMultiply[newEdge & 0x3F][sym];
-			newEdge >>>= 6;
-
-			/* Compute new distance */
-			int newDist = Tables.new_dist(Tables.prunTable1, N_STAGE1_CORNERS*newEdge+Tables.conjCorner1[newCorner][newSym], dist);
-			if (newDist > depth-1) continue;
+			s.moveTo( move, t );
+			if (t.pruning > depth-1) continue;
 			move_list_stage1[moves_done] = (byte)move;
-			if (search_stage1 (newEdge, newSym, newCorner, depth - 1, moves_done + 1, move, newDist, r)) return true;
+			if (search_stage1 (t, depth - 1, moves_done + 1, move, r)) return true;
 		}
 		return false;
 	}
@@ -203,33 +193,21 @@ public final class Search {
 
 		int min2 = Math.min( MAX_STAGE2 + 1, total_length - length1 - MIN_STAGE3 - MIN_STAGE4 - MIN_STAGE5);
 
-		int edge1 = c1.convert_edges_to_stage2();
-		int centerF1 = c1.convert_symcenters_to_stage2(4);
-		int centerB1 = c1.convert_symcenters_to_stage2(5);
-		int symF1 = centerF1 & 0xF;
-		int symB1 = centerB1 & 0xF;
-		centerF1 >>>= 4;
-		centerB1 >>>= 4;
-
-		int d21 = Math.max(Tables.getPrun2(Tables.prunTableEdgCen2, N_STAGE2_EDGES*centerF1+Tables.conjEdge2[edge1][symF1]), Tables.getPrun2(Tables.prunTableEdgCen2, N_STAGE2_EDGES * centerB1 + Tables.conjEdge2[edge1][symB1]));
+		Stage2 s1 = new Stage2();
+		s1.pack(c1);
+		int d21 = s1.pruning();
 		if( d21 >= min2 ) return false;
 
 		c1.copyTo (c1r);
 		c1r.leftMult  ( 8 );
-		int edge2 = c1r.convert_edges_to_stage2();
-		int centerF2 = c1r.convert_symcenters_to_stage2(4);
-		int centerB2 = c1r.convert_symcenters_to_stage2(5);
-		int symF2 = centerF2 & 0xF;
-		int symB2 = centerB2 & 0xF;
-		centerF2 >>>= 4;
-		centerB2 >>>= 4;
-
-		int d22 = Math.max(Tables.getPrun2(Tables.prunTableEdgCen2, N_STAGE2_EDGES * centerF2 + Tables.conjEdge2[edge2][symF2]), Tables.getPrun2(Tables.prunTableEdgCen2, N_STAGE2_EDGES * centerB2 + Tables.conjEdge2[edge2][symB2]));
+		Stage2 s2 = new Stage2();
+		s2.pack(c1r);
+		int d22 = s2.pruning();
 
 		for (length2 = Math.min(d21, d22); length2 < min2; ++length2) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "  Stage 2 - length "+length2 );
-			if((( length2 >= d21 ) && search_stage2 (edge1, centerF1, symF1, centerB1, symB1, length2, 0, N_STAGE_MOVES, 0 )) ||
-			   (( length2 >= d22 ) && search_stage2 (edge2, centerF2, symF2, centerB2, symB2, length2, 0, N_STAGE_MOVES, 1 ))){
+			if((( length2 >= d21 ) && search_stage2 (s1, length2, 0, N_STAGE_MOVES, 0 )) ||
+			   (( length2 >= d22 ) && search_stage2 (s2, length2, 0, N_STAGE_MOVES, 1 ))){
 				return true;
 			}
 			min2 = Math.min( MAX_STAGE2 + 1, total_length - length1 - MIN_STAGE3 - MIN_STAGE4 - MIN_STAGE5);
@@ -237,38 +215,24 @@ public final class Search {
 		return false;
 	}
 
-	public boolean search_stage2 (int edge, int centerF, int symF, int centerB, int symB, int depth, int moves_done, int last_move, int r ){
+	public boolean search_stage2 (Stage2 s, int depth, int moves_done, int last_move, int r ){
 		if (depth == 0){
-		if( ( centerF == centerB ) && (( symF & 0x8 ) == ( symB & 0x8 )) && ((( edge == 0 ) && (( symF & 0x8 ) != 0 )) || (( edge == 414 ) && (( symF & 0x8 ) == 0 ))))
-			for (int i=0; i < Constants.stage2_solved_symcenters.length; i++)
-				if (centerF == Constants.stage2_solved_symcenters[i])
-					//if (depth == 0) 
-						return init_stage3 (r);
-		return false;
+			if( s.isSolved() )
+				return init_stage3 (r);
+			return false;
 		}
 
+		Stage2 t = new Stage2();
 		long mask = moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < N_STAGE2_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;
 
 			/* Move cube1 to list2[depth] */
-			int edgex = Tables.moveEdge2[edge][move];
-			int centerFx = Tables.moveCenter2[centerF][Symmetry.moveConjugateStage[move][symF]];
-			int symFx = Symmetry.symIdxMultiply[centerFx & 0xF][symF];
-			centerFx >>= 4;
-
-			int newDistCenF = Tables.getPrun2(Tables.prunTableEdgCen2, N_STAGE2_EDGES*centerFx+Tables.conjEdge2[edgex][symFx]);
-			if (newDistCenF > depth-1) continue;
-
-			int centerBx = Tables.moveCenter2[centerB][Symmetry.moveConjugateStage[move][symB]];
-			int symBx = Symmetry.symIdxMultiply[centerBx & 0xF][symB];
-			centerBx >>= 4;
-
-			int newDistCenB = Tables.getPrun2(Tables.prunTableEdgCen2, N_STAGE2_EDGES*centerBx+Tables.conjEdge2[edgex][symBx]);
-			if (newDistCenB > depth-1) continue;
+			s.moveTo( move, t );
+			if (t.pruning() > depth-1) continue;
 			move_list_stage2[moves_done] = (byte)move;
-			if (search_stage2 (edgex, centerFx, symFx, centerBx, symBx, depth - 1, moves_done + 1, move, r)) return true;
+			if (search_stage2 (t, depth - 1, moves_done + 1, move, r)) return true;
 		}
 		return false;
 	}
@@ -298,22 +262,14 @@ public final class Search {
 			rotate2 += 8;
 		}
 
-		int center = c2.convert_symcenters_to_stage3();
-		int sym = center & 0x7;
-		center >>>= 3;
-		int edge = c2.convert_edges_to_stage3();
-		boolean edge_odd = c2.edgeUD_parity_odd();
-
+		Stage3 s = new Stage3();
+		s.pack( c2 );
 		int min3 = Math.min( MAX_STAGE3 + 1, total_length - length1 - length2 - MIN_STAGE4 - MIN_STAGE5 );
-
-		int cubeDistCen = Tables.prune_table_cen3.ptable[(center<<1)+(edge_odd?1:0)];
-		if( cubeDistCen >= min3 ) return false;
-		int cubeDistEdg = Tables.prune_table_edg3.ptable[( edge<<1 ) + (edge_odd?1:0)];
-		int d3 = Math.max(cubeDistCen, cubeDistEdg);
+		int d3 = s.pruning();
 
 		for (length3 = d3; length3 < min3; ++length3) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "    Stage 3 - length "+length3 );
-			if( search_stage3 (center, sym, edge, edge_odd, length3, 0, N_STAGE_MOVES )){
+			if( search_stage3 (s, length3, 0, N_STAGE_MOVES )){
 				return true;
 			}
 			min3 = Math.min( MAX_STAGE3 + 1, total_length - length1 - length2 - MIN_STAGE4 - MIN_STAGE5 );
@@ -321,34 +277,24 @@ public final class Search {
 		return false;
 	}
 
-	public boolean search_stage3 (int center, int sym, int edge, boolean edge_odd, int depth, int moves_done, int last_move){
-		if(( !edge_odd ) && ( edge == 12375 ))
-			for (int i = 0; i < Constants.stage3_solved_sym_centers.length; ++i)
-				if ( center == Constants.stage3_solved_sym_centers[i]){
-					if (depth == 0)
-						return init_stage4 ();
-					else
-						return false;
-				}
+	public boolean search_stage3 (Stage3 s, int depth, int moves_done, int last_move){
+		if( s.isSolved() ){
+			if (depth == 0)
+				return init_stage4 ();
+			else
+				return false;
+		}
 
+		Stage3 t = new Stage3();
 		long mask = moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < N_STAGE3_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;
 
-			/* Move cube1 to cube2 */
-			int edgex = Tables.moveEdge3[edge][move];
-			boolean edge_oddx = edge_odd ^ ((( stage3_move_parity>>move ) & 1 ) != 0);
-			int centerx = Tables.moveCenter3[center][Symmetry.moveConjugateStage[move][sym]];
-			int symx = Symmetry.symIdxMultiply[sym][centerx&0x7];
-			centerx >>= 3;
-
-			int newDistCen = Tables.prune_table_cen3.ptable[(centerx<<1)+(edge_oddx?1:0)];
-			if (newDistCen > depth-1) continue;
-			int newDistEdg = Tables.prune_table_edg3.ptable[( edgex<<1 ) + (edge_oddx?1:0)];
-			if (newDistEdg > depth-1) continue;
+			s.moveTo( t );
+			if (t.pruning() > depth-1) continue;
 			move_list_stage3[moves_done] = (byte)move;
-			if (search_stage3 (centerx, symx, edgex, edge_oddx, depth - 1, moves_done + 1, move)) return true;
+			if (search_stage3 (t, depth - 1, moves_done + 1, move)) return true;
 		}
 		return false;
 	}
@@ -360,23 +306,14 @@ public final class Search {
 		c2.copyTo(c3);
 		c3.scramble( length3, move_list_stage3, stage2moves );
 
-		int edge = c3.convert_symedges_to_stage4();
-		int sym = edge & 0xF;
-		edge >>>= 4;
-		int corner = c3.convert_corners_to_stage4();
-		int center = c3.convert_centers_to_stage4();
-
+		Stage4 s = new Stage4();
+		s.pack( c3 );
 		int min4 = Math.min( MAX_STAGE4 + 1, total_length - length1 - length2 - length3 - MIN_STAGE5 );
-
-		int cubeDistEdgCen = Tables.getPrun2(Tables.prunTableEdgCen4, edge * N_STAGE4_CENTERS + Tables.conjCenter4[center][sym]);
-		if( cubeDistEdgCen >= min4 ) return false;
-		int cubeDistEdgCor = FULL_PRUNING_STAGE4 ? Tables.prunDist4(edge, sym, corner, center) : Tables.prunDistEdgCor4(edge, sym, corner);
-		int d4 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
-
+		int d4 = s.pruning();
 
 		for (length4 = d4; length4 < min4; ++length4) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "      Stage 4 - length "+length4 );
-			if( search_stage4 (center, corner, edge, sym, length4, 0, N_STAGE_MOVES, cubeDistEdgCor )) {
+			if( search_stage4 (s, length4, 0, N_STAGE_MOVES )) {
 				return true;
 			}
 			min4 = Math.min( MAX_STAGE4 + 1, total_length - length1 - length2 - length3 - MIN_STAGE5 );
@@ -384,37 +321,24 @@ public final class Search {
 		return false;
 	}
 
-	public boolean search_stage4 (int center, int corner, int edge, int sym, int depth, int moves_done, int last_move, int dist){
-		if( corner == 0 && edge == 0 )
-			for (int i = 0; i < Constants.stage4_solved_centers_bm.length; ++i)
-				if (center == Constants.stage4_solved_centers_bm[i]){
-					if (depth == 0)
-						return init_stage5 ();
-					else
-						return false;
-				}
+	public boolean search_stage4 (Stage4 s, int depth, int moves_done, int last_move){
+		if( s.isSolved() ){
+			if (depth == 0)
+				return init_stage5 ();
+			else
+				return false;
+		}
 
+		Stage4 t = new Stage4();
 		long mask = moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < N_STAGE4_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;
 
-			/* Move */
-			int centerx = Tables.moveCenter4[center][move];
-			int cornerx = Tables.moveCorner4[corner][move];
-			int edgex = Tables.moveEdge4[edge][Symmetry.moveConjugateStage[move][sym]];
-			int symx = Symmetry.symIdxMultiply[edgex & 0xF][sym];
-			edgex >>= 4;
-
-			/* Compute new distance */
-			int newDistEdgCen = Tables.getPrun2(Tables.prunTableEdgCen4, edgex*N_STAGE4_CENTERS+Tables.conjCenter4[centerx][symx]);
-			if (newDistEdgCen > depth-1) continue;
-			int newDist = FULL_PRUNING_STAGE4 ? 
-			  Tables.new_dist(Tables.prunTable4, (long)(edgex*Constants.N_STAGE4_CORNERS+Tables.conjCorner4[cornerx][symx])*N_STAGE4_CENTERS+Tables.conjCenter4[centerx][symx], dist) :
-			  Tables.new_dist(Tables.prunTableEdgCor4, edgex*Constants.N_STAGE4_CORNERS+Tables.conjCorner4[cornerx][symx], dist);
-			if (newDist > depth-1) continue;
+			s.moveTo( t );
+			if (t.pruning() > depth-1) continue;
 			move_list_stage4[moves_done] = (byte)move;
-			if (search_stage4 (centerx, cornerx, edgex, symx, depth - 1, moves_done + 1, move, newDist)) return true;
+			if (search_stage4 (t, depth - 1, moves_done + 1, move)) return true;
 		}
 		return false;
 	}
@@ -425,20 +349,12 @@ public final class Search {
 		c3.copyTo(c4);
 		c4.scramble( length4, move_list_stage4, stage2moves );
 
-		int edge = c4.convert_symedges_to_stage5();
-		int sym = edge & 0xFF;
-		edge >>>= 8;
-		int corner = c4.convert_corners_to_stage5();
-		int center = c4.convert_centers_to_stage5();
-
-		int cubeDistEdgCor = Tables.getPrun2(Tables.prunTableEdgCor5, edge * N_STAGE5_CORNERS + Tables.conjCorner5[corner][sym]);
-		if( cubeDistEdgCor >= total_length-length4-length3-length2-length1 ) return false;
-		int cubeDistEdgCen = Tables.prunDistEdgCen5(edge, sym, center);
-
-		int d5 = Math.max(cubeDistEdgCen, cubeDistEdgCor);
+		Stage5 s = new Stage5();
+		s.pack( c4 );
+		int d5 = s.pruning();
 
 		for (length5 = d5; length5 < total_length-length4-length3-length2-length1; ++length5) {
-			if( search_stage5 (edge, sym, center, corner, length5, 0, N_STAGE_MOVES, cubeDistEdgCen)){
+			if( search_stage5 (s, length5, 0, N_STAGE_MOVES)){
 				if( DEBUG_LEVEL >= 1 ) System.out.println( "        Stage 5 - length "+length5 );
 				total_length = length1+length2+length3+length4+length5;
 				/* Save current solution */
@@ -463,28 +379,20 @@ public final class Search {
 		return false;
 	}
 
-	public boolean search_stage5 (int edge, int sym, int center, int corner, int depth, int moves_done, int last_move, int distEdgCen){
-		if (depth == 0) {
-			return( edge == 0 && Tables.conjCenter5[center][sym] == 0 && Tables.conjCorner5[corner][sym] == 0 );
-		}
+	public boolean search_stage5 (Stage5 s, int depth, int moves_done, int last_move){
+		if (depth == 0)
+			return( s.isSolved() );
+
+		Stage5 t = new Stage5();
 		long mask = moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < N_STAGE5_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;
 
-			/* Move cube1 to cube2 */
-			int centerx = Tables.moveCenter5[center][move];
-			int cornerx = Tables.moveCorner5[corner][move];
-			int edgex = Tables.moveEdge5[edge][Symmetry.moveConjugateCo4Stage[move][sym]];
-			int symx = Symmetry.symIdxCo4Multiply[sym][edgex & 0xFF];
-			edgex >>= 8;
-
-			int newDistEdgCor = Tables.getPrun2(Tables.prunTableEdgCor5, edgex * N_STAGE5_CORNERS + Tables.conjCorner5[cornerx][symx]);
-			if (newDistEdgCor > depth-1) continue;
-			int newDistEdgCen = Tables.new_dist(Tables.prunTableEdgCen5, edgex * Constants.N_STAGE5_CENTERS + Tables.conjCenter5[centerx][symx], distEdgCen);
-			if (newDistEdgCen > depth-1) continue;
+			s.moveTo( t );
+			if (t.pruning() > depth-1) continue;
 			move_list_stage5[moves_done] = (byte)move;
-			if (search_stage5 (edgex, symx, centerx, cornerx, depth - 1, moves_done + 1, move, newDistEdgCen)) return true;
+			if (search_stage5 (t, depth - 1, moves_done + 1, move)) return true;
 		}
 		return false;
 	}

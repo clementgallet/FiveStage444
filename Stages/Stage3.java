@@ -18,6 +18,12 @@ public final class Stage3 {
 		center = new Center3();
 	}
 
+	/* Pack from CubeState */
+	public void pack(CubeState cube){
+		edge.pack(cube);
+		center.pack(cube);
+	}
+
 	/* Check if solved */
 	public boolean isSolved(){
 		return edge.isSolved() && center.isSolved();

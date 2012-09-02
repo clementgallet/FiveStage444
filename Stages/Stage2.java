@@ -19,6 +19,13 @@ public final class Stage2 {
 		centerB = new Center2();
 	}
 
+	/* Pack from CubeState */
+	public void pack(CubeState cube){
+		edge.pack(cube);
+		centerF.pack(cube, 4);
+		centerB.pack(cube, 5);
+	}
+
 	/* Check if solved */
 	public boolean isSolved(){
 		return edge.isSolved()
