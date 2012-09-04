@@ -1,10 +1,14 @@
 package cg.fivestage444.Coordinates;
 
 import static cg.fivestage444.Constants.*;
+import cg.fivestage444.CubeState;
+import cg.fivestage444.Symmetry;
+import cg.fivestage444.Tables;
+import java.util.Arrays;
 
-public final class Edge1 {
+public final class Edge4 {
 
-	final static int N_COORD = 5968;
+	public final static int N_COORD = 5968;
 	final static int N_RAW_COORD = 88200*2;
 	final static int N_SYM = 16;
 	final static int SYM_SHIFT = 4;
@@ -12,8 +16,8 @@ public final class Edge1 {
 	final static int N_MOVES = 16;
 
 	/* Coordinates */
-	int coord;
-	int sym;
+	public int coord;
+	public int sym;
 	int raw_coord;
 
 	/* Tables */
@@ -48,7 +52,7 @@ public final class Edge1 {
 		int i1 = 0;
 		int i2 = 0;
 		int r = 4;
-		Constants.set4Perm( t, perm6_rl );
+		set4Perm( t, perm6_rl );
 		for( int i=7; i >= 0; i-- ){
 			if( ledge4of8 >= Cnk[i][r] ){
 				ledge4of8 -= Cnk[i][r--];
@@ -61,7 +65,7 @@ public final class Edge1 {
 		i1 = 0;
 		i2 = 0;
 		r = 4;
-		Constants.set4Perm( t, perm6_fb );
+		set4Perm( t, perm6_fb );
 		for( int i=7; i >= 0; i-- ){
 			if( redge4of8 >= Cnk[i][r] ){
 				redge4of8 -= Cnk[i][r--];
@@ -145,16 +149,16 @@ public final class Edge1 {
 		int repIdx = 0;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
+		Edge4 e = new Edge4();
 		byte[] t = new byte[8];
-
 		byte[] isRepTable = new byte[(N_RAW_COORD>>3) + 1];
 		symHelper = new byte[N_RAW_COORD];
 		hasSym = new int[N_COORD];
 		for (int u = 0; u < N_RAW_COORD; ++u) {
 			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
-			this.raw_coord = u;
+			e.raw_coord = u;
 			symHelper[u] = 0;
-			this.unpack(cube1);
+			e.unpackRaw(cube1);
 
 			/* Only retain configs without parity */
 			int ul = get8Perm( cube1.m_edge, 4 );
@@ -163,31 +167,31 @@ public final class Edge1 {
 			for (int i=4; i<8; i++)
 				t[i] = ( cube1.m_edge[i+8] > 4 ) ? (byte)(cube1.m_edge[i+8]-8) : cube1.m_edge[i+8];
 			int uh = get8Perm( t, 0 );
-			if( parity_perm8_table[ul] != parity_perm8_table[uh] ) continue; // getting rid of the parity.
+			if( Tables.parity_perm8_table[ul] != Tables.parity_perm8_table[uh] ) continue; // getting rid of the parity.
 
-			for (int sym = 1; sym < N_SYM; ++sym) {
-				cube1.conjugateEdges (sym, cube2);
-				this.packRaw( cube2 );
-				isRepTable[raw_coord>>>3] |= 1<<(raw_coord&0x7);
-				symHelper[raw_coord] = (byte)(Symmetry.invSymIdx[sym]);
-				if( raw_coord == u )
-					hasSym[repIdx] |= (1 << sym);
+			for (int s = 1; s < N_SYM; ++s) {
+				cube1.conjugateEdges (s, cube2);
+				e.packRaw( cube2 );
+				isRepTable[e.raw_coord>>>3] |= 1<<(e.raw_coord&0x7);
+				symHelper[e.raw_coord] = (byte)(Symmetry.invSymIdx[s]);
+				if( e.raw_coord == u )
+					hasSym[repIdx] |= (1 << s);
 			}
 			sym2raw[repIdx++] = u;
 		}
 	}
 
 	public static void initMove (){
-
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
+		Edge4 e = new Edge4();
 		for (int u = 0; u < N_COORD; ++u) {
-			this.coord = sym2raw[u];
-			this.unpack( cube1 );
+			e.coord = sym2raw[u];
+			e.unpackRaw( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
 				cube1.rotate_sliceEDGE (stage2moves[m], cube2);
-				this.pack( cube2 );
-				move[u][mc] = ( coord << SYM_SHIFT ) | sym;
+				e.pack( cube2 );
+				move[u][m] = ( e.coord << SYM_SHIFT ) | e.sym;
 			}
 		}
 	}

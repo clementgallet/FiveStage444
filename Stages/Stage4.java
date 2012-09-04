@@ -4,17 +4,19 @@ import static cg.fivestage444.Constants.*;
 import cg.fivestage444.Coordinates.Edge4;
 import cg.fivestage444.Coordinates.Corner4;
 import cg.fivestage444.Coordinates.Center4;
+import cg.fivestage444.CubeState;
 
 public final class Stage4 {
 
-	final static int N_MOVES = 16;
-	static int[] prunTable;
+	public final static int N_MOVES = 16;
+	public final static int N_SIZE = Edge4.N_COORD * Corner4.N_COORD * Center4.N_COORD;
+	public static int[] prunTable;
 
 	Edge4 edge;
 	Corner4 corner;
 	Center4 center;
 
-	Stage4(){
+	public Stage4(){
 		edge = new Edge4();
 		corner = new Corner4();
 		center = new Center4();
@@ -40,7 +42,7 @@ public final class Stage4 {
 	}
 
 	/* Init */
-	public void init(){
+	public static void init(){
 		Edge4.init();
 		Corner4.init();
 		Center4.init();
@@ -71,11 +73,13 @@ public final class Stage4 {
 	/* Init pruning table */
 	public static void initPruningTable(){
 		if( prunTable != null ) return;
-		final static int N_SIZE = Edge4.N_COORD * Corner4.N_COORD * Center4.N_COORD;
-		final static int INV_DEPTH = 7;
-		Stage4 s = new Stage4();
+		final int INV_DEPTH = 7;
+		Stage4 s1 = new Stage4();
+		Stage4 s2 = new Stage4();
 
 		prunTable = new int[(N_SIZE+7)/8];
+		for (int i=0; i<(N_SIZE+7)/8; i++)
+			prunTable[i] = -1;
 
 		/* Set the solved states */
 		for( int a=0; a<Center4.SOLVED.length; a++)
@@ -98,10 +102,10 @@ public final class Stage4 {
 				}
 				for (int end=Math.min(i+8, N_SIZE); i<end; i++, val>>=4) {
 					if ((val & 0xf)/*getPrun2(prunTable, i)*/ != select) continue;
-					set(i);
+					s1.set(i);
 					for (int m=0; m<N_MOVES; m++) {
-						moveTo(s);
-						int idx = s.get();
+						s1.moveTo(m, s2);
+						int idx = s2.get();
 						if (getPrun2(prunTable, idx) != check) continue;
 						done++;
 						if (inv) {
@@ -111,11 +115,11 @@ public final class Stage4 {
 							setPrun2(prunTable, idx, depth);
 							int nsym = 1;
 							unique++;
-							int symS = Edge4.hasSym[symx];
+							int symS = Edge4.hasSym[s2.edge.coord];
 							for (int k=0; symS != 0; symS>>=1, k++) {
 								if ((symS & 1) == 0) continue;
-								s.edge.sym = k;
-								int idxx = s.get();
+								s2.edge.sym = k;
+								int idxx = s2.get();
 								if( idxx == idx )
 									nsym++;
 								if (getPrun2(prunTable, idxx) == 0x0f) {

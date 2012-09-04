@@ -3,17 +3,18 @@ package cg.fivestage444.Stages;
 import static cg.fivestage444.Constants.*;
 import cg.fivestage444.Coordinates.Edge2;
 import cg.fivestage444.Coordinates.Center2;
+import cg.fivestage444.CubeState;
 
 public final class Stage2 {
 
-	final static int N_MOVES = 28;
+	public final static int N_MOVES = 28;
 	static int[] prunTable;
 
 	Edge2 edge;
 	Center2 centerF;
 	Center2 centerB;
 
-	Stage2(){
+	public Stage2(){
 		edge = new Edge2();
 		centerF = new Center2();
 		centerB = new Center2();
@@ -29,10 +30,10 @@ public final class Stage2 {
 	/* Check if solved */
 	public boolean isSolved(){
 		return edge.isSolved()
-		       && ( cornerF.coord == cornerB.coord )
-		       && (( cornerF.sym & 0x8 ) == ( cornerB.sym & 0x8 ))
-		       && (( edge.coord == 0 ) ^ (( cornerF.sym & 0x8 ) == 0 )) 
-		       && cornerF.isSolved();
+		       && ( centerF.coord == centerB.coord )
+		       && (( centerF.sym & 0x8 ) == ( centerB.sym & 0x8 ))
+		       && (( edge.coord == 0 ) ^ (( centerF.sym & 0x8 ) == 0 )) 
+		       && centerF.isSolved();
 	}
 
 	/* Move */
@@ -59,8 +60,8 @@ public final class Stage2 {
 	}
 
 	/* Get an index from this */
-	int get(boolean centerF){
-		if( centerF )
+	int get(boolean center){
+		if( center )
 			return centerF.coord * Edge2.N_COORD + edge.conjugate(centerF.sym);
 		else
 			return centerB.coord * Edge2.N_COORD + edge.conjugate(centerB.sym);
@@ -73,19 +74,22 @@ public final class Stage2 {
 
 	/* Init pruning table */
 	public static void initPruningTable(){
-		final static int N_SIZE = Edge2.N_COORD * Center2.N_COORD;
-		final static int INV_DEPTH = 7;
-		Stage2 s = new Stage2();
+		final int N_SIZE = Edge2.N_COORD * Center2.N_COORD;
+		final int INV_DEPTH = 7;
+		Stage2 s1 = new Stage2();
+		Stage2 s2 = new Stage2();
 
 		prunTable = new int[(N_SIZE+7)/8];
+		for (int i=0; i<(N_SIZE+7)/8; i++)
+			prunTable[i] = -1;
 
 		/* Set the solved states */
 		for( int a=0; a<Center2.SOLVED.length; a++){
-			centerF.coord = Center2.SOLVED[a];
-			edge.coord = 0;
-			setPrun2( prunTable, get(), 0 );
-			edge.coord = 414;
-			setPrun2( prunTable, get(), 0 );
+			s1.centerF.coord = Center2.SOLVED[a];
+			s1.edge.coord = 0;
+			setPrun2( prunTable, s1.get(true), 0 );
+			s1.edge.coord = 414;
+			setPrun2( prunTable, s1.get(true), 0 );
 		}
 
 		int done = 12;
@@ -106,10 +110,10 @@ public final class Stage2 {
 				}
 				for (int end=Math.min(i+8, N_SIZE); i<end; i++, val>>=4) {
 					if ((val & 0xf)/*getPrun2(prunTable, i)*/ != select) continue;
-					set(i);
+					s1.set(i);
 					for (int m=0; m<N_MOVES; m++) {
-						moveTo(s);
-						int idx = s.get(true);
+						s1.moveTo(m, s2);
+						int idx = s2.get(true);
 						if (getPrun2(prunTable, idx) != check) continue;
 						done++;
 						if (inv) {
@@ -119,11 +123,11 @@ public final class Stage2 {
 							setPrun2(prunTable, idx, depth);
 							int nsym = 1;
 							unique++;
-							int symS = Center2.hasSym[symx];
+							int symS = Center2.hasSym[s2.centerF.coord];
 							for (int k=0; symS != 0; symS>>=1, k++) {
 								if ((symS & 1) == 0) continue;
-								s.centerF.sym = k;
-								int idxx = s.get(true);
+								s2.centerF.sym = k;
+								int idxx = s2.get(true);
 								if( idxx == idx )
 									nsym++;
 								if (getPrun2(prunTable, idxx) == 0x0f) {

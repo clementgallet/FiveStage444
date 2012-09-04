@@ -1,21 +1,23 @@
 package cg.fivestage444.Coordinates;
 
 import static cg.fivestage444.Constants.*;
+import cg.fivestage444.CubeState;
+import cg.fivestage444.Symmetry;
 
 public final class Corner1 {
 
-	final static int N_COORD = 2187;
+	public final static int N_COORD = 2187;
 	final static int N_SYM = 48;
 	final static int N_MOVES = 36;
 	final static int N_FACE_MOVES = 18;
 	private static byte stage2face[] = new byte[N_MOVES];
 
 	/* Coordinates */
-	int coord;
+	public int coord;
 
 	/* Tables */
-	private static short[][] move = new short[MAX_COORD][N_FACE_MOVES];
-	private static short[][] conj = new short[MAX_COORD][N_SYM]; // (2187) 2187*48
+	private static short[][] move = new short[N_COORD][N_FACE_MOVES];
+	private static short[][] conj = new short[N_COORD][N_SYM]; // (2187) 2187*48
 
 	/* Check if solved */
 	public boolean isSolved(int sym){
@@ -72,18 +74,18 @@ public final class Corner1 {
 	}
 
 	public static void initMove (){
-
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
+		Corner1 c = new Corner1();
 		for (int u = 0; u < N_COORD; ++u) {
-			this.coord = u;
-			this.unpack( cube1 );
+			c.coord = u;
+			c.unpack( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
 				if(stage2face[m] == -1 )
 					continue;
-				cube1.rotate_sliceCORNER (stage2moves[mc], cube2);
-				this.pack( cube2 );
-				move[u][stage2face[mc]] = coord;
+				cube1.rotate_sliceCORNER (stage2moves[m], cube2);
+				c.pack( cube2 );
+				move[u][stage2face[m]] = (short)(c.coord);
 			}
 		}
 	}
@@ -91,14 +93,15 @@ public final class Corner1 {
 	public static void initConj (){
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
+		Corner1 c = new Corner1();
 		for (int u = 0; u < N_COORD; ++u) {
-			this.coord = u;
-			this.unpack( cube1 );
-			for (int sym = 0; sym < N_SYM; ++sym) {
-				cube1.rightMultCorners (Symmetry.invSymIdx[sym], cube2);
+			c.coord = u;
+			c.unpack( cube1 );
+			for (int s = 0; s < N_SYM; ++s) {
+				cube1.rightMultCorners (Symmetry.invSymIdx[s], cube2);
 				cube2.deMirrorCorners ();
-				this.pack( cube2 );
-				conj[u][sym] = coord;
+				c.pack( cube2 );
+				conj[u][s] = (short)(c.coord);
 			}
 		}
 	}

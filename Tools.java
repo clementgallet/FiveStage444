@@ -1,11 +1,11 @@
 package cg.fivestage444;
 
 import static cg.fivestage444.Constants.*;
-import cg.fivestage444.Stage1;
-import cg.fivestage444.Stage2;
-import cg.fivestage444.Stage3;
-import cg.fivestage444.Stage4;
-import cg.fivestage444.Stage5;
+import cg.fivestage444.Stages.Stage1;
+import cg.fivestage444.Stages.Stage2;
+import cg.fivestage444.Stages.Stage3;
+import cg.fivestage444.Stages.Stage4;
+import cg.fivestage444.Stages.Stage5;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -91,10 +91,10 @@ public class Tools {
 	
 	public static boolean initFrom(DataInput in) {
 		try {
-			Stage1.prunTable = new int[(Edge1.N_COORD * Corner1.N_COORD+7)/8];
+			Stage1.prunTable = new int[(Stage1.N_SIZE+7)/8];
 			read(Stage1.prunTable, in);
 			Stage1.init();
-			Stage4.prunTable = new int[(Edge4.N_COORD * Corner4.N_COORD * Center4.N_COORD+7)/8];
+			Stage4.prunTable = new int[(Stage4.N_SIZE+7)/8];
 			read(Stage4.prunTable, in);
 			Stage4.init();
 

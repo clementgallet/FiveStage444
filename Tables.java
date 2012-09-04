@@ -12,7 +12,7 @@ public final class Tables {
 	}
 
 	/*** init_parity_table ***/
-	private static final boolean[] parity_perm8_table = new boolean[40320];
+	public static final boolean[] parity_perm8_table = new boolean[40320];
 
 	private static final int get_parity8 (int x){
 		int i, j;

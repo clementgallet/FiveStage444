@@ -4,6 +4,7 @@ import static cg.fivestage444.Constants.*;
 
 public final class Symmetry {
 
+	static final int N_SYM = 48;
 	static byte[][] symEdges = new byte[N_SYM][24];
 	static byte[][] symCornersPerm = new byte[N_SYM][8];
 	static byte[][] symCornersOrient = new byte[N_SYM][8];
@@ -69,7 +70,7 @@ public final class Symmetry {
 		}
 	}
 
-	static int[] invSymIdx = new int[N_SYM];
+	public static int[] invSymIdx = new int[N_SYM];
 
 	static void initInvSymIdx(){
 
@@ -83,7 +84,7 @@ public final class Symmetry {
 				}
 	}
 
-	static int[][] symIdxMultiply = new int[N_SYM][N_SYM];
+	public static int[][] symIdxMultiply = new int[N_SYM][N_SYM];
 
 	static void initSymIdxMultiply(){
 
@@ -97,7 +98,7 @@ public final class Symmetry {
 					}
 	}
 
-	static int[][] symIdxCo4Multiply = new int[N_SYM*4][N_SYM*4];
+	public static int[][] symIdxCo4Multiply = new int[N_SYM*4][N_SYM*4];
 
 	static void initSymIdxCo4Multiply(){
 
@@ -138,8 +139,8 @@ public final class Symmetry {
 		}
 	}
 
-	static int[][] moveConjugateStage = new int[N_STAGE_MOVES][N_SYM];
-	static int[][] moveConjugateCo4Stage = new int[N_STAGE_MOVES][N_SYM*4];
+	public static int[][] moveConjugateStage = new int[N_STAGE_MOVES][N_SYM];
+	public static int[][] moveConjugateCo4Stage = new int[N_STAGE_MOVES][N_SYM*4];
 
 	static void initMoveConjugateStage(){
 

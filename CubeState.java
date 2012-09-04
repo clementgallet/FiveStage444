@@ -141,15 +141,6 @@ public final class CubeState{
 		rotate_sliceCENTER (move_code);
 	}
 
-	public final void do_move (int move_code, int piece, CubeState cube){
-		if( piece == 0 )
-			rotate_sliceCORNER (move_code, cube);
-		else if ( piece == 1 )
-			rotate_sliceEDGE (move_code, cube);
-		else
-			rotate_sliceCENTER (move_code, cube);
-	}
-
 	public void scramble (int move_count, byte[] move_arr){
 		int i;
 		for (i = 0; i < move_count; ++i) {
@@ -343,6 +334,7 @@ public final class CubeState{
 
 	public void rotate_sliceCORNER (int move_code, CubeState cube){
 		int i;
+		System.arraycopy(m_cor, 0, cube.m_cor, 0, 8);
 		if (( move_code / 3 ) % 3 == 1 )
 			return;		//inner slice turn, no corners affected
 
@@ -372,6 +364,7 @@ public final class CubeState{
 
 	public void rotate_sliceEDGE (int move_code, CubeState cube){
 		int i, j;
+		System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
 		int movdir = move_code % 3;
 		int mcx = 3*(move_code/9);
 		int layer = (move_code/3)%3; // 0: face, 1: slice, 2: face+slice
@@ -394,6 +387,7 @@ public final class CubeState{
 
 	public void rotate_sliceCENTER (int move_code, CubeState cube){
 		int i, j;
+		System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
 		int movdir = move_code % 3;
 		int mcx = 3*(move_code/9);
 		int layer = (move_code/3)%3; // 0: face, 1: slice, 2: face+slice

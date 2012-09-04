@@ -3,16 +3,18 @@ package cg.fivestage444.Stages;
 import static cg.fivestage444.Constants.*;
 import cg.fivestage444.Coordinates.Edge1;
 import cg.fivestage444.Coordinates.Corner1;
+import cg.fivestage444.CubeState;
 
 public final class Stage1 {
 
-	final static int N_MOVES = 36;
-	static int[] prunTable;
+	public final static int N_MOVES = 36;
+	public final static int N_SIZE = Edge1.N_COORD * Corner1.N_COORD;
+	public static int[] prunTable;
 
 	Edge1 edge;
 	Corner1 corner;
 
-	Stage1(){
+	public Stage1(){
 		edge = new Edge1();
 		corner = new Corner1();
 	}
@@ -63,11 +65,13 @@ public final class Stage1 {
 	/* Init pruning table */
 	public static void initPruningTable(){
 		if( prunTable != null ) return;
-		final static int N_SIZE = Edge1.N_COORD * Corner1.N_COORD;
-		final static int INV_DEPTH = 7;
-		Stage1 s = new Stage1();
+		final int INV_DEPTH = 7;
+		Stage1 s1 = new Stage1();
+		Stage1 s2 = new Stage1();
 
 		prunTable = new int[(N_SIZE+7)/8];
+		for (int i=0; i<(N_SIZE+7)/8; i++)
+			prunTable[i] = -1;
 
 		/* Set the solved states */
 		setPrun2( prunTable, 1906, 0 );
@@ -88,11 +92,11 @@ public final class Stage1 {
 					continue;
 				}
 				for (int end=Math.min(i+8, N_SIZE); i<end; i++, val>>=4) {
-					if ((val & 0xf)/*getPrun2(prunTable, i)*/ != select) continue;
-					set(i);
+					if ((val & 0x0f)/*getPrun2(prunTable, i)*/ != select) continue;
+					s1.set(i);
 					for (int m=0; m<N_MOVES; m++) {
-						moveTo(s);
-						int idx = s.get();
+						s1.moveTo(m, s2);
+						int idx = s2.get();
 						if (getPrun2(prunTable, idx) != check) continue;
 						done++;
 						if (inv) {
@@ -102,11 +106,11 @@ public final class Stage1 {
 							setPrun2(prunTable, idx, depth);
 							int nsym = 1;
 							unique++;
-							long symS = Edge1.hasSym[symx];
+							long symS = Edge1.hasSym[s2.edge.coord];
 							for (int k=0; symS != 0; symS>>=1, k++) {
 								if ((symS & 0x1L) == 0) continue;
-								s.edge.sym = k;
-								int idxx = s.get();
+								s2.edge.sym = k;
+								int idxx = s2.get();
 								if( idxx == idx )
 									nsym++;
 								if (getPrun2(prunTable, idxx) == 0x0f) {

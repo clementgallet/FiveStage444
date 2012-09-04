@@ -157,11 +157,11 @@ public final class Search {
 		}
 		Stage1 t = new Stage1();
 		long mask = moves_mask[last_move];
-		for (int move = 0; mask != 0 && move < N_STAGE1_MOVES; move++, mask >>>= 1) {
+		for (int move = 0; mask != 0 && move < Stage1.N_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1L ) == 0)
 				continue;
 			s.moveTo( move, t );
-			if (t.pruning > depth-1) continue;
+			if (t.pruning() > depth-1) continue;
 			move_list_stage1[moves_done] = (byte)move;
 			if (search_stage1 (t, depth - 1, moves_done + 1, move, r)) return true;
 		}
@@ -224,7 +224,7 @@ public final class Search {
 
 		Stage2 t = new Stage2();
 		long mask = moves_mask[last_move];
-		for (int move = 0; mask != 0 && move < N_STAGE2_MOVES; move++, mask >>>= 1) {
+		for (int move = 0; mask != 0 && move < Stage2.N_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;
 
@@ -287,11 +287,11 @@ public final class Search {
 
 		Stage3 t = new Stage3();
 		long mask = moves_mask[last_move];
-		for (int move = 0; mask != 0 && move < N_STAGE3_MOVES; move++, mask >>>= 1) {
+		for (int move = 0; mask != 0 && move < Stage3.N_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;
 
-			s.moveTo( t );
+			s.moveTo( move, t );
 			if (t.pruning() > depth-1) continue;
 			move_list_stage3[moves_done] = (byte)move;
 			if (search_stage3 (t, depth - 1, moves_done + 1, move)) return true;
@@ -331,11 +331,11 @@ public final class Search {
 
 		Stage4 t = new Stage4();
 		long mask = moves_mask[last_move];
-		for (int move = 0; mask != 0 && move < N_STAGE4_MOVES; move++, mask >>>= 1) {
+		for (int move = 0; mask != 0 && move < Stage4.N_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;
 
-			s.moveTo( t );
+			s.moveTo( move, t );
 			if (t.pruning() > depth-1) continue;
 			move_list_stage4[moves_done] = (byte)move;
 			if (search_stage4 (t, depth - 1, moves_done + 1, move)) return true;
@@ -385,11 +385,11 @@ public final class Search {
 
 		Stage5 t = new Stage5();
 		long mask = moves_mask[last_move];
-		for (int move = 0; mask != 0 && move < N_STAGE5_MOVES; move++, mask >>>= 1) {
+		for (int move = 0; mask != 0 && move < Stage5.N_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;
 
-			s.moveTo( t );
+			s.moveTo( move, t );
 			if (t.pruning() > depth-1) continue;
 			move_list_stage5[moves_done] = (byte)move;
 			if (search_stage5 (t, depth - 1, moves_done + 1, move)) return true;

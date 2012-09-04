@@ -125,11 +125,10 @@ public final class Constants{
 				if ( (m/18 == n/18) && (m>n) )
 					moves_mask[i] &= -1L ^ ( 1L << j );
 
-	  			/* For STM only, if two successive moves are from the same face and the same rotation, the first one should be either Ufx, Rfx or Ffx.
-	  			 *   for example Rf Ls3 is ok but Lf2 Rs2 is not permitted because Lf2 Rs2 = Rf2 Ls2. */
-				if( METRIC == STM )
-					if ((m/16 == n/16) && ((m%3) == (n%3)) && ((m%12) >= 3))
-						moves_mask[i] &= -1L ^ ( 1L << j );
+	  			/* If two successive moves are from the same face and the same rotation, the first one should be either Ufx, Rfx or Ffx.
+	  			 * For example Rf Ls3 is ok but Lf2 Rs2 is not permitted because Lf2 Rs2 = Rf2 Ls2. */
+				if ((m/16 == n/16) && ((m%3) == (n%3)) && ((m%12) >= 3))
+					moves_mask[i] &= -1L ^ ( 1L << j );
 
 				/* One of each double layer turn of the same plane is allowed, the other one not (Uw is ok, not Dw). */
 				if(( n%18 ) >= 15 )

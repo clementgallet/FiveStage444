@@ -1,26 +1,29 @@
 package cg.fivestage444.Coordinates;
 
 import static cg.fivestage444.Constants.*;
+import cg.fivestage444.CubeState;
+import cg.fivestage444.Symmetry;
+import java.util.Arrays;
 
 public final class Center2 {
 
-	final static int N_COORD = 716;
+	public final static int N_COORD = 716;
 	final static int N_RAW_COORD = 10626;
 	final static int N_SYM = 16;
 	final static int SYM_SHIFT = 4;
 	final static int SYM_MASK = ( 1 << SYM_SHIFT ) - 1;
 	final static int N_MOVES = 28;
 
-	static final int SOLVED[] = { 122, 242, 243, 245, 246, 247 };
+	public static final int SOLVED[] = { 122, 242, 243, 245, 246, 247 };
 
 	/* Coordinates */
-	int coord;
-	int sym;
+	public int coord;
+	public int sym;
 	int raw_coord;
 
 	/* Tables */
 	public static int[] sym2raw = new int[N_COORD];
-	public static long[][] hasSym;
+	public static int[] hasSym;
 	public static byte[] symHelper;
 	public static int[][] move = new int[N_COORD][N_MOVES];
 
@@ -56,7 +59,7 @@ public final class Center2 {
 	}
 
 	/* Pack a cube into the raw coord */
-	public void packRaw (CubeState cube, byte c){
+	public void packRaw (CubeState cube, int c){
 		this.raw_coord = 0;
 		int r = 4;
 		for (int i=23; i>=0; i--) {
@@ -67,7 +70,7 @@ public final class Center2 {
 	}
 
 	/* Compute the sym coordinate from a cube */
-	public void pack (CubeState cube, byte c){
+	public void pack (CubeState cube, int c){
 		CubeState cube2 = new CubeState();
 		int i;
 		if( this.symHelper == null )
@@ -98,22 +101,23 @@ public final class Center2 {
 		int repIdx = 0;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
+		Center2 c = new Center2();
 
 		byte[] isRepTable = new byte[(N_RAW_COORD>>3) + 1];
 		symHelper = new byte[N_RAW_COORD];
 		hasSym = new int[N_COORD];
 		for (int u = 0; u < N_RAW_COORD; ++u) {
 			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
-			this.raw_coord = u;
+			c.raw_coord = u;
 			symHelper[u] = 0;
-			this.unpack(cube1);
-			for (int sym = 1; sym < N_SYM; ++sym) {
-				cube1.rightMultCenters (Symmetry.invSymIdx[sym], cube2);
-				this.packRaw( cube2, 5 );
-				isRepTable[raw_coord>>>3] |= 1<<(raw_coord&0x7);
-				symHelper[raw_coord] = (byte)(Symmetry.invSymIdx[sym]);
-				if( raw_coord == u )
-					hasSym[repIdx] |= (1 << sym);
+			c.unpack(cube1);
+			for (int s = 1; s < N_SYM; ++s) {
+				cube1.rightMultCenters (Symmetry.invSymIdx[s], cube2);
+				c.packRaw( cube2, 5 );
+				isRepTable[c.raw_coord>>>3] |= 1<<(c.raw_coord&0x7);
+				symHelper[c.raw_coord] = (byte)(Symmetry.invSymIdx[s]);
+				if( c.raw_coord == u )
+					hasSym[repIdx] |= (1 << s);
 			}
 			sym2raw[repIdx++] = u;
 		}
@@ -123,13 +127,14 @@ public final class Center2 {
 
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
+		Center2 c = new Center2();
 		for (int u = 0; u < N_COORD; ++u) {
-			this.coord = sym2raw[u];
-			this.unpack( cube1 );
+			c.coord = sym2raw[u];
+			c.unpack( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
 				cube1.rotate_sliceCENTER (stage2moves[m], cube2);
-				this.pack( cube2, 5 );
-				move[u][mc] = ( coord << SYM_SHIFT ) | sym;
+				c.pack( cube2, 5 );
+				move[u][m] = ( c.coord << SYM_SHIFT ) | c.sym;
 			}
 		}
 	}

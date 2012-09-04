@@ -3,17 +3,18 @@ package cg.fivestage444.Stages;
 import static cg.fivestage444.Constants.*;
 import cg.fivestage444.Coordinates.Edge3;
 import cg.fivestage444.Coordinates.Center3;
+import cg.fivestage444.CubeState;
 
 public final class Stage3 {
 
-	final static int N_MOVES = 20;
+	public final static int N_MOVES = 20;
 	static int[] prunTableEdge;
 	static int[] prunTableCenter;
 
 	Edge3 edge;
 	Center3 center;
 
-	Stage3(){
+	public Stage3(){
 		edge = new Edge3();
 		center = new Center3();
 	}
@@ -36,7 +37,7 @@ public final class Stage3 {
 	}
 
 	/* Init */
-	public void init(){
+	public static void init(){
 		Edge3.init();
 		Center3.init();
 		initPruningTableEdge();
@@ -52,11 +53,14 @@ public final class Stage3 {
 
 	/* Init pruning table */
 	public static void initPruningTableEdge(){
-		final static int N_SIZE = Edge3.N_COORD;
-		final static int INV_DEPTH = 7;
-		Edge3 e = new Edge3();
+		final int N_SIZE = Edge3.N_COORD;
+		final int INV_DEPTH = 7;
+		Edge3 e1 = new Edge3();
+		Edge3 e2 = new Edge3();
 
 		prunTableEdge = new int[(Edge3.N_COORD+7)/8];
+		for (int i=0; i<(Edge3.N_COORD+7)/8; i++)
+			prunTableEdge[i] = -1;
 
 		/* Set the solved states */
 		setPrun2( prunTableEdge, 12375<<1, 0 );
@@ -76,16 +80,16 @@ public final class Stage3 {
 				}
 				for (int end=Math.min(i+8, Edge3.N_COORD); i<end; i++, val>>=4) {
 					if ((val & 0xf)/*getPrun2(prunTable, i)*/ != select) continue;
-					this.edge.coord = i;
+					e1.coord = i;
 					for (int m=0; m<N_MOVES; m++) {
-						this.edge.moveTo(e);
-						if (getPrun2(prunTableEdge, e.coord) != check) continue;
+						e1.moveTo(m, e2);
+						if (getPrun2(prunTableEdge, e2.coord) != check) continue;
 						done++;
 						if (inv) {
 							setPrun2(prunTableEdge, i, depth);
 							break;
 						} else {
-							setPrun2(prunTableEdge, e.coord, depth);
+							setPrun2(prunTableEdge, e2.coord, depth);
 						}
 					}
 				}
@@ -95,11 +99,14 @@ public final class Stage3 {
 	}
 
 	public static void initPruningTableCenter(){
-		final static int N_SIZE = Center3.N_COORD;
-		final static int INV_DEPTH = 7;
-		Center3 e = new Center3();
+		final int N_SIZE = Center3.N_COORD;
+		final int INV_DEPTH = 7;
+		Center3 c1 = new Center3();
+		Center3 c2 = new Center3();
 
 		prunTableCenter = new int[(Center3.N_COORD+7)/8];
+		for (int i=0; i<(Center3.N_COORD+7)/8; i++)
+			prunTableCenter[i] = -1;
 
 		/* Set the solved states */
 		for( int a=0; a<Center3.SOLVED.length; a++)
@@ -120,16 +127,16 @@ public final class Stage3 {
 				}
 				for (int end=Math.min(i+8, Center3.N_COORD); i<end; i++, val>>=4) {
 					if ((val & 0xf)/*getPrun2(prunTable, i)*/ != select) continue;
-					this.center.coord = i;
+					c1.coord = i;
 					for (int m=0; m<N_MOVES; m++) {
-						this.center.moveTo(c);
-						if (getPrun2(prunTableCenter, c.coord) != check) continue;
+						c1.moveTo(m, c2);
+						if (getPrun2(prunTableCenter, c2.coord) != check) continue;
 						done++;
 						if (inv) {
 							setPrun2(prunTableCenter, i, depth);
 							break;
 						} else {
-							setPrun2(prunTableCenter, c.coord, depth);
+							setPrun2(prunTableCenter, c2.coord, depth);
 						}
 					}
 				}

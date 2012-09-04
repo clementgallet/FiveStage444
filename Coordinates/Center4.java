@@ -1,17 +1,19 @@
 package cg.fivestage444.Coordinates;
 
 import static cg.fivestage444.Constants.*;
+import cg.fivestage444.CubeState;
+import cg.fivestage444.Symmetry;
 
 public final class Center4 {
 
-	final static int N_COORD = 35;
+	public final static int N_COORD = 35;
 	final static int N_SYM = 16;
 	final static int N_MOVES = 16;
 
-	static final int SOLVED[] = { 0, 14, 20, 23, 27, 28 };
+	public static final int SOLVED[] = { 0, 14, 20, 23, 27, 28 };
 
 	/* Coordinates */
-	int coord;
+	public int coord;
 
 	/* Tables */
 	public static short[][] move = new short[N_COORD][N_MOVES];
@@ -61,7 +63,7 @@ public final class Center4 {
 		this.coord = 0;
 		int r = 4;
 		for (i = 6; i >= 0; i--) {
-			if (m_cen[i] != m_cen[7]) {
+			if (cube.m_cen[i] != cube.m_cen[7]) {
 				this.coord += Cnk[i][r--];
 			}
 		}
@@ -77,13 +79,14 @@ public final class Center4 {
 
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
+		Center4 c = new Center4();
 		for (int u = 0; u < N_COORD; ++u) {
-			this.coord = u;
-			this.unpack( cube1 );
+			c.coord = u;
+			c.unpack( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
 				cube1.rotate_sliceCENTER (stage2moves[m], cube2);
-				this.pack( cube2 );
-				move[u][m] = coord;
+				c.pack( cube2 );
+				move[u][m] = (short)c.coord;
 			}
 		}
 	}
@@ -91,13 +94,14 @@ public final class Center4 {
 	public static void initConj (){
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
+		Center4 c = new Center4();
 		for (int u = 0; u < N_COORD; ++u) {
-			this.coord = u;
-			this.unpack( cube1 );
-			for (int sym = 0; sym < N_SYM; ++sym) {
-				cube1.conjugateCenters (sym, cube2);
-				this.pack( cube2 );
-				conj[u][sym] = coord;
+			c.coord = u;
+			c.unpack( cube1 );
+			for (int s = 0; s < N_SYM; ++s) {
+				cube1.conjugateCenters (s, cube2);
+				c.pack( cube2 );
+				conj[u][s] = (short)c.coord;
 			}
 		}
 	}

@@ -1,20 +1,22 @@
 package cg.fivestage444.Coordinates;
 
 import static cg.fivestage444.Constants.*;
+import cg.fivestage444.CubeState;
+import cg.fivestage444.Symmetry;
 
-public final class Edge2 {
+public final class Edge3 {
 
-	final static int N_COORD = 12870*2;
+	public final static int N_COORD = 12870*2;
 	final static int N_SYM = 8;
 	final static int N_MOVES = 20;
 	private static int moveParity;
 
 	/* Coordinates */
-	int coord;
+	public int coord;
 
 	/* Tables */
-	public static short[][] move = new short[MAX_COORD][N_MOVES];
-	public static short[][] conj = new short[MAX_COORD][N_SYM];
+	public static short[][] move = new short[N_COORD][N_MOVES];
+	public static short[][] conj = new short[N_COORD][N_SYM];
 
 	/* Check if solved */
 	public boolean isSolved(){
@@ -79,16 +81,16 @@ public final class Edge2 {
 	}
 
 	public static void initMove (){
-
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
+		Edge3 e = new Edge3();
 		for (int u = 0; u < N_COORD>>>1; ++u) {
-			this.coord = u << 1;
-			this.unpack( cube1 );
+			e.coord = u << 1;
+			e.unpack( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
 				cube1.rotate_sliceEDGE (stage2moves[m], cube2);
-				this.pack( cube2 );
-				move[u][m] = coord >>> 1;
+				e.pack( cube2 );
+				move[u][m] = (short)(e.coord >>> 1);
 			}
 		}
 	}
@@ -96,13 +98,14 @@ public final class Edge2 {
 	public static void initConj (){
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
+		Edge3 e = new Edge3();
 		for (int u = 0; u < N_COORD >>> 1; ++u) {
-			this.coord = u << 1;
-			this.unpack( cube1 );
-			for (int sym = 0; sym < N_SYM; ++sym) {
-				cube1.rightMultEdges (Symmetry.invSymIdx[sym], cube2);
-				this.pack( cube2 );
-				conj[u][sym] = coord >>> 1;
+			e.coord = u << 1;
+			e.unpack( cube1 );
+			for (int s = 0; s < N_SYM; ++s) {
+				cube1.rightMultEdges (Symmetry.invSymIdx[s], cube2);
+				e.pack( cube2 );
+				conj[u][s] = (short)(e.coord >>> 1);
 			}
 		}
 	}

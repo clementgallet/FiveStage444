@@ -2,11 +2,14 @@ JFLAGS = -g -Xlint:unchecked
 JC = javac
 JAVA = java
 DIR = cg/fivestage444
-TABLES = $(DIR)/fivephase_tables_stm
+TABLES = $(DIR)/fivephase_tables
 
 default:
 	mkdir -p $(DIR)
 	cp *.java $(DIR)
+	cp -r Coordinates $(DIR)
+	cp -r Stages $(DIR)
+	$(JC) $(JFLAGS) $(DIR)/*/*.java
 	$(JC) $(JFLAGS) $(DIR)/*.java
 	ctags -f ~/.tags -R ./ $(JAVA_HOME)src
 
@@ -28,3 +31,5 @@ tables:
 clean:
 	$(RM) $(DIR)/*.class
 	$(RM) $(DIR)/*.java
+	$(RM) $(DIR)/*/*.java
+	$(RM) $(DIR)/*/*.class
