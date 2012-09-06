@@ -65,6 +65,13 @@ public final class Stage4 {
 		return ( edge.coord * Corner4.N_COORD + corner.conjugate(edge.sym) ) * Center4.N_COORD + center.conjugate(edge.sym);
 	}
 
+	/* Get an index from this */
+	void normalise(){
+		corner.coord = corner.conjugate(edge.sym);
+		center.coord = center.conjugate(edge.sym);
+		edge.sym = 0;
+	}
+
 	/* Get pruning */
 	public int pruning(){
 		return getPrun2( prunTable, this.get());
@@ -73,7 +80,7 @@ public final class Stage4 {
 	/* Init pruning table */
 	public static void initPruningTable(){
 		if( prunTable != null ) return;
-		final int INV_DEPTH = 7;
+		final int INV_DEPTH = 13;
 		Stage4 s1 = new Stage4();
 		Stage4 s2 = new Stage4();
 
@@ -116,6 +123,7 @@ public final class Stage4 {
 							int nsym = 1;
 							unique++;
 							int symS = Edge4.hasSym[s2.edge.coord];
+							s2.normalise();
 							for (int k=0; symS != 0; symS>>=1, k++) {
 								if ((symS & 1) == 0) continue;
 								s2.edge.sym = k;

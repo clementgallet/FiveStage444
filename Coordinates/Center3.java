@@ -156,7 +156,7 @@ public final class Center3 {
 		CubeState cube2 = new CubeState();
 		Center3 c = new Center3();
 		for (int u = 0; u < N_COORD; ++u) {
-			c.coord = sym2raw[u];
+			c.raw_coord = sym2raw[u];
 			c.unpackRaw( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
 				cube1.rotate_sliceCENTER (stage2moves[m], cube2);

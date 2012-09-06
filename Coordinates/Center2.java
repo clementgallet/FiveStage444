@@ -43,7 +43,7 @@ public final class Center2 {
 	}
 
 	/* Unpack a raw coord to a cube */
-	public void unpack (CubeState cube)
+	public void unpackRaw (CubeState cube)
 	{
 		int center = raw_coord;
 		int r = 4;
@@ -110,7 +110,7 @@ public final class Center2 {
 			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
 			c.raw_coord = u;
 			symHelper[u] = 0;
-			c.unpack(cube1);
+			c.unpackRaw(cube1);
 			for (int s = 1; s < N_SYM; ++s) {
 				cube1.rightMultCenters (Symmetry.invSymIdx[s], cube2);
 				c.packRaw( cube2, 5 );
@@ -129,8 +129,8 @@ public final class Center2 {
 		CubeState cube2 = new CubeState();
 		Center2 c = new Center2();
 		for (int u = 0; u < N_COORD; ++u) {
-			c.coord = sym2raw[u];
-			c.unpack( cube1 );
+			c.raw_coord = sym2raw[u];
+			c.unpackRaw( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
 				cube1.rotate_sliceCENTER (stage2moves[m], cube2);
 				c.pack( cube2, 5 );

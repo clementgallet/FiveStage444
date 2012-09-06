@@ -186,7 +186,7 @@ public final class Edge4 {
 		CubeState cube2 = new CubeState();
 		Edge4 e = new Edge4();
 		for (int u = 0; u < N_COORD; ++u) {
-			e.coord = sym2raw[u];
+			e.raw_coord = sym2raw[u];
 			e.unpackRaw( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
 				cube1.rotate_sliceEDGE (stage2moves[m], cube2);

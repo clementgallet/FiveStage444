@@ -30,7 +30,7 @@ public final class Corner1 {
 		c.coord = ( face_move >= 0 ) ? move[coord][face_move] : coord;
 	}
 
-	/* Get the conjugated coordinate */
+	/* Rotate the coordinate */
 	public int conjugate( int sym ){
 		return conj[coord][sym];
 	}

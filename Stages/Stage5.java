@@ -46,8 +46,8 @@ public final class Stage5 {
 		Edge5.init();
 		Center5.init();
 		Corner5.init();
-		initPruningTable(true);
-		initPruningTable(false);
+		initPruningTable(true, prunTableEdgeCenter);
+		initPruningTable(false, prunTableEdgeCorner);
 	}
 
 	/** Pruning functions **/
@@ -73,19 +73,28 @@ public final class Stage5 {
 			return edge.coord * Corner5.N_COORD + corner.conjugate(edge.sym);
 	}
 
+	/* Rotate so that sym is 0 */
+	void normalise( boolean useCenter ){
+		if( useCenter )
+			center.coord = center.conjugate(edge.sym);
+		else
+			corner.coord = corner.conjugate(edge.sym);
+		edge.sym = 0;
+	}
+
 	/* Get pruning */
 	public int pruning(){
 		return Math.max( getPrun2( prunTableEdgeCenter, this.get(true)), getPrun2( prunTableEdgeCorner, this.get(false)));
 	}
 
 	/* Init pruning table */
-	public static void initPruningTable(boolean useCenter){
+	public static void initPruningTable(boolean useCenter, int[] prunTable){
 		final int N_SIZE = Edge5.N_COORD * (useCenter ? Center5.N_COORD : Corner5.N_COORD);
-		final int INV_DEPTH = 7;
+		final int INV_DEPTH = 10;
 		Stage5 s1 = new Stage5();
 		Stage5 s2 = new Stage5();
 
-		int[] prunTable = useCenter ? prunTableEdgeCenter : prunTableEdgeCorner;
+		//static int[] prunTable = useCenter ? prunTableEdgeCenter : prunTableEdgeCorner;
 		prunTable = new int[(N_SIZE+7)/8];
 		for (int i=0; i<(N_SIZE+7)/8; i++)
 			prunTable[i] = -1;
@@ -123,6 +132,7 @@ public final class Stage5 {
 							setPrun2(prunTable, idx, depth);
 							int nsym = 1;
 							unique++;
+							s2.normalise(useCenter);
 							for (int j=0; j<4; j++) {
 								long symS = Edge5.hasSym[s2.edge.coord][j];
 								for (int k=0; symS != 0; symS>>=1, k++) {

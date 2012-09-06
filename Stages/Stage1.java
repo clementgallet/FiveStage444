@@ -57,6 +57,12 @@ public final class Stage1 {
 		return edge.coord * Corner1.N_COORD + corner.conjugate(edge.sym);
 	}
 
+	/* Rotate so that the sym is 0 */
+	void normalise(){
+		corner.coord = corner.conjugate(edge.sym);
+		edge.sym = 0;
+	}
+
 	/* Get pruning */
 	public int pruning(){
 		return getPrun2( prunTable, this.get());
@@ -93,9 +99,12 @@ public final class Stage1 {
 				}
 				for (int end=Math.min(i+8, N_SIZE); i<end; i++, val>>=4) {
 					if ((val & 0x0f)/*getPrun2(prunTable, i)*/ != select) continue;
+//System.out.println(i);
 					s1.set(i);
 					for (int m=0; m<N_MOVES; m++) {
+//System.out.println("orig corner: "+s1.corner.conjugate(s1.edge.sym)+" - edge: "+s1.edge.coord);
 						s1.moveTo(m, s2);
+//System.out.println("corner: "+s2.corner.conjugate(s2.edge.sym)+" - edge: "+s2.edge.coord);
 						int idx = s2.get();
 						if (getPrun2(prunTable, idx) != check) continue;
 						done++;
@@ -104,9 +113,12 @@ public final class Stage1 {
 							break;
 						} else {
 							setPrun2(prunTable, idx, depth);
+//System.out.println("set: idx="+idx+" - depth:"+depth);
 							int nsym = 1;
 							unique++;
 							long symS = Edge1.hasSym[s2.edge.coord];
+							s2.normalise();
+//System.out.println("sym idx: "+symS);
 							for (int k=0; symS != 0; symS>>=1, k++) {
 								if ((symS & 0x1L) == 0) continue;
 								s2.edge.sym = k;

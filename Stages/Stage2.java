@@ -67,6 +67,18 @@ public final class Stage2 {
 			return centerB.coord * Edge2.N_COORD + edge.conjugate(centerB.sym);
 	}
 
+	/* Rotate so that sym is 0 */
+	void normalise(boolean center){
+		if( center ){
+			edge.coord = edge.conjugate(centerF.sym);
+			centerF.sym = 0;
+		}
+		else {
+			edge.coord = edge.conjugate(centerB.sym);
+			centerB.sym = 0;
+		}
+	}
+
 	/* Get pruning */
 	public int pruning(){
 		return Math.max( getPrun2( prunTable, this.get(true)), getPrun2( prunTable, this.get(false)));
@@ -124,6 +136,7 @@ public final class Stage2 {
 							int nsym = 1;
 							unique++;
 							int symS = Center2.hasSym[s2.centerF.coord];
+							s2.normalise(true);
 							for (int k=0; symS != 0; symS>>=1, k++) {
 								if ((symS & 1) == 0) continue;
 								s2.centerF.sym = k;
