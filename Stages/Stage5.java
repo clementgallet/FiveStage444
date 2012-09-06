@@ -46,8 +46,8 @@ public final class Stage5 {
 		Edge5.init();
 		Center5.init();
 		Corner5.init();
-		initPruningTable(true, prunTableEdgeCenter);
-		initPruningTable(false, prunTableEdgeCorner);
+		initPruningTableEdgeCenter();
+		initPruningTableEdgeCorner();
 	}
 
 	/** Pruning functions **/
@@ -88,23 +88,22 @@ public final class Stage5 {
 	}
 
 	/* Init pruning table */
-	public static void initPruningTable(boolean useCenter, int[] prunTable){
-		final int N_SIZE = Edge5.N_COORD * (useCenter ? Center5.N_COORD : Corner5.N_COORD);
+	public static void initPruningTableEdgeCenter(){
+		final int N_SIZE = Edge5.N_COORD * Center5.N_COORD;
 		final int INV_DEPTH = 10;
 		Stage5 s1 = new Stage5();
 		Stage5 s2 = new Stage5();
 
-		//static int[] prunTable = useCenter ? prunTableEdgeCenter : prunTableEdgeCorner;
-		prunTable = new int[(N_SIZE+7)/8];
+		prunTableEdgeCenter = new int[(N_SIZE+7)/8];
 		for (int i=0; i<(N_SIZE+7)/8; i++)
-			prunTable[i] = -1;
+			prunTableEdgeCenter[i] = -1;
 
 		/* Set the solved states */
-		setPrun2( prunTable, 0, 0 );
+		setPrun2( prunTableEdgeCenter, 0, 0 );
 		int done = 1;
 
 		int depth = 0;
-		while (done < N_SIZE) {
+		while (( done < N_SIZE ) && ( depth < 15 )) {
 			boolean inv = depth > INV_DEPTH;
 			int select = inv ? 0x0f : depth;
 			int check = inv ? depth : 0x0f;
@@ -112,37 +111,104 @@ public final class Stage5 {
 			int pos = 0;
 			int unique = 0;
 			for (int i=0; i<N_SIZE;) {
-				int val = prunTable[i>>3];
+				int val = prunTableEdgeCenter[i>>3];
 				if (!inv && val == -1) {
 					i += 8;
 					continue;
 				}
 				for (int end=Math.min(i+8, N_SIZE); i<end; i++, val>>=4) {
 					if ((val & 0xf)/*getPrun2(prunTable, i)*/ != select) continue;
-					s1.set(i, useCenter);
+					s1.set(i, true);
 					for (int m=0; m<N_MOVES; m++) {
 						s1.moveTo(m, s2);
-						int idx = s2.get(useCenter);
-						if (getPrun2(prunTable, idx) != check) continue;
+						int idx = s2.get(true);
+						if (getPrun2(prunTableEdgeCenter, idx) != check) continue;
 						done++;
 						if (inv) {
-							setPrun2(prunTable, i, depth);
+							setPrun2(prunTableEdgeCenter, i, depth);
 							break;
 						} else {
-							setPrun2(prunTable, idx, depth);
+							setPrun2(prunTableEdgeCenter, idx, depth);
 							int nsym = 1;
 							unique++;
-							s2.normalise(useCenter);
+							s2.normalise(true);
 							for (int j=0; j<4; j++) {
 								long symS = Edge5.hasSym[s2.edge.coord][j];
 								for (int k=0; symS != 0; symS>>=1, k++) {
 									if ((symS & 0x1L) == 0) continue;
 									s2.edge.sym = (k<<2) + j;
-									int idxx = s2.get(useCenter);
+									int idxx = s2.get(true);
 									if( idxx == idx )
 										nsym++;
-									if (getPrun2(prunTable, idxx) == 0x0f) {
-										setPrun2(prunTable, idxx, depth);
+									if (getPrun2(prunTableEdgeCenter, idxx) == 0x0f) {
+										setPrun2(prunTableEdgeCenter, idxx, depth);
+										done++;
+									}
+								}
+							}
+							pos += 192/nsym;
+						}
+					}
+				}
+			}
+			System.out.println(String.format("%2d%12d%10d", depth, pos, unique));
+		}
+	}
+
+	public static void initPruningTableEdgeCorner(){
+		final int N_SIZE = Edge5.N_COORD * Corner5.N_COORD;
+		final int INV_DEPTH = 10;
+		Stage5 s1 = new Stage5();
+		Stage5 s2 = new Stage5();
+
+		prunTableEdgeCorner = new int[(N_SIZE+7)/8];
+		for (int i=0; i<(N_SIZE+7)/8; i++)
+			prunTableEdgeCorner[i] = -1;
+
+		/* Set the solved states */
+		setPrun2( prunTableEdgeCorner, 0, 0 );
+		int done = 1;
+
+		int depth = 0;
+		while (( done < N_SIZE ) && ( depth < 15 )) {
+			boolean inv = depth > INV_DEPTH;
+			int select = inv ? 0x0f : depth;
+			int check = inv ? depth : 0x0f;
+			depth++;
+			int pos = 0;
+			int unique = 0;
+			for (int i=0; i<N_SIZE;) {
+				int val = prunTableEdgeCorner[i>>3];
+				if (!inv && val == -1) {
+					i += 8;
+					continue;
+				}
+				for (int end=Math.min(i+8, N_SIZE); i<end; i++, val>>=4) {
+					if ((val & 0xf)/*getPrun2(prunTable, i)*/ != select) continue;
+					s1.set(i, false);
+					for (int m=0; m<N_MOVES; m++) {
+						s1.moveTo(m, s2);
+						int idx = s2.get(false);
+						if (getPrun2(prunTableEdgeCorner, idx) != check) continue;
+						done++;
+						if (inv) {
+							setPrun2(prunTableEdgeCorner, i, depth);
+							break;
+						} else {
+							setPrun2(prunTableEdgeCorner, idx, depth);
+							int nsym = 1;
+							unique++;
+							s2.normalise(false);
+							for (int j=0; j<4; j++) {
+								long symS = Edge5.hasSym[s2.edge.coord][j];
+								for (int k=0; symS != 0; symS>>=1, k++) {
+									if ((symS & 0x1L) == 0) continue;
+									s2.edge.sym = (k<<2) + j;
+									int idxx = s2.get(false);
+									if( idxx == idx )
+										nsym++;
+									if (getPrun2(prunTableEdgeCorner, idxx) == 0x0f) {
+										setPrun2(prunTableEdgeCorner, idxx, depth);
 										done++;
 									}
 								}

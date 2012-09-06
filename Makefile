@@ -11,7 +11,7 @@ default:
 	cp -r Stages $(DIR)
 	$(JC) $(JFLAGS) $(DIR)/*/*.java
 	$(JC) $(JFLAGS) $(DIR)/*.java
-	ctags -f ~/.tags -R ./ $(JAVA_HOME)src
+	# ctags -f ~/.tags -R ./ $(JAVA_HOME)src
 
 run:
 	$(JAVA) $(DIR)/Main

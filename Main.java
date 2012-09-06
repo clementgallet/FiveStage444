@@ -9,11 +9,11 @@ public final class Main {
 		Tools.init();
 		CubeState c = new CubeState();
 		Search s = new Search();
-		Random gen = new Random(42);
+		Random gen = new Random();
 		long time = System.currentTimeMillis();	
 		for (int i = 0; i < random_count; ++i) {
 			c = Tools.randomCube(gen);
-			System.out.println(s.solve( c, 44, true));
+			System.out.println(s.solve( c, 45, true));
 		}
 		System.out.println(System.currentTimeMillis() - time);
 	}

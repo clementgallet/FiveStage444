@@ -94,7 +94,7 @@ public final class Stage4 {
 		int done = Center4.SOLVED.length;
 
 		int depth = 0;
-		while (done < N_SIZE) {
+		while (( done < N_SIZE ) && ( depth < 15 )) {
 			boolean inv = depth > INV_DEPTH;
 			int select = inv ? 0x0f : depth;
 			int check = inv ? depth : 0x0f;
