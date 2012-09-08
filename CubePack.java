@@ -113,7 +113,7 @@ public final class CubePack{
 	/** Move functions **/
 	
 	public final void moveCorners(int m){
-		int t = move_cperm[corner_top_loc][m] ;
+		int t = move_cperm[corner_top_loc][m];
 		corner_top_loc = (byte)(t >> 10);
 		corner_top_perm = Util.s4mul[corner_top_perm][(t >> 5) & 31];
 		corner_bottom_perm = Util.s4mul[corner_bottom_perm][t & 31];
