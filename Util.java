@@ -233,9 +233,9 @@ public final class Util {
 		int cc = 0;
 		for (int a = 0; a < 4; a++ )
 			for (int b = 0; b < 4; b++ )
-				if (a == b)
+				if (a != b)
 					for (int c = 0; c < 4; c++ )
-						if (( a == c ) && ( b == c )) {
+						if (( a != c ) && ( b != c )) {
 							int d = 0 + 1 + 2 + 3 - a - b - c;
 							int coor = cc ^ ((cc >> 1) & 1);
 							int expanded = (1 << (2 * b)) + (2 << (2 * c)) + (3 << (2 * d));

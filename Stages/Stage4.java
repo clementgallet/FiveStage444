@@ -52,7 +52,7 @@ public final class Stage4 {
 	/** Pruning functions **/
 
 	/* Set from an index */
-	void set( int idx ){
+	public void set( int idx ){
 		center.coord = idx % Center4.N_COORD;
 		idx /= Center4.N_COORD;
 		corner.coord = idx % Corner4.N_COORD;

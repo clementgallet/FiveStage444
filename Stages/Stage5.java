@@ -12,9 +12,9 @@ public final class Stage5 {
 	static int[] prunTableEdgeCenter;
 	static int[] prunTableEdgeCorner;
 
-	Edge5 edge;
-	Center5 center;
-	Corner5 corner;
+	public Edge5 edge;
+	public Center5 center;
+	public Corner5 corner;
 
 	public Stage5(){
 		edge = new Edge5();
