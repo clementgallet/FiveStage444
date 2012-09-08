@@ -1,9 +1,9 @@
 package cg.fivestage444.Stages;
 
-import static cg.fivestage444.Constants.*;
 import cg.fivestage444.Coordinates.Edge3;
 import cg.fivestage444.Coordinates.Center3;
 import cg.fivestage444.CubeState;
+import cg.fivestage444.Util;
 
 public final class Stage3 {
 
@@ -48,7 +48,7 @@ public final class Stage3 {
 
 	/* Get pruning */
 	public int pruning(){
-		return Math.max( getPrun2( prunTableEdge, edge.coord ), getPrun2( prunTableCenter, center.coord ));
+		return Math.max( Util.getPrun2( prunTableEdge, edge.coord ), Util.getPrun2( prunTableCenter, center.coord ));
 	}
 
 	/* Init pruning table */
@@ -63,7 +63,7 @@ public final class Stage3 {
 			prunTableEdge[i] = -1;
 
 		/* Set the solved states */
-		setPrun2( prunTableEdge, 12375<<1, 0 );
+		Util.setPrun2( prunTableEdge, 12375<<1, 0 );
 		int done = 1;
 
 		int depth = 0;
@@ -83,13 +83,13 @@ public final class Stage3 {
 					e1.coord = i;
 					for (int m=0; m<N_MOVES; m++) {
 						e1.moveTo(m, e2);
-						if (getPrun2(prunTableEdge, e2.coord) != check) continue;
+						if (Util.getPrun2(prunTableEdge, e2.coord) != check) continue;
 						done++;
 						if (inv) {
-							setPrun2(prunTableEdge, i, depth);
+							Util.setPrun2(prunTableEdge, i, depth);
 							break;
 						} else {
-							setPrun2(prunTableEdge, e2.coord, depth);
+							Util.setPrun2(prunTableEdge, e2.coord, depth);
 						}
 					}
 				}
@@ -110,7 +110,7 @@ public final class Stage3 {
 
 		/* Set the solved states */
 		for( int a=0; a<Center3.SOLVED.length; a++)
-			setPrun2( prunTableCenter, Center3.SOLVED[a], 0 );
+			Util.setPrun2( prunTableCenter, Center3.SOLVED[a], 0 );
 		int done = Center3.SOLVED.length;
 
 		int depth = 0;
@@ -130,13 +130,13 @@ public final class Stage3 {
 					c1.coord = i;
 					for (int m=0; m<N_MOVES; m++) {
 						c1.moveTo(m, c2);
-						if (getPrun2(prunTableCenter, c2.coord) != check) continue;
+						if (Util.getPrun2(prunTableCenter, c2.coord) != check) continue;
 						done++;
 						if (inv) {
-							setPrun2(prunTableCenter, i, depth);
+							Util.setPrun2(prunTableCenter, i, depth);
 							break;
 						} else {
-							setPrun2(prunTableCenter, c2.coord, depth);
+							Util.setPrun2(prunTableCenter, c2.coord, depth);
 						}
 					}
 				}

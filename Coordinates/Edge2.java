@@ -1,9 +1,9 @@
 package cg.fivestage444.Coordinates;
 
-import static cg.fivestage444.Constants.*;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.Symmetry;
-import cg.fivestage444.Tables;
+import cg.fivestage444.Moves;
+import cg.fivestage444.Util;
 
 public final class Edge2 {
 
@@ -39,7 +39,7 @@ public final class Edge2 {
 		int i;
 		byte[] t6 = new byte[4];
 		int edgeFbm = this.coord / 6;
-		set4Perm (t6, this.coord % 6);
+		Util.set4Perm (t6, this.coord % 6);
 		for (i = 0; i < 16; ++i)
 			cube.m_edge[i] = (byte)i;
 
@@ -47,8 +47,8 @@ public final class Edge2 {
 		int b = 0;
 		int r = 4;
 		for (i = 7; i >= 0; i--) {
-			if ( edgeFbm >= Cnk[i][r] ) {
-				edgeFbm -= Cnk[i][r--];
+			if ( edgeFbm >= Util.Cnk[i][r] ) {
+				edgeFbm -= Util.Cnk[i][r--];
 				cube.m_edge[16 + i] = f++;
 			} else {
 				cube.m_edge[16 + i] = (byte)(20 + t6[b++]);
@@ -58,8 +58,8 @@ public final class Edge2 {
 
 	/* Pack a cube into the coord */
 	public void pack (CubeState cube){
-		int u = get8Perm (cube.m_edge, 16);
-		this.coord = Tables.perm_to_420[u];
+		int u = Util.get8Perm (cube.m_edge, 16);
+		this.coord = Util.perm_to_420[u];
 	}
 
 	/* Initialisations */
@@ -76,7 +76,7 @@ public final class Edge2 {
 			e.coord = u;
 			e.unpack( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.rotate_sliceEDGE (stage2moves[m], cube2);
+				cube1.rotate_sliceEDGE (Moves.stage2moves[m], cube2);
 				e.pack( cube2 );
 				move[u][m] = (short)(e.coord);
 			}

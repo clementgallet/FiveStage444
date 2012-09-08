@@ -1,9 +1,9 @@
 package cg.fivestage444.Stages;
 
-import static cg.fivestage444.Constants.*;
 import cg.fivestage444.Coordinates.Edge1;
 import cg.fivestage444.Coordinates.Corner1;
 import cg.fivestage444.CubeState;
+import cg.fivestage444.Util;
 
 public final class Stage1 {
 
@@ -65,7 +65,7 @@ public final class Stage1 {
 
 	/* Get pruning */
 	public int pruning(){
-		return getPrun2( prunTable, this.get());
+		return Util.getPrun2( prunTable, this.get());
 	}
 
 	/* Init pruning table */
@@ -80,7 +80,7 @@ public final class Stage1 {
 			prunTable[i] = -1;
 
 		/* Set the solved states */
-		setPrun2( prunTable, 1906, 0 );
+		Util.setPrun2( prunTable, 1906, 0 );
 		int done = 1;
 
 		int depth = 0;
@@ -99,34 +99,29 @@ public final class Stage1 {
 				}
 				for (int end=Math.min(i+8, N_SIZE); i<end; i++, val>>=4) {
 					if ((val & 0x0f)/*getPrun2(prunTable, i)*/ != select) continue;
-//System.out.println(i);
 					s1.set(i);
 					for (int m=0; m<N_MOVES; m++) {
-//System.out.println("orig corner: "+s1.corner.conjugate(s1.edge.sym)+" - edge: "+s1.edge.coord);
 						s1.moveTo(m, s2);
-//System.out.println("corner: "+s2.corner.conjugate(s2.edge.sym)+" - edge: "+s2.edge.coord);
 						int idx = s2.get();
-						if (getPrun2(prunTable, idx) != check) continue;
+						if (Util.getPrun2(prunTable, idx) != check) continue;
 						done++;
 						if (inv) {
-							setPrun2(prunTable, i, depth);
+							Util.setPrun2(prunTable, i, depth);
 							break;
 						} else {
-							setPrun2(prunTable, idx, depth);
-//System.out.println("set: idx="+idx+" - depth:"+depth);
+							Util.setPrun2(prunTable, idx, depth);
 							int nsym = 1;
 							unique++;
 							long symS = Edge1.hasSym[s2.edge.coord];
 							s2.normalise();
-//System.out.println("sym idx: "+symS);
 							for (int k=0; symS != 0; symS>>=1, k++) {
 								if ((symS & 0x1L) == 0) continue;
 								s2.edge.sym = k;
 								int idxx = s2.get();
 								if( idxx == idx )
 									nsym++;
-								if (getPrun2(prunTable, idxx) == 0x0f) {
-									setPrun2(prunTable, idxx, depth);
+								if (Util.getPrun2(prunTable, idxx) == 0x0f) {
+									Util.setPrun2(prunTable, idxx, depth);
 									done++;
 								}
 							}

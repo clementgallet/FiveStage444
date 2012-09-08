@@ -1,9 +1,9 @@
 package cg.fivestage444.Coordinates;
 
-import static cg.fivestage444.Constants.*;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.Symmetry;
-import cg.fivestage444.Tables;
+import cg.fivestage444.Moves;
+import cg.fivestage444.Util;
 import java.util.Arrays;
 
 public final class Edge4 {
@@ -52,10 +52,10 @@ public final class Edge4 {
 		int i1 = 0;
 		int i2 = 0;
 		int r = 4;
-		set4Perm( t, perm6_rl );
+		Util.set4Perm( t, perm6_rl );
 		for( int i=7; i >= 0; i-- ){
-			if( ledge4of8 >= Cnk[i][r] ){
-				ledge4of8 -= Cnk[i][r--];
+			if( ledge4of8 >= Util.Cnk[i][r] ){
+				ledge4of8 -= Util.Cnk[i][r--];
 				cube.m_edge[i+4] = (byte)( t[i1++] + 4 );
 			}
 			else
@@ -65,10 +65,10 @@ public final class Edge4 {
 		i1 = 0;
 		i2 = 0;
 		r = 4;
-		set4Perm( t, perm6_fb );
+		Util.set4Perm( t, perm6_fb );
 		for( int i=7; i >= 0; i-- ){
-			if( redge4of8 >= Cnk[i][r] ){
-				redge4of8 -= Cnk[i][r--];
+			if( redge4of8 >= Util.Cnk[i][r] ){
+				redge4of8 -= Util.Cnk[i][r--];
 				cube.m_edge[( i < 4 ) ? i : i + 8] = (byte)(i1++);
 			}
 			else
@@ -91,7 +91,7 @@ public final class Edge4 {
 		int r = 4;
 		for( int i=7; i>=0;i--){
 			if( cube.m_edge[i+4] < 8 ){
-				ledge4of8 += Cnk[i][r--];
+				ledge4of8 += Util.Cnk[i][r--];
 				edges_rl[i_rl++] = cube.m_edge[i+4];
 			}
 			else
@@ -104,15 +104,15 @@ public final class Edge4 {
 		for( int i=7; i>=0;i--){
 			int u = (i < 4) ? i : i + 8;
 			if( cube.m_edge[u] < 4 ){
-				redge4of8 += Cnk[i][r--];
+				redge4of8 += Util.Cnk[i][r--];
 				edges_rl[i_rl++] = cube.m_edge[u];
 			}
 			else
 				edges_fb[i_fb++] = (byte)(cube.m_edge[u] - 8);
 		}
 
-		int perm6_rl = Tables.perm_to_420[get8Perm (edges_rl, 0)]%6;
-		int perm6_fb = Tables.perm_to_420[get8Perm (edges_fb, 0)]%6;
+		int perm6_rl = Util.perm_to_420[Util.get8Perm (edges_rl, 0)]%6;
+		int perm6_fb = Util.perm_to_420[Util.get8Perm (edges_fb, 0)]%6;
 
 		this.raw_coord = ((( perm6_rl * 6 + perm6_fb ) * 70 + redge4of8 ) * 70 + ledge4of8 );
 	}
@@ -161,13 +161,13 @@ public final class Edge4 {
 			e.unpackRaw(cube1);
 
 			/* Only retain configs without parity */
-			int ul = get8Perm( cube1.m_edge, 4 );
+			int ul = Util.get8Perm( cube1.m_edge, 4 );
 			for (int i=0; i<4; i++)
 				t[i] = ( cube1.m_edge[i] > 4 ) ? (byte)(cube1.m_edge[i]-8) : cube1.m_edge[i];
 			for (int i=4; i<8; i++)
 				t[i] = ( cube1.m_edge[i+8] > 4 ) ? (byte)(cube1.m_edge[i+8]-8) : cube1.m_edge[i+8];
-			int uh = get8Perm( t, 0 );
-			if( Tables.parity_perm8_table[ul] != Tables.parity_perm8_table[uh] ) continue; // getting rid of the parity.
+			int uh = Util.get8Perm( t, 0 );
+			if( Util.parity_perm8_table[ul] != Util.parity_perm8_table[uh] ) continue; // getting rid of the parity.
 
 			for (int s = 1; s < N_SYM; ++s) {
 				cube1.conjugateEdges (s, cube2);
@@ -189,7 +189,7 @@ public final class Edge4 {
 			e.raw_coord = sym2raw[u];
 			e.unpackRaw( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.rotate_sliceEDGE (stage2moves[m], cube2);
+				cube1.rotate_sliceEDGE (Moves.stage2moves[m], cube2);
 				e.pack( cube2 );
 				move[u][m] = ( e.coord << SYM_SHIFT ) | e.sym;
 			}

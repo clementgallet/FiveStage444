@@ -1,6 +1,5 @@
 package cg.fivestage444;
 
-import static cg.fivestage444.Constants.*;
 import cg.fivestage444.Stages.Stage1;
 import cg.fivestage444.Stages.Stage2;
 import cg.fivestage444.Stages.Stage3;
@@ -44,7 +43,7 @@ public class Tools {
 
 	private static void prepareTables() {
 		Symmetry.init();
-		Tables.init();
+		Util.init();
 	}
 
 	static volatile boolean inited = false;
@@ -161,8 +160,8 @@ public class Tools {
 			if( moves[i].isEmpty() ) continue;
 			/* Do it the lazy way... */
 			int themove = -1;
-			for(int m=0; m < Constants.N_MOVES; m++){
-				if( moves[i].equals( Constants.move_strings[m] )){
+			for(int m=0; m < Moves.N_MOVES; m++){
+				if( moves[i].equals( Moves.move_strings[m] )){
 					themove = m;
 					break;
 				}

@@ -1,8 +1,9 @@
 package cg.fivestage444.Coordinates;
 
-import static cg.fivestage444.Constants.*;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.Symmetry;
+import cg.fivestage444.Moves;
+import cg.fivestage444.Util;
 
 public final class Corner5 {
 
@@ -53,8 +54,8 @@ public final class Corner5 {
 		int i;
 		byte[] old_m_cor = new byte[8];
 		byte[] t = new byte[4];
-		set4Perm (old_m_cor, this.coord/4);
-		set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[this.coord/4]][this.coord % 4]);
+		Util.set4Perm (old_m_cor, this.coord/4);
+		Util.set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[this.coord/4]][this.coord % 4]);
 		for (i = 0; i < 4; ++i) {
 			old_m_cor[i+4] = (byte)(t[i]+4);
 		}
@@ -79,7 +80,7 @@ public final class Corner5 {
 			new_m_cor[std_to_sqs_cor[i]] = std_to_sqs_cor[cube.m_cor[i]];
 		}
 
-		this.coord = 4*get4Perm (new_m_cor, 0) + (new_m_cor[4] - 4);
+		this.coord = 4*Util.get4Perm (new_m_cor, 0) + (new_m_cor[4] - 4);
 	}
 
 	/* Initialisations */
@@ -97,7 +98,7 @@ public final class Corner5 {
 			c.coord = u;
 			c.unpack( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.rotate_sliceCORNER (stage2moves[m], cube2);
+				cube1.rotate_sliceCORNER (Moves.stage2moves[m], cube2);
 				c.pack( cube2 );
 				move[u][m] = (short)(c.coord);
 			}

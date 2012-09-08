@@ -1,8 +1,9 @@
 package cg.fivestage444.Coordinates;
 
-import static cg.fivestage444.Constants.*;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.Symmetry;
+import cg.fivestage444.Moves;
+import cg.fivestage444.Util;
 import java.util.Arrays;
 
 public final class Edge5 {
@@ -61,29 +62,29 @@ public final class Edge5 {
 		int ep2 = (raw_coord/96) % 96;
 		int ep3 = raw_coord/(96*96);
 		byte[] t = new byte[4];
-		set4Perm (cube.m_edge, ep1/4);
+		Util.set4Perm (cube.m_edge, ep1/4);
 
-		set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[ep1/4]][ep1 % 4]);
+		Util.set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[ep1/4]][ep1 % 4]);
 		for (i = 0; i < 4; ++i) {
 			cube.m_edge[i+4] = (byte)(t[i]+4);
 		}
 
-		set4Perm (t, ep2/4);
+		Util.set4Perm (t, ep2/4);
 		for (i = 0; i < 4; ++i) {
 			cube.m_edge[i+8] = (byte)(t[i]+8);
 		}
 
-		set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[ep2/4]][ep2 % 4]);
+		Util.set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[ep2/4]][ep2 % 4]);
 		for (i = 0; i < 4; ++i) {
 			cube.m_edge[i+12] = (byte)(t[i]+12);
 		}
 
-		set4Perm (t, ep3/4);
+		Util.set4Perm (t, ep3/4);
 		for (i = 0; i < 4; ++i) {
 			cube.m_edge[i+16] = (byte)(t[i]+16);
 		}
 
-		set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[ep3/4]][ep3 % 4]);
+		Util.set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[ep3/4]][ep3 % 4]);
 		for (i = 0; i < 4; ++i) {
 			cube.m_edge[i+20] = (byte)(t[i]+20);
 		}
@@ -91,9 +92,9 @@ public final class Edge5 {
 
 	/* Pack a cube into the raw coord */
 	public void packRaw (CubeState cube){
-		int ep1 = get4Perm (cube.m_edge, 0);
-		int ep2 = get4Perm (cube.m_edge, 8);
-		int ep3 = get4Perm (cube.m_edge, 16);
+		int ep1 = Util.get4Perm (cube.m_edge, 0);
+		int ep2 = Util.get4Perm (cube.m_edge, 8);
+		int ep3 = Util.get4Perm (cube.m_edge, 16);
 		this.raw_coord = 96*96*(4*ep3 + (cube.m_edge[20] - 20)) + 96*(4*ep2 + (cube.m_edge[12] - 12)) + 4*ep1 + (cube.m_edge[4] - 4);
 	}
 
@@ -169,7 +170,7 @@ public final class Edge5 {
 			e.raw_coord = sym2raw[u];
 			e.unpackRaw( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.rotate_sliceEDGE (stage2moves[m], cube2);
+				cube1.rotate_sliceEDGE (Moves.stage2moves[m], cube2);
 				e.pack( cube2 );
 				move[u][m] = ( e.coord << SYM_SHIFT ) | e.sym;
 			}

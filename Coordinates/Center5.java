@@ -1,9 +1,8 @@
 package cg.fivestage444.Coordinates;
 
-import static cg.fivestage444.Constants.*;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.Symmetry;
-import cg.fivestage444.Tables;
+import cg.fivestage444.Moves;
 
 public final class Center5 {
 
@@ -111,7 +110,7 @@ public final class Center5 {
 			c.coord = u;
 			c.unpack( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.rotate_sliceCENTER (stage2moves[m], cube2);
+				cube1.rotate_sliceCENTER (Moves.stage2moves[m], cube2);
 				c.pack( cube2 );
 				move[u][m] = (short)(c.coord);
 			}

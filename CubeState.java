@@ -1,6 +1,6 @@
 package cg.fivestage444;
 
-import static cg.fivestage444.Constants.*;
+// import static cg.fivestage444.Constants.*;
 import java.util.Arrays;
 
 //CubeState structure: a cubie-level representation of the cube.

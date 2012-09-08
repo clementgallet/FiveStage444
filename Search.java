@@ -1,6 +1,6 @@
 package cg.fivestage444;
 
-import static cg.fivestage444.Constants.*;
+//import static cg.fivestage444.Constants.*;
 import cg.fivestage444.Stages.Stage1;
 import cg.fivestage444.Stages.Stage2;
 import cg.fivestage444.Stages.Stage3;
@@ -72,15 +72,15 @@ public final class Search {
 
 		/* Transform rotations before outputing the solution */
 		for (i = 0; i < length1_sub; ++i)
-			move_list_sub_stage1[i] = stage2moves[move_list_sub_stage1[i]];
+			move_list_sub_stage1[i] = Moves.stage2moves[move_list_sub_stage1[i]];
 		for (i = 0; i < length2_sub; ++i)
-			move_list_sub_stage2[i] = Symmetry.moveConjugate[stage2moves[move_list_sub_stage2[i]]][rotate_sub];
+			move_list_sub_stage2[i] = Symmetry.moveConjugate[Moves.stage2moves[move_list_sub_stage2[i]]][rotate_sub];
 		for (i = 0; i < length3_sub; ++i)
-			move_list_sub_stage3[i] = Symmetry.moveConjugate[stage2moves[move_list_sub_stage3[i]]][rotate2_sub];
+			move_list_sub_stage3[i] = Symmetry.moveConjugate[Moves.stage2moves[move_list_sub_stage3[i]]][rotate2_sub];
 		for (i = 0; i < length4_sub; ++i)
-			move_list_sub_stage4[i] = Symmetry.moveConjugate[stage2moves[move_list_sub_stage4[i]]][rotate2_sub];
+			move_list_sub_stage4[i] = Symmetry.moveConjugate[Moves.stage2moves[move_list_sub_stage4[i]]][rotate2_sub];
 		for (i = 0; i < length5_sub; ++i)
-			move_list_sub_stage5[i] = Symmetry.moveConjugate[stage2moves[move_list_sub_stage5[i]]][rotate2_sub];
+			move_list_sub_stage5[i] = Symmetry.moveConjugate[Moves.stage2moves[move_list_sub_stage5[i]]][rotate2_sub];
 
 		if( inverse ){
 
@@ -106,18 +106,18 @@ public final class Search {
 			for (i = 0; i < length5_sub; ++i)
 				move_list_sub_stage5[i] = Symmetry.moveConjugate[move_list_sub_stage5[i]][final_ori];
 
-			sb.append(print_move_list (length5_sub, move_list_sub_stage5, true));
-			sb.append(print_move_list (length4_sub, move_list_sub_stage4, true));
-			sb.append(print_move_list (length3_sub, move_list_sub_stage3, true));
-			sb.append(print_move_list (length2_sub, move_list_sub_stage2, true));
-			sb.append(print_move_list (length1_sub, move_list_sub_stage1, true));
+			sb.append(Moves.print_move_list (length5_sub, move_list_sub_stage5, true));
+			sb.append(Moves.print_move_list (length4_sub, move_list_sub_stage4, true));
+			sb.append(Moves.print_move_list (length3_sub, move_list_sub_stage3, true));
+			sb.append(Moves.print_move_list (length2_sub, move_list_sub_stage2, true));
+			sb.append(Moves.print_move_list (length1_sub, move_list_sub_stage1, true));
 		}
 		else{
-			sb.append(print_move_list (length1_sub, move_list_sub_stage1, false));
-			sb.append(print_move_list (length2_sub, move_list_sub_stage2, false));
-			sb.append(print_move_list (length3_sub, move_list_sub_stage3, false));
-			sb.append(print_move_list (length4_sub, move_list_sub_stage4, false));
-			sb.append(print_move_list (length5_sub, move_list_sub_stage5, false));
+			sb.append(Moves.print_move_list (length1_sub, move_list_sub_stage1, false));
+			sb.append(Moves.print_move_list (length2_sub, move_list_sub_stage2, false));
+			sb.append(Moves.print_move_list (length3_sub, move_list_sub_stage3, false));
+			sb.append(Moves.print_move_list (length4_sub, move_list_sub_stage4, false));
+			sb.append(Moves.print_move_list (length5_sub, move_list_sub_stage5, false));
 		}
 		//System.out.print(length1_sub + length2_sub + length3_sub + length4_sub + length5_sub + "\t");
 		return sb.toString();
@@ -141,9 +141,9 @@ public final class Search {
 		found_sol = false;
 		for (length1 = d; length1 < total_length; ++length1) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "Stage 1 - length "+length1 );
-			if ( search_stage1 (s1, length1, 0, N_STAGE_MOVES, 0 )
-			  || search_stage1 (s2, length1, 0, N_STAGE_MOVES, 1 )
-			  || search_stage1 (s3, length1, 0, N_STAGE_MOVES, 2 ))
+			if ( search_stage1 (s1, length1, 0, Moves.N_STAGE_MOVES, 0 )
+			  || search_stage1 (s2, length1, 0, Moves.N_STAGE_MOVES, 1 )
+			  || search_stage1 (s3, length1, 0, Moves.N_STAGE_MOVES, 2 ))
 				return;
 		}
 	}
@@ -156,7 +156,7 @@ public final class Search {
 				return false;
 		}
 		Stage1 t = new Stage1();
-		long mask = moves_mask[last_move];
+		long mask = Moves.moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < Stage1.N_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1L ) == 0)
 				continue;
@@ -173,7 +173,7 @@ public final class Search {
 		r1 = r;
 		init_cube[r1].copyTo(c1);
 
-		c1.scramble( length1, move_list_stage1, stage2moves );
+		c1.scramble( length1, move_list_stage1, Moves.stage2moves );
 
 		rotate = c1.m_cor[0] >> 3;
 		switch (rotate) {
@@ -206,8 +206,8 @@ public final class Search {
 
 		for (length2 = Math.min(d21, d22); length2 < min2; ++length2) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "  Stage 2 - length "+length2 );
-			if((( length2 >= d21 ) && search_stage2 (s1, length2, 0, N_STAGE_MOVES, 0 )) ||
-			   (( length2 >= d22 ) && search_stage2 (s2, length2, 0, N_STAGE_MOVES, 1 ))){
+			if((( length2 >= d21 ) && search_stage2 (s1, length2, 0, Moves.N_STAGE_MOVES, 0 )) ||
+			   (( length2 >= d22 ) && search_stage2 (s2, length2, 0, Moves.N_STAGE_MOVES, 1 ))){
 				return true;
 			}
 			min2 = Math.min( MAX_STAGE2 + 1, total_length - length1 - MIN_STAGE3 - MIN_STAGE4 - MIN_STAGE5);
@@ -223,7 +223,7 @@ public final class Search {
 		}
 
 		Stage2 t = new Stage2();
-		long mask = moves_mask[last_move];
+		long mask = Moves.moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < Stage2.N_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;
@@ -253,7 +253,7 @@ public final class Search {
 			System.out.println ("Invalid cube rotation state.");
 		}
 
-		c2.scramble( length2, move_list_stage2, stage2moves );
+		c2.scramble( length2, move_list_stage2, Moves.stage2moves );
 
 		rotate2 = rotate;
 
@@ -269,7 +269,7 @@ public final class Search {
 
 		for (length3 = d3; length3 < min3; ++length3) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "    Stage 3 - length "+length3 );
-			if( search_stage3 (s, length3, 0, N_STAGE_MOVES )){
+			if( search_stage3 (s, length3, 0, Moves.N_STAGE_MOVES )){
 				return true;
 			}
 			min3 = Math.min( MAX_STAGE3 + 1, total_length - length1 - length2 - MIN_STAGE4 - MIN_STAGE5 );
@@ -286,7 +286,7 @@ public final class Search {
 		}
 
 		Stage3 t = new Stage3();
-		long mask = moves_mask[last_move];
+		long mask = Moves.moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < Stage3.N_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;
@@ -304,7 +304,7 @@ public final class Search {
 		if ( found_sol ) return true;
 
 		c2.copyTo(c3);
-		c3.scramble( length3, move_list_stage3, stage2moves );
+		c3.scramble( length3, move_list_stage3, Moves.stage2moves );
 
 		Stage4 s = new Stage4();
 		s.pack( c3 );
@@ -313,7 +313,7 @@ public final class Search {
 
 		for (length4 = d4; length4 < min4; ++length4) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "      Stage 4 - length "+length4 );
-			if( search_stage4 (s, length4, 0, N_STAGE_MOVES )) {
+			if( search_stage4 (s, length4, 0, Moves.N_STAGE_MOVES )) {
 				return true;
 			}
 			min4 = Math.min( MAX_STAGE4 + 1, total_length - length1 - length2 - length3 - MIN_STAGE5 );
@@ -330,7 +330,7 @@ public final class Search {
 		}
 
 		Stage4 t = new Stage4();
-		long mask = moves_mask[last_move];
+		long mask = Moves.moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < Stage4.N_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;
@@ -347,14 +347,14 @@ public final class Search {
 		int i;
 
 		c3.copyTo(c4);
-		c4.scramble( length4, move_list_stage4, stage2moves );
+		c4.scramble( length4, move_list_stage4, Moves.stage2moves );
 
 		Stage5 s = new Stage5();
 		s.pack( c4 );
 		int d5 = s.pruning();
 
 		for (length5 = d5; length5 < total_length-length4-length3-length2-length1; ++length5) {
-			if( search_stage5 (s, length5, 0, N_STAGE_MOVES)){
+			if( search_stage5 (s, length5, 0, Moves.N_STAGE_MOVES)){
 				if( DEBUG_LEVEL >= 1 ) System.out.println( "        Stage 5 - length "+length5 );
 				total_length = length1+length2+length3+length4+length5;
 				/* Save current solution */
@@ -384,7 +384,7 @@ public final class Search {
 			return( s.isSolved() );
 
 		Stage5 t = new Stage5();
-		long mask = moves_mask[last_move];
+		long mask = Moves.moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < Stage5.N_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;

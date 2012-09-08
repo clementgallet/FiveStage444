@@ -1,9 +1,9 @@
 package cg.fivestage444.Stages;
 
-import static cg.fivestage444.Constants.*;
 import cg.fivestage444.Coordinates.Edge2;
 import cg.fivestage444.Coordinates.Center2;
 import cg.fivestage444.CubeState;
+import cg.fivestage444.Util;
 
 public final class Stage2 {
 
@@ -81,7 +81,7 @@ public final class Stage2 {
 
 	/* Get pruning */
 	public int pruning(){
-		return Math.max( getPrun2( prunTable, this.get(true)), getPrun2( prunTable, this.get(false)));
+		return Math.max( Util.getPrun2( prunTable, this.get(true)), Util.getPrun2( prunTable, this.get(false)));
 	}
 
 	/* Init pruning table */
@@ -99,9 +99,9 @@ public final class Stage2 {
 		for( int a=0; a<Center2.SOLVED.length; a++){
 			s1.centerF.coord = Center2.SOLVED[a];
 			s1.edge.coord = 0;
-			setPrun2( prunTable, s1.get(true), 0 );
+			Util.setPrun2( prunTable, s1.get(true), 0 );
 			s1.edge.coord = 414;
-			setPrun2( prunTable, s1.get(true), 0 );
+			Util.setPrun2( prunTable, s1.get(true), 0 );
 		}
 
 		int done = 12;
@@ -126,13 +126,13 @@ public final class Stage2 {
 					for (int m=0; m<N_MOVES; m++) {
 						s1.moveTo(m, s2);
 						int idx = s2.get(true);
-						if (getPrun2(prunTable, idx) != check) continue;
+						if (Util.getPrun2(prunTable, idx) != check) continue;
 						done++;
 						if (inv) {
-							setPrun2(prunTable, i, depth);
+							Util.setPrun2(prunTable, i, depth);
 							break;
 						} else {
-							setPrun2(prunTable, idx, depth);
+							Util.setPrun2(prunTable, idx, depth);
 							int nsym = 1;
 							unique++;
 							int symS = Center2.hasSym[s2.centerF.coord];
@@ -143,8 +143,8 @@ public final class Stage2 {
 								int idxx = s2.get(true);
 								if( idxx == idx )
 									nsym++;
-								if (getPrun2(prunTable, idxx) == 0x0f) {
-									setPrun2(prunTable, idxx, depth);
+								if (Util.getPrun2(prunTable, idxx) == 0x0f) {
+									Util.setPrun2(prunTable, idxx, depth);
 									done++;
 								}
 							}

@@ -1,8 +1,9 @@
 package cg.fivestage444.Coordinates;
 
-import static cg.fivestage444.Constants.*;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.Symmetry;
+import cg.fivestage444.Moves;
+import cg.fivestage444.Util;
 
 public final class Edge3 {
 
@@ -41,8 +42,8 @@ public final class Edge3 {
 		byte e1 = 4;
 		int r = 8;
 		for (int i = 15; i >= 0; i--) {
-			if (edge >= Cnk[i][r]) {
-				edge -= Cnk[i][r--];
+			if (edge >= Util.Cnk[i][r]) {
+				edge -= Util.Cnk[i][r--];
 				cube.m_edge[i] = e0++;
 				if (e0 == 4) {
 					e0 = 12;		//skip numbers 4..11; those are used for e1
@@ -62,7 +63,7 @@ public final class Edge3 {
 		int r = 8;
 		for (int i=15; i>=0; i--) {
 			if (cube.m_edge[i] < 4 || cube.m_edge[i] >= 12) {
-				this.coord += Cnk[i][r--];
+				this.coord += Util.Cnk[i][r--];
 			}
 		}
 		this.coord = ( this.coord << 1 ) | cube.edgeUD_parity();
@@ -72,7 +73,7 @@ public final class Edge3 {
 	public static void init(){
 		/* Initialize move parity */
 		for( int i = 0; i < N_MOVES; i++){
-			int m = stage2moves[i];
+			int m = Moves.stage2moves[i];
 			if (((( m / 3 ) % 3 ) == 1 ) && (( m % 3 ) < 2 ))
 				moveParity |= 1 << i;
 		}
@@ -88,7 +89,7 @@ public final class Edge3 {
 			e.coord = u << 1;
 			e.unpack( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.rotate_sliceEDGE (stage2moves[m], cube2);
+				cube1.rotate_sliceEDGE (Moves.stage2moves[m], cube2);
 				e.pack( cube2 );
 				move[u][m] = (short)(e.coord >>> 1);
 			}

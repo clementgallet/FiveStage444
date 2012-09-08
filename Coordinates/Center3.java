@@ -1,8 +1,9 @@
 package cg.fivestage444.Coordinates;
 
-import static cg.fivestage444.Constants.*;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.Symmetry;
+import cg.fivestage444.Moves;
+import cg.fivestage444.Util;
 import java.util.Arrays;
 
 public final class Center3 {
@@ -53,18 +54,18 @@ public final class Center3 {
 		int s = 4;
 		int last_c = -1;
 		for (int i = 15; i >= 0; --i) {
-			if (cenbm < Cnk[i][r] ) {
+			if (cenbm < Util.Cnk[i][r] ) {
 				cube.m_cen[i] = (byte)(ud++/4);
 			} else {
-				cenbm -= Cnk[i][r--];
+				cenbm -= Util.Cnk[i][r--];
 				if (last_c == -1){
 					cube.m_cen[i] = 3;
 					last_c = i;
 				}
-				if (cenbm4of8 < Cnk[j][s]) {
+				if (cenbm4of8 < Util.Cnk[j][s]) {
 					cube.m_cen[i] = 3;
 				} else {
-					cenbm4of8 -= Cnk[j][s--];
+					cenbm4of8 -= Util.Cnk[j][s--];
 					cube.m_cen[i] = 2;
 				}
 			j--;
@@ -87,9 +88,9 @@ public final class Center3 {
 			if (cube.m_cen[i] >= 2) {
 				if (last_c == -1)
 					last_c = i;
-				cenbm += Cnk[i][r--];
+				cenbm += Util.Cnk[i][r--];
 				if (cube.m_cen[i] != cube.m_cen[last_c]) {
-					cenbm4of8 += Cnk[j][s--];
+					cenbm4of8 += Util.Cnk[j][s--];
 				}
 				--j;
 			}
@@ -159,7 +160,7 @@ public final class Center3 {
 			c.raw_coord = sym2raw[u];
 			c.unpackRaw( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.rotate_sliceCENTER (stage2moves[m], cube2);
+				cube1.rotate_sliceCENTER (Moves.stage2moves[m], cube2);
 				c.pack( cube2 );
 				move[u][m] = ( c.coord << SYM_SHIFT ) | c.sym;
 			}

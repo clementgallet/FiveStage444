@@ -10,7 +10,7 @@ import java.io.ObjectInputStream;
 /**
  * Class containing all the constants used in the program, and some useful functions.
  */
-public final class Constants{
+public final class Moves{
 
 //slice rotate codes
 	public static final int Uf  = 0;	//Up "face" (top slice) clockwise wrt top
@@ -143,104 +143,6 @@ public final class Constants{
 			if(( stage2moves[j]%18 ) >= 15 )
 				moves_mask[N_STAGE_MOVES] &= -1L ^ ( 1L << j );
 	}
-
-	public static final int Cnk [][] = new int[25][25];
-	public static final int fact [] = new int[26];
-	static {
-		fact[0] = 1;
-		for (int i=0; i<25; i++) {
-			Cnk[i][i] = 1;
-			Cnk[i][0] = 1;
-			fact[i+1] = fact[i] * (i+1);
-		}
-		for (int i=1; i<25; i++) {
-			for (int j=1; j<=i; j++) {
-				Cnk[i][j] = Cnk[i-1][j] + Cnk[i-1][j-1];
-			}
-		}
-	}
-
-	/**
-	 * Converts an array of integers from off to off+4-1 into a corresponding number from 0 to 4!-1.
-	 * Faster version. Taken from Chen Shuang (min2phase).
-	 * @param array_in	permutation
-	 * @param offset	index of the first element where the permutation starts in the table
-	 * @return		an integer representing the permutation
-	 */
-	public static final int get4Perm (byte[] array_in, int off){
-		int idx = 0;
-		int val = 0x3210;
-		for (int i=0; i<3; i++) {
-			int v = (array_in[i+off]-off) << 2;
-			idx = (4 - i) * idx + ((val >> v) & 07);
-			val -= 0x1110 << v;
-		}
-		return idx;
-	}
-
-	/**
-	 * Converts an array of integers from off to off+8-1 into a corresponding number from 0 to 8!-1.
-	 * Faster version. Taken from Chen Shuang (min2phase).
-	 * @param array_in	permutation
-	 * @param offset	index of the first element where the permutation starts in the table
-	 * @return		an integer representing the permutation
-	 */
-	public static final int get8Perm (byte[] array_in, int off){
-		int idx = 0;
-		int val = 0x76543210;
-		for (int i=0; i<7; i++) {
-			int v = (array_in[i+off]-off) << 2;
-			idx = (8 - i) * idx + ((val >> v) & 07);
-			val -= 0x11111110 << v;
-		}
-		return idx;
-	}
-
-	/**
-	 * Converts an integer into a permutation represented as an array of integers from 0 to 3.
-	 * @param arr		the permutation coded as an array of integers
-	 * @param idx		an integer representing the permutation
-	 */
-	public static final void set4Perm (byte[] arr, int idx) {
-		int val = 0x3210;
-		for (int i=0; i<3; i++) {
-			int p = fact[3-i];
-			int v = idx / p;
-			idx -= v*p;
-			v <<= 2;
-			arr[i] = (byte) ((val >> v) & 07);
-			int m = (1 << v) - 1;
-			val = (val & m) + ((val >> 4) & ~m);
-		}
-		arr[3] = (byte)val;
-	}
-
-	/**
-	 * Converts an integer into a permutation represented as an array of integers from 0 to 7.
-	 * @param arr		the permutation coded as an array of integers
-	 * @param idx		an integer representing the permutation
-	 */
-	public static final void set8Perm (byte[] arr, int idx) {
-		int val = 0x76543210;
-		for (int i=0; i<7; i++) {
-			int p = fact[7-i];
-			int v = idx / p;
-			idx -= v*p;
-			v <<= 2;
-			arr[i] = (byte) ((val >> v) & 07);
-			int m = (1 << v) - 1;
-			val = (val & m) + ((val >> 4) & ~m);
-		}
-		arr[7] = (byte)val;
-	}
-
-        public static final void setPrun2(int[] table, int index, int value) {
-                table[index >> 3] ^= (0x0f ^ value) << ((index & 7) << 2);
-        }
-
-        public static final int getPrun2(int[] table, int index) {
-                return (table[index >> 3] >> ((index & 7) << 2)) & 0x0f;
-        }
 
 	public static String move_strings[] = {
 	"U", "U'", "U2", "u", "u'", "u2", "Uw", "Uw'", "Uw2",

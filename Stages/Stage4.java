@@ -1,10 +1,10 @@
 package cg.fivestage444.Stages;
 
-import static cg.fivestage444.Constants.*;
 import cg.fivestage444.Coordinates.Edge4;
 import cg.fivestage444.Coordinates.Corner4;
 import cg.fivestage444.Coordinates.Center4;
 import cg.fivestage444.CubeState;
+import cg.fivestage444.Util;
 
 public final class Stage4 {
 
@@ -74,7 +74,7 @@ public final class Stage4 {
 
 	/* Get pruning */
 	public int pruning(){
-		return getPrun2( prunTable, this.get());
+		return Util.getPrun2( prunTable, this.get());
 	}
 
 	/* Init pruning table */
@@ -90,7 +90,7 @@ public final class Stage4 {
 
 		/* Set the solved states */
 		for( int a=0; a<Center4.SOLVED.length; a++)
-			setPrun2( prunTable, Center4.SOLVED[a], 0 );
+			Util.setPrun2( prunTable, Center4.SOLVED[a], 0 );
 		int done = Center4.SOLVED.length;
 
 		int depth = 0;
@@ -113,13 +113,13 @@ public final class Stage4 {
 					for (int m=0; m<N_MOVES; m++) {
 						s1.moveTo(m, s2);
 						int idx = s2.get();
-						if (getPrun2(prunTable, idx) != check) continue;
+						if (Util.getPrun2(prunTable, idx) != check) continue;
 						done++;
 						if (inv) {
-							setPrun2(prunTable, i, depth);
+							Util.setPrun2(prunTable, i, depth);
 							break;
 						} else {
-							setPrun2(prunTable, idx, depth);
+							Util.setPrun2(prunTable, idx, depth);
 							int nsym = 1;
 							unique++;
 							int symS = Edge4.hasSym[s2.edge.coord];
@@ -130,8 +130,8 @@ public final class Stage4 {
 								int idxx = s2.get();
 								if( idxx == idx )
 									nsym++;
-								if (getPrun2(prunTable, idxx) == 0x0f) {
-									setPrun2(prunTable, idxx, depth);
+								if (Util.getPrun2(prunTable, idxx) == 0x0f) {
+									Util.setPrun2(prunTable, idxx, depth);
 									done++;
 								}
 							}

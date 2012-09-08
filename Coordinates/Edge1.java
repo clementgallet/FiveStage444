@@ -1,8 +1,9 @@
 package cg.fivestage444.Coordinates;
 
-import static cg.fivestage444.Constants.*;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.Symmetry;
+import cg.fivestage444.Moves;
+import cg.fivestage444.Util;
 import java.util.Arrays;
 
 public final class Edge1 {
@@ -45,8 +46,8 @@ public final class Edge1 {
 		byte lrfb = 0;
 		byte ud = 16;
 		for (int i=23; i>=0; i--) {
-			if (c >= Cnk[i][r]) {
-				c -= Cnk[i][r--];
+			if (c >= Util.Cnk[i][r]) {
+				c -= Util.Cnk[i][r--];
 				cube.m_edge[i] = ud++;
 			} else {
 				cube.m_edge[i] = lrfb++;
@@ -60,7 +61,7 @@ public final class Edge1 {
 		int r = 8;
 		for (int i=23; i>=0; i--) {
 			if (cube.m_edge[i] >= 16) {
-				this.raw_coord += Cnk[i][r--];
+				this.raw_coord += Util.Cnk[i][r--];
 			}
 		}
 	}
@@ -127,7 +128,7 @@ public final class Edge1 {
 			e.raw_coord = sym2raw[u];
 			e.unpackRaw( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.rotate_sliceEDGE (stage2moves[m], cube2);
+				cube1.rotate_sliceEDGE (Moves.stage2moves[m], cube2);
 				e.pack( cube2 );
 				move[u][m] = ( e.coord << SYM_SHIFT ) | e.sym;
 			}

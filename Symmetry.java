@@ -1,6 +1,6 @@
 package cg.fivestage444;
 
-import static cg.fivestage444.Constants.*;
+import cg.fivestage444.Moves;
 
 public final class Symmetry {
 
@@ -53,20 +53,20 @@ public final class Symmetry {
 							symCornersOrient[idx+4][i] = (byte)(3 + (cube.m_cor[symRLCorners[i]] / 8));
 						}
 						idx += 1;
-						cube.do_move (Uw2);
-						cube.do_move (Dw2);
+						cube.do_move (Moves.Uw2);
+						cube.do_move (Moves.Dw2);
 					}
-					cube.do_move (Fw2);
-					cube.do_move (Bw2);
+					cube.do_move (Moves.Fw2);
+					cube.do_move (Moves.Bw2);
 				}
 				idx += 4;
-				cube.do_move (Uw);
-				cube.do_move (Dw3);
+				cube.do_move (Moves.Uw);
+				cube.do_move (Moves.Dw3);
 			}
-			cube.do_move (Uw3);
-			cube.do_move (Dw);
-			cube.do_move (Rw3);
-			cube.do_move (Lw);
+			cube.do_move (Moves.Uw3);
+			cube.do_move (Moves.Dw);
+			cube.do_move (Moves.Rw3);
+			cube.do_move (Moves.Lw);
 		}
 	}
 
@@ -107,7 +107,7 @@ public final class Symmetry {
 				symIdxCo4Multiply[i][j] = symIdxMultiply[symIdxMultiply[invSymIdx[j>>2]][i&3]][symIdxMultiply[j>>2][j&3]] + ( symIdxMultiply[i>>2][j>>2] << 2 );
 	}
 
-	static byte[][] moveConjugate = new byte[N_MOVES][N_SYM];
+	static byte[][] moveConjugate = new byte[Moves.N_MOVES][N_SYM];
 
 	static void initMoveConjugate(){
 
@@ -115,12 +115,12 @@ public final class Symmetry {
 		CubeState cube2 = new CubeState();
 		CubeState cube3 = new CubeState();
 
-		for (int i=0; i<N_MOVES; i++){
+		for (int i=0; i<Moves.N_MOVES; i++){
 			cube.init();
 			cube.do_move(i);
 			for (int j=0; j<N_SYM; j++){
 				cube.conjugateEdges(j, cube2);
-				for (int k=0; k<N_MOVES; k++){
+				for (int k=0; k<Moves.N_MOVES; k++){
 					cube3.init();
 					cube3.do_move(k);
 					boolean isMove = true;
@@ -139,19 +139,19 @@ public final class Symmetry {
 		}
 	}
 
-	public static int[][] moveConjugateStage = new int[N_STAGE_MOVES][N_SYM];
-	public static int[][] moveConjugateCo4Stage = new int[N_STAGE_MOVES][N_SYM*4];
+	public static int[][] moveConjugateStage = new int[Moves.N_STAGE_MOVES][N_SYM];
+	public static int[][] moveConjugateCo4Stage = new int[Moves.N_STAGE_MOVES][N_SYM*4];
 
 	static void initMoveConjugateStage(){
 
 		int i, j;
 
-		for (i=0; i<N_STAGE_MOVES; i++)
+		for (i=0; i<Moves.N_STAGE_MOVES; i++)
 			for (j=0; j<N_SYM; j++)
-				moveConjugateStage[i][j] = moves2stage[moveConjugate[stage2moves[i]][j]];
+				moveConjugateStage[i][j] = Moves.moves2stage[moveConjugate[Moves.stage2moves[i]][j]];
 
-		for (i=0; i<N_STAGE_MOVES; i++)
+		for (i=0; i<Moves.N_STAGE_MOVES; i++)
 			for (j=0; j<N_SYM*4; j++)
-				moveConjugateCo4Stage[i][j] = moves2stage[moveConjugate[stage2moves[i]][symIdxMultiply[j>>2][j&3]]];
+				moveConjugateCo4Stage[i][j] = Moves.moves2stage[moveConjugate[Moves.stage2moves[i]][symIdxMultiply[j>>2][j&3]]];
 	}
 }

@@ -1,8 +1,8 @@
 package cg.fivestage444.Coordinates;
 
-import static cg.fivestage444.Constants.*;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.Symmetry;
+import cg.fivestage444.Moves;
 
 public final class Corner1 {
 
@@ -62,7 +62,7 @@ public final class Corner1 {
 	public static void init(){
 		/* Initialize stage2face table */
 		for( int s = 0; s < N_MOVES; s++ ){
-			int m = stage2moves[s];
+			int m = Moves.stage2moves[s];
 			if((( m / 3 ) % 3 ) == 1 )
 				stage2face[s] = -1;
 			else
@@ -83,7 +83,7 @@ public final class Corner1 {
 			for (int m = 0; m < N_MOVES; ++m) {
 				if(stage2face[m] == -1 )
 					continue;
-				cube1.rotate_sliceCORNER (stage2moves[m], cube2);
+				cube1.rotate_sliceCORNER (Moves.stage2moves[m], cube2);
 				c.pack( cube2 );
 				move[u][stage2face[m]] = (short)(c.coord);
 			}

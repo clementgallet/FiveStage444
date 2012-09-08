@@ -1,8 +1,9 @@
 package cg.fivestage444.Coordinates;
 
-import static cg.fivestage444.Constants.*;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.Symmetry;
+import cg.fivestage444.Moves;
+import cg.fivestage444.Util;
 
 public final class Center4 {
 
@@ -45,8 +46,8 @@ public final class Center4 {
 		int r = 4;
 		cube.m_cen[7] = 1;
 		for (i = 6; i >= 0; i--) {
-			if ( center >= Cnk[i][r] ) {
-				center -= Cnk[i][r--];
+			if ( center >= Util.Cnk[i][r] ) {
+				center -= Util.Cnk[i][r--];
 				cube.m_cen[i] = 0;
 			} else {
 				cube.m_cen[i] = 1;
@@ -64,7 +65,7 @@ public final class Center4 {
 		int r = 4;
 		for (i = 6; i >= 0; i--) {
 			if (cube.m_cen[i] != cube.m_cen[7]) {
-				this.coord += Cnk[i][r--];
+				this.coord += Util.Cnk[i][r--];
 			}
 		}
 	}
@@ -84,7 +85,7 @@ public final class Center4 {
 			c.coord = u;
 			c.unpack( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.rotate_sliceCENTER (stage2moves[m], cube2);
+				cube1.rotate_sliceCENTER (Moves.stage2moves[m], cube2);
 				c.pack( cube2 );
 				move[u][m] = (short)c.coord;
 			}
