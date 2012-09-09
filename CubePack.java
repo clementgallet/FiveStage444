@@ -33,6 +33,10 @@ public final class CubePack{
 
 	/** Init tables **/
 
+	static void init(){
+		init_moveCorners();
+		init_conjCorners();
+	}
 
 	static void init_moveCorners(){
 		CubePack cp1 = new CubePack();

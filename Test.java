@@ -10,7 +10,9 @@ public final class Test {
 
 	public static void main(String[] args){
 
-		Tools.init();
+		//Tools.init();
+		Util.init();
+		CubePack.init();
 
 		testPack();
 
