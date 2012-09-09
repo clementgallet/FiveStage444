@@ -11,6 +11,7 @@ public final class Test {
 	public static void main(String[] args){
 
 		//Tools.init();
+		Symmetry.init();
 		Util.init();
 		CubePack.init();
 
@@ -35,22 +36,24 @@ public final class Test {
 	}
 
 	public static void testPack(){
-		Random gen = new Random();
+		Random gen = new Random(42);
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		CubePack cp1 = new CubePack();
 		CubePack cp2 = new CubePack();
 
+
+		/* Do one move on the cube and on the cubepack, and compare the two */
 		randomScramble( cube1, Moves.stage2moves, 28, gen );
-		cp1.packCorners( cube1 );
+		cp1.pack( cube1 );
+
 		int move = gen.nextInt(Moves.N_STAGE_MOVES);
 		cube1.do_move(Moves.stage2moves[move]);
-		cp1.moveCorners(move);
-		cp2.packCorners( cube1 );
-		System.out.println(cp1.corner_top_loc + " - " + cp1.corner_top_perm + " - " + cp1.corner_bottom_perm);
-		System.out.println(cp2.corner_top_loc + " - " + cp2.corner_top_perm + " - " + cp2.corner_bottom_perm);
-		//cube1.print();
-		//cube2.print();
+		cp1.move(move);
+
+		cp2.pack( cube1 );
+		cp1.print();
+		cp2.print();
 	}
 
 
