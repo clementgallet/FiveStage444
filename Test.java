@@ -36,7 +36,7 @@ public final class Test {
 	}
 
 	public static void testPack(){
-		Random gen = new Random(42);
+		Random gen = new Random();
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		CubePack cp1 = new CubePack();

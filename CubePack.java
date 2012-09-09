@@ -86,35 +86,42 @@ public final class CubePack{
 		final byte sqs_to_std[] = { 0, 2, 5, 7, 1, 3, 4, 6 };
 		final byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
 		int ctl = 0;
-		int ctp = 0;
-		int cbp = 0;
+		byte[] ctp = new byte[4];
+		byte[] cbp = new byte[4];
+		int itp = 3;
+		int ibp = 3;
+		int r = 4;
 		for (int i=7; i>=0; i--) {
 			int perm = std_to_sqs[cube.m_cor[sqs_to_std[i]] & 0x7];
-			if (( perm & 4 ) != 0) { // bottom layer
-				cbp = 4 * cbp + (perm & 3);
+			if (( perm & 0x4 ) != 0) { // bottom layer
+				cbp[ibp--] = (byte)( perm & 0x3 );
 			} else {
-				ctl |= 1<<i;
-				ctp = 4 * ctp + (perm & 3);
+				ctl += Util.Cnk[i][r--];
+				ctp[itp--] = (byte)( perm & 0x3 );
 			}
 		}
-		corner_top_loc = Util.c8_4_compact[ctl];
-		corner_top_perm = Util.s4compress[ctp];
-		corner_bottom_perm = Util.s4compress[cbp];
+		corner_top_loc = (byte) ctl;
+		corner_top_perm = (byte) Util.get4Perm(ctp, 0);
+		corner_bottom_perm = (byte) Util.get4Perm(cbp, 0);
 	}
 
 	void unpackCorners( CubeState cube ){
 		final byte sqs_to_std[] = { 0, 2, 5, 7, 1, 3, 4, 6 };
 		final byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
-		int c8_4_bits = Util.c8_4_expand[corner_top_loc];
-		int ct_perm = Util.s4expand[corner_top_perm];
-		int cb_perm = Util.s4expand[corner_bottom_perm];
-		for (int i=0; i<8; i++)
-			if (((c8_4_bits >> i) & 1 ) != 0) { // top layer
-				cube.m_cor[sqs_to_std[i]] = sqs_to_std[3 & ct_perm];
-				ct_perm >>= 2 ;
+		int c8_4_bits = corner_top_loc;
+		int r = 4;
+		byte[] ct_perm = new byte[4];
+		byte[] cb_perm = new byte[4];
+		int itp = 3;
+		int ibp = 3;
+		Util.set4Perm(ct_perm, corner_top_perm);
+		Util.set4Perm(cb_perm, corner_bottom_perm);
+		for (int i = 7; i >=0; i--)
+			if ( c8_4_bits >= Util.Cnk[i][r] ) { // top layer
+				c8_4_bits -= Util.Cnk[i][r--];
+				cube.m_cor[sqs_to_std[i]] = sqs_to_std[ct_perm[itp--]];
 			} else {
-				cube.m_cor[sqs_to_std[i]] = sqs_to_std[(3 & cb_perm) + 4];
-				cb_perm >>= 2 ;
+				cube.m_cor[sqs_to_std[i]] = sqs_to_std[cb_perm[ibp--] + 4];
 			}
 	}
 
@@ -145,24 +152,28 @@ public final class CubePack{
 		int r = 4;
 		int perm = 0;
 		this.edges_loc[e_idx] = 0;
+		byte[] t = new byte[4];
+		int it = 3;
 
 		for (int i=23; i>=0; i--) {
 			if (( cube.m_edge[i] / 4 ) == e_idx ){
 				this.edges_loc[e_idx] += Util.Cnk[i][r--];
-				perm = 4 * perm + ( cube.m_edge[i] & 0x3 );
+				t[it--] = (byte)( cube.m_edge[i] & 0x3 );
 			}
 		}
-		this.edges_perm[e_idx] = Util.s4compress[perm];
+		this.edges_perm[e_idx] = (byte) Util.get4Perm( t, 0 );
 	}
 
 	void unpackEdges( CubeState cube, int e_idx ){
-		int perm = Util.s4expand[this.edges_perm[e_idx]];
+		byte[] t = new byte[4];
+		Util.set4Perm( t, this.edges_perm[e_idx] );
+		int it = 3;
 		int loc = this.edges_loc[e_idx];
 		int r = 4;
 		for (int i=23; i>=0; i--)
 			if (loc >= Util.Cnk[i][r]) {
 				loc -= Util.Cnk[i][r--];
-				cube.m_edge[i] = (byte)( 4*e_idx + (( perm >>> (2*r)) & 0x3 ));
+				cube.m_edge[i] = (byte)( 4*e_idx + t[it--] );
 			}
 			else
 				cube.m_edge[i] = -1;

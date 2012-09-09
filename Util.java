@@ -13,7 +13,6 @@ public final class Util {
 		initMap96();
 
 		init_s4();
-		init_c8_4();
 		initPerm420();
 	}
 
@@ -277,9 +276,7 @@ public final class Util {
 			for (w = 0; w < 96; ++w) {
 				for (i = 0; i < 8; ++i)
 					t2[i] = map96[w][t[i]];
-				int topexp = ((t2[3]*4+t2[2])*4+t2[1])*4+t2[0];
-				int botexp = (((t2[7]-4)*4+t2[6]-4)*4+t2[5]-4)*4+t2[4]-4;
-				perms_to_6[s4compress[topexp]][s4compress[botexp]] = (byte)v;
+				perms_to_6[get4Perm(t2, 0)][get4Perm(t2, 4)] = (byte)v;
 				for (u = 0; u < 70; ++u) {
 					int f = 0;
 					int b = 4;
@@ -303,68 +300,19 @@ public final class Util {
 	static final int FACT4 = 24;
 	static final int C8_4 = 70;
 
-	static final byte[] s4inv = new byte[FACT4];
 	static final byte[][] s4mul = new byte[FACT4][FACT4];
-	static final byte[] s4compress = new byte[256];
-	static final byte[] s4expand = new byte[FACT4];
-
-	static final byte[] c8_4_compact = new byte[256];
-	static final byte[] c8_4_expand = new byte[C8_4];
-//	static final byte c8_4_parity[C8_4];
 
 	static void init_s4(){
-		int cc = 0;
-		for (int a = 0; a < 4; a++ )
-			for (int b = 0; b < 4; b++ )
-				if (a != b)
-					for (int c = 0; c < 4; c++ )
-						if (( a != c ) && ( b != c )) {
-							int d = 0 + 1 + 2 + 3 - a - b - c;
-							int coor = cc ^ ((cc >> 1) & 1);
-							int expanded = (1 << (2 * b)) + (2 << (2 * c)) + (3 << (2 * d));
-							s4compress[expanded] = (byte)coor;
-							s4expand[coor] = (byte)expanded;
-							cc++;
-						}
+		byte[] t1 = new byte[4];
+		byte[] t2 = new byte[4];
+		byte[] t3 = new byte[4];
 		for (int i = 0; i < FACT4; i++ )
-			for (int j = 0; j < FACT4; j++ ) {
-				int k = s4compress[muls4(s4expand[i], s4expand[j])];
-				s4mul[j][i] = (byte)k;
-				if (k == 0) s4inv[i] = (byte)j;
+			for (int j = 0; j < FACT4; j++ ){
+				set4Perm( t1, i );
+				set4Perm( t2, j );
+				for( int k = 0; k < 4; k++ )
+					t3[k] = t2[t1[k]];
+				s4mul[j][i] = (byte) get4Perm( t3, 0 );
 			}
-	}
-
-	static int muls4(int a, int b) {
-		int r = 3 & (b >> (2 * (a & 3)));
-		r += (3 & (b >> (2 * ((a >> 2) & 3)))) << 2;
-		r += (3 & (b >> (2 * ((a >> 4) & 3)))) << 4;
-		r += (3 & (b >> (2 * ((a >> 6) & 3)))) << 6;
-		return r ;
-	}
-
-	static void init_c8_4(){
-		int c = 0;
-		for (int i=0; i<256; i++)
-			if (bc(i) == 4) {
-/*				int parity = 0 ;
-				for (int j=0; j<8; j++)
-					if (1 & (i >> j))
-						for (int k=0; k<j; k++)
-							if (0 == (1 & (i >> k)))
-								parity++;
-				c8_4_parity[c] = parity & 1; */
-				c8_4_compact[i] = (byte)c;
-				c8_4_expand[c] = (byte)i;
-				c++;
-			}
-	}
-
-	static int bc(int v) {
-		int r = 0;
-		while (v != 0) {
-			v &= v - 1;
-			r++;
-		}
-		return r;
 	}
 }
