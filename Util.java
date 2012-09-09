@@ -7,6 +7,7 @@ public final class Util {
 	public static final void init (){
 		initCnk();
 		initC24to8();
+		initC16to16();
 		initParityTable();
 		initMap96();
 
@@ -49,6 +50,46 @@ public final class Util {
 				}
 			}
 			C24to8[c24] = (byte)c8;
+		}
+	}
+
+	static final int C16_4 = 1820;
+	static final int C15_4 = 1365;
+	public static final int[][] C16to16 = new int[C16_4][C15_4];
+
+	public static final void initC16to16() {
+		for (int p=0; p<C16_4; p++){
+			for (int q=0; q<C15_4; q++){
+				int tp = p;
+				int tq = q;
+				int rp = 4;
+				int rq = 4;
+				int c8 = 0;
+				int r = 8;
+				int c4 = 0;
+				int s = 4;
+				int j = 7;
+				int first_cen = 0;
+				for (int i=15; i>=0; i--){
+					if( tp >= Cnk[i][rp] ){
+						tp -= Cnk[i][rp--];
+						c8 += Cnk[i][r--];
+						if( first_cen == 0 ) first_cen = 1;
+						if( first_cen != 1 )
+							c4 += Cnk[j][s--];
+						j--;
+					}	
+					if( tq >= Cnk[i][rq] ){
+						tq -= Cnk[i][rq--];
+						c8 += Cnk[i][r--];
+						if( first_cen == 0 ) first_cen = -1;
+						if( first_cen != -1 )
+							c4 += Cnk[j][s--];
+						j--;
+					}	
+				}
+				C16to16[p][q] = 35*c8 + c4;
+			}
 		}
 	}
 

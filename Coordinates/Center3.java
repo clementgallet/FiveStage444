@@ -20,12 +20,12 @@ public final class Center3 {
 	/* Coordinates */
 	public int coord;
 	public int sym;
-	int raw_coord;
+	public int raw_coord;
 
 	/* Tables */
 	public static int[] sym2raw = new int[N_COORD];
+	public static int[] raw2sym = new int[N_RAW_COORD];
 	public static int[] hasSym;
-	public static byte[] symHelper;
 	public static int[][] move = new int[N_COORD][N_MOVES];
 
 	/* Check if solved */
@@ -98,26 +98,11 @@ public final class Center3 {
 		this.raw_coord = 35*cenbm + cenbm4of8;
 	}
 
-	/* Compute the sym coordinate from a cube */
-	public void pack (CubeState cube){
-		CubeState cube2 = new CubeState();
-		int i;
-		if( this.symHelper == null )
-			this.sym = 0;
-		else{
-			this.packRaw(cube);
-			this.sym = this.symHelper[raw_coord];
-		}
-		for (; this.sym < N_SYM; this.sym++ ){
-			cube.rightMultCenters(Symmetry.invSymIdx[sym], cube2);
-			this.packRaw( cube2 );
-			int rep = Arrays.binarySearch(this.sym2raw, raw_coord);
-			if( rep >= 0 ){
-				this.coord = rep;
-				return;
-			}
-		}
-		return;
+	/* Compute the sym coordinate from the raw coordinate */
+	public void computeSym (){
+		int symcoord = raw2sym[raw_coord];
+		this.coord = symcoord >> SYM_SHIFT;
+		this.sym = symcoord & SYM_MASK;
 	}
 
 	/* Initialisations */
@@ -131,19 +116,19 @@ public final class Center3 {
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		Center3 c = new Center3();
+
 		byte[] isRepTable = new byte[(N_RAW_COORD>>3) + 1];
-		symHelper = new byte[N_RAW_COORD];
 		hasSym = new int[N_COORD];
 		for (int u = 0; u < N_RAW_COORD; ++u) {
 			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
+			raw2sym[u] = repIdx << SYM_SHIFT;
 			c.raw_coord = u;
-			symHelper[u] = 0;
 			c.unpackRaw(cube1);
 			for (int s = 1; s < N_SYM; ++s) {
 				cube1.rightMultCenters (Symmetry.invSymIdx[s], cube2);
 				c.packRaw( cube2 );
 				isRepTable[c.raw_coord>>>3] |= 1<<(c.raw_coord&0x7);
-				symHelper[c.raw_coord] = (byte)(Symmetry.invSymIdx[s]);
+				raw2sym[c.raw_coord] = ( repIdx << SYM_SHIFT ) + Symmetry.invSymIdx[s];
 				if( c.raw_coord == u )
 					hasSym[repIdx] |= (1 << s);
 			}
@@ -161,8 +146,8 @@ public final class Center3 {
 			c.unpackRaw( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
 				cube1.rotate_sliceCENTER (Moves.stage2moves[m], cube2);
-				c.pack( cube2 );
-				move[u][m] = ( c.coord << SYM_SHIFT ) | c.sym;
+				c.packRaw( cube2 );
+				move[u][m] = raw2sym[c.raw_coord];
 			}
 		}
 	}

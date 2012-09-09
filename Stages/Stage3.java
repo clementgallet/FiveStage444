@@ -11,8 +11,8 @@ public final class Stage3 {
 	static int[] prunTableEdge;
 	static int[] prunTableCenter;
 
-	Edge3 edge;
-	Center3 center;
+	public Edge3 edge;
+	public Center3 center;
 
 	public Stage3(){
 		edge = new Edge3();
@@ -22,7 +22,8 @@ public final class Stage3 {
 	/* Pack from CubeState */
 	public void pack(CubeState cube){
 		edge.pack(cube);
-		center.pack(cube);
+		center.packRaw(cube);
+		center.computeSym();
 	}
 
 	/* Check if solved */

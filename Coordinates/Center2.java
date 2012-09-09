@@ -101,7 +101,6 @@ public final class Center2 {
 				c.packRaw( cube2, 5 );
 				isRepTable[c.raw_coord>>>3] |= 1<<(c.raw_coord&0x7);
 				raw2sym[c.raw_coord] = (short)(( repIdx << SYM_SHIFT ) + Symmetry.invSymIdx[s]);
-				//raw2sym[c.raw_coord] = (short)(( repIdx << SYM_SHIFT ) + s);
 				if( c.raw_coord == u )
 					hasSym[repIdx] |= (1 << s);
 			}

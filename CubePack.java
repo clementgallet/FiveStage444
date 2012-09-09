@@ -1,9 +1,12 @@
 package cg.fivestage444;
 
 import cg.fivestage444.Stages.Stage2;
+import cg.fivestage444.Stages.Stage3;
 
 import cg.fivestage444.Coordinates.Edge2;
 import cg.fivestage444.Coordinates.Center2;
+import cg.fivestage444.Coordinates.Edge3;
+import cg.fivestage444.Coordinates.Center3;
 import cg.fivestage444.Coordinates.Corner4;
 import java.util.Arrays;
 
@@ -242,6 +245,26 @@ public final class CubePack{
 		toEdge2( s.edge );
 		toCenter2( s.centerF, 4 );
 		toCenter2( s.centerB, 5 );
+	}
+
+	void toCenter3( Center3 c ){
+		if( centers[2] > centers[3] )
+			c.raw_coord = Util.C16to16[centers[2]][centers[3]];
+		else
+			c.raw_coord = Util.C16to16[centers[3]][centers[2]];
+		c.computeSym();
+	}
+
+	void toEdge3( Edge3 e ){
+		if( edges_loc[0] > edges_loc[3] )
+			e.coord = ( Util.C16to16[edges_loc[0]][edges_loc[3]]/35 ) << 1; // Missing the parity...
+		else
+			e.coord = ( Util.C16to16[edges_loc[3]][edges_loc[0]]/35 ) << 1; // ...
+	}
+
+	public void toStage3( Stage3 s ){
+		toEdge3( s.edge );
+		toCenter3( s.center );
 	}
 
 	public void toCorner4( Corner4 c ){
