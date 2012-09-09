@@ -44,6 +44,7 @@ public class Tools {
 	private static void prepareTables() {
 		Symmetry.init();
 		Util.init();
+		CubePack.init();
 	}
 
 	static volatile boolean inited = false;

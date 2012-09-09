@@ -33,8 +33,8 @@ public final class Search {
 	byte[] move_list_sub_stage5 = new byte[50];
 	int length1_sub, length2_sub, length3_sub, length4_sub, length5_sub;
 	boolean found_sol;
-	int r1, r2;
-	int r1_sub, r2_sub;
+	int r1;
+	int r1_sub;
 
 	static int MAX_STAGE2 = 6;
 	static int MAX_STAGE3 = 9;
@@ -132,6 +132,14 @@ public final class Search {
 		s2.pack(init_cube[1]);
 		s3.pack(init_cube[2]);
 
+		CubePack cp1 = new CubePack();
+		CubePack cp2 = new CubePack();
+		CubePack cp3 = new CubePack();
+
+		cp1.pack(init_cube[0]);
+		cp2.pack(init_cube[1]);
+		cp3.pack(init_cube[2]);
+
 		int d1 = s1.pruning();
 		int d2 = s2.pruning();
 		int d3 = s3.pruning();
@@ -141,50 +149,56 @@ public final class Search {
 		found_sol = false;
 		for (length1 = d; length1 < total_length; ++length1) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "Stage 1 - length "+length1 );
-			if ( search_stage1 (s1, length1, 0, Moves.N_STAGE_MOVES, 0 )
-			  || search_stage1 (s2, length1, 0, Moves.N_STAGE_MOVES, 1 )
-			  || search_stage1 (s3, length1, 0, Moves.N_STAGE_MOVES, 2 ))
+			if ( search_stage1 (s1, cp1, length1, 0, Moves.N_STAGE_MOVES, 0 )
+			  || search_stage1 (s2, cp2, length1, 0, Moves.N_STAGE_MOVES, 1 )
+			  || search_stage1 (s3, cp3, length1, 0, Moves.N_STAGE_MOVES, 2 ))
 				return;
 		}
 	}
 
-	public boolean search_stage1 (Stage1 s, int depth, int moves_done, int last_move, int r){
+	public boolean search_stage1 (Stage1 s, CubePack cp, int depth, int moves_done, int last_move, int r){
 		if ( s.isSolved() ){
 			if (depth == 0)
-				return init_stage2 (r);
+				return init_stage2 (r, cp);
 			else
 				return false;
 		}
 		Stage1 t = new Stage1();
+		CubePack cp2 = new CubePack();
 		long mask = Moves.moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < Stage1.N_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1L ) == 0)
 				continue;
 			s.moveTo( move, t );
 			if (t.pruning() > depth-1) continue;
+			cp.moveTo( move, cp2 );
 			move_list_stage1[moves_done] = (byte)move;
-			if (search_stage1 (t, depth - 1, moves_done + 1, move, r)) return true;
+			if (search_stage1 (t, cp2, depth - 1, moves_done + 1, move, r)) return true;
 		}
 		return false;
 	}
 
-	public boolean init_stage2 (int r){
+	public boolean init_stage2 (int r, CubePack cp){
 		if( found_sol ) return true;
 		r1 = r;
 		init_cube[r1].copyTo(c1);
 
 		c1.scramble( length1, move_list_stage1, Moves.stage2moves );
 
+		CubePack cp2 = new CubePack();
 		rotate = c1.m_cor[0] >> 3;
 		switch (rotate) {
 		case 0:
+			cp.copyTo( cp2 );
 			break;	//no whole cube rotation
 		case 1:
 			c1.rightMult ( 32 );
+			cp.moveTo( CubePack.ROTATE_RU3, cp2 );
 			rotate = 32;
 			break;
 		case 2:
 			c1.rightMult ( 16 );
+			cp.moveTo( CubePack.ROTATE_UR3, cp2 );
 			rotate = 16;
 			break;
 		default:
@@ -195,30 +209,29 @@ public final class Search {
 
 		Stage2 s1 = new Stage2();
 		s1.pack(c1);
-		int d21 = s1.pruning();
-		if( d21 >= min2 ) return false;
+		Stage2 s1p = new Stage2();
+		cp2.toStage2( s1p );
 
-		c1.copyTo (c1r);
-		c1r.leftMult  ( 8 );
-		Stage2 s2 = new Stage2();
-		s2.pack(c1r);
-		int d22 = s2.pruning();
+		//System.out.println(s1.edge.coord+" - "+s1.centerF.coord+" - "+s1.centerF.sym+" - "+s1.centerB.coord+" - "+s1.centerB.sym);
+		//System.out.println(s1p.edge.coord+" - "+s1p.centerF.coord+" - "+s1p.centerF.sym+" - "+s1p.centerB.coord+" - "+s1p.centerB.sym);
+		//System.out.println();
 
-		for (length2 = Math.min(d21, d22); length2 < min2; ++length2) {
+		int d2 = s1.pruning();
+		if( d2 >= min2 ) return false;
+
+		for (length2 = d2; length2 < min2; ++length2) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "  Stage 2 - length "+length2 );
-			if((( length2 >= d21 ) && search_stage2 (s1, length2, 0, Moves.N_STAGE_MOVES, 0 )) ||
-			   (( length2 >= d22 ) && search_stage2 (s2, length2, 0, Moves.N_STAGE_MOVES, 1 ))){
+			if( search_stage2 (s1, length2, 0, Moves.N_STAGE_MOVES ))
 				return true;
-			}
 			min2 = Math.min( MAX_STAGE2 + 1, total_length - length1 - MIN_STAGE3 - MIN_STAGE4 - MIN_STAGE5);
 		}
 		return false;
 	}
 
-	public boolean search_stage2 (Stage2 s, int depth, int moves_done, int last_move, int r ){
+	public boolean search_stage2 (Stage2 s, int depth, int moves_done, int last_move ){
 		if (depth == 0){
 			if( s.isSolved() )
-				return init_stage3 (r);
+				return init_stage3 ();
 			return false;
 		}
 
@@ -232,26 +245,16 @@ public final class Search {
 			s.moveTo( move, t );
 			if (t.pruning() > depth-1) continue;
 			move_list_stage2[moves_done] = (byte)move;
-			if (search_stage2 (t, depth - 1, moves_done + 1, move, r)) return true;
+			if (search_stage2 (t, depth - 1, moves_done + 1, move)) return true;
 		}
 		return false;
 	}
 
-	public boolean init_stage3 (int r){
+	public boolean init_stage3 (){
 		int i;
 		if ( found_sol ) return true;
 
-		r2 = r;
-		switch (r) {
-		case 0:
-			c1.copyTo(c2);
-			break;	//no whole cube rotation
-		case 1:
-			c1r.copyTo(c2);
-			break;	//no whole cube rotation
-		default:
-			System.out.println ("Invalid cube rotation state.");
-		}
+		c1.copyTo(c2);
 
 		c2.scramble( length2, move_list_stage2, Moves.stage2moves );
 
@@ -370,7 +373,6 @@ public final class Search {
 				length4_sub = length4;
 				length5_sub = length5;
 				r1_sub = r1;
-				r2_sub = r2;
 				rotate_sub = rotate;
 				rotate2_sub = rotate2;
 				return true;

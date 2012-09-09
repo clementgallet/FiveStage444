@@ -10,9 +10,9 @@ public final class Stage2 {
 	public final static int N_MOVES = 28;
 	static int[] prunTable;
 
-	Edge2 edge;
-	Center2 centerF;
-	Center2 centerB;
+	public Edge2 edge;
+	public Center2 centerF;
+	public Center2 centerB;
 
 	public Stage2(){
 		edge = new Edge2();
@@ -23,8 +23,10 @@ public final class Stage2 {
 	/* Pack from CubeState */
 	public void pack(CubeState cube){
 		edge.pack(cube);
-		centerF.pack(cube, 4);
-		centerB.pack(cube, 5);
+		centerF.packRaw(cube, 4);
+		centerF.computeSym();
+		centerB.packRaw(cube, 5);
+		centerB.computeSym();
 	}
 
 	/* Check if solved */

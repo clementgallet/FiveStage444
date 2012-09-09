@@ -6,6 +6,7 @@ public final class Util {
 
 	public static final void init (){
 		initCnk();
+		initC24to8();
 		initParityTable();
 		initMap96();
 
@@ -28,6 +29,26 @@ public final class Util {
 			for (int j=1; j<=i; j++) {
 				Cnk[i][j] = Cnk[i-1][j] + Cnk[i-1][j-1];
 			}
+		}
+	}
+
+	static final int C24_4 = 10626;
+	public static final byte[] C24to8 = new byte[C24_4];
+
+	public static final void initC24to8() {
+		byte[] t = new byte[8];
+		for (int p=0; p<40320; p++){
+			int r = 4;
+			int c24 = 0;
+			int c8 = 0;
+			set8Perm( t, p );
+			for (int i=7; i>=0; i--){
+				if( t[i] < 4 ){
+					c24 += Cnk[i+16][r];
+					c8 += Cnk[i][r--];
+				}
+			}
+			C24to8[c24] = (byte)c8;
 		}
 	}
 

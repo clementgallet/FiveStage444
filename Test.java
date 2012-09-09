@@ -41,6 +41,7 @@ public final class Test {
 		CubeState cube2 = new CubeState();
 		CubePack cp1 = new CubePack();
 		CubePack cp2 = new CubePack();
+		CubePack cp3 = new CubePack();
 
 
 		/* Do one move on the cube and on the cubepack, and compare the two */
@@ -49,11 +50,11 @@ public final class Test {
 
 		int move = gen.nextInt(Moves.N_STAGE_MOVES);
 		cube1.do_move(Moves.stage2moves[move]);
-		cp1.move(move);
+		cp1.moveTo(move, cp2);
 
-		cp2.pack( cube1 );
-		cp1.print();
+		cp3.pack( cube1 );
 		cp2.print();
+		cp3.print();
 	}
 
 

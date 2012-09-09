@@ -1,5 +1,9 @@
 package cg.fivestage444;
 
+import cg.fivestage444.Stages.Stage2;
+
+import cg.fivestage444.Coordinates.Edge2;
+import cg.fivestage444.Coordinates.Center2;
 import cg.fivestage444.Coordinates.Corner4;
 import java.util.Arrays;
 
@@ -43,12 +47,16 @@ public final class CubePack{
 
 	/** Tables **/
 
-	static final int[][] move_cperm = new int[Util.C8_4][Moves.N_STAGE_MOVES];
-	static final int[][] conj_cperm = new int[Util.C8_4][Symmetry.N_SYM];
-	static final int[][] move_edges = new int[10626][Moves.N_STAGE_MOVES];
-	static final int[][] conj_edges = new int[10626][Symmetry.N_SYM];
-	static final short[][] move_centers = new short[10626][Moves.N_STAGE_MOVES];
-	static final short[][] conj_centers = new short[10626][Symmetry.N_SYM];
+	static final int N_ROT = 3;
+	static final int ROTATE_U = Moves.N_STAGE_MOVES + 0;
+	static final int ROTATE_UR3 = Moves.N_STAGE_MOVES + 1;
+	static final int ROTATE_RU3 = Moves.N_STAGE_MOVES + 2;
+	static final int[] rotations = {8, 16, 32};
+
+	static final int[][] move_cperm = new int[Util.C8_4][Moves.N_STAGE_MOVES+N_ROT];
+	static final int[][] move_edges = new int[10626][Moves.N_STAGE_MOVES+N_ROT];
+	static final short[][] move_centers = new short[10626][Moves.N_STAGE_MOVES+N_ROT];
+
 
 	/** Packing and Unpacking **/
 
@@ -158,11 +166,8 @@ public final class CubePack{
 
 	static void init(){
 		init_moveCorners();
-		init_conjCorners();
 		init_moveEdges();
-		init_conjEdges();
 		init_moveCenters();
-		init_conjCenters();
 	}
 
 	static void init_moveCorners(){
@@ -173,26 +178,13 @@ public final class CubePack{
 		for (int i=0; i<Util.C8_4; i++) {
 			cp1.corner_top_loc = (byte)i;
 			cp1.unpackCorners( cube1 );
-			for (int mv=0; mv<Moves.N_STAGE_MOVES; mv++) {
-				cube1.rotate_sliceCORNER( Moves.stage2moves[mv], cube2 );
+			for (int mv=0; mv<Moves.N_STAGE_MOVES + N_ROT; mv++) {
+				if( mv >= Moves.N_STAGE_MOVES)
+					cube1.rightMultCorners( rotations[mv - Moves.N_STAGE_MOVES], cube2 );
+				else
+					cube1.rotate_sliceCORNER( Moves.stage2moves[mv], cube2 );
 				cp2.packCorners( cube2 );
 				move_cperm[i][mv] = (cp2.corner_top_loc << 10) + (cp2.corner_top_perm << 5) + cp2.corner_bottom_perm;
-			}
-		}
-	}
-
-	static void init_conjCorners(){
-		CubePack cp1 = new CubePack();
-		CubePack cp2 = new CubePack();
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
-		for (int i=0; i<Util.C8_4; i++) {
-			cp1.corner_top_loc = (byte)i;
-			cp1.unpackCorners( cube1 );
-			for (int sym=0; sym<Symmetry.N_SYM; sym++) {
-				cube1.rightMultCorners( sym, cube2 );
-				cp2.packCorners( cube2 );
-				conj_cperm[i][sym] = (cp2.corner_top_loc << 10) + (cp2.corner_top_perm << 5) + cp2.corner_bottom_perm;
 			}
 		}
 	}
@@ -205,26 +197,13 @@ public final class CubePack{
 		for (int i=0; i<10626; i++) {
 			cp1.edges_loc[2] = (short)i;
 			cp1.unpackEdges( cube1, 2 );
-			for (int mv=0; mv<Moves.N_STAGE_MOVES; mv++) {
-				cube1.rotate_sliceEDGE( Moves.stage2moves[mv], cube2 );
+			for (int mv=0; mv<Moves.N_STAGE_MOVES + N_ROT; mv++) {
+				if( mv >= Moves.N_STAGE_MOVES)
+					cube1.rightMultEdges( rotations[mv - Moves.N_STAGE_MOVES], cube2 );
+				else
+					cube1.rotate_sliceEDGE( Moves.stage2moves[mv], cube2 );
 				cp2.packEdges( cube2, 2 );
 				move_edges[i][mv] = (cp2.edges_loc[2] << 5) + cp2.edges_perm[2];
-			}
-		}
-	}
-
-	static void init_conjEdges(){
-		CubePack cp1 = new CubePack();
-		CubePack cp2 = new CubePack();
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
-		for (int i=0; i<10626; i++) {
-			cp1.edges_loc[2] = (short)i;
-			cp1.unpackEdges( cube1, 2 );
-			for (int sym=0; sym<Symmetry.N_SYM; sym++) {
-				cube1.rightMultEdges( sym, cube2 );
-				cp2.packEdges( cube2, 2 );
-				conj_edges[i][sym] = (cp2.edges_loc[2] << 5) + cp2.edges_perm[2];
 			}
 		}
 	}
@@ -237,31 +216,33 @@ public final class CubePack{
 		for (int i=0; i<10626; i++) {
 			cp1.centers[3] = (short)i;
 			cp1.unpackCenters( cube1, 3 );
-			for (int mv=0; mv<Moves.N_STAGE_MOVES; mv++) {
-				cube1.rotate_sliceCENTER( Moves.stage2moves[mv], cube2 );
+			for (int mv=0; mv<Moves.N_STAGE_MOVES + N_ROT; mv++) {
+				if( mv >= Moves.N_STAGE_MOVES)
+					cube1.rightMultCenters( rotations[mv - Moves.N_STAGE_MOVES], cube2 );
+				else
+					cube1.rotate_sliceCENTER( Moves.stage2moves[mv], cube2 );
 				cp2.packCenters( cube2, 3 );
 				move_centers[i][mv] = cp2.centers[3];
 			}
 		}
 	}
 
-	static void init_conjCenters(){
-		CubePack cp1 = new CubePack();
-		CubePack cp2 = new CubePack();
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
-		for (int i=0; i<10626; i++) {
-			cp1.centers[2] = (short)i;
-			cp1.unpackCenters( cube1, 2 );
-			for (int sym=0; sym<Symmetry.N_SYM; sym++) {
-				cube1.rightMultCenters( sym, cube2 );
-				cp2.packCenters( cube2, 2 );
-				conj_centers[i][sym] = cp2.centers[2];
-			}
-		}
+	/** Convert to Coordinates **/
+
+	void toEdge2( Edge2 e ){
+		e.coord = 6 * Util.C24to8[edges_loc[4]] + Util.perms_to_6[edges_perm[4]][edges_perm[5]];
 	}
 
-	/** Convert to Coordinates **/
+	void toCenter2( Center2 c, int c_idx ){
+		c.raw_coord = centers[c_idx];
+		c.computeSym();
+	}
+
+	public void toStage2( Stage2 s ){
+		toEdge2( s.edge );
+		toCenter2( s.centerF, 4 );
+		toCenter2( s.centerB, 5 );
+	}
 
 	public void toCorner4( Corner4 c ){
 		c.coord = 6 * corner_top_loc + Util.perms_to_6[corner_top_perm][corner_bottom_perm];
@@ -269,36 +250,29 @@ public final class CubePack{
 
 	/** Move functions **/
 
-	public final void move(int m){
-		moveCorners(m);
+	public final void moveTo(int m, CubePack cp){
+		moveCorners(m, cp);
 		for (int i=0; i<6; i++){
-			moveEdges(m, i);
-			moveCenters(m, i);
+			moveEdges(m, i, cp);
+			moveCenters(m, i, cp);
 		}
 	}
 
-	public final void moveCorners(int m){
+	public final void moveCorners(int m, CubePack cp){
 		int t = move_cperm[corner_top_loc][m];
-		corner_top_loc = (byte)(t >> 10);
-		corner_top_perm = Util.s4mul[corner_top_perm][(t >> 5) & 31];
-		corner_bottom_perm = Util.s4mul[corner_bottom_perm][t & 31];
+		cp.corner_top_loc = (byte)(t >> 10);
+		cp.corner_top_perm = Util.s4mul[corner_top_perm][(t >> 5) & 31];
+		cp.corner_bottom_perm = Util.s4mul[corner_bottom_perm][t & 31];
 	}
 
-	public final void moveEdges(int m, int e_idx){
+	public final void moveEdges(int m, int e_idx, CubePack cp){
 		int t = move_edges[this.edges_loc[e_idx]][m];
-		this.edges_loc[e_idx] = (short)(t >> 5);
-		this.edges_perm[e_idx] = Util.s4mul[this.edges_perm[e_idx]][t & 31];
+		cp.edges_loc[e_idx] = (short)(t >> 5);
+		cp.edges_perm[e_idx] = Util.s4mul[this.edges_perm[e_idx]][t & 31];
 	}
 
-	public final void moveCenters(int m, int c_idx){
-		this.centers[c_idx] = move_centers[this.centers[c_idx]][m];
-	}
-
-	public final void conjCorners(int sym){
-		int t = conj_cperm[corner_top_loc][sym] ;
-		corner_top_loc = (byte)(t >> 10);
-		corner_top_perm = Util.s4mul[corner_top_perm][(t >> 5) & 31];
-		corner_bottom_perm = Util.s4mul[corner_bottom_perm][t & 31];
+	public final void moveCenters(int m, int c_idx, CubePack cp){
+		cp.centers[c_idx] = move_centers[this.centers[c_idx]][m];
 	}
 
 	/** Debug **/
