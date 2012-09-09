@@ -12,9 +12,9 @@ public final class Stage4 {
 	public final static int N_SIZE = Edge4.N_COORD * Corner4.N_COORD * Center4.N_COORD;
 	public static int[] prunTable;
 
-	Edge4 edge;
-	Corner4 corner;
-	Center4 center;
+	public Edge4 edge;
+	public Corner4 corner;
+	public Center4 center;
 
 	public Stage4(){
 		edge = new Edge4();

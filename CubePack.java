@@ -2,12 +2,15 @@ package cg.fivestage444;
 
 import cg.fivestage444.Stages.Stage2;
 import cg.fivestage444.Stages.Stage3;
+import cg.fivestage444.Stages.Stage4;
 
 import cg.fivestage444.Coordinates.Edge2;
 import cg.fivestage444.Coordinates.Center2;
 import cg.fivestage444.Coordinates.Edge3;
 import cg.fivestage444.Coordinates.Center3;
 import cg.fivestage444.Coordinates.Corner4;
+import cg.fivestage444.Coordinates.Edge4;
+import cg.fivestage444.Coordinates.Center4;
 import java.util.Arrays;
 
 /* CubePack structure: a (almost) full representation of the cube using a set of coordinates.
@@ -270,6 +273,27 @@ public final class CubePack{
 	public void toCorner4( Corner4 c ){
 		c.coord = 6 * corner_top_loc + Util.perms_to_6[corner_top_perm][corner_bottom_perm];
 	}
+
+	public void toCenter4( Center4 c ){
+		if( centers[0] < centers[1] )
+			c.coord = centers[0];
+		else
+			c.coord = centers[1];
+	}
+
+	public void toEdge4( Edge4 e ){
+		e.coord = (( Util.perms_to_6[edges_perm[0]][edges_perm[1]]   * 6  +
+		             Util.perms_to_6[edges_perm[2]][edges_perm[3]] ) * 70 +
+		             Util.shiftC16[edges_loc[0]]                   ) * 70 +
+		             Util.shiftC16[edges_loc[1]];
+	}
+
+	public void toStage4( Stage4 s ){
+		toEdge4( s.edge );
+		toCenter4( s.center );
+		toCorner4( s.corner );
+	}
+
 
 	/** Move functions **/
 

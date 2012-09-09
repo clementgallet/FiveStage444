@@ -8,6 +8,7 @@ public final class Util {
 		initCnk();
 		initC24to8();
 		initC16to16();
+		initShiftC16();
 		initParityTable();
 		initMap96();
 
@@ -90,6 +91,26 @@ public final class Util {
 				}
 				C16to16[p][q] = 35*c8 + c4;
 			}
+		}
+	}
+
+	public static final int[] shiftC16 = new int[C16_4];
+
+	public static final void initShiftC16() {
+		for (int p=0; p<C8_4; p++){
+			int t = p;
+			int r = 4;
+			int c12 = 0;
+			int c16 = 0;
+			for (int i=7; i>=0; i--){
+				if( t >= Cnk[i][r] ){
+					t -= Cnk[i][r];
+					c12 += Cnk[i+4][r];
+					c16 += Cnk[(i<4)?i:i+8][r--];
+				}	
+			}
+			shiftC16[c12] = p;
+			shiftC16[c16] = p;
 		}
 	}
 
