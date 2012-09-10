@@ -9,6 +9,7 @@ public final class Util {
 		initC24to8();
 		initC16to16();
 		initShiftC16();
+		initC24_4to12();
 		initParityTable();
 		initMap96();
 
@@ -32,6 +33,96 @@ public final class Util {
 			}
 		}
 	}
+
+	/**
+	 * Converts an array of integers from off to off+4-1 into a corresponding number from 0 to 4!-1.
+	 * Faster version. Taken from Chen Shuang (min2phase).
+	 * @param array_in	permutation
+	 * @param offset	index of the first element where the permutation starts in the table
+	 * @return		an integer representing the permutation
+	 */
+	public static final int get4Perm (byte[] array_in, int off){
+		int idx = 0;
+		int val = 0x3210;
+		for (int i=0; i<3; i++) {
+			int v = (array_in[i+off]-off) << 2;
+			idx = (4 - i) * idx + ((val >> v) & 07);
+			val -= 0x1110 << v;
+		}
+		return idx;
+	}
+
+	/**
+	 * Converts an array of integers from off to off+8-1 into a corresponding number from 0 to 8!-1.
+	 * Faster version. Taken from Chen Shuang (min2phase).
+	 * @param array_in	permutation
+	 * @param offset	index of the first element where the permutation starts in the table
+	 * @return		an integer representing the permutation
+	 */
+	public static final int get8Perm (byte[] array_in, int off){
+		int idx = 0;
+		int val = 0x76543210;
+		for (int i=0; i<7; i++) {
+			int v = (array_in[i+off]-off) << 2;
+			idx = (8 - i) * idx + ((val >> v) & 07);
+			val -= 0x11111110 << v;
+		}
+		return idx;
+	}
+
+	/**
+	 * Converts an integer into a permutation represented as an array of integers from 0 to 3.
+	 * @param arr		the permutation coded as an array of integers
+	 * @param idx		an integer representing the permutation
+	 */
+	public static final void set4Perm (byte[] arr, int idx) {
+		int val = 0x3210;
+		for (int i=0; i<3; i++) {
+			int p = fact[3-i];
+			int v = idx / p;
+			idx -= v*p;
+			v <<= 2;
+			arr[i] = (byte) ((val >> v) & 07);
+			int m = (1 << v) - 1;
+			val = (val & m) + ((val >> 4) & ~m);
+		}
+		arr[3] = (byte)val;
+	}
+
+	/**
+	 * Converts an integer into a permutation represented as an array of integers from 0 to 7.
+	 * @param arr		the permutation coded as an array of integers
+	 * @param idx		an integer representing the permutation
+	 */
+	public static final void set8Perm (byte[] arr, int idx) {
+		int val = 0x76543210;
+		for (int i=0; i<7; i++) {
+			int p = fact[7-i];
+			int v = idx / p;
+			idx -= v*p;
+			v <<= 2;
+			arr[i] = (byte) ((val >> v) & 07);
+			int m = (1 << v) - 1;
+			val = (val & m) + ((val >> 4) & ~m);
+		}
+		arr[7] = (byte)val;
+	}
+
+        public static final void set1bit(byte[] table, int index) {
+		table[index>>>3] |= (byte)( 1 << ( index & 0x7 ));
+	}
+
+        public static final boolean get1bit(byte[] table, int index) {
+		return (( table[index>>>3] >>> ( index & 0x7 )) & 1 ) != 0;
+        }
+
+	public static final void setPrun2(int[] table, int index, int value) {
+		table[index >> 3] ^= (0x0f ^ value) << ((index & 7) << 2);
+	}
+
+        public static final int getPrun2(int[] table, int index) {
+                return (table[index >> 3] >> ((index & 7) << 2)) & 0x0f;
+        }
 
 	/* We need to be able to convert a number between 0 and C^24_4 - 1 that represents the location of four elements among 24,
 	 * who in practice are only taking place in the 8 last places, into the number coding to the location of those four elements
@@ -148,95 +239,30 @@ public final class Util {
 		}
 	}
 
-	/**
-	 * Converts an array of integers from off to off+4-1 into a corresponding number from 0 to 4!-1.
-	 * Faster version. Taken from Chen Shuang (min2phase).
-	 * @param array_in	permutation
-	 * @param offset	index of the first element where the permutation starts in the table
-	 * @return		an integer representing the permutation
-	 */
-	public static final int get4Perm (byte[] array_in, int off){
-		int idx = 0;
-		int val = 0x3210;
-		for (int i=0; i<3; i++) {
-			int v = (array_in[i+off]-off) << 2;
-			idx = (4 - i) * idx + ((val >> v) & 07);
-			val -= 0x1110 << v;
+	public static final byte[] C24_4to12 = new byte[C24_4];
+	public static final void initC24_4to12(){
+		final short squares_cen_map[] = { 0x0F, 0x33, 0x3C, 0x55, 0x5A, 0x66, 0x99, 0xA5, 0xAA, 0xC3, 0xCC, 0xF0 };
+		final byte std_to_sqs_cen[] = { 0,  3,  1,  2,  5,  6,  4,  7 };
+		//final byte sqs_to_std_cen[] = { 0,  2,  3,  1,  6,  4,  5,  7 };
+		for (int i=0; i<12; i++){
+			int x = squares_cen_map[i];
+			int r = 4;
+			int c8 = 0;
+			int c16 = 0;
+			int c24 = 0;
+			for (int j=7; j>=0; j--){
+				//if((( x >>> sqs_to_std_cen[7-j] ) & 0x1 ) != 0 ){
+				if((( x >>> std_to_sqs_cen[7-j] ) & 0x1 ) != 0 ){
+					c8 += Cnk[j][r];
+					c16 += Cnk[j+8][r];
+					c24 += Cnk[j+16][r--];
+				}
+			}
+			C24_4to12[c8] = (byte)i;
+			C24_4to12[c16] = (byte)i;
+			C24_4to12[c24] = (byte)i;
 		}
-		return idx;
 	}
-
-	/**
-	 * Converts an array of integers from off to off+8-1 into a corresponding number from 0 to 8!-1.
-	 * Faster version. Taken from Chen Shuang (min2phase).
-	 * @param array_in	permutation
-	 * @param offset	index of the first element where the permutation starts in the table
-	 * @return		an integer representing the permutation
-	 */
-	public static final int get8Perm (byte[] array_in, int off){
-		int idx = 0;
-		int val = 0x76543210;
-		for (int i=0; i<7; i++) {
-			int v = (array_in[i+off]-off) << 2;
-			idx = (8 - i) * idx + ((val >> v) & 07);
-			val -= 0x11111110 << v;
-		}
-		return idx;
-	}
-
-	/**
-	 * Converts an integer into a permutation represented as an array of integers from 0 to 3.
-	 * @param arr		the permutation coded as an array of integers
-	 * @param idx		an integer representing the permutation
-	 */
-	public static final void set4Perm (byte[] arr, int idx) {
-		int val = 0x3210;
-		for (int i=0; i<3; i++) {
-			int p = fact[3-i];
-			int v = idx / p;
-			idx -= v*p;
-			v <<= 2;
-			arr[i] = (byte) ((val >> v) & 07);
-			int m = (1 << v) - 1;
-			val = (val & m) + ((val >> 4) & ~m);
-		}
-		arr[3] = (byte)val;
-	}
-
-	/**
-	 * Converts an integer into a permutation represented as an array of integers from 0 to 7.
-	 * @param arr		the permutation coded as an array of integers
-	 * @param idx		an integer representing the permutation
-	 */
-	public static final void set8Perm (byte[] arr, int idx) {
-		int val = 0x76543210;
-		for (int i=0; i<7; i++) {
-			int p = fact[7-i];
-			int v = idx / p;
-			idx -= v*p;
-			v <<= 2;
-			arr[i] = (byte) ((val >> v) & 07);
-			int m = (1 << v) - 1;
-			val = (val & m) + ((val >> 4) & ~m);
-		}
-		arr[7] = (byte)val;
-	}
-
-        public static final void set1bit(byte[] table, int index) {
-		table[index>>>3] |= (byte)( 1 << ( index & 0x7 ));
-	}
-
-        public static final boolean get1bit(byte[] table, int index) {
-		return (( table[index>>>3] >>> ( index & 0x7 )) & 1 ) != 0;
-        }
-
-	public static final void setPrun2(int[] table, int index, int value) {
-		table[index >> 3] ^= (0x0f ^ value) << ((index & 7) << 2);
-	}
-
-        public static final int getPrun2(int[] table, int index) {
-                return (table[index >> 3] >> ((index & 7) << 2)) & 0x0f;
-        }
 
 	/*** init_parity_table ***/
 	public static final boolean[] parity_perm8_table = new boolean[40320];

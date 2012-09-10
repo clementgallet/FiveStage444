@@ -329,16 +329,16 @@ public final class Search {
 		Stage4 sp = new Stage4();
 		cp.toStage4( sp );
 
-		System.out.println(s.edge.coord+" - "+s.edge.sym+" - "+s.center.coord+" - "+s.corner.coord);
-		System.out.println(sp.edge.coord+" - "+sp.edge.sym+" - "+sp.center.coord+" - "+sp.corner.coord);
-		System.out.println();
+		//System.out.println(s.edge.coord+" - "+s.edge.sym+" - "+s.center.coord+" - "+s.corner.coord);
+		//System.out.println(sp.edge.coord+" - "+sp.edge.sym+" - "+sp.center.coord+" - "+sp.corner.coord);
+		//System.out.println();
 
 		int min4 = Math.min( MAX_STAGE4 + 1, total_length - length1 - length2 - length3 - MIN_STAGE5 );
 		int d4 = s.pruning();
 
 		for (length4 = d4; length4 < min4; ++length4) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "      Stage 4 - length "+length4 );
-			if( search_stage4 (s, length4, 0, Moves.N_STAGE_MOVES )) {
+			if( search_stage4 (s, cp, length4, 0, Moves.N_STAGE_MOVES )) {
 				return true;
 			}
 			min4 = Math.min( MAX_STAGE4 + 1, total_length - length1 - length2 - length3 - MIN_STAGE5 );
@@ -346,15 +346,16 @@ public final class Search {
 		return false;
 	}
 
-	public boolean search_stage4 (Stage4 s, int depth, int moves_done, int last_move){
+	public boolean search_stage4 (Stage4 s, CubePack cp, int depth, int moves_done, int last_move){
 		if( s.isSolved() ){
 			if (depth == 0)
-				return init_stage5 ();
+				return init_stage5 (cp);
 			else
 				return false;
 		}
 
 		Stage4 t = new Stage4();
+		CubePack cp2 = new CubePack();
 		long mask = Moves.moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < Stage4.N_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
@@ -362,13 +363,14 @@ public final class Search {
 
 			s.moveTo( move, t );
 			if (t.pruning() > depth-1) continue;
+			cp.moveTo( move, cp2 );
 			move_list_stage4[moves_done] = (byte)move;
-			if (search_stage4 (t, depth - 1, moves_done + 1, move)) return true;
+			if (search_stage4 (t, cp2, depth - 1, moves_done + 1, move)) return true;
 		}
 		return false;
 	}
 
-	public boolean init_stage5 (){
+	public boolean init_stage5 (CubePack cp){
 		int i;
 
 		c3.copyTo(c4);
@@ -376,6 +378,13 @@ public final class Search {
 
 		Stage5 s = new Stage5();
 		s.pack( c4 );
+		Stage5 sp = new Stage5();
+		cp.toStage5( sp );
+
+		//System.out.println(s.edge.coord+" - "+s.edge.sym+" - "+s.center.coord+" - "+s.corner.coord);
+		//System.out.println(sp.edge.coord+" - "+sp.edge.sym+" - "+sp.center.coord+" - "+sp.corner.coord);
+		//System.out.println();
+
 		int d5 = s.pruning();
 
 		for (length5 = d5; length5 < total_length-length4-length3-length2-length1; ++length5) {

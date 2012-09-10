@@ -333,15 +333,25 @@ public final class CubePack{
 	}
 
 	public void toEdge5( Edge5 e ){
-		e.coord = (( 4 * edges_perm[4] + edges_perm[5] / 6 ) * 96 +
-		             4 * edges_perm[2] + edges_perm[3] / 6 ) * 96 +
-		             4 * edges_perm[0] + edges_perm[1] / 6;
+		e.raw_coord = (( 4 * edges_perm[4] + edges_perm[5] / 6 ) * 96 +
+		                 4 * edges_perm[2] + edges_perm[3] / 6 ) * 96 +
+		                 4 * edges_perm[0] + edges_perm[1] / 6;
+		e.computeSym();
 	}
 
 	public void toCorner5( Corner5 c ){
 		c.coord = 4 * corner_top_perm + corner_bottom_perm / 6;
 	}
 
+	public void toCenter5( Center5 c ){
+		c.coord = ( Util.C24_4to12[centers[5]] * 12 + Util.C24_4to12[centers[3]] ) * 12 + Util.C24_4to12[centers[1]];
+	}
+
+	public void toStage5( Stage5 s ){
+		toEdge5( s.edge );
+		toCenter5( s.center );
+		toCorner5( s.corner );
+	}
 
 	/** Move functions **/
 

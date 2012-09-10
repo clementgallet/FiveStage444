@@ -18,12 +18,12 @@ public final class Edge5 {
 	/* Coordinates */
 	public int coord;
 	public int sym;
-	int raw_coord;
+	public int raw_coord;
 
 	/* Tables */
 	public static int[] sym2raw = new int[N_COORD];
+	public static int[] raw2sym = new int[N_RAW_COORD];
 	public static long[][] hasSym;
-	public static byte[] symHelper;
 	public static int[][] move = new int[N_COORD][N_MOVES];
 
 	/* Check if solved */
@@ -99,31 +99,10 @@ public final class Edge5 {
 	}
 
 	/* Compute the sym coordinate from a cube */
-	public void pack (CubeState cube){
-		CubeState cube2 = new CubeState();
-		CubeState cube3 = new CubeState();
-		int i;
-		if( this.symHelper == null )
-			this.sym = 0;
-		else{
-			this.packRaw(cube);
-			this.sym = this.symHelper[raw_coord];
-		}
-		for (; this.sym < N_SYM; this.sym++ ){
-			System.arraycopy(cube.m_edge, 0, cube2.m_edge, 0, 24);
-			cube2.leftMultEdges(sym);
-			for (int cosym=0; cosym < 4; cosym++ ){
-				cube2.rightMultEdges (Symmetry.invSymIdx[Symmetry.symIdxMultiply[sym][cosym]], cube3);
-				this.packRaw( cube3 );
-				int rep = Arrays.binarySearch(this.sym2raw, raw_coord);
-				if( rep >= 0 ){
-					this.coord = rep;
-					this.sym = ( this.sym << 2 ) | cosym;
-					return;
-				}
-			}
-		}
-		return;
+	public void computeSym (){
+		int symcoord = raw2sym[raw_coord];
+		this.coord = symcoord >> SYM_SHIFT;
+		this.sym = symcoord & SYM_MASK;
 	}
 
 	/* Initialisations */
@@ -138,22 +117,22 @@ public final class Edge5 {
 		CubeState cube2 = new CubeState();
 		Edge5 e = new Edge5();
 		byte[] isRepTable = new byte[(N_RAW_COORD>>3) + 1];
-		symHelper = new byte[N_RAW_COORD];
 		hasSym = new long[N_COORD][4];
 		for (int u = 0; u < N_RAW_COORD; ++u) {
 			if( Util.get1bit( isRepTable, u )) continue;
+			raw2sym[u] = repIdx << SYM_SHIFT;
 			e.raw_coord = u;
-			symHelper[u] = 0;
 			e.unpackRaw(cube1);
 
 			for (int s = 0; s < N_SYM; ++s) {
 				for (int cs = 0; cs < 4; ++cs) {
 					if(s==0 && cs==0) continue;
-					cube1.rightMultEdges(Symmetry.invSymIdx[Symmetry.symIdxMultiply[s][cs]], cube2);
+					//cube1.rightMultEdges(Symmetry.invSymIdx[Symmetry.symIdxMultiply[s][cs]], cube2);
+					cube1.rightMultEdges(Symmetry.symIdxMultiply[Symmetry.invSymIdx[s]][Symmetry.invSymIdx[cs]], cube2);
 					cube2.leftMultEdges(s);
 					e.packRaw( cube2 );
 					Util.set1bit( isRepTable, e.raw_coord );
-					symHelper[e.raw_coord] = (byte)(Symmetry.invSymIdx[s]);
+					raw2sym[e.raw_coord] = ( repIdx << SYM_SHIFT ) + ( Symmetry.invSymIdx[s] << 2 ) + Symmetry.invSymIdx[cs];
 					if( e.raw_coord == u )
 						hasSym[repIdx][cs] |= (0x1L << s);
 				}
@@ -171,8 +150,8 @@ public final class Edge5 {
 			e.unpackRaw( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
 				cube1.rotate_sliceEDGE (Moves.stage2moves[m], cube2);
-				e.pack( cube2 );
-				move[u][m] = ( e.coord << SYM_SHIFT ) | e.sym;
+				e.packRaw( cube2 );
+				move[u][m] = raw2sym[e.raw_coord];
 			}
 		}
 	}

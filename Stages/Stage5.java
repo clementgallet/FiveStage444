@@ -24,7 +24,8 @@ public final class Stage5 {
 
 	/* Pack from CubeState */
 	public void pack(CubeState cube){
-		edge.pack(cube);
+		edge.packRaw(cube);
+		edge.computeSym();
 		center.pack(cube);
 		corner.pack(cube);
 	}
