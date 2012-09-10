@@ -11,7 +11,6 @@ public final class Analyze {
 	static final int N_SIZE5 = Edge5.N_COORD*Corner5.N_COORD*Center5.N_COORD;
 
 	static int length4;
-	static CubeState cube = new CubeState();
 	static long unique, pos, done;
 	static byte[] move_list_stage4 = new byte[30];
 
@@ -29,7 +28,10 @@ public final class Analyze {
 		Stage4 s = new Stage4();
 		s.set( coset );
 
+		CubeState cube = new CubeState();
 		cube.init();
+		CubePack cp = new CubePack();
+		cp.pack(cube);
 		int cubeDist;
 		cubeDist = s.pruning();
 
@@ -42,7 +44,7 @@ public final class Analyze {
 			for( int idx=0; idx<N_SIZE5>>>3; idx++ )
 				allPos5[idx] |= allPos5_2[idx];
 			//if(length4==0)
-			search_stage4 (s, length4, 0, Moves.N_STAGE_MOVES);
+			search_stage4 (s, cp, length4, 0, Moves.N_STAGE_MOVES);
 			/* Copy from allPos5 to allPos5_2 */
 			for( int idx=0; idx<N_SIZE5>>>3; idx++ )
 				allPos5_2[idx] |= allPos5[idx];
@@ -50,13 +52,14 @@ public final class Analyze {
 		}
 	}
 
-	public static void search_stage4 (Stage4 s, int depth, int moves_done, int last_move){
+	public static void search_stage4 (Stage4 s, CubePack cp, int depth, int moves_done, int last_move){
 		int mov_idx, j;
 		if (depth == 0 && s.isSolved() ){
-			save_stage5 ();
+			save_stage5 (cp);
 			return;
 		}
 		Stage4 t = new Stage4();
+		CubePack cp2 = new CubePack();
 		long mask = Moves.moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < Stage4.N_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
@@ -66,20 +69,17 @@ public final class Analyze {
 			int dist4 = t.pruning();
 			if (dist4 > depth-1) continue;
 			if( ( (depth-1)!=dist4 ) && (depth+dist4<6) ) continue;
+			cp.moveTo( move, cp2 );
 			move_list_stage4[moves_done] = (byte)move;
-			search_stage4 (t, depth - 1, moves_done + 1, move);
+			search_stage4 (t, cp2, depth - 1, moves_done + 1, move);
 		}
 	}
 
-	public static void save_stage5 (){
+	public static void save_stage5 (CubePack cp){
 		int i;
 
-		CubeState c = new CubeState();
-		cube.copyTo(c);
-		c.scramble( length4, move_list_stage4, Moves.stage2moves );
-
 		Stage5 s = new Stage5();
-		s.pack( c );
+		cp.toStage5( s );
 		s.center.coord = s.center.conjugate(s.edge.sym);
 		s.corner.coord = s.corner.conjugate(s.edge.sym);
 		s.edge.sym = 0;
