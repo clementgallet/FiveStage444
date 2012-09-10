@@ -380,6 +380,25 @@ public final class CubePack{
 		cp.centers[c_idx] = move_centers[this.centers[c_idx]][m];
 	}
 
+	/** Orientation **/
+	public final int rotateStage2(){
+		if( edges_loc[5] > Util.Cnk[17][4] )
+			return 0;
+		if( edges_loc[5] > Util.Cnk[9][4] ){
+			moveTo( ROTATE_RU3, this );
+			return 32;
+		}
+		moveTo( ROTATE_UR3, this );
+		return 16;
+	}
+
+	public final int rotateStage3(){
+		if( centers[5] > Util.Cnk[17][4] )
+			return 0;
+		moveTo( ROTATE_U, this );
+		return 8;
+	}
+
 	/** Debug **/
 
 	public void print(){
