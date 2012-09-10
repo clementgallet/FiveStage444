@@ -319,11 +319,11 @@ public final class CubePack{
 	}
 
 	public void toEdge4( Edge4 e ){
-		e.coord = (( Util.perms_to_6[edges_perm[0]][edges_perm[1]]   * 6  +
+		e.raw_coord = (( Util.perms_to_6[edges_perm[0]][edges_perm[1]]   * 6  +
 		             Util.perms_to_6[edges_perm[2]][edges_perm[3]] ) * 70 +
 		             Util.shiftC16[edges_loc[0]]                   ) * 70 +
 		             Util.shiftC16[edges_loc[1]];
-		// TODO: Missing the symmetry reduction.
+		e.computeSym();
 	}
 
 	public void toStage4( Stage4 s ){
