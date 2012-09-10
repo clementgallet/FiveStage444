@@ -120,14 +120,14 @@ public final class Center3 {
 		byte[] isRepTable = new byte[(N_RAW_COORD>>3) + 1];
 		hasSym = new int[N_COORD];
 		for (int u = 0; u < N_RAW_COORD; ++u) {
-			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
+			if( Util.get1bit( isRepTable, u )) continue;
 			raw2sym[u] = repIdx << SYM_SHIFT;
 			c.raw_coord = u;
 			c.unpackRaw(cube1);
 			for (int s = 1; s < N_SYM; ++s) {
 				cube1.rightMultCenters (Symmetry.invSymIdx[s], cube2);
 				c.packRaw( cube2 );
-				isRepTable[c.raw_coord>>>3] |= 1<<(c.raw_coord&0x7);
+				Util.set1bit( isRepTable, c.raw_coord );
 				raw2sym[c.raw_coord] = ( repIdx << SYM_SHIFT ) + Symmetry.invSymIdx[s];
 				if( c.raw_coord == u )
 					hasSym[repIdx] |= (1 << s);

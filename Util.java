@@ -33,6 +33,9 @@ public final class Util {
 		}
 	}
 
+	/* We need to be able to convert a number between 0 and C^24_4 - 1 that represents the location of four elements among 24,
+	 * who in practice are only taking place in the 8 last places, into the number coding to the location of those four elements
+	 * among the 8 last places */
 	static final int C24_4 = 10626;
 	public static final byte[] C24to8 = new byte[C24_4];
 
@@ -53,42 +56,74 @@ public final class Util {
 		}
 	}
 
+	/* We need to be able to convert two numbers between 0 and C^16_4 - 1 representing the location of four elements among 16,
+	 * where the elements from both numbers are not intersecting, into a number between 0 and C^16_8 - 1 representing the location of
+	 * all eight elements among 16 and a number between 0 and C^8_4 - 1 representing how the four elements from the one of the input numbers
+	 * are disposed among 8. As we don't care of which element come from each number, we can swap the numbers so that the second number is 
+	 * always below C^15_4, which reduce some space.
+	 * We also keep track of how many inversions there are between the four elements from the first input number and those from the second input number.
+	 * Because of the swap thing from earlier, we need two arrays, the second array for when the input numbers are swapped.
+	 * Finally, we also compute the number of inversions between the eight elements coming from the two input numbers and the other eight elements.
+	 * We don't need to keep the exact number of inversion, just the parity. */
 	static final int C16_4 = 1820;
 	static final int C15_4 = 1365;
+	static final int C16_8 = 12870;
 	public static final int[][] C16to16 = new int[C16_4][C15_4];
+	public static final byte[] parityC16_4 = new byte[C16_4*C15_4/8+1];
+	public static final byte[] paritySwapC16_4 = new byte[C16_4*C15_4/8+1];
+	public static final byte[] parityC16_8 = new byte[C16_4*C15_4/8+1];
 
 	public static final void initC16to16() {
-		for (int p=0; p<C16_4; p++){
-			for (int q=0; q<C15_4; q++){
-				int tp = p;
-				int tq = q;
-				int rp = 4;
-				int rq = 4;
-				int c8 = 0;
-				int r = 8;
-				int c4 = 0;
-				int s = 4;
+		for (int i_loc8=0; i_loc8<C16_8; i_loc8++){
+			for (int i_loc4=0; i_loc4<C8_4/2; i_loc4++){
+				int loc8 = i_loc8;
+				int loc4 = i_loc4;
+				int r8 = 8;
+				int r4 = 4;
+
+				int loc4a = 0;
+				int loc4b = 0;
+
 				int j = 7;
-				int first_cen = 0;
+
+				int inva = 0;
+				int invb = 0;
+				int inv = 0;
+
 				for (int i=15; i>=0; i--){
-					if( tp >= Cnk[i][rp] ){
-						tp -= Cnk[i][rp--];
-						c8 += Cnk[i][r--];
-						if( first_cen == 0 ) first_cen = 1;
-						if( first_cen != 1 )
-							c4 += Cnk[j][s--];
+					if( loc8 >= Cnk[i][r8] ){
+						loc8 -= Cnk[i][r8];
+						
+						if( loc4 >= Cnk[j][r4] ){
+							loc4 -= Cnk[j][r4];
+							loc4a += Cnk[i][r4];
+							inva += r8-r4;
+							r4--;
+						}
+						else{
+							loc4b += Cnk[i][r8-r4];
+							invb += r4;
+						}
+						r8--;
 						j--;
-					}	
-					if( tq >= Cnk[i][rq] ){
-						tq -= Cnk[i][rq--];
-						c8 += Cnk[i][r--];
-						if( first_cen == 0 ) first_cen = -1;
-						if( first_cen != -1 )
-							c4 += Cnk[j][s--];
-						j--;
-					}	
+					}
+					else
+						inv += r8;
 				}
-				C16to16[p][q] = 35*c8 + c4;
+				if( loc4b > loc4a ){
+					int temp = loc4a;
+					loc4a = loc4b;
+					loc4b = temp;
+				}
+
+				C16to16[loc4a][loc4b] = 35*i_loc8 + i_loc4;
+
+				if(( inva & 0x1 ) != 0 )
+					set1bit( parityC16_4, loc4a * C15_4 + loc4b );
+				if(( invb & 0x1 ) != 0 )
+					set1bit( paritySwapC16_4, loc4a * C15_4 + loc4b );
+				if(( inv & 0x1 ) != 0 )
+					set1bit( parityC16_8, loc4a * C15_4 + loc4b );
 			}
 		}
 	}
@@ -187,9 +222,17 @@ public final class Util {
 		arr[7] = (byte)val;
 	}
 
-        public static final void setPrun2(int[] table, int index, int value) {
-                table[index >> 3] ^= (0x0f ^ value) << ((index & 7) << 2);
+        public static final void set1bit(byte[] table, int index) {
+		table[index>>>3] |= (byte)( 1 << ( index & 0x7 ));
+	}
+
+        public static final boolean get1bit(byte[] table, int index) {
+		return (( table[index>>>3] >>> ( index & 0x7 )) & 1 ) != 0;
         }
+
+	public static final void setPrun2(int[] table, int index, int value) {
+		table[index >> 3] ^= (0x0f ^ value) << ((index & 7) << 2);
+	}
 
         public static final int getPrun2(int[] table, int index) {
                 return (table[index >> 3] >> ((index & 7) << 2)) & 0x0f;
@@ -301,12 +344,13 @@ public final class Util {
 	static final int C8_4 = 70;
 
 	static final byte[][] s4mul = new byte[FACT4][FACT4];
+	static final byte[] parity_s4 = new byte[FACT4/8+1];
 
 	static void init_s4(){
 		byte[] t1 = new byte[4];
 		byte[] t2 = new byte[4];
 		byte[] t3 = new byte[4];
-		for (int i = 0; i < FACT4; i++ )
+		for (int i = 0; i < FACT4; i++ ){
 			for (int j = 0; j < FACT4; j++ ){
 				set4Perm( t1, i );
 				set4Perm( t2, j );
@@ -314,5 +358,13 @@ public final class Util {
 					t3[k] = t2[t1[k]];
 				s4mul[j][i] = (byte) get4Perm( t3, 0 );
 			}
+			int parity = 0;
+			for (int a = 0; a < 3; a++ )
+				for (int b = a+1; b < 4; b++ )
+					if( t1[a] > t1[b] )
+						parity ^= 1;
+			if(( parity & 0x1 ) != 0)
+				set1bit( parity_s4, i );
+		}
 	}
 }

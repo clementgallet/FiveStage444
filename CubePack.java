@@ -1,20 +1,28 @@
 package cg.fivestage444;
 
-import cg.fivestage444.Stages.Stage2;
-import cg.fivestage444.Stages.Stage3;
-import cg.fivestage444.Stages.Stage4;
-
 import cg.fivestage444.Coordinates.Edge2;
 import cg.fivestage444.Coordinates.Center2;
+
 import cg.fivestage444.Coordinates.Edge3;
 import cg.fivestage444.Coordinates.Center3;
+
 import cg.fivestage444.Coordinates.Corner4;
 import cg.fivestage444.Coordinates.Edge4;
 import cg.fivestage444.Coordinates.Center4;
+
+import cg.fivestage444.Coordinates.Corner5;
+import cg.fivestage444.Coordinates.Edge5;
+import cg.fivestage444.Coordinates.Center5;
+
+import cg.fivestage444.Stages.Stage2;
+import cg.fivestage444.Stages.Stage3;
+import cg.fivestage444.Stages.Stage4;
+import cg.fivestage444.Stages.Stage5;
+
 import java.util.Arrays;
 
 /* CubePack structure: a (almost) full representation of the cube using a set of coordinates.
- * Some code is taken from cube20 */
+ * Some code and ideas are taken from cube20 */
 
 public final class CubePack{
 
@@ -60,8 +68,8 @@ public final class CubePack{
 	static final int[] rotations = {8, 16, 32};
 
 	static final int[][] move_cperm = new int[Util.C8_4][Moves.N_STAGE_MOVES+N_ROT];
-	static final int[][] move_edges = new int[10626][Moves.N_STAGE_MOVES+N_ROT];
-	static final short[][] move_centers = new short[10626][Moves.N_STAGE_MOVES+N_ROT];
+	static final int[][] move_edges = new int[Util.C24_4][Moves.N_STAGE_MOVES+N_ROT];
+	static final short[][] move_centers = new short[Util.C24_4][Moves.N_STAGE_MOVES+N_ROT];
 
 
 	/** Packing and Unpacking **/
@@ -211,7 +219,7 @@ public final class CubePack{
 		CubePack cp2 = new CubePack();
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		for (int i=0; i<10626; i++) {
+		for (int i=0; i<Util.C24_4; i++) {
 			cp1.edges_loc[2] = (short)i;
 			cp1.unpackEdges( cube1, 2 );
 			for (int mv=0; mv<Moves.N_STAGE_MOVES + N_ROT; mv++) {
@@ -230,7 +238,7 @@ public final class CubePack{
 		CubePack cp2 = new CubePack();
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
-		for (int i=0; i<10626; i++) {
+		for (int i=0; i<Util.C24_4; i++) {
 			cp1.centers[3] = (short)i;
 			cp1.unpackCenters( cube1, 3 );
 			for (int mv=0; mv<Moves.N_STAGE_MOVES + N_ROT; mv++) {
@@ -271,9 +279,27 @@ public final class CubePack{
 
 	void toEdge3( Edge3 e ){
 		if( edges_loc[0] > edges_loc[3] )
-			e.coord = ( Util.C16to16[edges_loc[0]][edges_loc[3]]/35 ) << 1; // Missing the parity...
+			e.coord = ( Util.C16to16[edges_loc[0]][edges_loc[3]]/35 ) << 1;
 		else
-			e.coord = ( Util.C16to16[edges_loc[3]][edges_loc[0]]/35 ) << 1; // ...
+			e.coord = ( Util.C16to16[edges_loc[3]][edges_loc[0]]/35 ) << 1;
+
+		boolean parity = false;
+		for( int i=0; i<4; i++ )
+			parity ^= Util.get1bit( Util.parity_s4, edges_perm[i] );
+		if( edges_loc[0] < edges_loc[1] ){
+			parity ^= Util.get1bit( Util.parityC16_4, edges_loc[1] * Util.C15_4 + edges_loc[0] );
+			parity ^= Util.get1bit( Util.parityC16_8, edges_loc[1] * Util.C15_4 + edges_loc[0] );
+		}
+		else {
+			parity ^= Util.get1bit( Util.paritySwapC16_4, edges_loc[0] * Util.C15_4 + edges_loc[1] );
+			parity ^= Util.get1bit( Util.parityC16_8, edges_loc[0] * Util.C15_4 + edges_loc[1] );
+		}
+		if( edges_loc[2] < edges_loc[3] )
+			parity ^= Util.get1bit( Util.parityC16_4, edges_loc[3] * Util.C15_4 + edges_loc[2] );
+		else
+			parity ^= Util.get1bit( Util.paritySwapC16_4, edges_loc[2] * Util.C15_4 + edges_loc[3] );
+
+		if( parity ) e.coord++;
 	}
 
 	public void toStage3( Stage3 s ){
@@ -297,12 +323,23 @@ public final class CubePack{
 		             Util.perms_to_6[edges_perm[2]][edges_perm[3]] ) * 70 +
 		             Util.shiftC16[edges_loc[0]]                   ) * 70 +
 		             Util.shiftC16[edges_loc[1]];
+		// TODO: Missing the symmetry reduction.
 	}
 
 	public void toStage4( Stage4 s ){
 		toEdge4( s.edge );
 		toCenter4( s.center );
 		toCorner4( s.corner );
+	}
+
+	public void toEdge5( Edge5 e ){
+		e.coord = (( 4 * edges_perm[4] + edges_perm[5] / 6 ) * 96 +
+		             4 * edges_perm[2] + edges_perm[3] / 6 ) * 96 +
+		             4 * edges_perm[0] + edges_perm[1] / 6;
+	}
+
+	public void toCorner5( Corner5 c ){
+		c.coord = 4 * corner_top_perm + corner_bottom_perm / 6;
 	}
 
 

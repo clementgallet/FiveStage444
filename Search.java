@@ -209,8 +209,8 @@ public final class Search {
 
 		Stage2 s1 = new Stage2();
 		s1.pack(c1);
-		Stage2 s1p = new Stage2();
-		cp2.toStage2( s1p );
+		//Stage2 s1p = new Stage2();
+		//cp2.toStage2( s1p );
 
 		//System.out.println(s1.edge.coord+" - "+s1.centerF.coord+" - "+s1.centerF.sym+" - "+s1.centerB.coord+" - "+s1.centerB.sym);
 		//System.out.println(s1p.edge.coord+" - "+s1p.centerF.coord+" - "+s1p.centerF.sym+" - "+s1p.centerB.coord+" - "+s1p.centerB.sym);
@@ -221,21 +221,22 @@ public final class Search {
 
 		for (length2 = d2; length2 < min2; ++length2) {
 			if( DEBUG_LEVEL >= 1 ) System.out.println( "  Stage 2 - length "+length2 );
-			if( search_stage2 (s1, length2, 0, Moves.N_STAGE_MOVES ))
+			if( search_stage2 (s1, cp2, length2, 0, Moves.N_STAGE_MOVES ))
 				return true;
 			min2 = Math.min( MAX_STAGE2 + 1, total_length - length1 - MIN_STAGE3 - MIN_STAGE4 - MIN_STAGE5);
 		}
 		return false;
 	}
 
-	public boolean search_stage2 (Stage2 s, int depth, int moves_done, int last_move ){
+	public boolean search_stage2 (Stage2 s, CubePack cp, int depth, int moves_done, int last_move ){
 		if (depth == 0){
 			if( s.isSolved() )
-				return init_stage3 ();
+				return init_stage3 (cp);
 			return false;
 		}
 
 		Stage2 t = new Stage2();
+		CubePack cp2 = new CubePack();
 		long mask = Moves.moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < Stage2.N_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
@@ -244,29 +245,41 @@ public final class Search {
 			/* Move cube1 to list2[depth] */
 			s.moveTo( move, t );
 			if (t.pruning() > depth-1) continue;
+			cp.moveTo( move, cp2 );
 			move_list_stage2[moves_done] = (byte)move;
-			if (search_stage2 (t, depth - 1, moves_done + 1, move)) return true;
+			if (search_stage2 (t, cp2, depth - 1, moves_done + 1, move)) return true;
 		}
 		return false;
 	}
 
-	public boolean init_stage3 (){
+	public boolean init_stage3 (CubePack cp){
 		int i;
 		if ( found_sol ) return true;
 
 		c1.copyTo(c2);
 
 		c2.scramble( length2, move_list_stage2, Moves.stage2moves );
+		CubePack cp2 = new CubePack();
 
 		rotate2 = rotate;
 
 		if (c2.m_cen[16] < 4) {
 			c2.rightMult ( 8 );
+			cp.moveTo( CubePack.ROTATE_U, cp2 );
 			rotate2 += 8;
 		}
+		else
+			cp.copyTo( cp2 );
 
 		Stage3 s = new Stage3();
 		s.pack( c2 );
+		Stage3 sp = new Stage3();
+		cp2.toStage3( sp );
+
+		System.out.println(s.edge.coord+" - "+s.center.coord+" - "+s.center.sym);
+		System.out.println(sp.edge.coord+" - "+sp.center.coord+" - "+sp.center.sym);
+		System.out.println();
+
 		int min3 = Math.min( MAX_STAGE3 + 1, total_length - length1 - length2 - MIN_STAGE4 - MIN_STAGE5 );
 		int d3 = s.pruning();
 

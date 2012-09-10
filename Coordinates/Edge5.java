@@ -141,7 +141,7 @@ public final class Edge5 {
 		symHelper = new byte[N_RAW_COORD];
 		hasSym = new long[N_COORD][4];
 		for (int u = 0; u < N_RAW_COORD; ++u) {
-			if(((isRepTable[u>>>3]>>(u&0x7))&1) != 0 ) continue;
+			if( Util.get1bit( isRepTable, u )) continue;
 			e.raw_coord = u;
 			symHelper[u] = 0;
 			e.unpackRaw(cube1);
@@ -152,7 +152,7 @@ public final class Edge5 {
 					cube1.rightMultEdges(Symmetry.invSymIdx[Symmetry.symIdxMultiply[s][cs]], cube2);
 					cube2.leftMultEdges(s);
 					e.packRaw( cube2 );
-					isRepTable[e.raw_coord>>>3] |= 1<<(e.raw_coord&0x7);
+					Util.set1bit( isRepTable, e.raw_coord );
 					symHelper[e.raw_coord] = (byte)(Symmetry.invSymIdx[s]);
 					if( e.raw_coord == u )
 						hasSym[repIdx][cs] |= (0x1L << s);
