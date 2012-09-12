@@ -1,11 +1,9 @@
 TODO:
 
 - Cancel moves between stages.
-- Eventually don't use the CubeState class anymore during the solve between stages, but generate all coordinates at the beginning and more move tables
-- Get rid of all the PruningTable classes, incorporate into Tables.java -> Almost done !
 - Doc the code !
 - Compute distance tables (unique and sym)
-
+- Pruning tables for stage 3 are not efficient right now, use a full pruning table (without the parity maybe, for a factor of 2)
 
 - From Kociemba
 -- Filter last move possibilities (is it efficient ?)
@@ -18,6 +16,8 @@ TODO:
 
 DONE:
 
++ Eventually don't use the CubeState class anymore during the solve between stages, but generate all coordinates at the beginning and more move tables
++ Get rid of all the PruningTable classes, incorporate into Tables.java -> Almost done !
 + Eventually get rid of all the CubeStagex classes, and use directly the coordinates
 + Check for tables integrity -> Used Arrays.deepHashCode()
 + Do not consider solutions that contain a strict prefix that is also a solution (how in practice ?) -> done
