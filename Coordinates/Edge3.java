@@ -7,10 +7,9 @@ import cg.fivestage444.Util;
 
 public final class Edge3 {
 
-	public final static int N_COORD = 12870*2;
+	public final static int N_COORD = 12870;
 	final static int N_SYM = 8;
 	final static int N_MOVES = 20;
-	private static int moveParity;
 
 	/* Coordinates */
 	public int coord;
@@ -21,12 +20,12 @@ public final class Edge3 {
 
 	/* Check if solved */
 	public boolean isSolved(){
-		return (( coord & 1 ) == 0 ) && (( coord >> 1 ) == 12375 );
+		return coord == 12375;
 	}
 
 	/* Move */
 	public void moveTo( int m, Edge3 e ){
-		e.coord = ( move[coord>>>1][m] << 1 ) | (( coord & 1 ) ^ (( moveParity >>> m ) & 1 ));
+		e.coord = move[coord][m];
 	}
 
 	/* Get the conjugated coordinate */
@@ -37,7 +36,7 @@ public final class Edge3 {
 	/* Unpack a coord to a cube */
 	public void unpack (CubeState cube)
 	{
-		int edge = coord >>> 1;
+		int edge = coord;
 		byte e0 = 0;
 		byte e1 = 4;
 		int r = 8;
@@ -66,17 +65,10 @@ public final class Edge3 {
 				this.coord += Util.Cnk[i][r--];
 			}
 		}
-		this.coord = ( this.coord << 1 ) | cube.edgeUD_parity();
 	}
 
 	/* Initialisations */
 	public static void init(){
-		/* Initialize move parity */
-		for( int i = 0; i < N_MOVES; i++){
-			int m = Moves.stage2moves[i];
-			if (((( m / 3 ) % 3 ) == 1 ) && (( m % 3 ) < 2 ))
-				moveParity |= 1 << i;
-		}
 		initMove();
 		initConj();
 	}
@@ -85,13 +77,13 @@ public final class Edge3 {
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		Edge3 e = new Edge3();
-		for (int u = 0; u < N_COORD>>>1; ++u) {
-			e.coord = u << 1;
+		for (int u = 0; u < N_COORD; ++u) {
+			e.coord = u;
 			e.unpack( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
 				cube1.rotate_sliceEDGE (Moves.stage2moves[m], cube2);
 				e.pack( cube2 );
-				move[u][m] = (short)(e.coord >>> 1);
+				move[u][m] = (short)e.coord;
 			}
 		}
 	}
@@ -100,13 +92,13 @@ public final class Edge3 {
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		Edge3 e = new Edge3();
-		for (int u = 0; u < N_COORD >>> 1; ++u) {
-			e.coord = u << 1;
+		for (int u = 0; u < N_COORD; ++u) {
+			e.coord = u;
 			e.unpack( cube1 );
 			for (int s = 0; s < N_SYM; ++s) {
 				cube1.rightMultEdges (Symmetry.invSymIdx[s], cube2);
 				e.pack( cube2 );
-				conj[u][s] = (short)(e.coord >>> 1);
+				conj[u][s] = (short)e.coord;
 			}
 		}
 	}

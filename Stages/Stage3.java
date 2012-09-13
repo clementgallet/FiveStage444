@@ -3,6 +3,7 @@ package cg.fivestage444.Stages;
 import cg.fivestage444.Coordinates.Edge3;
 import cg.fivestage444.Coordinates.Center3;
 import cg.fivestage444.CubeState;
+import cg.fivestage444.Moves;
 import cg.fivestage444.Util;
 
 public final class Stage3 {
@@ -10,35 +11,37 @@ public final class Stage3 {
 	public final static int N_MOVES = 20;
 	static int[] prunTableEdge;
 	static int[] prunTableCenter;
+	private static int moveParity;
 
 	public Edge3 edge;
 	public Center3 center;
+	public byte parity;
 
 	public Stage3(){
 		edge = new Edge3();
 		center = new Center3();
 	}
 
-	/* Pack from CubeState */
-	public void pack(CubeState cube){
-		edge.pack(cube);
-		center.packRaw(cube);
-		center.computeSym();
-	}
-
 	/* Check if solved */
 	public boolean isSolved(){
-		return edge.isSolved() && center.isSolved();
+		return ( parity == 0 ) && edge.isSolved() && center.isSolved();
 	}
 
 	/* Move */
 	public void moveTo( int m, Stage3 s ){
 		edge.moveTo( m, s.edge );
 		center.moveTo( m, s.center );
+		s.parity = (byte)( parity ^ (( moveParity >>> m ) & 1 ));
 	}
 
 	/* Init */
 	public static void init(){
+		/* Initialize move parity */
+		for( int i = 0; i < N_MOVES; i++){
+			int m = Moves.stage2moves[i];
+			if (((( m / 3 ) % 3 ) == 1 ) && (( m % 3 ) < 2 ))
+				moveParity |= 1 << i;
+		}
 		Edge3.init();
 		Center3.init();
 		initPruningTableEdge();
@@ -64,7 +67,7 @@ public final class Stage3 {
 			prunTableEdge[i] = -1;
 
 		/* Set the solved states */
-		Util.setPrun2( prunTableEdge, 12375<<1, 0 );
+		Util.setPrun2( prunTableEdge, 12375, 0 );
 		int done = 1;
 
 		int depth = 0;

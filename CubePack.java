@@ -279,10 +279,15 @@ public final class CubePack{
 
 	void toEdge3( Edge3 e ){
 		if( edges_loc[0] > edges_loc[3] )
-			e.coord = ( Util.C16to16[edges_loc[0]][edges_loc[3]]/35 ) << 1;
+			e.coord = Util.C16to16[edges_loc[0]][edges_loc[3]]/35;
 		else
-			e.coord = ( Util.C16to16[edges_loc[3]][edges_loc[0]]/35 ) << 1;
+			e.coord = Util.C16to16[edges_loc[3]][edges_loc[0]]/35;
+	}
 
+	public void toStage3( Stage3 s ){
+		toEdge3( s.edge );
+		toCenter3( s.center );
+		/* Parity. Yes, it is not simple... */
 		boolean parity = false;
 		for( int i=0; i<4; i++ )
 			parity ^= Util.get1bit( Util.parity_s4, edges_perm[i] );
@@ -298,13 +303,7 @@ public final class CubePack{
 			parity ^= Util.get1bit( Util.parityC16_4, edges_loc[3] * Util.C15_4 + edges_loc[2] );
 		else
 			parity ^= Util.get1bit( Util.paritySwapC16_4, edges_loc[2] * Util.C15_4 + edges_loc[3] );
-
-		if( parity ) e.coord++;
-	}
-
-	public void toStage3( Stage3 s ){
-		toEdge3( s.edge );
-		toCenter3( s.center );
+		s.parity = (byte)( parity ? 1 : 0 );
 	}
 
 	public void toCorner4( Corner4 c ){
