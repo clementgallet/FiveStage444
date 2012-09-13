@@ -80,11 +80,6 @@ public final class Corner4 {
 
 	/* Initialisations */
 	public static void init(){
-		initMove();
-		initConj();
-	}
-
-	public static void initMove (){
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		Corner4 c = new Corner4();
@@ -96,16 +91,6 @@ public final class Corner4 {
 				c.pack( cube2 );
 				move[u][m] = (short)(c.coord);
 			}
-		}
-	}
-
-	public static void initConj (){
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
-		Corner4 c = new Corner4();
-		for (int u = 0; u < N_COORD; ++u) {
-			c.coord = u;
-			c.unpack( cube1 );
 			for (int s = 0; s < N_SYM; ++s) {
 				cube1.conjugateCorners (s, cube2);
 				c.pack( cube2 );

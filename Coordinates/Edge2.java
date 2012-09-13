@@ -64,11 +64,6 @@ public final class Edge2 {
 
 	/* Initialisations */
 	public static void init(){
-		initMove();
-		initConj();
-	}
-
-	public static void initMove (){
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		Edge2 e = new Edge2();
@@ -80,16 +75,6 @@ public final class Edge2 {
 				e.pack( cube2 );
 				move[u][m] = (short)(e.coord);
 			}
-		}
-	}
-
-	public static void initConj (){
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
-		Edge2 e = new Edge2();
-		for (int u = 0; u < N_COORD; ++u) {
-			e.coord = u;
-			e.unpack( cube1 );
 			for (int s = 0; s < N_SYM; ++s) {
 				cube1.rightMultEdges (Symmetry.invSymIdx[s], cube2);
 				e.pack( cube2 );

@@ -85,12 +85,6 @@ public final class Corner5 {
 
 	/* Initialisations */
 	public static void init(){
-		initMove();
-		initConj();
-	}
-
-	public static void initMove (){
-
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		Corner5 c = new Corner5();
@@ -102,16 +96,6 @@ public final class Corner5 {
 				c.pack( cube2 );
 				move[u][m] = (short)(c.coord);
 			}
-		}
-	}
-
-	public static void initConj (){
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
-		Corner5 c = new Corner5();
-		for (int u = 0; u < N_COORD; ++u) {
-			c.coord = u;
-			c.unpack( cube1 );
 			for (int s = 0; s < N_SYM; ++s) {
 				for (int cs = 0; cs < 4; ++cs) {
 					cube1.rightMultCorners(Symmetry.invSymIdx[Symmetry.symIdxMultiply[s][cs]], cube2);

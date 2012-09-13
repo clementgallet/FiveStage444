@@ -22,14 +22,6 @@ public final class Stage4 {
 		center = new Center4();
 	}
 
-	/* Pack from CubeState */
-	public void pack(CubeState cube){
-		edge.packRaw(cube);
-		edge.computeSym();
-		corner.pack(cube);
-		center.pack(cube);
-	}
-
 	/* Check if solved */
 	public boolean isSolved(){
 		return edge.isSolved() && corner.isSolved() && center.isSolved();

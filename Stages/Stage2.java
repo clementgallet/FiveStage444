@@ -20,15 +20,6 @@ public final class Stage2 {
 		centerB = new Center2();
 	}
 
-	/* Pack from CubeState */
-	public void pack(CubeState cube){
-		edge.pack(cube);
-		centerF.packRaw(cube, 4);
-		centerF.computeSym();
-		centerB.packRaw(cube, 5);
-		centerB.computeSym();
-	}
-
 	/* Check if solved */
 	public boolean isSolved(){
 		return edge.isSolved()

@@ -97,12 +97,6 @@ public final class Center5 {
 		for (int i = 0; i < 12; ++i) {
 			squares_cen_revmap[squares_cen_map[i]] = (byte)i;
 		}
-		initMove();
-		initConj();
-	}
-
-	public static void initMove (){
-
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		Center5 c = new Center5();
@@ -114,16 +108,6 @@ public final class Center5 {
 				c.pack( cube2 );
 				move[u][m] = (short)(c.coord);
 			}
-		}
-	}
-
-	public static void initConj (){
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
-		Center5 c = new Center5();
-		for (int u = 0; u < N_COORD; ++u) {
-			c.coord = u;
-			c.unpack( cube1 );
 			for (int s = 0; s < N_SYM; ++s) {
 				for (int cs = 0; cs < 4; ++cs) {
 					cube1.rightMultCenters(Symmetry.invSymIdx[Symmetry.symIdxMultiply[s][cs]], cube2);

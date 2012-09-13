@@ -69,11 +69,6 @@ public final class Corner1 {
 				stage2face[s] = (byte)(( m / 9 ) * 3 + ( m % 3 ));
 		}
 
-		initMove();
-		initConj();
-	}
-
-	public static void initMove (){
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		Corner1 c = new Corner1();
@@ -87,16 +82,6 @@ public final class Corner1 {
 				c.pack( cube2 );
 				move[u][stage2face[m]] = (short)(c.coord);
 			}
-		}
-	}
-
-	public static void initConj (){
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
-		Corner1 c = new Corner1();
-		for (int u = 0; u < N_COORD; ++u) {
-			c.coord = u;
-			c.unpack( cube1 );
 			for (int s = 0; s < N_SYM; ++s) {
 				cube1.rightMultCorners (Symmetry.invSymIdx[s], cube2);
 				cube2.deMirrorCorners ();

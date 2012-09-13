@@ -35,12 +35,6 @@ public final class CubePack{
 	short[] centers = new short[6]; // Location of each center (10626).
 	short[] edges_loc = new short[6]; // Location of each group of 4 edges (10626).
 	byte[] edges_perm = new byte[6]; // Permutation of each group of 4 edges (24).
-	final static int CENTER_U = 0;
-	final static int CENTER_D = 1;
-	final static int CENTER_L = 2;
-	final static int CENTER_R = 3;
-	final static int CENTER_F = 4;
-	final static int CENTER_B = 5;
 
 	public CubePack(){
 		corner_top_loc = 0;
@@ -79,14 +73,6 @@ public final class CubePack{
 		for( int i=0; i<6; i++){
 			packCenters( cube, i );
 			packEdges( cube, i );
-		}
-	}
-
-	void unpack( CubeState cube ){
-		unpackCorners( cube );
-		for( int i=0; i<6; i++){
-			unpackCenters( cube, i );
-			unpackEdges( cube, i );
 		}
 	}
 
