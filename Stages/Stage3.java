@@ -9,8 +9,10 @@ import cg.fivestage444.Util;
 public final class Stage3 {
 
 	public final static int N_MOVES = 20;
+	public final static int N_SIZE = Edge3.N_COORD * Center3.N_COORD;
 	static byte[] prunTableEdge;
 	static byte[] prunTableCenter;
+	public static byte[] prunTable;
 	private static int moveParity;
 
 	public Edge3 edge;
@@ -44,15 +46,40 @@ public final class Stage3 {
 		}
 		Edge3.init();
 		Center3.init();
-		initPruningTableEdge();
-		initPruningTableCenter();
+		if( Util.FULL_PRUNING3 )
+			initPruningTable();
+		else{
+			initPruningTableEdge();
+			initPruningTableCenter();
+		}
 	}
 
 	/** Pruning functions **/
 
+	/* Set from an index */
+	void set( int idx ){
+		edge.coord = idx % Edge3.N_COORD;
+		center.coord = idx / Edge3.N_COORD;
+		center.sym = 0;
+	}
+
+	/* Get an index from this */
+	int get(){
+		return center.coord * Edge3.N_COORD + edge.conjugate(center.sym);
+	}
+
+	/* Rotate so that the sym is 0 */
+	void normalise(){
+		edge.coord = edge.conjugate(center.sym);
+		center.sym = 0;
+	}
+
 	/* Get pruning */
 	public int pruning(){
-		return Math.max( Util.getPrun2( prunTableEdge, edge.coord ), Util.getPrun2( prunTableCenter, center.coord ));
+		if( Util.FULL_PRUNING3 )
+			return Util.getPrun2( prunTable, this.get());
+		else
+			return Math.max( Util.getPrun2( prunTableEdge, edge.coord ), Util.getPrun2( prunTableCenter, center.coord ));
 	}
 
 	/* Init pruning table */
@@ -132,6 +159,65 @@ public final class Stage3 {
 				}
 			}
 			System.out.println(String.format("%2d%12d", depth, done));
+		}
+	}
+
+	public static void initPruningTable(){
+		if( prunTable != null ) return;
+		final int INV_DEPTH = 11;
+		Stage3 s1 = new Stage3();
+		Stage3 s2 = new Stage3();
+
+		prunTable = new byte[(N_SIZE+1)/2];
+		for (int i=0; i<(N_SIZE+1)/2; i++)
+			prunTable[i] = -1;
+
+		/* Set the solved states */
+		for( int a=0; a<Center3.SOLVED.length; a++)
+			Util.setPrun2( prunTable, Center3.SOLVED[a] * Edge3.N_COORD + 12375, 0 );
+		int done = Center3.SOLVED.length;
+
+		int depth = 0;
+		while (done < N_SIZE) {
+			boolean inv = depth > INV_DEPTH;
+			int select = inv ? 0x0f : depth;
+			int check = inv ? depth : 0x0f;
+			depth++;
+			int pos = 0;
+			int unique = 0;
+			for (int i=0; i<N_SIZE; i++) {
+				if (Util.getPrun2(prunTable, i) != select) continue;
+				s1.set(i);
+				for (int m=0; m<N_MOVES; m++) {
+					s1.moveTo(m, s2);
+					int idx = s2.get();
+					if (Util.getPrun2(prunTable, idx) != check) continue;
+					done++;
+					if (inv) {
+						Util.setPrun2(prunTable, i, depth);
+						break;
+					} else {
+						Util.setPrun2(prunTable, idx, depth);
+						int nsym = 1;
+						unique++;
+						int symS = Center3.hasSym[s2.center.coord];
+						s2.normalise();
+						for (int k=0; symS != 0; symS>>=1, k++) {
+							if ((symS & 0x1) == 0) continue;
+							s2.center.sym = k;
+							int idxx = s2.get();
+							if( idxx == idx )
+								nsym++;
+							if (Util.getPrun2(prunTable, idxx) == 0x0f) {
+								Util.setPrun2(prunTable, idxx, depth);
+								done++;
+							}
+						}
+						pos += 8/nsym;
+					}
+				}
+			}
+			System.out.println(String.format("%2d%12d%10d", depth, pos, unique));
 		}
 	}
 }

@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 public final class Util {
 
+	public static final boolean FULL_PRUNING3 = true;
+
 	public static final void init (){
 		initCnk();
 		initC24to8();
