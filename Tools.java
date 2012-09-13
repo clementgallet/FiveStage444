@@ -23,20 +23,14 @@ import java.util.Random;
 public class Tools {
 	private static final Logger l = Logger.getLogger(Tools.class.getName());
 
-	static void read(int[] arr, DataInput in) throws IOException {
-		final int length = arr.length;
-		for (int i=0; i<length; i++) {
-			arr[i] = in.readInt();
-		}
+	static void read(byte[] arr, DataInput in) throws IOException {
+		in.readFully(arr);
 	}
 
-	static void write(int[] arr, DataOutput out) throws IOException {
-		final int length = arr.length;
-		for (int i=0; i<length; i++) {
-			out.writeInt(arr[i]);
-		}
+	static void write(byte[] arr, DataOutput out) throws IOException {
+		out.write(arr);
 	}
-	
+
 	public static synchronized void init() {
 		init(true, null);
 	}
@@ -91,10 +85,10 @@ public class Tools {
 	
 	public static boolean initFrom(DataInput in) {
 		try {
-			Stage1.prunTable = new int[(Stage1.N_SIZE+7)/8];
+			Stage1.prunTable = new byte[(Stage1.N_SIZE+1)/2];
 			read(Stage1.prunTable, in);
 			Stage1.init();
-			Stage4.prunTable = new int[(Stage4.N_SIZE+7)/8];
+			Stage4.prunTable = new byte[(Stage4.N_SIZE+1)/2];
 			read(Stage4.prunTable, in);
 			Stage4.init();
 

@@ -8,7 +8,7 @@ import cg.fivestage444.Util;
 public final class Stage2 {
 
 	public final static int N_MOVES = 28;
-	static int[] prunTable;
+	static byte[] prunTable;
 
 	public Edge2 edge;
 	public Center2 centerF;
@@ -84,8 +84,8 @@ public final class Stage2 {
 		Stage2 s1 = new Stage2();
 		Stage2 s2 = new Stage2();
 
-		prunTable = new int[(N_SIZE+7)/8];
-		for (int i=0; i<(N_SIZE+7)/8; i++)
+		prunTable = new byte[(N_SIZE+1)/2];
+		for (int i=0; i<(N_SIZE+1)/2; i++)
 			prunTable[i] = -1;
 
 		/* Set the solved states */
@@ -107,42 +107,35 @@ public final class Stage2 {
 			depth++;
 			int pos = 0;
 			int unique = 0;
-			for (int i=0; i<N_SIZE;) {
-				int val = prunTable[i>>3];
-				if (!inv && val == -1) {
-					i += 8;
-					continue;
-				}
-				for (int end=Math.min(i+8, N_SIZE); i<end; i++, val>>=4) {
-					if ((val & 0xf)/*getPrun2(prunTable, i)*/ != select) continue;
-					s1.set(i);
-					for (int m=0; m<N_MOVES; m++) {
-						s1.moveTo(m, s2);
-						int idx = s2.get(true);
-						if (Util.getPrun2(prunTable, idx) != check) continue;
-						done++;
-						if (inv) {
-							Util.setPrun2(prunTable, i, depth);
-							break;
-						} else {
-							Util.setPrun2(prunTable, idx, depth);
-							int nsym = 1;
-							unique++;
-							int symS = Center2.hasSym[s2.centerF.coord];
-							s2.normalise(true);
-							for (int k=0; symS != 0; symS>>=1, k++) {
-								if ((symS & 1) == 0) continue;
-								s2.centerF.sym = k;
-								int idxx = s2.get(true);
-								if( idxx == idx )
-									nsym++;
-								if (Util.getPrun2(prunTable, idxx) == 0x0f) {
-									Util.setPrun2(prunTable, idxx, depth);
-									done++;
-								}
+			for (int i=0; i<N_SIZE; i++) {
+				if (Util.getPrun2(prunTable, i) != select) continue;
+				s1.set(i);
+				for (int m=0; m<N_MOVES; m++) {
+					s1.moveTo(m, s2);
+					int idx = s2.get(true);
+					if (Util.getPrun2(prunTable, idx) != check) continue;
+					done++;
+					if (inv) {
+						Util.setPrun2(prunTable, i, depth);
+						break;
+					} else {
+						Util.setPrun2(prunTable, idx, depth);
+						int nsym = 1;
+						unique++;
+						int symS = Center2.hasSym[s2.centerF.coord];
+						s2.normalise(true);
+						for (int k=0; symS != 0; symS>>=1, k++) {
+							if ((symS & 1) == 0) continue;
+							s2.centerF.sym = k;
+							int idxx = s2.get(true);
+							if( idxx == idx )
+								nsym++;
+							if (Util.getPrun2(prunTable, idxx) == 0x0f) {
+								Util.setPrun2(prunTable, idxx, depth);
+								done++;
 							}
-							pos += 16/nsym;
 						}
+						pos += 16/nsym;
 					}
 				}
 			}

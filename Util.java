@@ -116,12 +116,12 @@ public final class Util {
 		return (( table[index>>>3] >>> ( index & 0x7 )) & 1 ) != 0;
         }
 
-	public static final void setPrun2(int[] table, int index, int value) {
-		table[index >> 3] ^= (0x0f ^ value) << ((index & 7) << 2);
+	public static final void setPrun2(byte[] table, int index, int value) {
+		table[index >> 1] ^= (0x0f ^ value) << ((index & 1) << 2);
 	}
 
-        public static final int getPrun2(int[] table, int index) {
-                return (table[index >> 3] >> ((index & 7) << 2)) & 0x0f;
+        public static final int getPrun2(byte[] table, int index) {
+                return (table[index >> 1] >> ((index & 1) << 2)) & 0x0f;
         }
 
 	/* We need to be able to convert a number between 0 and C^24_4 - 1 that represents the location of four elements among 24,

@@ -9,8 +9,8 @@ import cg.fivestage444.Util;
 public final class Stage3 {
 
 	public final static int N_MOVES = 20;
-	static int[] prunTableEdge;
-	static int[] prunTableCenter;
+	static byte[] prunTableEdge;
+	static byte[] prunTableCenter;
 	private static int moveParity;
 
 	public Edge3 edge;
@@ -62,8 +62,8 @@ public final class Stage3 {
 		Edge3 e1 = new Edge3();
 		Edge3 e2 = new Edge3();
 
-		prunTableEdge = new int[(Edge3.N_COORD+7)/8];
-		for (int i=0; i<(Edge3.N_COORD+7)/8; i++)
+		prunTableEdge = new byte[(Edge3.N_COORD+1)/2];
+		for (int i=0; i<(Edge3.N_COORD+1)/2; i++)
 			prunTableEdge[i] = -1;
 
 		/* Set the solved states */
@@ -76,25 +76,18 @@ public final class Stage3 {
 			int select = inv ? 0x0f : depth;
 			int check = inv ? depth : 0x0f;
 			depth++;
-			for (int i=0; i<Edge3.N_COORD;) {
-				int val = prunTableEdge[i>>3];
-				if (!inv && val == -1) {
-					i += 8;
-					continue;
-				}
-				for (int end=Math.min(i+8, Edge3.N_COORD); i<end; i++, val>>=4) {
-					if ((val & 0xf)/*getPrun2(prunTable, i)*/ != select) continue;
-					e1.coord = i;
-					for (int m=0; m<N_MOVES; m++) {
-						e1.moveTo(m, e2);
-						if (Util.getPrun2(prunTableEdge, e2.coord) != check) continue;
-						done++;
-						if (inv) {
-							Util.setPrun2(prunTableEdge, i, depth);
-							break;
-						} else {
-							Util.setPrun2(prunTableEdge, e2.coord, depth);
-						}
+			for (int i=0; i<Edge3.N_COORD; i++) {
+				if (Util.getPrun2(prunTableEdge, i) != select) continue;
+				e1.coord = i;
+				for (int m=0; m<N_MOVES; m++) {
+					e1.moveTo(m, e2);
+					if (Util.getPrun2(prunTableEdge, e2.coord) != check) continue;
+					done++;
+					if (inv) {
+						Util.setPrun2(prunTableEdge, i, depth);
+						break;
+					} else {
+						Util.setPrun2(prunTableEdge, e2.coord, depth);
 					}
 				}
 			}
@@ -108,8 +101,8 @@ public final class Stage3 {
 		Center3 c1 = new Center3();
 		Center3 c2 = new Center3();
 
-		prunTableCenter = new int[(Center3.N_COORD+7)/8];
-		for (int i=0; i<(Center3.N_COORD+7)/8; i++)
+		prunTableCenter = new byte[(Center3.N_COORD+1)/2];
+		for (int i=0; i<(Center3.N_COORD+1)/2; i++)
 			prunTableCenter[i] = -1;
 
 		/* Set the solved states */
@@ -123,25 +116,18 @@ public final class Stage3 {
 			int select = inv ? 0x0f : depth;
 			int check = inv ? depth : 0x0f;
 			depth++;
-			for (int i=0; i<Center3.N_COORD;) {
-				int val = prunTableCenter[i>>3];
-				if (!inv && val == -1) {
-					i += 8;
-					continue;
-				}
-				for (int end=Math.min(i+8, Center3.N_COORD); i<end; i++, val>>=4) {
-					if ((val & 0xf)/*getPrun2(prunTable, i)*/ != select) continue;
-					c1.coord = i;
-					for (int m=0; m<N_MOVES; m++) {
-						c1.moveTo(m, c2);
-						if (Util.getPrun2(prunTableCenter, c2.coord) != check) continue;
-						done++;
-						if (inv) {
-							Util.setPrun2(prunTableCenter, i, depth);
-							break;
-						} else {
-							Util.setPrun2(prunTableCenter, c2.coord, depth);
-						}
+			for (int i=0; i<Center3.N_COORD; i++) {
+				if (Util.getPrun2(prunTableCenter, i) != select) continue;
+				c1.coord = i;
+				for (int m=0; m<N_MOVES; m++) {
+					c1.moveTo(m, c2);
+					if (Util.getPrun2(prunTableCenter, c2.coord) != check) continue;
+					done++;
+					if (inv) {
+						Util.setPrun2(prunTableCenter, i, depth);
+						break;
+					} else {
+						Util.setPrun2(prunTableCenter, c2.coord, depth);
 					}
 				}
 			}

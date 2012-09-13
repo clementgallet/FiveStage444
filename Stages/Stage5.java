@@ -9,8 +9,8 @@ import cg.fivestage444.Util;
 public final class Stage5 {
 
 	public final static int N_MOVES = 12;
-	static int[] prunTableEdgeCenter;
-	static int[] prunTableEdgeCorner;
+	static byte[] prunTableEdgeCenter;
+	static byte[] prunTableEdgeCorner;
 
 	public Edge5 edge;
 	public Center5 center;
@@ -87,8 +87,8 @@ public final class Stage5 {
 		Stage5 s1 = new Stage5();
 		Stage5 s2 = new Stage5();
 
-		prunTableEdgeCenter = new int[(N_SIZE+7)/8];
-		for (int i=0; i<(N_SIZE+7)/8; i++)
+		prunTableEdgeCenter = new byte[(N_SIZE+1)/2];
+		for (int i=0; i<(N_SIZE+1)/2; i++)
 			prunTableEdgeCenter[i] = -1;
 
 		/* Set the solved states */
@@ -103,44 +103,37 @@ public final class Stage5 {
 			depth++;
 			int pos = 0;
 			int unique = 0;
-			for (int i=0; i<N_SIZE;) {
-				int val = prunTableEdgeCenter[i>>3];
-				if (!inv && val == -1) {
-					i += 8;
-					continue;
-				}
-				for (int end=Math.min(i+8, N_SIZE); i<end; i++, val>>=4) {
-					if ((val & 0xf)/*Util.getPrun2(prunTable, i)*/ != select) continue;
-					s1.set(i, true);
-					for (int m=0; m<N_MOVES; m++) {
-						s1.moveTo(m, s2);
-						int idx = s2.get(true);
-						if (Util.getPrun2(prunTableEdgeCenter, idx) != check) continue;
-						done++;
-						if (inv) {
-							Util.setPrun2(prunTableEdgeCenter, i, depth);
-							break;
-						} else {
-							Util.setPrun2(prunTableEdgeCenter, idx, depth);
-							int nsym = 1;
-							unique++;
-							s2.normalise(true);
-							for (int j=0; j<4; j++) {
-								long symS = Edge5.hasSym[s2.edge.coord][j];
-								for (int k=0; symS != 0; symS>>=1, k++) {
-									if ((symS & 0x1L) == 0) continue;
-									s2.edge.sym = (k<<2) + j;
-									int idxx = s2.get(true);
-									if( idxx == idx )
-										nsym++;
-									if (Util.getPrun2(prunTableEdgeCenter, idxx) == 0x0f) {
-										Util.setPrun2(prunTableEdgeCenter, idxx, depth);
-										done++;
-									}
+			for (int i=0; i<N_SIZE; i++) {
+				if (Util.getPrun2(prunTableEdgeCenter, i) != select) continue;
+				s1.set(i, true);
+				for (int m=0; m<N_MOVES; m++) {
+					s1.moveTo(m, s2);
+					int idx = s2.get(true);
+					if (Util.getPrun2(prunTableEdgeCenter, idx) != check) continue;
+					done++;
+					if (inv) {
+						Util.setPrun2(prunTableEdgeCenter, i, depth);
+						break;
+					} else {
+						Util.setPrun2(prunTableEdgeCenter, idx, depth);
+						int nsym = 1;
+						unique++;
+						s2.normalise(true);
+						for (int j=0; j<4; j++) {
+							long symS = Edge5.hasSym[s2.edge.coord][j];
+							for (int k=0; symS != 0; symS>>=1, k++) {
+								if ((symS & 0x1L) == 0) continue;
+								s2.edge.sym = (k<<2) + j;
+								int idxx = s2.get(true);
+								if( idxx == idx )
+									nsym++;
+								if (Util.getPrun2(prunTableEdgeCenter, idxx) == 0x0f) {
+									Util.setPrun2(prunTableEdgeCenter, idxx, depth);
+									done++;
 								}
 							}
-							pos += 192/nsym;
 						}
+						pos += 192/nsym;
 					}
 				}
 			}
@@ -154,8 +147,8 @@ public final class Stage5 {
 		Stage5 s1 = new Stage5();
 		Stage5 s2 = new Stage5();
 
-		prunTableEdgeCorner = new int[(N_SIZE+7)/8];
-		for (int i=0; i<(N_SIZE+7)/8; i++)
+		prunTableEdgeCorner = new byte[(N_SIZE+1)/2];
+		for (int i=0; i<(N_SIZE+1)/2; i++)
 			prunTableEdgeCorner[i] = -1;
 
 		/* Set the solved states */
@@ -170,44 +163,37 @@ public final class Stage5 {
 			depth++;
 			int pos = 0;
 			int unique = 0;
-			for (int i=0; i<N_SIZE;) {
-				int val = prunTableEdgeCorner[i>>3];
-				if (!inv && val == -1) {
-					i += 8;
-					continue;
-				}
-				for (int end=Math.min(i+8, N_SIZE); i<end; i++, val>>=4) {
-					if ((val & 0xf)/*Util.getPrun2(prunTable, i)*/ != select) continue;
-					s1.set(i, false);
-					for (int m=0; m<N_MOVES; m++) {
-						s1.moveTo(m, s2);
-						int idx = s2.get(false);
-						if (Util.getPrun2(prunTableEdgeCorner, idx) != check) continue;
-						done++;
-						if (inv) {
-							Util.setPrun2(prunTableEdgeCorner, i, depth);
-							break;
-						} else {
-							Util.setPrun2(prunTableEdgeCorner, idx, depth);
-							int nsym = 1;
-							unique++;
-							s2.normalise(false);
-							for (int j=0; j<4; j++) {
-								long symS = Edge5.hasSym[s2.edge.coord][j];
-								for (int k=0; symS != 0; symS>>=1, k++) {
-									if ((symS & 0x1L) == 0) continue;
-									s2.edge.sym = (k<<2) + j;
-									int idxx = s2.get(false);
-									if( idxx == idx )
-										nsym++;
-									if (Util.getPrun2(prunTableEdgeCorner, idxx) == 0x0f) {
-										Util.setPrun2(prunTableEdgeCorner, idxx, depth);
-										done++;
-									}
+			for (int i=0; i<N_SIZE; i++) {
+				if (Util.getPrun2(prunTableEdgeCorner, i) != select) continue;
+				s1.set(i, false);
+				for (int m=0; m<N_MOVES; m++) {
+					s1.moveTo(m, s2);
+					int idx = s2.get(false);
+					if (Util.getPrun2(prunTableEdgeCorner, idx) != check) continue;
+					done++;
+					if (inv) {
+						Util.setPrun2(prunTableEdgeCorner, i, depth);
+						break;
+					} else {
+						Util.setPrun2(prunTableEdgeCorner, idx, depth);
+						int nsym = 1;
+						unique++;
+						s2.normalise(false);
+						for (int j=0; j<4; j++) {
+							long symS = Edge5.hasSym[s2.edge.coord][j];
+							for (int k=0; symS != 0; symS>>=1, k++) {
+								if ((symS & 0x1L) == 0) continue;
+								s2.edge.sym = (k<<2) + j;
+								int idxx = s2.get(false);
+								if( idxx == idx )
+									nsym++;
+								if (Util.getPrun2(prunTableEdgeCorner, idxx) == 0x0f) {
+									Util.setPrun2(prunTableEdgeCorner, idxx, depth);
+									done++;
 								}
 							}
-							pos += 192/nsym;
 						}
+						pos += 192/nsym;
 					}
 				}
 			}
