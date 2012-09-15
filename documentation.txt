@@ -6,74 +6,73 @@ Stage 1
 -------
 
 Orient the corner cubies, and put the u- and d-layer edges into those two layers. (A d-layer edge may be in u layer, and a u-layer edge may be in the d layer.)
-STM turns allowed:
+Turns allowed:
   U, U', U2, u, u', u2, D, D', D2, d, d', d2,
   L, L', L2, l, l', l2, R, R', R2, r, r', r2,
   F, F', F2, f, f', f2, B, B', B2, b, b', b2
-FTM turns allowed:
-  U, U', U2, Uw, Uw', Uw2, D, D', D2, Dw, Dw', Dw2,
-  L, L', L2, Lw, Lw', Lw2, R, R', R2, Rw, Rw', Rw2,
-  F, F', F2, Fw, Fw', Fw2, B, B', B2, Bw, Bw', Bw2
 One-time whole cube rotations allowed:
 120-degree turns (either direction) about the UFL-DBR axis.
+
+There are 3 possibilities for each corner orientation and 8 corners so 3^8 possibilities. However, when setting the orientation of 7 corners, the 8th is fixed so only 3^7 = 2,187 cases.
+For the edges, we have to record the position of 8 edges among 24 slots, so C^24_8 = 735,471 cases. This coordinate is reduced by symmetry. There are 48 symmetries, which let to only 15582 cases.
+The overall space of this stage is 2,187*15,582 = 34,077,834 which is small enough to allow using a single pruning table.
 
 Stage 2
 -------
 
 Put front and back centers onto the front and back faces into one of the twelve configurations that can be solved using only half-turn moves. Arrange u- and d-layer edges within the u- and d-layers so that they will be in one of the 96 configurations that can be solved using only half-turn moves.
-STM turns allowed:
+Turns allowed:
   U, U', U2, u, u', u2, D, D', D2, d, d', d2,
          L2, l, l', l2,        R2, r, r', r2,
          F2, f, f', f2,        B2, b, b', b2
-FTM turns allowed:
-  U, U', U2, Uw, Uw', Uw2, D, D', D2, Dw, Dw', Dw2,
-         L2, l,  l',  Lw2,        R2, r,  r',  Rw2,
-         F2, f,  f',  Fw2,        B2, b,  b',  Bw2
-Some STM turns are needed on this stage as the outer layer quarter turns are not allowed.
 One-time whole cube rotations allowed:
 90-degree turn about U-D axis.
+
+As for edges of stage 1, there are C^24_8 = 735,471 cases for storing the position of the 8 F/B centers, and we also need to keep track of which center are F and which are B, requiring another C^8_4 = 70, so a total of 735,471*70=51,482,970. This is a bit too much for a single coordinate, so we split the centers into fcenterF and centerB coordinates, each one having C^24_4 = 10626 positions. With symmetry reduction (16 symmetries), both coordinates are reduced to 716.
+For the edges, the total number of permutations is 8! = 40,320 and there are 96 configurations that are considered solved (square group), so the coordinate is 40,320/96 = 420.
 
 Stage 3
 -------
 
 Put centers for left and right faces into the left and right faces so that they are in one of the 12 configurations that can be solved using only half-turn moves. This leaves the centers for the U and D faces arbitrarily arranged in the U and D faces. Put top and bottom layer edges into positions such that the U or D facelet is facing either up or down. Also, put these edges into an even permutation.
-STM turns allowed:
+Turns allowed:
   U, U', U2,        u2, D, D', D2,        d2,
          L2,        l2,        R2,        r2,
          F2, f, f', f2,        B2, b, b', b2
-FTM turns allowed:
-  U, U', U2,        Uw2, D, D', D2,        Dw2,
-         L2,        Lw2,        R2,        Rw2,
-         F2, f, f', Fw2,        B2, b, b', Bw2
-Same comment as for stage 2.
+
+For centers, this is the same as for stage 2, except that now there are only 16 remaining slots for one center, as F and B faces are filled during stage 2. Using the same principle, the center coordinate is C^16_8 * C^8_4 = 12,870 * 70 = 900,900. Moreover, we don't need to keep track of which center is the U center and which one is the D center. This allows to cut in half the number of cases, so 450,450. Using symmetry reduction (8 in this stage), we only need to store 56,980 positions.
+For edges, we need to put half of the edges in half of the positions, so C^16_8 = 12,870 cases. The even permutation required gives a extra factor of 2.
+The total size of this stage is 56,980 * 12,870 * 2 = 1,466,665,200.
 
 Stage 4
 -------
 
 Put corners into one of the 96 configurations that can be solved using only half-turn moves. Put U and D centers into one of the 12 configurations that can be solved using only half-turn moves. Put all U- and D-layer edges into a configuration that can be solved using only half-turn moves. This consists of 96 possible configurations for the l- and r-layer edges, and 96 for the f- and b-layer edges.
-STM turns allowed:
+Turns allowed:
   U, U',U2, u2, D, D', D2, d2,
         L2, l2,        R2, r2,
         F2, f2,        B2, b2
-FTM turns allowed:
-  U, U',U2, Uw2, D, D', D2, Dw2,
-        L2, Lw2,        R2, Rw2,
-        F2, Fw2,        B2, Bw2
+
+The corner coordinate is exactly like the edge coordinate from stage 2, which gives 420 cases.
+The remaining centers are already in the right faces, so we only need to put them in the right order: C^8_4 = 70. Using the same trick as for stage 3, we only need to keep 35 cases.
+The edges are as the corners, except that there are two groups of edges so 420*420=176,400. In fact, only half of the cases happen, because of the parity condition from stage 3, so 88,200 real cases. We are doing the symmetry reduction on this coordinate (16 symmetries), which leave only 5,968 cases.
+The overall size is 420*35*5,968 = 87,729,600
 
 Stage 5
 -------
 
 Put all cubies into their solved position.
-STM turns allowed:
+Turns allowed:
   U2, u2, D2, d2,
   L2, l2, R2, r2,
   F2, f2, B2, b2
-FTM turns allowed:
-  U2, Uw2, D2, Dw2,
-  L2, Lw2, R2, Rw2,
-  F2, Fw2, B2, Bw2
 One-time whole cube rotations allowed:
 180-degree turns about U-D, F-B, L-R axes.
+
+There are 96 positions for corners.
+Edges are like 3 independent groups of corners, so 96*96*96 = 884,736 positions. We are doing a symmetry reduction, and we use a trick to get as much as 192 different symmetries, so that this coordinate has only 7,444 positions (see the appropriate section).
+For centers, each pairs of opposite centers have 12 different configurations, so 12*12*12 = 1,728 positions.
+The overall size is 96*7,444*1,728 = 1,234,870,272
 
 ==============
 Cube structure
@@ -313,35 +312,4 @@ distance    positions          unique
       ---------------   -------------
       146,767,085,568     783,001,224
 
-
-======
-Memory
-======
-
-Move tables          Positions        Moves        Size        Memory (byte)
-----------------------------------------------------------------------------
-stage 1 symedges        15,582           36           4            2,243,808
-stage 1 corners          2,187           18           2               78,732
-stage 2 symcenters         716           28           2               40,096
-stage 2 edges              420           28           2               23,520
-stage 3 symcenters      56,980           20           4            4,558,400
-stage 3 edges           12,870           20           2              514,800
-stage 4 symedges         5,968           16           4              381,952
-stage 4 corners            420           16           2               13,440
-stage 4 centers             70           16           1                1,120
-stage 5 symedges         7,444           12           4              357,312
-stage 5 corners             96           12           1                1,152
-stage 5 centers          1,728           12           2               41,472
-
-Pruning tables              Positions        Memory (byte)
-----------------------------------------------------------
-stage 1                    34,077,834            6,815,567
-stage 2 centers/edges         300,720              300,720
-stage 3 symcenters             56,980               56,980
-stage 3 edges                  25,740               25,740
-stage 4                   175,459,200           35,091,841
-stage 4 symedges/centers      417,760              417,760
-stage 4 symedges/corners    2,506,560              501,313
-stage 5 symedges/centers   12,863,232            2,572,647
-stage 5 symedges/corners      714,624              714,624
 

@@ -8,15 +8,15 @@ import cg.fivestage444.Util;
 public final class Edge3 {
 
 	public final static int N_COORD = 12870;
-	final static int N_SYM = 8;
-	final static int N_MOVES = 20;
+	private final static int N_SYM = 8;
+	private final static int N_MOVES = 20;
 
 	/* Coordinates */
 	public int coord;
 
 	/* Tables */
-	public static short[][] move = new short[N_COORD][N_MOVES];
-	public static short[][] conj = new short[N_COORD][N_SYM];
+	private static short[][] move = new short[N_COORD][N_MOVES];
+	private static short[][] conj = new short[N_COORD][N_SYM];
 
 	/* Check if solved */
 	public boolean isSolved(){
@@ -34,7 +34,7 @@ public final class Edge3 {
 	}
 
 	/* Unpack a coord to a cube */
-	public void unpack (CubeState cube)
+	private void unpack (CubeState cube)
 	{
 		int edge = coord;
 		byte e0 = 0;
@@ -57,7 +57,7 @@ public final class Edge3 {
 	}
 
 	/* Pack a cube into the coord */
-	public void pack (CubeState cube){
+	private void pack (CubeState cube){
 		this.coord = 0;
 		int r = 8;
 		for (int i=15; i>=0; i--) {

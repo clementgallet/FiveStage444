@@ -9,8 +9,8 @@ import cg.fivestage444.Util;
 public final class Stage5 {
 
 	public final static int N_MOVES = 12;
-	static byte[] prunTableEdgeCenter;
-	static byte[] prunTableEdgeCorner;
+	private static byte[] prunTableEdgeCenter;
+	private static byte[] prunTableEdgeCorner;
 
 	public Edge5 edge;
 	public Center5 center;
@@ -46,7 +46,7 @@ public final class Stage5 {
 	/** Pruning functions **/
 
 	/* Set from an index */
-	void set( int idx, boolean useCenter ){
+	private final void set( int idx, boolean useCenter ){
 		if( useCenter ){
 			center.coord = idx % Center5.N_COORD;
 			edge.coord = idx / Center5.N_COORD;
@@ -59,7 +59,7 @@ public final class Stage5 {
 	}
 
 	/* Get an index from this */
-	int get( boolean useCenter ){
+	private final int get( boolean useCenter ){
 		if( useCenter )
 			return edge.coord * Center5.N_COORD + center.conjugate(edge.sym);
 		else
@@ -67,7 +67,7 @@ public final class Stage5 {
 	}
 
 	/* Rotate so that sym is 0 */
-	void normalise( boolean useCenter ){
+	private final void normalise( boolean useCenter ){
 		if( useCenter )
 			center.coord = center.conjugate(edge.sym);
 		else

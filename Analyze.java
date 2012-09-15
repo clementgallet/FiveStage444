@@ -26,7 +26,7 @@ public final class Analyze {
 		System.out.println("Start analysing coset "+coset);
 
 		Stage4 s = new Stage4();
-		s.set( coset );
+		//s.set( coset );
 
 		CubeState cube = new CubeState();
 		cube.init();
@@ -39,7 +39,7 @@ public final class Analyze {
 		for (length4 = 0; length4 < 19; ++length4) {
 			unique = 0;
 			pos = 0;
-			move_stage5();
+			//move_stage5();
 			/* Copy from allPos5_2 to allPos5 */
 			for( int idx=0; idx<N_SIZE5>>>3; idx++ )
 				allPos5[idx] |= allPos5_2[idx];

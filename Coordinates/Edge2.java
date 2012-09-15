@@ -8,15 +8,15 @@ import cg.fivestage444.Util;
 public final class Edge2 {
 
 	public final static int N_COORD = 420;
-	final static int N_SYM = 16;
-	final static int N_MOVES = 28;
+	private final static int N_SYM = 16;
+	private final static int N_MOVES = 28;
 
 	/* Coordinates */
 	public int coord;
 
 	/* Tables */
-	public static short[][] move = new short[N_COORD][N_MOVES];
-	public static short[][] conj = new short[N_COORD][N_SYM];
+	private static short[][] move = new short[N_COORD][N_MOVES];
+	private static short[][] conj = new short[N_COORD][N_SYM];
 
 	/* Check if solved */
 	public boolean isSolved(){
@@ -34,7 +34,7 @@ public final class Edge2 {
 	}
 
 	/* Unpack a coord to a cube */
-	public void unpack (CubeState cube)
+	private void unpack (CubeState cube)
 	{
 		int i;
 		byte[] t6 = new byte[4];
@@ -57,7 +57,7 @@ public final class Edge2 {
 	}
 
 	/* Pack a cube into the coord */
-	public void pack (CubeState cube){
+	private void pack (CubeState cube){
 		int u = Util.get8Perm (cube.m_edge, 16);
 		this.coord = Util.perm_to_420[u];
 	}

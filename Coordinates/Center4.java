@@ -8,8 +8,8 @@ import cg.fivestage444.Util;
 public final class Center4 {
 
 	public final static int N_COORD = 35;
-	final static int N_SYM = 16;
-	final static int N_MOVES = 16;
+	private final static int N_SYM = 16;
+	private final static int N_MOVES = 16;
 
 	public static final int SOLVED[] = { 0, 14, 20, 23, 27, 28 };
 
@@ -17,8 +17,8 @@ public final class Center4 {
 	public int coord;
 
 	/* Tables */
-	public static short[][] move = new short[N_COORD][N_MOVES];
-	public static short[][] conj = new short[N_COORD][N_SYM];
+	private static short[][] move = new short[N_COORD][N_MOVES];
+	private static short[][] conj = new short[N_COORD][N_SYM];
 
 	/* Check if solved */
 	public boolean isSolved(){
@@ -39,7 +39,7 @@ public final class Center4 {
 	}
 
 	/* Unpack a coord to a cube */
-	public void unpack (CubeState cube)
+	private void unpack (CubeState cube)
 	{
 		int center = coord;
 		int i;
@@ -59,7 +59,7 @@ public final class Center4 {
 	}
 
 	/* Pack a cube into the coord */
-	public void pack (CubeState cube){
+	private void pack (CubeState cube){
 		int i;
 		this.coord = 0;
 		int r = 4;

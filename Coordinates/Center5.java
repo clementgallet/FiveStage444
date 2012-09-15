@@ -7,17 +7,17 @@ import cg.fivestage444.Moves;
 public final class Center5 {
 
 	public final static int N_COORD = 12*12*12;
-	final static int N_SYM = 48;
-	final static int N_MOVES = 12;
-	static final short squares_cen_map[] = { 0x0F, 0x33, 0x3C, 0x55, 0x5A, 0x66, 0x99, 0xA5, 0xAA, 0xC3, 0xCC, 0xF0 };
-	static final byte[] squares_cen_revmap = new byte[256];
+	private final static int N_SYM = 48;
+	private final static int N_MOVES = 12;
+	private static final short squares_cen_map[] = { 0x0F, 0x33, 0x3C, 0x55, 0x5A, 0x66, 0x99, 0xA5, 0xAA, 0xC3, 0xCC, 0xF0 };
+	private static final byte[] squares_cen_revmap = new byte[256];
 
 	/* Coordinates */
 	public int coord;
 
 	/* Tables */
-	public static short[][] move = new short[N_COORD][N_MOVES];
-	public static short[][] conj = new short[N_COORD][N_SYM*4];
+	private static short[][] move = new short[N_COORD][N_MOVES];
+	private static short[][] conj = new short[N_COORD][N_SYM*4];
 
 	/* Check if solved */
 	public boolean isSolved( int sym ){
@@ -35,7 +35,7 @@ public final class Center5 {
 	}
 
 	/* Unpack a coord to a cube */
-	public void unpack (CubeState cube)
+	private void unpack (CubeState cube)
 	{
 		int i;
 		byte[] old_m_cen = new byte[24];
@@ -63,7 +63,7 @@ public final class Center5 {
 	}
 
 	/* Pack a cube into the coord */
-	public void pack (CubeState cube){
+	private void pack (CubeState cube){
 		int i;
 		//We must convert between "squares"-style cubie numbering and the "standard"-style
 		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.

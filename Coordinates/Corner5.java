@@ -8,15 +8,15 @@ import cg.fivestage444.Util;
 public final class Corner5 {
 
 	public final static int N_COORD = 96;
-	final static int N_SYM = 48;
-	final static int N_MOVES = 12;
+	private final static int N_SYM = 48;
+	private final static int N_MOVES = 12;
 
 	/* Coordinates */
 	public int coord;
 
 	/* Tables */
-	public static short[][] move = new short[N_COORD][N_MOVES];
-	public static short[][] conj = new short[N_COORD][N_SYM*4];
+	private static short[][] move = new short[N_COORD][N_MOVES];
+	private static short[][] conj = new short[N_COORD][N_SYM*4];
 
 	/* Check if solved */
 	public boolean isSolved( int sym ){
@@ -34,7 +34,7 @@ public final class Corner5 {
 	}
 
 	/* Unpack a coord to a cube */
-	public void unpack (CubeState cube)
+	private void unpack (CubeState cube)
 	{
 		final int sqs_rep_to_perm[][] = {
 			{  0,  7, 16, 23 },
@@ -69,7 +69,7 @@ public final class Corner5 {
 	}
 
 	/* Pack a cube into the coord */
-	public void pack (CubeState cube){
+	private void pack (CubeState cube){
 		int i;
 		//We must convert between "squares"-style cubie numbering and the "standard"-style
 		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.

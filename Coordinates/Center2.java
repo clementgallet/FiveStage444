@@ -9,11 +9,11 @@ import java.util.Arrays;
 public final class Center2 {
 
 	public final static int N_COORD = 716;
-	final static int N_RAW_COORD = 10626;
-	final static int N_SYM = 16;
-	final static int SYM_SHIFT = 4;
-	final static int SYM_MASK = ( 1 << SYM_SHIFT ) - 1;
-	final static int N_MOVES = 28;
+	private final static int N_RAW_COORD = 10626;
+	private final static int N_SYM = 16;
+	private final static int SYM_SHIFT = 4;
+	private final static int SYM_MASK = ( 1 << SYM_SHIFT ) - 1;
+	private final static int N_MOVES = 28;
 
 	public static final int SOLVED[] = { 122, 242, 243, 245, 246, 247 };
 
@@ -23,10 +23,10 @@ public final class Center2 {
 	public int raw_coord;
 
 	/* Tables */
-	public static short[] sym2raw = new short[N_COORD];
-	public static short[] raw2sym = new short[N_RAW_COORD];
+	private static short[] sym2raw = new short[N_COORD];
+	private static short[] raw2sym = new short[N_RAW_COORD];
 	public static int[] hasSym;
-	public static int[][] move = new int[N_COORD][N_MOVES];
+	private static int[][] move = new int[N_COORD][N_MOVES];
 
 	/* Check if solved */
 	public boolean isSolved(){
@@ -44,7 +44,7 @@ public final class Center2 {
 	}
 
 	/* Unpack a raw coord to a cube */
-	public void unpackRaw (CubeState cube)
+	private void unpackRaw (CubeState cube)
 	{
 		int center = raw_coord;
 		int r = 4;
@@ -60,7 +60,7 @@ public final class Center2 {
 	}
 
 	/* Pack a cube into the raw coord */
-	public void packRaw (CubeState cube, int c){
+	private void packRaw (CubeState cube, int c){
 		this.raw_coord = 0;
 		int r = 4;
 		for (int i=23; i>=0; i--) {
@@ -83,7 +83,7 @@ public final class Center2 {
 		initMove();
 	}
 
-	public static void initSym2Raw (){
+	private static void initSym2Raw (){
 		int repIdx = 0;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
@@ -108,7 +108,7 @@ public final class Center2 {
 		}
 	}
 
-	public static void initMove (){
+	private static void initMove (){
 
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();

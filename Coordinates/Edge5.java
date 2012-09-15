@@ -9,11 +9,11 @@ import java.util.Arrays;
 public final class Edge5 {
 
 	public final static int N_COORD = 7444;
-	final static int N_RAW_COORD = 96*96*96;
-	final static int N_SYM = 48;
-	final static int SYM_SHIFT = 8;
-	final static int SYM_MASK = ( 1 << SYM_SHIFT ) - 1;
-	final static int N_MOVES = 12;
+	private final static int N_RAW_COORD = 96*96*96;
+	private final static int N_SYM = 48;
+	private final static int SYM_SHIFT = 8;
+	private final static int SYM_MASK = ( 1 << SYM_SHIFT ) - 1;
+	private final static int N_MOVES = 12;
 
 	/* Coordinates */
 	public int coord;
@@ -21,10 +21,10 @@ public final class Edge5 {
 	public int raw_coord;
 
 	/* Tables */
-	public static int[] sym2raw = new int[N_COORD];
-	public static int[] raw2sym = new int[N_RAW_COORD];
+	private static int[] sym2raw = new int[N_COORD];
+	private static int[] raw2sym = new int[N_RAW_COORD];
 	public static long[][] hasSym;
-	public static int[][] move = new int[N_COORD][N_MOVES];
+	private static int[][] move = new int[N_COORD][N_MOVES];
 
 	/* Check if solved */
 	public boolean isSolved(){
@@ -39,7 +39,7 @@ public final class Edge5 {
 	}
 
 	/* Unpack a raw coord to a cube */
-	public void unpackRaw (CubeState cube)
+	private void unpackRaw (CubeState cube)
 	{
 		final int sqs_rep_to_perm[][] = {
 			{  0,  7, 16, 23 },
@@ -91,7 +91,7 @@ public final class Edge5 {
 	}
 
 	/* Pack a cube into the raw coord */
-	public void packRaw (CubeState cube){
+	private void packRaw (CubeState cube){
 		int ep1 = Util.get4Perm (cube.m_edge, 0);
 		int ep2 = Util.get4Perm (cube.m_edge, 8);
 		int ep3 = Util.get4Perm (cube.m_edge, 16);
@@ -111,7 +111,7 @@ public final class Edge5 {
 		initMove();
 	}
 
-	public static void initSym2Raw (){
+	private static void initSym2Raw (){
 		int repIdx = 0;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
@@ -127,7 +127,6 @@ public final class Edge5 {
 			for (int s = 0; s < N_SYM; ++s) {
 				for (int cs = 0; cs < 4; ++cs) {
 					if(s==0 && cs==0) continue;
-					//cube1.rightMultEdges(Symmetry.invSymIdx[Symmetry.symIdxMultiply[s][cs]], cube2);
 					cube1.rightMultEdges(Symmetry.symIdxMultiply[Symmetry.invSymIdx[s]][Symmetry.invSymIdx[cs]], cube2);
 					cube2.leftMultEdges(s);
 					e.packRaw( cube2 );
@@ -141,7 +140,7 @@ public final class Edge5 {
 		}
 	}
 
-	public static void initMove (){
+	private static void initMove (){
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		Edge5 e = new Edge5();

@@ -8,15 +8,15 @@ import cg.fivestage444.Util;
 public final class Corner4 {
 
 	public final static int N_COORD = 420;
-	final static int N_SYM = 16;
-	final static int N_MOVES = 16;
+	private final static int N_SYM = 16;
+	private final static int N_MOVES = 16;
 
 	/* Coordinates */
 	public int coord;
 
 	/* Tables */
-	public static short[][] move = new short[N_COORD][N_MOVES];
-	public static short[][] conj = new short[N_COORD][N_SYM];
+	private static short[][] move = new short[N_COORD][N_MOVES];
+	private static short[][] conj = new short[N_COORD][N_SYM];
 
 	/* Check if solved */
 	public boolean isSolved(){
@@ -34,7 +34,7 @@ public final class Corner4 {
 	}
 
 	/* Unpack a coord to a cube */
-	public void unpack (CubeState cube)
+	private void unpack (CubeState cube)
 	{
 		int i;
 		byte[] t6 = new byte[4];
@@ -63,7 +63,7 @@ public final class Corner4 {
 	}
 
 	/* Pack a cube into the coord */
-	public void pack (CubeState cube){
+	private void pack (CubeState cube){
 		int i;
 		byte[] t6 = new byte[8];
 

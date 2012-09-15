@@ -9,11 +9,11 @@ import java.util.Arrays;
 public final class Edge1 {
 
 	public final static int N_COORD = 15582;
-	final static int N_RAW_COORD = 735471;
-	final static int N_SYM = 48;
-	final static int SYM_SHIFT = 6;
-	final static int SYM_MASK = ( 1 << SYM_SHIFT ) - 1;
-	final static int N_MOVES = 36;
+	private final static int N_RAW_COORD = 735471;
+	private final static int N_SYM = 48;
+	private final static int SYM_SHIFT = 6;
+	private final static int SYM_MASK = ( 1 << SYM_SHIFT ) - 1;
+	private final static int N_MOVES = 36;
 
 	/* Coordinates */
 	public int coord;
@@ -21,10 +21,10 @@ public final class Edge1 {
 	int raw_coord;
 
 	/* Tables */
-	public static int[] sym2raw = new int[N_COORD];
+	private static int[] sym2raw = new int[N_COORD];
 	public static long[] hasSym;
-	public static byte[] symHelper;
-	public static int[][] move = new int[N_COORD][N_MOVES];
+	private static byte[] symHelper;
+	private static int[][] move = new int[N_COORD][N_MOVES];
 
 	/* Check if solved */
 	public boolean isSolved(){
@@ -39,7 +39,7 @@ public final class Edge1 {
 	}
 
 	/* Unpack a raw coord to a cube */
-	public void unpackRaw (CubeState cube)
+	private void unpackRaw (CubeState cube)
 	{
 		int c = this.raw_coord;
 		int r = 8;
@@ -56,7 +56,7 @@ public final class Edge1 {
 	}
 
 	/* Pack a cube into the raw coord */
-	public void packRaw (CubeState cube){
+	private void packRaw (CubeState cube){
 		this.raw_coord = 0;
 		int r = 8;
 		for (int i=23; i>=0; i--) {
@@ -95,7 +95,7 @@ public final class Edge1 {
 		initMove();
 	}
 
-	public static void initSym2Raw (){
+	private static void initSym2Raw (){
 		int repIdx = 0;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
@@ -120,7 +120,7 @@ public final class Edge1 {
 		}
 	}
 
-	public static void initMove (){
+	private static void initMove (){
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
 		Edge1 e = new Edge1();

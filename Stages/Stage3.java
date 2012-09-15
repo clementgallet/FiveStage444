@@ -10,8 +10,8 @@ public final class Stage3 {
 
 	public final static int N_MOVES = 20;
 	public final static int N_SIZE = Edge3.N_COORD * Center3.N_COORD;
-	static byte[] prunTableEdge;
-	static byte[] prunTableCenter;
+	private static byte[] prunTableEdge;
+	private static byte[] prunTableCenter;
 	public static byte[] prunTable;
 	private static int moveParity;
 
@@ -57,19 +57,19 @@ public final class Stage3 {
 	/** Pruning functions **/
 
 	/* Set from an index */
-	void set( int idx ){
+	private final void set( int idx ){
 		edge.coord = idx % Edge3.N_COORD;
 		center.coord = idx / Edge3.N_COORD;
 		center.sym = 0;
 	}
 
 	/* Get an index from this */
-	int get(){
+	private final int get(){
 		return center.coord * Edge3.N_COORD + edge.conjugate(center.sym);
 	}
 
 	/* Rotate so that the sym is 0 */
-	void normalise(){
+	private final void normalise(){
 		edge.coord = edge.conjugate(center.sym);
 		center.sym = 0;
 	}

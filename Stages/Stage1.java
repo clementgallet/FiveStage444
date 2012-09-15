@@ -46,19 +46,19 @@ public final class Stage1 {
 	/** Pruning functions **/
 
 	/* Set from an index */
-	void set( int idx ){
+	private final void set( int idx ){
 		corner.coord = idx % Corner1.N_COORD;
 		edge.coord = idx / Corner1.N_COORD;
 		edge.sym = 0;
 	}
 
 	/* Get an index from this */
-	int get(){
+	private final int get(){
 		return edge.coord * Corner1.N_COORD + corner.conjugate(edge.sym);
 	}
 
 	/* Rotate so that the sym is 0 */
-	void normalise(){
+	private final void normalise(){
 		corner.coord = corner.conjugate(edge.sym);
 		edge.sym = 0;
 	}

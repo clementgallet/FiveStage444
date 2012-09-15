@@ -7,9 +7,9 @@ import cg.fivestage444.Moves;
 public final class Corner1 {
 
 	public final static int N_COORD = 2187;
-	final static int N_SYM = 48;
-	final static int N_MOVES = 36;
-	final static int N_FACE_MOVES = 18;
+	private final static int N_SYM = 48;
+	private final static int N_MOVES = 36;
+	private final static int N_FACE_MOVES = 18;
 	private static byte stage2face[] = new byte[N_MOVES];
 
 	/* Coordinates */

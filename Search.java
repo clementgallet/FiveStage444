@@ -35,11 +35,11 @@ public final class Search {
 	boolean found_sol;
 
 	static int MAX_STAGE2 = 6;
-	static int MAX_STAGE3 = 9;
-	static int MAX_STAGE4 = 12;
+	static int MAX_STAGE3 = 10;
+	static int MAX_STAGE4 = 14;
 
-	static int MIN_STAGE3 = 7;
-	static int MIN_STAGE4 = 8;
+	static int MIN_STAGE3 = 8;
+	static int MIN_STAGE4 = 7;
 	static int MIN_STAGE5 = 8;
 
 	CubeState[] init_cube = new CubeState[3];

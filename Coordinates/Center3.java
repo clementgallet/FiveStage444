@@ -9,11 +9,11 @@ import java.util.Arrays;
 public final class Center3 {
 
 	public final static int N_COORD = 56980;
-	final static int N_RAW_COORD = 450450;
-	final static int N_SYM = 8;
-	final static int SYM_SHIFT = 3;
-	final static int SYM_MASK = ( 1 << SYM_SHIFT ) - 1;
-	final static int N_MOVES = 20;
+	private final static int N_RAW_COORD = 450450;
+	private final static int N_SYM = 8;
+	private final static int SYM_SHIFT = 3;
+	private final static int SYM_MASK = ( 1 << SYM_SHIFT ) - 1;
+	private final static int N_MOVES = 20;
 
 	public static final int SOLVED[] = { 56966, 56974, 56975, 56977, 56978, 56979 };
 	
@@ -23,10 +23,10 @@ public final class Center3 {
 	public int raw_coord;
 
 	/* Tables */
-	public static int[] sym2raw = new int[N_COORD];
-	public static int[] raw2sym = new int[N_RAW_COORD];
+	private static int[] sym2raw = new int[N_COORD];
+	private static int[] raw2sym = new int[N_RAW_COORD];
 	public static int[] hasSym;
-	public static int[][] move = new int[N_COORD][N_MOVES];
+	private static int[][] move = new int[N_COORD][N_MOVES];
 
 	/* Check if solved */
 	public boolean isSolved(){
@@ -44,7 +44,7 @@ public final class Center3 {
 	}
 
 	/* Unpack a raw coord to a cube */
-	public void unpackRaw (CubeState cube)
+	private void unpackRaw (CubeState cube)
 	{
 		int cenbm = this.raw_coord/35;
 		int cenbm4of8 = this.raw_coord % 35;
@@ -77,7 +77,7 @@ public final class Center3 {
 	}
 
 	/* Pack a cube into the raw coord */
-	public void packRaw (CubeState cube){
+	private void packRaw (CubeState cube){
 		int cenbm = 0;
 		int cenbm4of8 = 0;
 		int j = 7;
@@ -111,7 +111,7 @@ public final class Center3 {
 		initMove();
 	}
 
-	public static void initSym2Raw (){
+	private static void initSym2Raw (){
 		int repIdx = 0;
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
@@ -136,7 +136,7 @@ public final class Center3 {
 		}
 	}
 
-	public static void initMove (){
+	private static void initMove (){
 
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();
