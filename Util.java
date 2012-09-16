@@ -243,9 +243,7 @@ public final class Util {
 
 	public static final byte[] C24_4to12 = new byte[C24_4];
 	public static final void initC24_4to12(){
-		final short squares_cen_map[] = { 0x0F, 0x33, 0x3C, 0x55, 0x5A, 0x66, 0x99, 0xA5, 0xAA, 0xC3, 0xCC, 0xF0 };
-		final byte std_to_sqs_cen[] = { 0,  3,  1,  2,  5,  6,  4,  7 };
-		//final byte sqs_to_std_cen[] = { 0,  2,  3,  1,  6,  4,  5,  7 };
+		final short squares_cen_map[] = { 15, 60, 85, 90, 102, 105, 150, 153, 165, 170, 195, 240 };
 		for (int i=0; i<12; i++){
 			int x = squares_cen_map[i];
 			int r = 4;
@@ -253,8 +251,7 @@ public final class Util {
 			int c16 = 0;
 			int c24 = 0;
 			for (int j=7; j>=0; j--){
-				//if((( x >>> sqs_to_std_cen[7-j] ) & 0x1 ) != 0 ){
-				if((( x >>> std_to_sqs_cen[7-j] ) & 0x1 ) != 0 ){
+				if((( x >>> (7-j) ) & 0x1 ) != 0 ){
 					c8 += Cnk[j][r];
 					c16 += Cnk[j+8][r];
 					c24 += Cnk[j+16][r--];

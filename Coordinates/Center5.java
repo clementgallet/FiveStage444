@@ -9,7 +9,7 @@ public final class Center5 {
 	public final static int N_COORD = 12*12*12;
 	private final static int N_SYM = 48;
 	private final static int N_MOVES = 12;
-	private static final short squares_cen_map[] = { 0x0F, 0x33, 0x3C, 0x55, 0x5A, 0x66, 0x99, 0xA5, 0xAA, 0xC3, 0xCC, 0xF0 };
+	private static final short squares_cen_map[] = { 15, 60, 85, 90, 102, 105, 150, 153, 165, 170, 195, 240 };
 	private static final byte[] squares_cen_revmap = new byte[256];
 
 	/* Coordinates */
@@ -37,51 +37,23 @@ public final class Center5 {
 	/* Unpack a coord to a cube */
 	private void unpack (CubeState cube)
 	{
-		int i;
-		byte[] old_m_cen = new byte[24];
-
 		int cen1 = this.coord % 12;
 		int cen2 = (this.coord/12) % 12;
 		int cen3 = this.coord/(12*12);
 		int x = (squares_cen_map[cen1] << 16) | (squares_cen_map[cen2] << 8) | squares_cen_map[cen3];
 		int b = 0x800000;
-		for (i = 0; i < 24; ++i) {
-			old_m_cen[i] = (byte) (2*(i/8) + ((x & b) == 0 ? 0 : 1));
+		for (int i = 0; i < 24; ++i) {
+			cube.m_cen[i] = (byte) (2*(i/8) + ((x & b) == 0 ? 0 : 1));
 			b >>= 1;
-		}
-
-		//We must convert between "standard"-style cubie numbering and the "square"-style
-		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
-		final byte sqs_to_std_cen[] = {
-			0,  2,  3,  1,  6,  4,  5,  7,
-			8, 10, 11,  9, 14, 12, 13, 15,
-			16, 18, 19, 17, 22, 20, 21, 23
-		};
-		for (i = 0; i < 24; ++i) {
-			cube.m_cen[sqs_to_std_cen[i]] = (byte)(sqs_to_std_cen[4*old_m_cen[i]]/4);
 		}
 	}
 
 	/* Pack a cube into the coord */
 	private void pack (CubeState cube){
-		int i;
-		//We must convert between "squares"-style cubie numbering and the "standard"-style
-		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
-
-		final byte std_to_sqs_cen[] = {
-			0,  3,  1,  2,  5,  6,  4,  7,
-			8, 11,  9, 10, 13, 14, 12, 15,
-			16, 19, 17, 18, 21, 22, 20, 23
-		};
-		byte[] new_m_cen = new byte[24];
-		for (i = 0; i < 24; ++i) {
-			new_m_cen[std_to_sqs_cen[i]] = (byte)(std_to_sqs_cen[4*cube.m_cen[i]]/4);
-		}
-
 		int x = 0;
 		int b = 0x800000;
-		for (i = 0; i < 24; ++i) {
-			if ((new_m_cen[i] & 0x1) != 0) {
+		for (int i = 0; i < 24; ++i) {
+			if ((cube.m_cen[i] & 0x1) != 0) {
 				x |= b;
 			}
 			b >>= 1;

@@ -141,25 +141,7 @@ given pair of inner slices.
             | 3      7 |
             +----------+
 
- There are 24 "center" cubies. For the squares analysis, they are numbered 0 to 23 as shown.
-             -------------
-             |           |
-             |    2  3   |
-             |    0  1   |
-             |           |
- -------------------------------------------------
- |           |           |           |           |
- |    9  8   |   16 18   |   12 13   |   22 20   |
- |   11 10   |   17 19   |   14 15   |   23 21   |
- |           |           |           |           |
- -------------------------------------------------
-             |           |
-             |    4  5   |
-             |    6  7   |
-             |           |
-             -------------
-
- For the other analyses, they are numbered 0 to 23 as shown.
+ There are 24 "center" cubies. They are numbered 0 to 23 as shown.
              -------------
              |           |
              |    3  1   |
