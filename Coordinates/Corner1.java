@@ -21,7 +21,7 @@ public final class Corner1 {
 
 	/* Check if solved */
 	public boolean isSolved(int sym){
-		return conj[coord][sym] == 1906;
+		return conj[coord][sym] == 2173;
 	}
 
 	/* Move */

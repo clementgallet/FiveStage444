@@ -77,8 +77,6 @@ public final class CubePack{
 	}
 
 	void packCorners( CubeState cube ){
-		final byte sqs_to_std[] = { 0, 2, 5, 7, 1, 3, 4, 6 };
-		final byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
 		int ctl = 0;
 		byte[] ctp = new byte[4];
 		byte[] cbp = new byte[4];
@@ -86,7 +84,7 @@ public final class CubePack{
 		int ibp = 3;
 		int r = 4;
 		for (int i=7; i>=0; i--) {
-			int perm = std_to_sqs[cube.m_cor[sqs_to_std[i]] & 0x7];
+			int perm = cube.m_cor[i] & 0x7;
 			if (( perm & 0x4 ) != 0) { // bottom layer
 				cbp[ibp--] = (byte)( perm & 0x3 );
 			} else {
@@ -100,8 +98,6 @@ public final class CubePack{
 	}
 
 	void unpackCorners( CubeState cube ){
-		final byte sqs_to_std[] = { 0, 2, 5, 7, 1, 3, 4, 6 };
-		final byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
 		int c8_4_bits = corner_top_loc;
 		int r = 4;
 		byte[] ct_perm = new byte[4];
@@ -113,9 +109,9 @@ public final class CubePack{
 		for (int i = 7; i >=0; i--)
 			if ( c8_4_bits >= Util.Cnk[i][r] ) { // top layer
 				c8_4_bits -= Util.Cnk[i][r--];
-				cube.m_cor[sqs_to_std[i]] = sqs_to_std[ct_perm[itp--]];
+				cube.m_cor[i] = ct_perm[itp--];
 			} else {
-				cube.m_cor[sqs_to_std[i]] = sqs_to_std[cb_perm[ibp--] + 4];
+				cube.m_cor[i] = (byte)( cb_perm[ibp--] + 4 );
 			}
 	}
 

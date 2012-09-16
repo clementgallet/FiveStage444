@@ -5,11 +5,16 @@ Description of the stages
 Stage 1
 -------
 
-Orient the corner cubies, and put the u- and d-layer edges into those two layers. (A d-layer edge may be in u layer, and a u-layer edge may be in the d layer.)
+Goal: 
+- Orient the corner cubies.
+- Put the u- and d-layer edges into those two layers. (A d-layer edge may be in u layer, and a u-layer edge may be in the d layer.)
+
 Turns allowed:
-  U, U', U2, u, u', u2, D, D', D2, d, d', d2,
-  L, L', L2, l, l', l2, R, R', R2, r, r', r2,
-  F, F', F2, f, f', f2, B, B', B2, b, b', b2
+
+    U, U', U2, u, u', u2, D, D', D2, d, d', d2,
+    L, L', L2, l, l', l2, R, R', R2, r, r', r2,
+    F, F', F2, f, f', f2, B, B', B2, b, b', b2
+
 One-time whole cube rotations allowed:
 120-degree turns (either direction) about the UFL-DBR axis.
 
@@ -20,11 +25,16 @@ The overall space of this stage is 2,187*15,582 = 34,077,834 which is small enou
 Stage 2
 -------
 
-Put front and back centers onto the front and back faces into one of the twelve configurations that can be solved using only half-turn moves. Arrange u- and d-layer edges within the u- and d-layers so that they will be in one of the 96 configurations that can be solved using only half-turn moves.
+Goal:
+- Put front and back centers onto the front and back faces into one of the twelve configurations that can be solved using only half-turn moves.
+- Arrange u- and d-layer edges within the u- and d-layers so that they will be in one of the 96 configurations that can be solved using only half-turn moves.
+
 Turns allowed:
-  U, U', U2, u, u', u2, D, D', D2, d, d', d2,
-         L2, l, l', l2,        R2, r, r', r2,
-         F2, f, f', f2,        B2, b, b', b2
+
+    U, U', U2, u, u', u2, D, D', D2, d, d', d2,
+           L2, l, l', l2,        R2, r, r', r2,
+           F2, f, f', f2,        B2, b, b', b2
+
 One-time whole cube rotations allowed:
 90-degree turn about U-D axis.
 
@@ -34,11 +44,15 @@ For the edges, the total number of permutations is 8! = 40,320 and there are 96 
 Stage 3
 -------
 
-Put centers for left and right faces into the left and right faces so that they are in one of the 12 configurations that can be solved using only half-turn moves. This leaves the centers for the U and D faces arbitrarily arranged in the U and D faces. Put top and bottom layer edges into positions such that the U or D facelet is facing either up or down. Also, put these edges into an even permutation.
+Goal:
+- Put centers for left and right faces into the left and right faces so that they are in one of the 12 configurations that can be solved using only half-turn moves. This leaves the centers for the U and D faces arbitrarily arranged in the U and D faces.
+- Put top and bottom layer edges into positions such that the U or D facelet is facing either up or down. Also, put these edges into an even permutation.
+
 Turns allowed:
-  U, U', U2,        u2, D, D', D2,        d2,
-         L2,        l2,        R2,        r2,
-         F2, f, f', f2,        B2, b, b', b2
+
+    U, U', U2,        u2, D, D', D2,        d2,
+           L2,        l2,        R2,        r2,
+           F2, f, f', f2,        B2, b, b', b2
 
 For centers, this is the same as for stage 2, except that now there are only 16 remaining slots for one center, as F and B faces are filled during stage 2. Using the same principle, the center coordinate is C^16_8 * C^8_4 = 12,870 * 70 = 900,900. Moreover, we don't need to keep track of which center is the U center and which one is the D center. This allows to cut in half the number of cases, so 450,450. Using symmetry reduction (8 in this stage), we only need to store 56,980 positions.
 For edges, we need to put half of the edges in half of the positions, so C^16_8 = 12,870 cases. The even permutation required gives a extra factor of 2.
@@ -47,11 +61,16 @@ The total size of this stage is 56,980 * 12,870 * 2 = 1,466,665,200.
 Stage 4
 -------
 
-Put corners into one of the 96 configurations that can be solved using only half-turn moves. Put U and D centers into one of the 12 configurations that can be solved using only half-turn moves. Put all U- and D-layer edges into a configuration that can be solved using only half-turn moves. This consists of 96 possible configurations for the l- and r-layer edges, and 96 for the f- and b-layer edges.
+Goal:
+- Put corners into one of the 96 configurations that can be solved using only half-turn moves.
+- Put U and D centers into one of the 12 configurations that can be solved using only half-turn moves.
+- Put all U- and D-layer edges into a configuration that can be solved using only half-turn moves. This consists of 96 possible configurations for the l- and r-layer edges, and 96 for the f- and b-layer edges.
+
 Turns allowed:
-  U, U',U2, u2, D, D', D2, d2,
-        L2, l2,        R2, r2,
-        F2, f2,        B2, b2
+
+    U, U',U2, u2, D, D', D2, d2,
+          L2, l2,        R2, r2,
+          F2, f2,        B2, b2
 
 The corner coordinate is exactly like the edge coordinate from stage 2, which gives 420 cases.
 The remaining centers are already in the right faces, so we only need to put them in the right order: C^8_4 = 70. Using the same trick as for stage 3, we only need to keep 35 cases.
@@ -61,13 +80,14 @@ The overall size is 420*35*5,968 = 87,729,600
 Stage 5
 -------
 
-Put all cubies into their solved position.
+Goal:
+- Put all cubies into their solved position.
+
 Turns allowed:
-  U2, u2, D2, d2,
-  L2, l2, R2, r2,
-  F2, f2, B2, b2
-One-time whole cube rotations allowed:
-180-degree turns about U-D, F-B, L-R axes.
+
+    U2, u2, D2, d2,
+    L2, l2, R2, r2,
+    F2, f2, B2, b2
 
 There are 96 positions for corners.
 Edges are like 3 independent groups of corners, so 96*96*96 = 884,736 positions. We are doing a symmetry reduction, and we use a trick to get as much as 192 different symmetries, so that this coordinate has only 7,444 positions (see the appropriate section).
@@ -78,86 +98,72 @@ The overall size is 96*7,444*1,728 = 1,234,870,272
 Cube structure
 ==============
 
- EDGE CONVENTION:
+Edges
+------
 
- There are 24 "edge" cubies, numbered 0 to 23.
- The home positions of these cubies are labeled in the diagram below.
- Each edge cubie has two exposed faces, so there are two faces labelled with
- each number.
+There are 24 "edge" cubies, numbered 0 to 23.
+The home positions of these cubies are labeled in the diagram below.
+Each edge cubie has two exposed faces, so there are two faces labelled with each number.
 
-             -------------
-             |    5  1   |
-             |12   U   10|
-             | 8       14|
-             |    0  4   |
- -------------------------------------------------
- |   12  8   |    0  4   |   14 10   |    1  5   |
- |22   L   16|16   F   21|21   R   19|19   B   22|
- |18       20|20       17|17       23|23       18|
- |    9 13   |    6  2   |   11 15   |    7  3   |
- -------------------------------------------------
-             |    6  2   |
-             |13   D   11|
-             | 9       15|
-             |    3  7   |
-             -------------
+                -------------
+                |    5  1   |
+                |12   U   10|
+                | 8       14|
+                |    0  4   |
+    -------------------------------------------------
+    |   12  8   |    0  4   |   14 10   |    1  5   |
+    |22   L   16|16   F   21|21   R   19|19   B   22|
+    |18       20|20       17|17       23|23       18|
+    |    9 13   |    6  2   |   11 15   |    7  3   |
+    -------------------------------------------------
+                |    6  2   |
+                |13   D   11|
+                | 9       15|
+                |    3  7   |
+                -------------
 
+Corners
+-------
 
- There are 8 "corner" cubies, numbered 0 to 7.
- The home positions of these cubies are labeled in the diagram below.
- Each corner cubie has three exposed faces, so there are three faces labelled
- with each number. Asterisks mark the primary facelet position. Orientation
- will be the number of clockwise rotations the primary facelet is from the
- primary facelet position where it is located.
+There are 8 "corner" cubies, numbered 0 to 7.
+The home positions of these cubies are labeled in the diagram below.
+Each corner cubie has three exposed faces, so there are three faces labelled with each number. Asterisks mark the primary facelet position. Orientation will be the number of clockwise rotations the primary facelet is from the primary facelet position where it is located.
 
-            +----------+
-            |*3*    *2*|
-            |    U     |
-            |*0*    *1*|
- +----------+----------+----------+----------+
- | 7      0 | 0      1 | 1      2 | 2      3 |
- |     L    |    F     |    R     |    B     |
- | 7      4 | 4      5 | 5      6 | 6      7 |
- +----------+----------+----------+----------+
-            |*4*    *5*|
-            |    D     |
-            |*7*    *6*|
-            +----------+
+               +----------+
+               |*5*    *1*|
+               |    U     |
+               |*0*    *4*|
+    +----------+----------+----------+----------+
+    | 5      0 | 0      4 | 4      1 | 1      5 |
+    |     L    |    F     |    R     |    B     |
+    | 3      6 | 6      2 | 2      7 | 7      3 |
+    +----------+----------+----------+----------+
+               |*6*    *2*|
+               |    D     |
+               |*3*    *7*|
+               +----------+
 
-For squares calculation, corners are numbered as given below.
-This makes the corners look much like a set of 8 edges of a
-given pair of inner slices.
-            +----------+
-            | 5      1 |
-            |    U    |
-            | 0      4 |
- +----------+----------+----------+----------+
- | 5      0 | 0      4 | 4      1 | 1      5 |
- |     L    |    F     |    R     |    B     |
- | 3      6 | 6      2 | 2      7 | 7      3 |
- +----------+----------+----------+----------+
-            | 6      2 |
-            |    D     |
-            | 3      7 |
-            +----------+
+Centers
+-------
 
- There are 24 "center" cubies. They are numbered 0 to 23 as shown.
-             -------------
-             |           |
-             |    3  1   |
-             |    0  2   |
-             |           |
- -------------------------------------------------
- |           |           |           |           |
- |   10  8   |   16 19   |   14 12   |   21 22   |
- |    9 11   |   18 17   |   13 15   |   23 20   |
- |           |           |           |           |
- -------------------------------------------------
-             |           |
-             |    6  4   |
-             |    5  7   |
-             |           |
-             -------------
+There are 24 "center" cubies. They are numbered 0 to 23 as shown.
+
+                -------------
+                |           |
+                |    3  1   |
+                |    0  2   |
+                |           |
+    -------------------------------------------------
+    |           |           |           |           |
+    |   10  8   |   16 19   |   14 12   |   21 22   |
+    |    9 11   |   18 17   |   13 15   |   23 20   |
+    |           |           |           |           |
+    -------------------------------------------------
+                |           |
+                |    6  4   |
+                |    5  7   |
+                |           |
+                -------------
 
 
 ===============

@@ -52,35 +52,17 @@ public final class Corner5 {
 			5, 4, 3, 2, 1, 0
 		};
 		int i;
-		byte[] old_m_cor = new byte[8];
 		byte[] t = new byte[4];
-		Util.set4Perm (old_m_cor, this.coord/4);
+		Util.set4Perm (cube.m_cor, this.coord/4);
 		Util.set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[this.coord/4]][this.coord % 4]);
 		for (i = 0; i < 4; ++i) {
-			old_m_cor[i+4] = (byte)(t[i]+4);
-		}
-
-		//We must convert between "standard"-style cubie numbering and the "square"-style
-		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
-		final byte sqs_to_std_cor[] = { 0, 2, 5, 7, 1, 3, 4, 6 };
-		for (i = 0; i < 8; ++i) {
-			cube.m_cor[sqs_to_std_cor[i]] = sqs_to_std_cor[old_m_cor[i]];
+			cube.m_cor[i+4] = (byte)(t[i]+4);
 		}
 	}
 
 	/* Pack a cube into the coord */
 	private void pack (CubeState cube){
-		int i;
-		//We must convert between "squares"-style cubie numbering and the "standard"-style
-		//cubie numbering for the corner and center cubies. Edge cubies need no such translation.
-
-		final byte std_to_sqs_cor[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
-		byte[] new_m_cor = new byte[8];
-		for (i = 0; i < 8; ++i) {
-			new_m_cor[std_to_sqs_cor[i]] = std_to_sqs_cor[cube.m_cor[i]];
-		}
-
-		this.coord = 4*Util.get4Perm (new_m_cor, 0) + (new_m_cor[4] - 4);
+		this.coord = 4*Util.get4Perm (cube.m_cor, 0) + (cube.m_cor[4] - 4);
 	}
 
 	/* Initialisations */

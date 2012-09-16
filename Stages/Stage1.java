@@ -80,7 +80,7 @@ public final class Stage1 {
 			prunTable[i] = -1;
 
 		/* Set the solved states */
-		Util.setPrun2( prunTable, 1906, 0 );
+		Util.setPrun2( prunTable, 2173, 0 );
 		int done = 1;
 
 		int depth = 0;

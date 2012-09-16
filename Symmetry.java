@@ -22,7 +22,7 @@ public final class Symmetry {
 	static void initSymTables (){
 
 		byte[] symRLEdges = {4, 5, 6, 7, 0, 1, 2, 3, 14, 15, 12, 13, 10, 11, 8, 9, 21, 20, 23, 22, 17, 16, 19, 18};
-		byte[] symRLCorners = {1, 0, 3, 2, 5, 4, 7, 6};
+		byte[] symRLCorners = {4, 5, 6, 7, 0, 1, 2, 3};
 		byte[] symRLCenters = {2, 3, 0, 1, 6, 7, 4, 5, 14, 15, 12, 13, 10, 11, 8, 9, 19, 18, 17, 16, 23, 22, 21, 20};
 
 		int i, a, b, c, d, e, idx=0;
@@ -78,7 +78,7 @@ public final class Symmetry {
 			for (int j=0; j<N_SYM; j++)
 				if( symCornersPerm[i][symCornersPerm[j][0]] == 0 &&
 				    symCornersPerm[i][symCornersPerm[j][1]] == 1 &&
-				    symCornersPerm[i][symCornersPerm[j][2]] == 2 ){
+				    symCornersPerm[i][symCornersPerm[j][4]] == 4 ){
 					invSymIdx[i] = j;
 					break;
 				}

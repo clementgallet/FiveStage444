@@ -38,7 +38,6 @@ public final class Corner4 {
 	{
 		int i;
 		byte[] t6 = new byte[4];
-		byte[] t8 = new byte[8];
 		int cor_bm = this.coord / 6;
 		Util.set4Perm (t6, this.coord % 6);
 		int a = 0;
@@ -47,34 +46,16 @@ public final class Corner4 {
 		for (i = 7; i >= 0; i--) {
 			if (cor_bm >= Util.Cnk[i][r] ) {
 				cor_bm -= Util.Cnk[i][r--];
-				t8[i] = (byte)a++;
+				cube.m_cor[i] = (byte)a++;
 			} else {
-				t8[i] = (byte)(4 + t6[b++]);
+				cube.m_cor[i] = (byte)(4 + t6[b++]);
 			}
-		}
-
-		//Note: for corners, "squares" style mapping is used in creating the "coordinate" value.
-		//But the do_move function for cube assumes "standard" mapping.
-		//Therefore the m_cor array must be converted accordingly using this conversion array.
-		final byte sqs_to_std[] = { 0, 2, 5, 7, 1, 3, 4, 6 };
-		for (i = 0; i < 8; ++i) {
-			cube.m_cor[sqs_to_std[i]] = sqs_to_std[t8[i]];
 		}
 	}
 
 	/* Pack a cube into the coord */
 	private void pack (CubeState cube){
-		int i;
-		byte[] t6 = new byte[8];
-
-		//Note: for corners, use of perm_to_420 array requires "squares" style mapping.
-		//But the do_move function for std_cube assumes "standard" mapping.
-		//Therefore the m_cor array must be converted accordingly using this conversion array.
-		final byte std_to_sqs[] = { 0, 4, 1, 5, 6, 2, 7, 3 };
-		for (i = 0; i < 8; ++i) {
-			t6[std_to_sqs[i]] = std_to_sqs[cube.m_cor[i]];
-		}
-		int u = Util.get8Perm (t6, 0);
+		int u = Util.get8Perm (cube.m_cor, 0);
 		this.coord = Util.perm_to_420[u];
 	}
 

@@ -11,12 +11,12 @@ public final class CubeState{
 	public byte[] m_cen = new byte[24]; //what's at each center position
 
 	private static int rotateCOR_ft[] = {
-		 0,  3,  2,  1,  0,  3,	//U face
-		 4,  5,  6,  7,  4,  5,	//D face
-	     3,  0,  4,  7,  3,  0,	//L face
-	     1,  2,  6,  5,  1,  2,	//R face
-	     0,  1,  5,  4,  0,  1,	//F face
-	     2,  3,  7,  6,  2,  3	//B face
+		 0,  5,  1,  4,  0,  5,	//U face
+		 6,  2,  7,  3,  6,  2,	//D face
+	     5,  0,  6,  3,  5,  0,	//L face
+	     4,  1,  7,  2,  4,  1,	//R face
+	     0,  4,  2,  6,  0,  4,	//F face
+	     1,  5,  3,  7,  1,  5	//B face
 	};
 	private static int rotateCOR_ori[] = { 1, 2, 1, 2 };
 	private static int rotateCOR_fidx[] = {  0,  2,  0,  6,  8,  6, 12, 14, 12, 18, 20, 18, 24, 26, 24, 30, 32, 30 };
