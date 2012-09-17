@@ -3,7 +3,6 @@ TODO:
 - Cancel moves between stages.
 - Doc the code !
 - Compute distance tables (unique and sym)
-- Pruning tables for stage 3 are not efficient right now, use a full pruning table (without the parity maybe, for a factor of 2)
 
 - From Kociemba
 -- Filter last move possibilities (is it efficient ?)
@@ -11,11 +10,12 @@ TODO:
 
 - From Chen Shuang (min2phase)
 -- Use multithreading (again) for table generation
--- Check if using int tables instead of byte tables is faster
 
 
 DONE:
 
++ Check if using int tables instead of byte tables is faster -> Storing is much faster with bytes.
++ Pruning tables for stage 3 are not efficient right now, use a full pruning table (without the parity maybe, for a factor of 2)
 + Eventually don't use the CubeState class anymore during the solve between stages, but generate all coordinates at the beginning and more move tables
 + Get rid of all the PruningTable classes, incorporate into Tables.java -> Almost done !
 + Eventually get rid of all the CubeStagex classes, and use directly the coordinates

@@ -8,6 +8,7 @@ import cg.fivestage444.Util;
 public final class Stage1 {
 
 	public final static int N_MOVES = 36;
+	public final static int N_SYM = 48;
 	public final static int N_SIZE = Edge1.N_COORD * Corner1.N_COORD;
 	public static byte[] prunTable;
 

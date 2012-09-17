@@ -3,12 +3,13 @@ package cg.fivestage444.Coordinates;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
+import cg.fivestage444.Stages.Stage5;
 
 public final class Center5 {
 
 	public final static int N_COORD = 12*12*12;
-	private final static int N_SYM = 48;
-	private final static int N_MOVES = 12;
+	private final static int N_SYM = Stage5.N_SYM;
+	private final static int N_MOVES = Stage5.N_MOVES;
 	private static final short squares_cen_map[] = { 15, 60, 85, 90, 102, 105, 150, 153, 165, 170, 195, 240 };
 	private static final byte[] squares_cen_revmap = new byte[256];
 

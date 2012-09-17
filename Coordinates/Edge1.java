@@ -4,16 +4,17 @@ import cg.fivestage444.CubeState;
 import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
 import cg.fivestage444.Util;
+import cg.fivestage444.Stages.Stage1;
 import java.util.Arrays;
 
 public final class Edge1 {
 
 	public final static int N_COORD = 15582;
 	private final static int N_RAW_COORD = 735471;
-	private final static int N_SYM = 48;
+	private final static int N_SYM = Stage1.N_SYM;
 	private final static int SYM_SHIFT = 6;
 	private final static int SYM_MASK = ( 1 << SYM_SHIFT ) - 1;
-	private final static int N_MOVES = 36;
+	private final static int N_MOVES = Stage1.N_MOVES;
 
 	/* Coordinates */
 	public int coord;

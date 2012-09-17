@@ -4,12 +4,13 @@ import cg.fivestage444.CubeState;
 import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
 import cg.fivestage444.Util;
+import cg.fivestage444.Stages.Stage4;
 
 public final class Center4 {
 
 	public final static int N_COORD = 35;
-	private final static int N_SYM = 16;
-	private final static int N_MOVES = 16;
+	private final static int N_SYM = Stage4.N_SYM;
+	private final static int N_MOVES = Stage4.N_MOVES;
 
 	public static final int SOLVED[] = { 0, 14, 20, 23, 27, 28 };
 

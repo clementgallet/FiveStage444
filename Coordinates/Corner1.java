@@ -3,12 +3,13 @@ package cg.fivestage444.Coordinates;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
+import cg.fivestage444.Stages.Stage1;
 
 public final class Corner1 {
 
 	public final static int N_COORD = 2187;
-	private final static int N_SYM = 48;
-	private final static int N_MOVES = 36;
+	private final static int N_SYM = Stage1.N_SYM;
+	private final static int N_MOVES = Stage1.N_MOVES;
 	private final static int N_FACE_MOVES = 18;
 	private static byte stage2face[] = new byte[N_MOVES];
 

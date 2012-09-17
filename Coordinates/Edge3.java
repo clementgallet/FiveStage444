@@ -4,12 +4,13 @@ import cg.fivestage444.CubeState;
 import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
 import cg.fivestage444.Util;
+import cg.fivestage444.Stages.Stage3;
 
 public final class Edge3 {
 
 	public final static int N_COORD = 12870;
-	private final static int N_SYM = 8;
-	private final static int N_MOVES = 20;
+	private final static int N_SYM = Stage3.N_SYM;
+	private final static int N_MOVES = Stage3.N_MOVES;
 
 	/* Coordinates */
 	public int coord;

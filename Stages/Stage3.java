@@ -9,6 +9,7 @@ import cg.fivestage444.Util;
 public final class Stage3 {
 
 	public final static int N_MOVES = 20;
+	public final static int N_SYM = 8;
 	public final static int N_SIZE = Edge3.N_COORD * Center3.N_COORD;
 	private static byte[] prunTableEdge;
 	private static byte[] prunTableCenter;

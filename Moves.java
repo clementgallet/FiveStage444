@@ -127,21 +127,13 @@ public final class Moves{
 
 	  			/* If two successive moves are from the same face and the same rotation, the first one should be either Ufx, Rfx or Ffx.
 	  			 * For example Rf Ls3 is ok but Lf2 Rs2 is not permitted because Lf2 Rs2 = Rf2 Ls2. */
-				if ((m/16 == n/16) && ((m%3) == (n%3)) && ((m%12) >= 3))
-					moves_mask[i] &= -1L ^ ( 1L << j );
-
-				/* One of each double layer turn of the same plane is allowed, the other one not (Uw is ok, not Dw). */
-				if(( n%18 ) >= 15 )
+				if ((m/18 == n/18) && ((m%3) == (n%3)) && ((m%18) >= 3))
 					moves_mask[i] &= -1L ^ ( 1L << j );
 			}
 		}
 
-		/* The index N_STAGE_MOVES correspond to the beginning of the solve, where no moves has been done yet.
-		 * Everything is allowed except for the double layer thing. */
+		/* The index N_STAGE_MOVES correspond to the beginning of the solve, where no moves has been done yet. */
 		moves_mask[N_STAGE_MOVES] = ( 1L << N_STAGE_MOVES ) - 1L;
-		for (int j=0; j<N_STAGE_MOVES; j++)
-			if(( stage2moves[j]%18 ) >= 15 )
-				moves_mask[N_STAGE_MOVES] &= -1L ^ ( 1L << j );
 	}
 
 	public static String move_strings[] = {

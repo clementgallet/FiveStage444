@@ -4,16 +4,17 @@ import cg.fivestage444.CubeState;
 import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
 import cg.fivestage444.Util;
+import cg.fivestage444.Stages.Stage2;
 import java.util.Arrays;
 
 public final class Center2 {
 
 	public final static int N_COORD = 716;
 	private final static int N_RAW_COORD = 10626;
-	private final static int N_SYM = 16;
+	private final static int N_SYM = Stage2.N_SYM;
 	private final static int SYM_SHIFT = 4;
 	private final static int SYM_MASK = ( 1 << SYM_SHIFT ) - 1;
-	private final static int N_MOVES = 28;
+	private final static int N_MOVES = Stage2.N_MOVES;
 
 	public static final int SOLVED[] = { 122, 242, 243, 245, 246, 247 };
 
