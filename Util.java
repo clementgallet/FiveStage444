@@ -392,4 +392,32 @@ public final class Util {
 				set1bit( parity_s4, i );
 		}
 	}
+
+	static void swap( byte[] tab, int a, int b, int c, int d, int rot ){
+		byte temp;
+		switch (rot){
+			case 0:
+				temp = tab[d];
+				tab[d] = tab[c];
+				tab[c] = tab[b];
+				tab[b] = tab[a];
+				tab[a] = temp;
+				break;
+			case 1:
+				temp = tab[a];
+				tab[a] = tab[b];
+				tab[b] = tab[c];
+				tab[c] = tab[d];
+				tab[d] = temp;
+				break;
+			case 2:
+				temp = tab[a];
+				tab[a] = tab[c];
+				tab[c] = temp;
+				temp = tab[b];
+				tab[b] = tab[d];
+				tab[d] = temp;
+				break;
+		}
+	}
 }

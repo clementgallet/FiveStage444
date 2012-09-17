@@ -22,69 +22,6 @@ public final class CubeState{
 	private static int rotateCOR_fidx[] = {  0,  2,  0,  6,  8,  6, 12, 14, 12, 18, 20, 18, 24, 26, 24, 30, 32, 30 };
 	private static int rotateCOR_tidx[] = {  1,  1,  2,  7,  7,  8, 13, 13, 14, 19, 19, 20, 25, 25, 26, 31, 31, 32 };
 
-	private static int rotateEDGE_fidx[] = {
-		 0,  1,  0,  6,  7,  6, 12, 13, 12, 18, 19, 18, 24, 25, 24, 30, 31, 30,
-		36, 37, 36, 42, 43, 42, 48, 49, 48, 54, 55, 54, 60, 61, 60, 66, 67, 66,
-		72, 73, 72, 78, 79, 78, 84, 85, 84, 90, 91, 90, 96, 97, 96,102,103,102
-	};
-	private static int rotateEDGE_tidx[] = {
-		 1,  0,  2,  7,  6,  8, 13, 12, 14, 19, 18, 20, 25, 24, 26, 31, 30, 32,
-   		37, 36, 38, 43, 42, 44, 49, 48, 50, 55, 54, 56, 61, 60, 62, 67, 66, 68,
-		73, 72, 74, 79, 78, 80, 85, 84, 86, 91, 90, 92, 97, 96, 98,103,102,104
-	};
-	private static int rotateEDGE_ft[] = {
-		 0, 12,  1, 14,  0, 12, //up face, set 1
-	     4,  8,  5, 10,  4,  8, //up face, set 2
-		16, 22, 19, 21, 16, 22, //up slice
-
-		 2, 15,  3, 13,  2, 15, //down face, set 1
-	     6, 11,  7,  9,  6, 11, //down face, set 2
-	    17, 23, 18, 20, 17, 23, //down slice
-
-		 8, 20,  9, 22,  8, 20, //left face, set 1
-		12, 16, 13, 18, 12, 16, //left face, set 2
-		 0,  6,  3,  5,  0,  6, //left slice
-
-		10, 23, 11, 21, 10, 23, //right face, set 1
-		14, 19, 15, 17, 14, 19, //right face, set 2
-		 1,  7,  2,  4,  1,  7, //right slice
-
-		 0, 21,  2, 20,  0, 21, //front face, set 1
-		 4, 17,  6, 16,  4, 17, //front face, set 2
-		 8, 14, 11, 13,  8, 14, //front slice
-
-		 1, 22,  3, 23,  1, 22, //back face, set 1
-		 5, 18,  7, 19,  5, 18, //back face, set 2
-		 9, 15, 10, 12,  9, 15  //back slice
-	};
-
-	private static int rotateCEN_ft[] = {
-		 0,  3,  1,  2,  0,  3, //up face
-	    16, 10, 21, 14, 16, 10, //up slice, set1
-		19,  8, 22, 12, 19,  8, //up slice, set2
-
-		 4,  7,  5,  6,  4,  7, //down face
-	    18, 13, 23,  9, 18, 13, //down slice, set 1
-	    17, 15, 20, 11, 17, 15, //down slice, set 2
-
-		 8, 11,  9, 10,  8, 11, //left face
-		16,  6, 20,  3, 16,  6, //left slice, set 1
-		18,  5, 22,  0, 18,  5, //left slice, set 2
-
-		12, 15, 13, 14, 12, 15, //right face
-		19,  1, 23,  4, 19,  1, //right slice, set 1
-		17,  2, 21,  7, 17,  2, //right slice, set 2
-
-		16, 19, 17, 18, 16, 19, //front face
-		 0, 14,  4, 11,  0, 14, //front slice, set 1
-		 2, 13,  6,  8,  2, 13, //front slice, set 2
-
-		20, 23, 21, 22, 20, 23, //back face
-		 1, 10,  5, 15,  1, 10, //back slice, set 1
-		 3,  9,  7, 12,  3,  9  //back slice, set 2
-	};
-
-
 	public void init (){
 		byte i;
 		for (i = 0; i < 24; ++i) {
@@ -356,49 +293,171 @@ public final class CubeState{
 		}
 	}
 
-	public void rotate_sliceEDGE (int move_code){
-		CubeState cube = new CubeState();
+	public void rotate_sliceEDGE (int move_code, CubeState cube){
 		System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
-		cube.rotate_sliceEDGE( move_code, this );
+		cube.rotate_sliceEDGE( move_code );
 	}
 
-	public void rotate_sliceEDGE (int move_code, CubeState cube){
-		int i, j;
-		System.arraycopy(m_edge, 0, cube.m_edge, 0, 24);
-		int movdir = move_code % 3;
-		int mcx = 3*(move_code/9);
-		int layer = (move_code/3)%3; // 0: face, 1: slice, 2: face+slice
-		for (j = 0; j < 3; ++j) { // j = 0, 1: face turn. j = 2: slice turn
-			if(((layer==1) && (j<2)) || ((layer==0) && (j==2)))
-				continue;
-			int fidx = rotateEDGE_fidx[3*(mcx+j) + movdir];
-			int tidx = rotateEDGE_tidx[3*(mcx+j) + movdir];
-			for (i = 0; i < 4; ++i) {
-				cube.m_edge[rotateEDGE_ft[tidx + i]] = m_edge[rotateEDGE_ft[fidx + i]];
-			}
+	public void rotate_sliceEDGE (int move_code){
+		int rot = move_code % 3;
+		int layer = move_code / 3;
+		switch (layer){
+			case 0: // U
+				Util.swap(m_edge, 0, 12, 1, 14, rot);
+				Util.swap(m_edge, 4, 8, 5, 10, rot);
+				break;
+			case 1: // u
+				Util.swap(m_edge, 16, 22, 19, 21, rot);
+				break;
+			case 2: // Uw
+				Util.swap(m_edge, 0, 12, 1, 14, rot);
+				Util.swap(m_edge, 4, 8, 5, 10, rot);
+				Util.swap(m_edge, 16, 22, 19, 21, rot);
+				break;
+			case 3: // D
+				Util.swap(m_edge, 2, 15, 3, 13, rot);
+				Util.swap(m_edge, 6, 11, 7, 9, rot);
+				break;
+			case 4: // d
+				Util.swap(m_edge, 17, 23, 18, 20, rot);
+				break;
+			case 5: // Dw
+				Util.swap(m_edge, 2, 15, 3, 13, rot);
+				Util.swap(m_edge, 6, 11, 7, 9, rot);
+				Util.swap(m_edge, 17, 23, 18, 20, rot);
+				break;
+			case 6: // L
+				Util.swap(m_edge, 8, 20, 9, 22, rot);
+				Util.swap(m_edge, 12, 16, 13, 18, rot);
+				break;
+			case 7: // l
+				Util.swap(m_edge, 0, 6, 3, 5, rot);
+				break;
+			case 8: // Lw
+				Util.swap(m_edge, 8, 20, 9, 22, rot);
+				Util.swap(m_edge, 12, 16, 13, 18, rot);
+				Util.swap(m_edge, 0, 6, 3, 5, rot);
+				break;
+			case 9: // R
+				Util.swap(m_edge, 10, 23, 11, 21, rot);
+				Util.swap(m_edge, 14, 19, 15, 17, rot);
+				break;
+			case 10: // r
+				Util.swap(m_edge, 1, 7, 2, 4, rot);
+				break;
+			case 11: // Rw
+				Util.swap(m_edge, 10, 23, 11, 21, rot);
+				Util.swap(m_edge, 14, 19, 15, 17, rot);
+				Util.swap(m_edge, 1, 7, 2, 4, rot);
+				break;
+			case 12: // F
+				Util.swap(m_edge, 0, 21, 2, 20, rot);
+				Util.swap(m_edge, 4, 17, 6, 16, rot);
+				break;
+			case 13: // f
+				Util.swap(m_edge, 8, 14, 11, 13, rot);
+				break;
+			case 14: // Fw
+				Util.swap(m_edge, 0, 21, 2, 20, rot);
+				Util.swap(m_edge, 4, 17, 6, 16, rot);
+				Util.swap(m_edge, 8, 14, 11, 13, rot);
+				break;
+			case 15: // B
+				Util.swap(m_edge, 1, 22, 3, 23, rot);
+				Util.swap(m_edge, 5, 18, 7, 19, rot);
+				break;
+			case 16: // b
+				Util.swap(m_edge, 9, 15, 10, 12, rot);
+				break;
+			case 17: // Bw
+				Util.swap(m_edge, 1, 22, 3, 23, rot);
+				Util.swap(m_edge, 5, 18, 7, 19, rot);
+				Util.swap(m_edge, 9, 15, 10, 12, rot);
+				break;
 		}
 	}
 
-	public void rotate_sliceCENTER (int move_code){
-		CubeState cube = new CubeState();
+	public void rotate_sliceCENTER (int move_code, CubeState cube){
 		System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
-		cube.rotate_sliceCENTER( move_code, this );
+		cube.rotate_sliceCENTER( move_code );
 	}
 
-	public void rotate_sliceCENTER (int move_code, CubeState cube){
-		int i, j;
-		System.arraycopy(m_cen, 0, cube.m_cen, 0, 24);
-		int movdir = move_code % 3;
-		int mcx = 3*(move_code/9);
-		int layer = (move_code/3)%3; // 0: face, 1: slice, 2: face+slice
-		for (j = 0; j < 3; ++j) { // j = 0: face turn. j = 1, 2: slice turn
-			if(((layer==1) && (j==0)) || ((layer==0) && (j>0)))
-				continue;
-			int fidx = rotateEDGE_fidx[3*(mcx+j) + movdir]; // rotateCEN_fidx = rotateEDGE_fidx
-			int tidx = rotateEDGE_tidx[3*(mcx+j) + movdir]; // rotateCEN_tidx = rotateEDGE_tidx
-			for (i = 0; i < 4; ++i) {
-				cube.m_cen[rotateCEN_ft[tidx + i]] = m_cen[rotateCEN_ft[fidx + i]];
-			}
+	public void rotate_sliceCENTER (int move_code){
+		int rot = move_code % 3;
+		int layer = move_code / 3;
+		switch (layer){
+			case 0: // U
+				Util.swap(m_cen, 0, 3, 1, 2, rot);
+				break;
+			case 1: // u
+				Util.swap(m_cen, 16, 10, 21, 14, rot);
+				Util.swap(m_cen, 19, 8, 22, 12, rot);
+				break;
+			case 2: // Uw
+				Util.swap(m_cen, 0, 3, 1, 2, rot);
+				Util.swap(m_cen, 16, 10, 21, 14, rot);
+				Util.swap(m_cen, 19, 8, 22, 12, rot);
+				break;
+			case 3: // D
+				Util.swap(m_cen, 4, 7, 5, 6, rot);
+				break;
+			case 4: // d
+				Util.swap(m_cen, 18, 13, 23, 9, rot);
+				Util.swap(m_cen, 17, 15, 20, 11, rot);
+				break;
+			case 5: // Dw
+				Util.swap(m_cen, 4, 7, 5, 6, rot);
+				Util.swap(m_cen, 18, 13, 23, 9, rot);
+				Util.swap(m_cen, 17, 15, 20, 11, rot);
+				break;
+			case 6: // L
+				Util.swap(m_cen, 8, 11, 9, 10, rot);
+				break;
+			case 7: // l
+				Util.swap(m_cen, 16, 6, 20, 3, rot);
+				Util.swap(m_cen, 18, 5, 22, 0, rot);
+				break;
+			case 8: // Lw
+				Util.swap(m_cen, 8, 11, 9, 10, rot);
+				Util.swap(m_cen, 16, 6, 20, 3, rot);
+				Util.swap(m_cen, 18, 5, 22, 0, rot);
+				break;
+			case 9: // R
+				Util.swap(m_cen, 12, 15, 13, 14, rot);
+				break;
+			case 10: // r
+				Util.swap(m_cen, 19, 1, 23, 4, rot);
+				Util.swap(m_cen, 17, 2, 21, 7, rot);
+				break;
+			case 11: // Rw
+				Util.swap(m_cen, 12, 15, 13, 14, rot);
+				Util.swap(m_cen, 19, 1, 23, 4, rot);
+				Util.swap(m_cen, 17, 2, 21, 7, rot);
+				break;
+			case 12: // F
+				Util.swap(m_cen, 16, 19, 17, 18, rot);
+				break;
+			case 13: // f
+				Util.swap(m_cen, 0, 14, 4, 11, rot);
+				Util.swap(m_cen, 2, 13, 6, 8, rot);
+				break;
+			case 14: // Fw
+				Util.swap(m_cen, 16, 19, 17, 18, rot);
+				Util.swap(m_cen, 0, 14, 4, 11, rot);
+				Util.swap(m_cen, 2, 13, 6, 8, rot);
+				break;
+			case 15: // B
+				Util.swap(m_cen, 20, 23, 21, 22, rot);
+				break;
+			case 16: // b
+				Util.swap(m_cen, 1, 10, 5, 15, rot);
+				Util.swap(m_cen, 3, 9, 7, 12, rot);
+				break;
+			case 17: // Bw
+				Util.swap(m_cen, 20, 23, 21, 22, rot);
+				Util.swap(m_cen, 1, 10, 5, 15, rot);
+				Util.swap(m_cen, 3, 9, 7, 12, rot);
+				break;
 		}
 	}
 
