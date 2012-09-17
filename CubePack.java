@@ -36,23 +36,6 @@ public final class CubePack{
 	short[] edges_loc = new short[6]; // Location of each group of 4 edges (10626).
 	byte[] edges_perm = new byte[6]; // Permutation of each group of 4 edges (24).
 
-	public CubePack(){
-		corner_top_loc = 0;
-		corner_top_perm = 0;
-		corner_bottom_perm = 0;
-	}
-
-	public void copyTo( CubePack cp ){
-		cp.corner_top_loc = this.corner_top_loc;
-		cp.corner_top_perm = this.corner_top_perm;
-		cp.corner_bottom_perm = this.corner_bottom_perm;
-		for( int i=0; i<6; i++ ){
-			cp.centers[i] = this.centers[i];
-			cp.edges_loc[i] = this.edges_loc[i];
-			cp.edges_perm[i] = this.edges_perm[i];
-		}
-	}
-
 	/** Tables **/
 
 	static final int N_ROT = 3;
