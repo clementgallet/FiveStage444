@@ -10,18 +10,6 @@ public final class CubeState{
 	public byte[] m_cor = new byte[8]; //what's at each corner position (3*cubie + orientation)
 	public byte[] m_cen = new byte[24]; //what's at each center position
 
-	private static int rotateCOR_ft[] = {
-		 0,  5,  1,  4,  0,  5,	//U face
-		 6,  2,  7,  3,  6,  2,	//D face
-	     5,  0,  6,  3,  5,  0,	//L face
-	     4,  1,  7,  2,  4,  1,	//R face
-	     0,  4,  2,  6,  0,  4,	//F face
-	     1,  5,  3,  7,  1,  5	//B face
-	};
-	private static int rotateCOR_ori[] = { 1, 2, 1, 2 };
-	private static int rotateCOR_fidx[] = {  0,  2,  0,  6,  8,  6, 12, 14, 12, 18, 20, 18, 24, 26, 24, 30, 32, 30 };
-	private static int rotateCOR_tidx[] = {  1,  1,  2,  7,  7,  8, 13, 13, 14, 19, 19, 20, 25, 25, 26, 31, 31, 32 };
-
 	public void init (){
 		byte i;
 		for (i = 0; i < 24; ++i) {
@@ -263,33 +251,35 @@ public final class CubeState{
 		return parity;
 	}
 
-	public void rotate_sliceCORNER (int move_code){
-		CubeState cube = new CubeState();
+	public void rotate_sliceCORNER (int move_code, CubeState cube){
 		System.arraycopy(m_cor, 0, cube.m_cor, 0, 8);
-		cube.rotate_sliceCORNER( move_code, this );
+		cube.rotate_sliceCORNER( move_code );
 	}
 
-	public void rotate_sliceCORNER (int move_code, CubeState cube){
-		int i;
-		System.arraycopy(m_cor, 0, cube.m_cor, 0, 8);
-		if (( move_code / 3 ) % 3 == 1 )
-			return;		//inner slice turn, no corners affected
-
-		int mc = 3*(move_code/9) + ( move_code % 3 );
-		int fidx = rotateCOR_fidx[mc];
-		int tidx = rotateCOR_tidx[mc];
-		if (( mc % 3 != 2 ) && ( mc >= 6 )) { // single L, R, F or B face turn
-			for (i = 0; i < 4; ++i) {
-				byte tmpface = m_cor[rotateCOR_ft[fidx + i]];
-				byte new_ori = (byte)((tmpface >> 3) + rotateCOR_ori[i]);
-				new_ori %= 3;
-				tmpface = (byte)((tmpface & 0x7) + (new_ori << 3));
-				cube.m_cor[rotateCOR_ft[tidx + i]] = tmpface;
-			}
-		} else {
-			for (i = 0; i < 4; ++i) {
-				cube.m_cor[rotateCOR_ft[tidx + i]] = m_cor[rotateCOR_ft[fidx + i]];
-			}
+	public void rotate_sliceCORNER (int move_code){
+		int rot = move_code % 3;
+		int layer = move_code / 3;
+		if(( layer % 3 ) == 1 ) return;
+		int face = layer / 3;
+		switch (face){
+			case 0: // U
+				Util.swap(m_cor, 0, 5, 1, 4, rot);
+				break;
+			case 1: // D
+				Util.swap(m_cor, 6, 2, 7, 3, rot);
+				break;
+			case 2: // L
+				Util.swapCorners(m_cor, 5, 0, 6, 3, rot);
+				break;
+			case 3: // R
+				Util.swapCorners(m_cor, 4, 1, 7, 2, rot);
+				break;
+			case 4: // F
+				Util.swapCorners(m_cor, 0, 4, 2, 6, rot);
+				break;
+			case 5: // B
+				Util.swapCorners(m_cor, 1, 5, 3, 7, rot);
+				break;
 		}
 	}
 

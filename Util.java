@@ -420,4 +420,32 @@ public final class Util {
 				break;
 		}
 	}
+
+	static void swapCorners( byte[] tab, int a, int b, int c, int d, int rot ){
+		byte temp;
+		switch (rot){
+			case 0:
+				temp = tab[d];
+				tab[d] = (byte)((tab[c] + 8) % 24);
+				tab[c] = (byte)((tab[b] + 16) % 24);
+				tab[b] = (byte)((tab[a] + 8) % 24);
+				tab[a] = (byte)((temp + 16) % 24);
+				break;
+			case 1:
+				temp = tab[a];
+				tab[a] = (byte)((tab[b] + 16) % 24);
+				tab[b] = (byte)((tab[c] + 8) % 24);
+				tab[c] = (byte)((tab[d] + 16) % 24);
+				tab[d] = (byte)((temp + 8) % 24);
+				break;
+			case 2:
+				temp = tab[a];
+				tab[a] = tab[c];
+				tab[c] = temp;
+				temp = tab[b];
+				tab[b] = tab[d];
+				tab[d] = temp;
+				break;
+		}
+	}
 }
