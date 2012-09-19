@@ -19,6 +19,11 @@ import cg.fivestage444.Stages.Stage3;
 import cg.fivestage444.Stages.Stage4;
 import cg.fivestage444.Stages.Stage5;
 
+import cg.fivestage444.Cubies.EdgeCubies;
+import cg.fivestage444.Cubies.CenterCubies;
+import cg.fivestage444.Cubies.CornerCubies;
+
+
 import java.util.Arrays;
 
 /* CubePack structure: a (almost) full representation of the cube using a set of coordinates.
@@ -52,14 +57,14 @@ public final class CubePack{
 	/** Packing and Unpacking **/
 
 	void pack( CubeState cube ){
-		packCorners( cube );
+		packCorners( cube.corners );
 		for( int i=0; i<6; i++){
-			packCenters( cube, i );
-			packEdges( cube, i );
+			packCenters( cube.centers, i );
+			packEdges( cube.edges, i );
 		}
 	}
 
-	void packCorners( CubeState cube ){
+	void packCorners( CornerCubies cube ){
 		int ctl = 0;
 		byte[] ctp = new byte[4];
 		byte[] cbp = new byte[4];
@@ -67,7 +72,7 @@ public final class CubePack{
 		int ibp = 3;
 		int r = 4;
 		for (int i=7; i>=0; i--) {
-			int perm = cube.m_cor[i] & 0x7;
+			int perm = cube.cubies[i] & 0x7;
 			if (( perm & 0x4 ) != 0) { // bottom layer
 				cbp[ibp--] = (byte)( perm & 0x3 );
 			} else {
@@ -80,7 +85,7 @@ public final class CubePack{
 		corner_bottom_perm = (byte) Util.get4Perm(cbp, 0);
 	}
 
-	void unpackCorners( CubeState cube ){
+	void unpackCorners( CornerCubies cube ){
 		int c8_4_bits = corner_top_loc;
 		int r = 4;
 		byte[] ct_perm = new byte[4];
@@ -92,36 +97,36 @@ public final class CubePack{
 		for (int i = 7; i >=0; i--)
 			if ( c8_4_bits >= Util.Cnk[i][r] ) { // top layer
 				c8_4_bits -= Util.Cnk[i][r--];
-				cube.m_cor[i] = ct_perm[itp--];
+				cube.cubies[i] = ct_perm[itp--];
 			} else {
-				cube.m_cor[i] = (byte)( cb_perm[ibp--] + 4 );
+				cube.cubies[i] = (byte)( cb_perm[ibp--] + 4 );
 			}
 	}
 
-	void packCenters (CubeState cube, int c_idx){
+	void packCenters (CenterCubies cube, int c_idx){
 		this.centers[c_idx] = 0;
 		int r = 4;
 		for (int i=23; i>=0; i--) {
-			if (cube.m_cen[i] == c_idx) {
+			if (cube.cubies[i] == c_idx) {
 				this.centers[c_idx] += Util.Cnk[i][r--];
 			}
 		}
 	}
 
-	void unpackCenters (CubeState cube, int c_idx){
+	void unpackCenters (CenterCubies cube, int c_idx){
 		int center = this.centers[c_idx];
 		int r = 4;
 		for (int i=23; i>=0; i--) {
 			if (center >= Util.Cnk[i][r]) {
 				center -= Util.Cnk[i][r--];
-				cube.m_cen[i] = (byte)c_idx;
+				cube.cubies[i] = (byte)c_idx;
 			}
 			else
-				cube.m_cen[i] = -1;
+				cube.cubies[i] = -1;
 		}
 	}
 
-	void packEdges( CubeState cube, int e_idx ){
+	void packEdges( EdgeCubies cube, int e_idx ){
 		int r = 4;
 		int perm = 0;
 		this.edges_loc[e_idx] = 0;
@@ -129,15 +134,15 @@ public final class CubePack{
 		int it = 3;
 
 		for (int i=23; i>=0; i--) {
-			if (( cube.m_edge[i] / 4 ) == e_idx ){
+			if (( cube.cubies[i] / 4 ) == e_idx ){
 				this.edges_loc[e_idx] += Util.Cnk[i][r--];
-				t[it--] = (byte)( cube.m_edge[i] & 0x3 );
+				t[it--] = (byte)( cube.cubies[i] & 0x3 );
 			}
 		}
 		this.edges_perm[e_idx] = (byte) Util.get4Perm( t, 0 );
 	}
 
-	void unpackEdges( CubeState cube, int e_idx ){
+	void unpackEdges( EdgeCubies cube, int e_idx ){
 		byte[] t = new byte[4];
 		Util.set4Perm( t, this.edges_perm[e_idx] );
 		int it = 3;
@@ -146,10 +151,10 @@ public final class CubePack{
 		for (int i=23; i>=0; i--)
 			if (loc >= Util.Cnk[i][r]) {
 				loc -= Util.Cnk[i][r--];
-				cube.m_edge[i] = (byte)( 4*e_idx + t[it--] );
+				cube.cubies[i] = (byte)( 4*e_idx + t[it--] );
 			}
 			else
-				cube.m_edge[i] = -1;
+				cube.cubies[i] = -1;
 	}
 
 	/** Init tables **/
@@ -163,16 +168,16 @@ public final class CubePack{
 	static void init_moveCorners(){
 		CubePack cp1 = new CubePack();
 		CubePack cp2 = new CubePack();
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
+		CornerCubies cube1 = new CornerCubies();
+		CornerCubies cube2 = new CornerCubies();
 		for (int i=0; i<Util.C8_4; i++) {
 			cp1.corner_top_loc = (byte)i;
 			cp1.unpackCorners( cube1 );
 			for (int mv=0; mv<Moves.N_STAGE_MOVES + N_ROT; mv++) {
 				if( mv >= Moves.N_STAGE_MOVES)
-					cube1.rightMultCorners( rotations[mv - Moves.N_STAGE_MOVES], cube2 );
+					cube1.rightMult( rotations[mv - Moves.N_STAGE_MOVES], cube2 );
 				else
-					cube1.rotate_sliceCORNER( Moves.stage2moves[mv], cube2 );
+					cube1.move( Moves.stage2moves[mv], cube2 );
 				cp2.packCorners( cube2 );
 				move_cperm[i][mv] = (cp2.corner_top_loc << 10) + (cp2.corner_top_perm << 5) + cp2.corner_bottom_perm;
 			}
@@ -182,16 +187,16 @@ public final class CubePack{
 	static void init_moveEdges(){
 		CubePack cp1 = new CubePack();
 		CubePack cp2 = new CubePack();
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
+		EdgeCubies cube1 = new EdgeCubies();
+		EdgeCubies cube2 = new EdgeCubies();
 		for (int i=0; i<Util.C24_4; i++) {
 			cp1.edges_loc[2] = (short)i;
 			cp1.unpackEdges( cube1, 2 );
 			for (int mv=0; mv<Moves.N_STAGE_MOVES + N_ROT; mv++) {
 				if( mv >= Moves.N_STAGE_MOVES)
-					cube1.rightMultEdges( rotations[mv - Moves.N_STAGE_MOVES], cube2 );
+					cube1.rightMult( rotations[mv - Moves.N_STAGE_MOVES], cube2 );
 				else
-					cube1.rotate_sliceEDGE( Moves.stage2moves[mv], cube2 );
+					cube1.move( Moves.stage2moves[mv], cube2 );
 				cp2.packEdges( cube2, 2 );
 				move_edges[i][mv] = (cp2.edges_loc[2] << 5) + cp2.edges_perm[2];
 			}
@@ -201,16 +206,16 @@ public final class CubePack{
 	static void init_moveCenters(){
 		CubePack cp1 = new CubePack();
 		CubePack cp2 = new CubePack();
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
+		CenterCubies cube1 = new CenterCubies();
+		CenterCubies cube2 = new CenterCubies();
 		for (int i=0; i<Util.C24_4; i++) {
 			cp1.centers[3] = (short)i;
 			cp1.unpackCenters( cube1, 3 );
 			for (int mv=0; mv<Moves.N_STAGE_MOVES + N_ROT; mv++) {
 				if( mv >= Moves.N_STAGE_MOVES)
-					cube1.rightMultCenters( rotations[mv - Moves.N_STAGE_MOVES], cube2 );
+					cube1.rightMult( rotations[mv - Moves.N_STAGE_MOVES], cube2 );
 				else
-					cube1.rotate_sliceCENTER( Moves.stage2moves[mv], cube2 );
+					cube1.move( Moves.stage2moves[mv], cube2 );
 				cp2.packCenters( cube2, 3 );
 				move_centers[i][mv] = cp2.centers[3];
 			}

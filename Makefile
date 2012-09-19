@@ -9,6 +9,7 @@ default:
 	cp *.java $(DIR)
 	cp -r Coordinates $(DIR)
 	cp -r Stages $(DIR)
+	cp -r Cubies $(DIR)
 	$(JC) $(JFLAGS) $(DIR)/*/*.java
 	$(JC) $(JFLAGS) $(DIR)/*.java
 	# ctags -f ~/.tags -R ./ $(JAVA_HOME)src

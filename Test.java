@@ -23,7 +23,7 @@ public final class Test {
 
 		cube.init();
 		for( int i=0; i < 100; i++ ){
-			cube.do_move(gen.nextInt(Moves.N_MOVES));
+			cube.move(gen.nextInt(Moves.N_MOVES));
 		}		
 	}
 
@@ -31,7 +31,7 @@ public final class Test {
 
 		cube.init();
 		for( int i=0; i < 100; i++ ){
-			cube.do_move(moves[gen.nextInt(length)]);
+			cube.move(moves[gen.nextInt(length)]);
 		}		
 	}
 
@@ -49,7 +49,7 @@ public final class Test {
 		cp1.pack( cube1 );
 
 		int move = gen.nextInt(Moves.N_STAGE_MOVES);
-		cube1.do_move(Moves.stage2moves[move]);
+		cube1.move(Moves.stage2moves[move]);
 		cp1.moveTo(move, cp2);
 
 		cp3.pack( cube1 );

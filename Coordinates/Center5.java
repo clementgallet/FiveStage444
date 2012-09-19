@@ -1,6 +1,6 @@
 package cg.fivestage444.Coordinates;
 
-import cg.fivestage444.CubeState;
+import cg.fivestage444.Cubies.CenterCubies;
 import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
 import cg.fivestage444.Stages.Stage5;
@@ -36,7 +36,7 @@ public final class Center5 {
 	}
 
 	/* Unpack a coord to a cube */
-	private void unpack (CubeState cube)
+	private void unpack (CenterCubies cube)
 	{
 		int cen1 = this.coord % 12;
 		int cen2 = (this.coord/12) % 12;
@@ -44,17 +44,17 @@ public final class Center5 {
 		int x = (squares_cen_map[cen1] << 16) | (squares_cen_map[cen2] << 8) | squares_cen_map[cen3];
 		int b = 0x800000;
 		for (int i = 0; i < 24; ++i) {
-			cube.m_cen[i] = (byte) (2*(i/8) + ((x & b) == 0 ? 0 : 1));
+			cube.cubies[i] = (byte) (2*(i/8) + ((x & b) == 0 ? 0 : 1));
 			b >>= 1;
 		}
 	}
 
 	/* Pack a cube into the coord */
-	private void pack (CubeState cube){
+	private void pack (CenterCubies cube){
 		int x = 0;
 		int b = 0x800000;
 		for (int i = 0; i < 24; ++i) {
-			if ((cube.m_cen[i] & 0x1) != 0) {
+			if ((cube.cubies[i] & 0x1) != 0) {
 				x |= b;
 			}
 			b >>= 1;
@@ -70,21 +70,21 @@ public final class Center5 {
 		for (int i = 0; i < 12; ++i) {
 			squares_cen_revmap[squares_cen_map[i]] = (byte)i;
 		}
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
+		CenterCubies cube1 = new CenterCubies();
+		CenterCubies cube2 = new CenterCubies();
 		Center5 c = new Center5();
 		for (int u = 0; u < N_COORD; ++u) {
 			c.coord = u;
 			c.unpack( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.rotate_sliceCENTER (Moves.stage2moves[m], cube2);
+				cube1.move (Moves.stage2moves[m], cube2);
 				c.pack( cube2 );
 				move[u][m] = (short)(c.coord);
 			}
 			for (int s = 0; s < N_SYM; ++s) {
 				for (int cs = 0; cs < 4; ++cs) {
-					cube1.rightMultCenters(Symmetry.invSymIdx[Symmetry.symIdxMultiply[s][cs]], cube2);
-					cube2.leftMultCenters(s);
+					cube1.rightMult(Symmetry.invSymIdx[Symmetry.symIdxMultiply[s][cs]], cube2);
+					cube2.leftMult(s);
 					c.pack( cube2 );
 					conj[u][(s<<2)|cs] = (short)(c.coord);
 				}

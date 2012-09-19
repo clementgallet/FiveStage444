@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.Random;
 
 public class Tools {
 	private static final Logger l = Logger.getLogger(Tools.class.getName());
@@ -114,44 +113,11 @@ public class Tools {
 			write(Stage3.prunTable, out); // 12870 * 56980 / 2  = 366,666,300 B
 	}
 
-	/**
-	 * Generates a random cube.
-	 * @return A random cube in the string representation. Each cube of the cube space has the same probability.
-	 */
-	public static CubeState randomCube() {
-		Random gen = new Random();
-		return randomCube(gen);
-	}
-	
-	public static CubeState randomCube(Random r) {
-		int i, o, os;
-		CubeState cube = new CubeState();
-		cube.init ();
-
-		/* Randomize corners */
-		randomPerm(r, cube.m_cor, 8);
-		os = 0;
-		for (i=0; i<7; i++){
-			o = r.nextInt(3);
-			cube.m_cor[i] += 8*o;
-			os += o;
-		}
-		cube.m_cor[7] += 8*((15 - os) % 3);
-
-		/* Randomize centers */
-		randomPerm(r, cube.m_cen, 24);
-
-		/* Randomize edges */
-		randomPerm(r, cube.m_edge, 24);
-
-		return cube;
-	}
-
 	public static int checkSolution(CubeState cube, byte[] moves){
 
 		for (int i=moves.length-1; i>=0; i--){
 			int themove = moves[i] + ((( moves[i] + 2 ) % 3 ) - 1);
-			cube.do_move(themove);
+			cube.move(themove);
 		}
 		return cube.is_solved();
 	}
@@ -174,20 +140,9 @@ public class Tools {
 				return -1;
 			}
 			themove = themove + ((( themove + 2 ) % 3 ) - 1);
-			cube.do_move(themove);
+			cube.move(themove);
 		}
 		return cube.is_solved();
 	}
 
-	/* Fisher-Yates shuffle */
-	private static void randomPerm(Random r, byte[] array, int n) {
-		int i, j;
-		byte t;
-		for (i = n-1; i > 0; i--){
-			j = r.nextInt(i+1);
-			t = array[i];
-			array[i] = array[j];
-			array[j] = t;
-		}
-	}
 }

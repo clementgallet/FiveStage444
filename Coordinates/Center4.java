@@ -1,6 +1,6 @@
 package cg.fivestage444.Coordinates;
 
-import cg.fivestage444.CubeState;
+import cg.fivestage444.Cubies.CenterCubies;
 import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
 import cg.fivestage444.Util;
@@ -40,32 +40,32 @@ public final class Center4 {
 	}
 
 	/* Unpack a coord to a cube */
-	private void unpack (CubeState cube)
+	private void unpack (CenterCubies cube)
 	{
 		int center = coord;
 		int i;
 		int r = 4;
-		cube.m_cen[7] = 1;
+		cube.cubies[7] = 1;
 		for (i = 6; i >= 0; i--) {
 			if ( center >= Util.Cnk[i][r] ) {
 				center -= Util.Cnk[i][r--];
-				cube.m_cen[i] = 0;
+				cube.cubies[i] = 0;
 			} else {
-				cube.m_cen[i] = 1;
+				cube.cubies[i] = 1;
 			}
 		}
 		for (i = 8; i < 24; ++i) {
-			cube.m_cen[i] = (byte)(i/4);
+			cube.cubies[i] = (byte)(i/4);
 		}
 	}
 
 	/* Pack a cube into the coord */
-	private void pack (CubeState cube){
+	private void pack (CenterCubies cube){
 		int i;
 		this.coord = 0;
 		int r = 4;
 		for (i = 6; i >= 0; i--) {
-			if (cube.m_cen[i] != cube.m_cen[7]) {
+			if (cube.cubies[i] != cube.cubies[7]) {
 				this.coord += Util.Cnk[i][r--];
 			}
 		}
@@ -73,19 +73,19 @@ public final class Center4 {
 
 	/* Initialisations */
 	public static void init(){
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
+		CenterCubies cube1 = new CenterCubies();
+		CenterCubies cube2 = new CenterCubies();
 		Center4 c = new Center4();
 		for (int u = 0; u < N_COORD; ++u) {
 			c.coord = u;
 			c.unpack( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.rotate_sliceCENTER (Moves.stage2moves[m], cube2);
+				cube1.move (Moves.stage2moves[m], cube2);
 				c.pack( cube2 );
 				move[u][m] = (short)c.coord;
 			}
 			for (int s = 0; s < N_SYM; ++s) {
-				cube1.conjugateCenters (s, cube2);
+				cube1.conjugate (s, cube2);
 				c.pack( cube2 );
 				conj[u][s] = (short)c.coord;
 			}

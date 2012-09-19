@@ -1,6 +1,6 @@
 package cg.fivestage444.Coordinates;
 
-import cg.fivestage444.CubeState;
+import cg.fivestage444.Cubies.EdgeCubies;
 import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
 import cg.fivestage444.Util;
@@ -35,7 +35,7 @@ public final class Edge3 {
 	}
 
 	/* Unpack a coord to a cube */
-	private void unpack (CubeState cube)
+	private void unpack (EdgeCubies cube)
 	{
 		int edge = coord;
 		byte e0 = 0;
@@ -44,25 +44,25 @@ public final class Edge3 {
 		for (int i = 15; i >= 0; i--) {
 			if (edge >= Util.Cnk[i][r]) {
 				edge -= Util.Cnk[i][r--];
-				cube.m_edge[i] = e0++;
+				cube.cubies[i] = e0++;
 				if (e0 == 4) {
 					e0 = 12;		//skip numbers 4..11; those are used for e1
 				}
 			} else {
-				cube.m_edge[i] = e1++;
+				cube.cubies[i] = e1++;
 			}
 		}
 		for (int i = 16; i < 24; ++i) {
-			cube.m_edge[i] = (byte)i;
+			cube.cubies[i] = (byte)i;
 		}
 	}
 
 	/* Pack a cube into the coord */
-	private void pack (CubeState cube){
+	private void pack (EdgeCubies cube){
 		this.coord = 0;
 		int r = 8;
 		for (int i=15; i>=0; i--) {
-			if (cube.m_edge[i] < 4 || cube.m_edge[i] >= 12) {
+			if (cube.cubies[i] < 4 || cube.cubies[i] >= 12) {
 				this.coord += Util.Cnk[i][r--];
 			}
 		}
@@ -70,19 +70,19 @@ public final class Edge3 {
 
 	/* Initialisations */
 	public static void init(){
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
+		EdgeCubies cube1 = new EdgeCubies();
+		EdgeCubies cube2 = new EdgeCubies();
 		Edge3 e = new Edge3();
 		for (int u = 0; u < N_COORD; ++u) {
 			e.coord = u;
 			e.unpack( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.rotate_sliceEDGE (Moves.stage2moves[m], cube2);
+				cube1.move (Moves.stage2moves[m], cube2);
 				e.pack( cube2 );
 				move[u][m] = (short)e.coord;
 			}
 			for (int s = 0; s < N_SYM; ++s) {
-				cube1.rightMultEdges (Symmetry.invSymIdx[s], cube2);
+				cube1.rightMult (Symmetry.invSymIdx[s], cube2);
 				e.pack( cube2 );
 				conj[u][s] = (short)e.coord;
 			}

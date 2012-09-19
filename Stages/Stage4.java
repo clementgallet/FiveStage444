@@ -3,7 +3,6 @@ package cg.fivestage444.Stages;
 import cg.fivestage444.Coordinates.Edge4;
 import cg.fivestage444.Coordinates.Corner4;
 import cg.fivestage444.Coordinates.Center4;
-import cg.fivestage444.CubeState;
 import cg.fivestage444.Util;
 
 public final class Stage4 {

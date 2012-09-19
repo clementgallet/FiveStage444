@@ -22,8 +22,8 @@ public final class Stage1 {
 
 	/* Pack from CubeState */
 	public void pack(CubeState cube){
-		edge.pack(cube);
-		corner.pack(cube);
+		edge.pack(cube.edges);
+		corner.pack(cube.corners);
 	}
 
 	/* Check if solved */

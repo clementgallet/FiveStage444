@@ -1,6 +1,6 @@
 package cg.fivestage444.Coordinates;
 
-import cg.fivestage444.CubeState;
+import cg.fivestage444.Cubies.EdgeCubies;
 import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
 import cg.fivestage444.Util;
@@ -40,7 +40,7 @@ public final class Edge4 {
 	}
 
 	/* Unpack a raw coord to a cube */
-	private void unpackRaw (CubeState cube)
+	private void unpackRaw (EdgeCubies cube)
 	{
 		int ledge4of8 = raw_coord % 70;
 		int edge = raw_coord / 70;
@@ -57,10 +57,10 @@ public final class Edge4 {
 		for( int i=7; i >= 0; i-- ){
 			if( ledge4of8 >= Util.Cnk[i][r] ){
 				ledge4of8 -= Util.Cnk[i][r--];
-				cube.m_edge[i+4] = (byte)( t[i1++] + 4 );
+				cube.cubies[i+4] = (byte)( t[i1++] + 4 );
 			}
 			else
-				cube.m_edge[i+4] = (byte)( (i2++) + 8);
+				cube.cubies[i+4] = (byte)( (i2++) + 8);
 		}
 
 		i1 = 0;
@@ -70,18 +70,18 @@ public final class Edge4 {
 		for( int i=7; i >= 0; i-- ){
 			if( redge4of8 >= Util.Cnk[i][r] ){
 				redge4of8 -= Util.Cnk[i][r--];
-				cube.m_edge[( i < 4 ) ? i : i + 8] = (byte)(i1++);
+				cube.cubies[( i < 4 ) ? i : i + 8] = (byte)(i1++);
 			}
 			else
-				cube.m_edge[( i < 4 ) ? i : i + 8] = (byte)(t[i2++] + 12);
+				cube.cubies[( i < 4 ) ? i : i + 8] = (byte)(t[i2++] + 12);
 		}
 
 		for( int i=16; i < 24; i++ )
-			cube.m_edge[i] = (byte)i;
+			cube.cubies[i] = (byte)i;
 	}
 
 	/* Pack a cube into the raw coord */
-	private void packRaw (CubeState cube){
+	private void packRaw (EdgeCubies cube){
 		int redge4of8 = 0;
 		int ledge4of8 = 0;
 		byte[] edges_rl = new byte[8];
@@ -91,12 +91,12 @@ public final class Edge4 {
 		int i_fb = 0;
 		int r = 4;
 		for( int i=7; i>=0;i--){
-			if( cube.m_edge[i+4] < 8 ){
+			if( cube.cubies[i+4] < 8 ){
 				ledge4of8 += Util.Cnk[i][r--];
-				edges_rl[i_rl++] = cube.m_edge[i+4];
+				edges_rl[i_rl++] = cube.cubies[i+4];
 			}
 			else
-				edges_fb[i_fb++] = (byte)(cube.m_edge[i+4] - 8);
+				edges_fb[i_fb++] = (byte)(cube.cubies[i+4] - 8);
 		}
 
 		i_rl = 0;
@@ -104,12 +104,12 @@ public final class Edge4 {
 		r = 4;
 		for( int i=7; i>=0;i--){
 			int u = (i < 4) ? i : i + 8;
-			if( cube.m_edge[u] < 4 ){
+			if( cube.cubies[u] < 4 ){
 				redge4of8 += Util.Cnk[i][r--];
-				edges_rl[i_rl++] = cube.m_edge[u];
+				edges_rl[i_rl++] = cube.cubies[u];
 			}
 			else
-				edges_fb[i_fb++] = (byte)(cube.m_edge[u] - 8);
+				edges_fb[i_fb++] = (byte)(cube.cubies[u] - 8);
 		}
 
 		int perm6_rl = Util.perm_to_420[Util.get8Perm (edges_rl, 0)]%6;
@@ -133,8 +133,8 @@ public final class Edge4 {
 
 	private static void initSym2Raw (){
 		int repIdx = 0;
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
+		EdgeCubies cube1 = new EdgeCubies();
+		EdgeCubies cube2 = new EdgeCubies();
 		Edge4 e = new Edge4();
 		byte[] t = new byte[8];
 		byte[] isRepTable = new byte[(N_RAW_COORD>>3) + 1];
@@ -146,16 +146,16 @@ public final class Edge4 {
 			e.unpackRaw(cube1);
 
 			/* Only retain configs without parity */
-			int ul = Util.get8Perm( cube1.m_edge, 4 );
+			int ul = Util.get8Perm( cube1.cubies, 4 );
 			for (int i=0; i<4; i++)
-				t[i] = ( cube1.m_edge[i] > 4 ) ? (byte)(cube1.m_edge[i]-8) : cube1.m_edge[i];
+				t[i] = ( cube1.cubies[i] > 4 ) ? (byte)(cube1.cubies[i]-8) : cube1.cubies[i];
 			for (int i=4; i<8; i++)
-				t[i] = ( cube1.m_edge[i+8] > 4 ) ? (byte)(cube1.m_edge[i+8]-8) : cube1.m_edge[i+8];
+				t[i] = ( cube1.cubies[i+8] > 4 ) ? (byte)(cube1.cubies[i+8]-8) : cube1.cubies[i+8];
 			int uh = Util.get8Perm( t, 0 );
 			if( Util.parity_perm8_table[ul] != Util.parity_perm8_table[uh] ) continue; // getting rid of the parity.
 
 			for (int s = 1; s < N_SYM; ++s) {
-				cube1.conjugateEdges (s, cube2);
+				cube1.conjugate (s, cube2);
 				e.packRaw( cube2 );
 				Util.set1bit( isRepTable, e.raw_coord );
 				raw2sym[e.raw_coord] = ( repIdx << SYM_SHIFT ) + Symmetry.invSymIdx[s];
@@ -167,14 +167,14 @@ public final class Edge4 {
 	}
 
 	private static void initMove (){
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
+		EdgeCubies cube1 = new EdgeCubies();
+		EdgeCubies cube2 = new EdgeCubies();
 		Edge4 e = new Edge4();
 		for (int u = 0; u < N_COORD; ++u) {
 			e.raw_coord = sym2raw[u];
 			e.unpackRaw( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.rotate_sliceEDGE (Moves.stage2moves[m], cube2);
+				cube1.move (Moves.stage2moves[m], cube2);
 				e.packRaw( cube2 );
 				move[u][m] = raw2sym[e.raw_coord];
 			}

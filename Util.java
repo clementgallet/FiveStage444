@@ -393,7 +393,7 @@ public final class Util {
 		}
 	}
 
-	static void swap( byte[] tab, int a, int b, int c, int d, int rot ){
+	public static void swap( byte[] tab, int a, int b, int c, int d, int rot ){
 		byte temp;
 		switch (rot){
 			case 0:
@@ -421,7 +421,7 @@ public final class Util {
 		}
 	}
 
-	static void swapCorners( byte[] tab, int a, int b, int c, int d, int rot ){
+	public static void swapCorners( byte[] tab, int a, int b, int c, int d, int rot ){
 		byte temp;
 		switch (rot){
 			case 0:

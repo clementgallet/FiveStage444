@@ -1,6 +1,6 @@
 package cg.fivestage444.Coordinates;
 
-import cg.fivestage444.CubeState;
+import cg.fivestage444.Cubies.CenterCubies;
 import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
 import cg.fivestage444.Util;
@@ -45,7 +45,7 @@ public final class Center3 {
 	}
 
 	/* Unpack a raw coord to a cube */
-	private void unpackRaw (CubeState cube)
+	private void unpackRaw (CenterCubies cube)
 	{
 		int cenbm = this.raw_coord/35;
 		int cenbm4of8 = this.raw_coord % 35;
@@ -56,29 +56,29 @@ public final class Center3 {
 		int last_c = -1;
 		for (int i = 15; i >= 0; --i) {
 			if (cenbm < Util.Cnk[i][r] ) {
-				cube.m_cen[i] = (byte)(ud++/4);
+				cube.cubies[i] = (byte)(ud++/4);
 			} else {
 				cenbm -= Util.Cnk[i][r--];
 				if (last_c == -1){
-					cube.m_cen[i] = 3;
+					cube.cubies[i] = 3;
 					last_c = i;
 				}
 				if (cenbm4of8 < Util.Cnk[j][s]) {
-					cube.m_cen[i] = 3;
+					cube.cubies[i] = 3;
 				} else {
 					cenbm4of8 -= Util.Cnk[j][s--];
-					cube.m_cen[i] = 2;
+					cube.cubies[i] = 2;
 				}
 			j--;
 			}
 		}
 		for (int i = 16; i < 24; ++i) {
-			cube.m_cen[i] = (byte)(i/4);
+			cube.cubies[i] = (byte)(i/4);
 		}
 	}
 
 	/* Pack a cube into the raw coord */
-	private void packRaw (CubeState cube){
+	private void packRaw (CenterCubies cube){
 		int cenbm = 0;
 		int cenbm4of8 = 0;
 		int j = 7;
@@ -86,11 +86,11 @@ public final class Center3 {
 		int s = 4;
 		int last_c = -1;
 		for (int i = 15; i >= 0; i--) {
-			if (cube.m_cen[i] >= 2) {
+			if (cube.cubies[i] >= 2) {
 				if (last_c == -1)
 					last_c = i;
 				cenbm += Util.Cnk[i][r--];
-				if (cube.m_cen[i] != cube.m_cen[last_c]) {
+				if (cube.cubies[i] != cube.cubies[last_c]) {
 					cenbm4of8 += Util.Cnk[j][s--];
 				}
 				--j;
@@ -114,8 +114,8 @@ public final class Center3 {
 
 	private static void initSym2Raw (){
 		int repIdx = 0;
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
+		CenterCubies cube1 = new CenterCubies();
+		CenterCubies cube2 = new CenterCubies();
 		Center3 c = new Center3();
 
 		byte[] isRepTable = new byte[(N_RAW_COORD>>3) + 1];
@@ -126,7 +126,7 @@ public final class Center3 {
 			c.raw_coord = u;
 			c.unpackRaw(cube1);
 			for (int s = 1; s < N_SYM; ++s) {
-				cube1.rightMultCenters (Symmetry.invSymIdx[s], cube2);
+				cube1.rightMult (Symmetry.invSymIdx[s], cube2);
 				c.packRaw( cube2 );
 				Util.set1bit( isRepTable, c.raw_coord );
 				raw2sym[c.raw_coord] = ( repIdx << SYM_SHIFT ) + Symmetry.invSymIdx[s];
@@ -139,14 +139,14 @@ public final class Center3 {
 
 	private static void initMove (){
 
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
+		CenterCubies cube1 = new CenterCubies();
+		CenterCubies cube2 = new CenterCubies();
 		Center3 c = new Center3();
 		for (int u = 0; u < N_COORD; ++u) {
 			c.raw_coord = sym2raw[u];
 			c.unpackRaw( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.rotate_sliceCENTER (Moves.stage2moves[m], cube2);
+				cube1.move (Moves.stage2moves[m], cube2);
 				c.packRaw( cube2 );
 				move[u][m] = raw2sym[c.raw_coord];
 			}

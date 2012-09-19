@@ -1,14 +1,15 @@
 package cg.fivestage444;
 
 import cg.fivestage444.Moves;
+import cg.fivestage444.Cubies.EdgeCubies;
 
 public final class Symmetry {
 
-	static final int N_SYM = 48;
-	static byte[][] symEdges = new byte[N_SYM][24];
-	static byte[][] symCornersPerm = new byte[N_SYM][8];
-	static byte[][] symCornersOrient = new byte[N_SYM][8];
-	static byte[][] symCenters = new byte[N_SYM][24];
+	public static final int N_SYM = 48;
+	public static byte[][] symEdges = new byte[N_SYM][24];
+	public static byte[][] symCornersPerm = new byte[N_SYM][8];
+	public static byte[][] symCornersOrient = new byte[N_SYM][8];
+	public static byte[][] symCenters = new byte[N_SYM][24];
 
 	static void init (){
 		initSymTables();
@@ -27,13 +28,9 @@ public final class Symmetry {
 
 		int i, a, b, c, d, e, idx=0;
 		CubeState cube = new CubeState();
-		for (i = 0; i < 24; ++i) {
-			cube.m_edge[i] = (byte)i;
-			cube.m_cen[i] = (byte)i;
-		}
-		for (i = 0; i < 8; ++i) {
-			cube.m_cor[i] = (byte)i;
-		}
+		cube.init();
+		for (i = 0; i < 24; ++i)
+			cube.centers.cubies[i] = (byte)i;
 
 		for (b=0;b<3;b++){ //SymUR3
 			for (c=0;c<2;c++){ //SymU
@@ -41,32 +38,32 @@ public final class Symmetry {
 					for (e=0;e<2;e++){ //SymU2
 						//SymLR2
 						for (i=0; i<24; i++){
-							symEdges[idx][i] = cube.m_edge[i];
-							symEdges[idx+4][i] = cube.m_edge[symRLEdges[i]];
-							symCenters[idx][i] = cube.m_cen[i];
-							symCenters[idx+4][i] = cube.m_cen[symRLCenters[i]];
+							symEdges[idx][i] = cube.edges.cubies[i];
+							symEdges[idx+4][i] = cube.edges.cubies[symRLEdges[i]];
+							symCenters[idx][i] = cube.centers.cubies[i];
+							symCenters[idx+4][i] = cube.centers.cubies[symRLCenters[i]];
 						}
 						for (i=0; i<8; i++){
-							symCornersPerm[idx][i] = (byte)(cube.m_cor[i] % 8);
-							symCornersPerm[idx+4][i] = (byte)(cube.m_cor[symRLCorners[i]] % 8);
-							symCornersOrient[idx][i] = (byte)(cube.m_cor[i] / 8);
-							symCornersOrient[idx+4][i] = (byte)(3 + (cube.m_cor[symRLCorners[i]] / 8));
+							symCornersPerm[idx][i] = (byte)(cube.corners.cubies[i] % 8);
+							symCornersPerm[idx+4][i] = (byte)(cube.corners.cubies[symRLCorners[i]] % 8);
+							symCornersOrient[idx][i] = (byte)(cube.corners.cubies[i] / 8);
+							symCornersOrient[idx+4][i] = (byte)(3 + (cube.corners.cubies[symRLCorners[i]] / 8));
 						}
 						idx += 1;
-						cube.do_move (Moves.Uw2);
-						cube.do_move (Moves.Dw2);
+						cube.move (Moves.Uw2);
+						cube.move (Moves.Dw2);
 					}
-					cube.do_move (Moves.Fw2);
-					cube.do_move (Moves.Bw2);
+					cube.move (Moves.Fw2);
+					cube.move (Moves.Bw2);
 				}
 				idx += 4;
-				cube.do_move (Moves.Uw);
-				cube.do_move (Moves.Dw3);
+				cube.move (Moves.Uw);
+				cube.move (Moves.Dw3);
 			}
-			cube.do_move (Moves.Uw3);
-			cube.do_move (Moves.Dw);
-			cube.do_move (Moves.Rw3);
-			cube.do_move (Moves.Lw);
+			cube.move (Moves.Uw3);
+			cube.move (Moves.Dw);
+			cube.move (Moves.Rw3);
+			cube.move (Moves.Lw);
 		}
 	}
 
@@ -111,21 +108,21 @@ public final class Symmetry {
 
 	static void initMoveConjugate(){
 
-		CubeState cube = new CubeState();
-		CubeState cube2 = new CubeState();
-		CubeState cube3 = new CubeState();
+		EdgeCubies cube = new EdgeCubies();
+		EdgeCubies cube2 = new EdgeCubies();
+		EdgeCubies cube3 = new EdgeCubies();
 
 		for (int i=0; i<Moves.N_MOVES; i++){
 			cube.init();
-			cube.do_move(i);
+			cube.move(i);
 			for (int j=0; j<N_SYM; j++){
-				cube.conjugateEdges(j, cube2);
+				cube.conjugate(j, cube2);
 				for (int k=0; k<Moves.N_MOVES; k++){
 					cube3.init();
-					cube3.do_move(k);
+					cube3.move(k);
 					boolean isMove = true;
 					for (int l=0; l<24; l++){
-						if( cube3.m_edge[l] != cube2.m_edge[l] ){
+						if( cube3.cubies[l] != cube2.cubies[l] ){
 							isMove = false;
 							break;
 						}

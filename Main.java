@@ -24,7 +24,7 @@ public final class Main {
 		s.MIN_STAGE5 = o;*/
 		long time = System.currentTimeMillis();	
 		for (int i = 0; i < random_count; ++i) {
-			c = Tools.randomCube(gen);
+			c.randomise(gen);
 			System.out.println(s.solve( c, 45, true));
 			//s.solve( c, 45, true);
 		}

@@ -1,6 +1,6 @@
 package cg.fivestage444.Coordinates;
 
-import cg.fivestage444.CubeState;
+import cg.fivestage444.Cubies.CornerCubies;
 import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
 import cg.fivestage444.Util;
@@ -35,7 +35,7 @@ public final class Corner4 {
 	}
 
 	/* Unpack a coord to a cube */
-	private void unpack (CubeState cube)
+	private void unpack (CornerCubies cube)
 	{
 		int i;
 		byte[] t6 = new byte[4];
@@ -47,34 +47,34 @@ public final class Corner4 {
 		for (i = 7; i >= 0; i--) {
 			if (cor_bm >= Util.Cnk[i][r] ) {
 				cor_bm -= Util.Cnk[i][r--];
-				cube.m_cor[i] = (byte)a++;
+				cube.cubies[i] = (byte)a++;
 			} else {
-				cube.m_cor[i] = (byte)(4 + t6[b++]);
+				cube.cubies[i] = (byte)(4 + t6[b++]);
 			}
 		}
 	}
 
 	/* Pack a cube into the coord */
-	private void pack (CubeState cube){
-		int u = Util.get8Perm (cube.m_cor, 0);
+	private void pack (CornerCubies cube){
+		int u = Util.get8Perm (cube.cubies, 0);
 		this.coord = Util.perm_to_420[u];
 	}
 
 	/* Initialisations */
 	public static void init(){
-		CubeState cube1 = new CubeState();
-		CubeState cube2 = new CubeState();
+		CornerCubies cube1 = new CornerCubies();
+		CornerCubies cube2 = new CornerCubies();
 		Corner4 c = new Corner4();
 		for (int u = 0; u < N_COORD; ++u) {
 			c.coord = u;
 			c.unpack( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.rotate_sliceCORNER (Moves.stage2moves[m], cube2);
+				cube1.move (Moves.stage2moves[m], cube2);
 				c.pack( cube2 );
 				move[u][m] = (short)(c.coord);
 			}
 			for (int s = 0; s < N_SYM; ++s) {
-				cube1.conjugateCorners (s, cube2);
+				cube1.conjugate (s, cube2);
 				c.pack( cube2 );
 				conj[u][s] = (short)(c.coord);
 			}
