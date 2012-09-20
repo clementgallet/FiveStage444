@@ -7,8 +7,7 @@ public final class Symmetry {
 
 	public static final int N_SYM = 48;
 	public static byte[][] symEdges = new byte[N_SYM][24];
-	public static byte[][] symCornersPerm = new byte[N_SYM][8];
-	public static byte[][] symCornersOrient = new byte[N_SYM][8];
+	public static byte[][] symCorners = new byte[N_SYM][8];
 	public static byte[][] symCenters = new byte[N_SYM][24];
 
 	static void init (){
@@ -44,10 +43,8 @@ public final class Symmetry {
 							symCenters[idx+4][i] = cube.centers.cubies[symRLCenters[i]];
 						}
 						for (i=0; i<8; i++){
-							symCornersPerm[idx][i] = (byte)(cube.corners.cubies[i] % 8);
-							symCornersPerm[idx+4][i] = (byte)(cube.corners.cubies[symRLCorners[i]] % 8);
-							symCornersOrient[idx][i] = (byte)(cube.corners.cubies[i] / 8);
-							symCornersOrient[idx+4][i] = (byte)(3 + (cube.corners.cubies[symRLCorners[i]] / 8));
+							symCorners[idx][i] = cube.corners.cubies[i];
+							symCorners[idx+4][i] = (byte)(cube.corners.cubies[symRLCorners[i]] + 24); // 24 means the orientation is mirrored
 						}
 						idx += 1;
 						cube.move (Moves.Uw2);
@@ -73,9 +70,9 @@ public final class Symmetry {
 
 		for (int i=0; i<N_SYM; i++)
 			for (int j=0; j<N_SYM; j++)
-				if( symCornersPerm[i][symCornersPerm[j][0]] == 0 &&
-				    symCornersPerm[i][symCornersPerm[j][1]] == 1 &&
-				    symCornersPerm[i][symCornersPerm[j][4]] == 4 ){
+				if( symEdges[i][symEdges[j][0]] == 0 &&
+				    symEdges[i][symEdges[j][7]] == 7 &&
+				    symEdges[i][symEdges[j][18]] == 18 ){
 					invSymIdx[i] = j;
 					break;
 				}

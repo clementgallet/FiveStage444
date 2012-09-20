@@ -51,17 +51,15 @@ public final class CornerCubies{
 
 	public void leftMult (int symIdx){
 		for (int i = 0; i < 8; ++i){
-			int orientA = Symmetry.symCornersOrient[symIdx][(cubies[i] & 0x7)];
-			int orientB = cubies[i] >> 3;
-			cubies[i] = (byte) ((multD3(orientA, orientB) << 3 ) + Symmetry.symCornersPerm[symIdx][(cubies[i] & 0x7)]);
+			int corner = Symmetry.symCorners[symIdx][(cubies[i] & 0x7)];
+			cubies[i] = (byte) ((multD3(corner >>> 3, cubies[i] >>> 3) << 3 ) + ( corner & 0x7 ));
 		}
 	}
 
 	public void rightMult (int symIdx, CornerCubies c){
 		for (int i = 0; i < 8; ++i){
-			int orientA = cubies[Symmetry.symCornersPerm[symIdx][i]] >> 3;
-			int orientB = Symmetry.symCornersOrient[symIdx][i];
-			c.cubies[i] = (byte) (( multD3(orientA, orientB) << 3 ) + (cubies[Symmetry.symCornersPerm[symIdx][i]] & 0x7));
+			int corner = Symmetry.symCorners[symIdx][i];
+			c.cubies[i] = (byte) (( multD3(cubies[corner & 0x7] >>> 3, corner >>> 3) << 3 ) + (cubies[corner & 0x7] & 0x7));
 		}
 	}
 
