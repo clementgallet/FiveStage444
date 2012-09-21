@@ -106,8 +106,23 @@ public final class Moves{
 		}
 	}
 
-	/** Filter certain combinaisons of moves:
-	  **/
+	/** Initialize stage2face table **/
+	public final static int N_FACE_MOVES = 18;
+	public static byte stage2face[] = new byte[N_MOVES];
+	public static byte face2moves[] = new byte[N_FACE_MOVES];
+	static{
+		for( int s = 0; s < N_STAGE_MOVES; s++ ){
+			byte m = stage2moves[s];
+			if((( m / 3 ) % 3 ) == 1 )
+				stage2face[s] = -1;
+			else{
+				stage2face[s] = (byte)(( m / 9 ) * 3 + ( m % 3 ));
+				face2moves[stage2face[s]] = m;
+			}
+		}
+	}
+
+	/** Filter certain combinaisons of moves **/
 
 	public static final long moves_mask [] = new long[N_STAGE_MOVES+1];
 	static{

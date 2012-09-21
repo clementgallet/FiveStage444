@@ -9,15 +9,13 @@ public final class Corner1 {
 
 	public final static int N_COORD = 2187;
 	private final static int N_SYM = Stage1.N_SYM;
-	private final static int N_MOVES = Stage1.N_MOVES;
-	private final static int N_FACE_MOVES = 18;
-	private static byte stage2face[] = new byte[N_MOVES];
+	private final static int N_MOVES = Moves.N_FACE_MOVES;
 
 	/* Coordinates */
 	public int coord;
 
 	/* Tables */
-	private static short[][] move = new short[N_COORD][N_FACE_MOVES];
+	private static short[][] move = new short[N_COORD][N_MOVES];
 	private static short[][] conj = new short[N_COORD][N_SYM]; // (2187) 2187*48
 
 	/* Check if solved */
@@ -27,7 +25,7 @@ public final class Corner1 {
 
 	/* Move */
 	public void moveTo( int m, Corner1 c ){
-		int face_move = stage2face[m];
+		int face_move = Moves.stage2face[m];
 		c.coord = ( face_move >= 0 ) ? move[coord][face_move] : coord;
 	}
 
@@ -61,14 +59,6 @@ public final class Corner1 {
 
 	/* Initialisations */
 	public static void init(){
-		/* Initialize stage2face table */
-		for( int s = 0; s < N_MOVES; s++ ){
-			int m = Moves.stage2moves[s];
-			if((( m / 3 ) % 3 ) == 1 )
-				stage2face[s] = -1;
-			else
-				stage2face[s] = (byte)(( m / 9 ) * 3 + ( m % 3 ));
-		}
 
 		CornerCubies cube1 = new CornerCubies();
 		CornerCubies cube2 = new CornerCubies();
@@ -77,11 +67,9 @@ public final class Corner1 {
 			c.coord = u;
 			c.unpack( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				if(stage2face[m] == -1 )
-					continue;
-				cube1.move (Moves.stage2moves[m], cube2);
+				cube1.move (Moves.face2moves[m], cube2);
 				c.pack( cube2 );
-				move[u][stage2face[m]] = (short)(c.coord);
+				move[u][m] = (short)(c.coord);
 			}
 			for (int s = 0; s < N_SYM; ++s) {
 				cube1.rightMult (Symmetry.invSymIdx[s], cube2);
