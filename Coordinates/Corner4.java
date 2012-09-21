@@ -10,7 +10,7 @@ public final class Corner4 {
 
 	public final static int N_COORD = 420;
 	private final static int N_SYM = Stage4.N_SYM;
-	private final static int N_MOVES = Stage4.N_MOVES;
+	private final static int N_MOVES = 10;
 
 	/* Coordinates */
 	public int coord;
@@ -26,7 +26,8 @@ public final class Corner4 {
 
 	/* Move */
 	public void moveTo( int m, Corner4 c ){
-		c.coord =  move[coord][m];
+		int face_move = Moves.stage2face[m];
+		c.coord = ( face_move >= 0 ) ? move[coord][face_move] : coord;
 	}
 
 	/* Get the conjugated coordinate */
@@ -69,7 +70,7 @@ public final class Corner4 {
 			c.coord = u;
 			c.unpack( cube1 );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.move (Moves.stage2moves[m], cube2);
+				cube1.move (Moves.face2moves[m], cube2);
 				c.pack( cube2 );
 				move[u][m] = (short)(c.coord);
 			}

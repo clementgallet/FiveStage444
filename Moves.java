@@ -111,13 +111,15 @@ public final class Moves{
 	public static byte stage2face[] = new byte[N_MOVES];
 	public static byte face2moves[] = new byte[N_FACE_MOVES];
 	static{
+		int fm = 0; // TODO: Only works for STM, because face moves are unique.
 		for( int s = 0; s < N_STAGE_MOVES; s++ ){
 			byte m = stage2moves[s];
-			if((( m / 3 ) % 3 ) == 1 )
+			if((( m / 3 ) % 3 ) == 1 ) // inner slice move
 				stage2face[s] = -1;
 			else{
-				stage2face[s] = (byte)(( m / 9 ) * 3 + ( m % 3 ));
-				face2moves[stage2face[s]] = m;
+				stage2face[s] = (byte) fm;
+				face2moves[fm] = m;
+				fm++;
 			}
 		}
 	}
