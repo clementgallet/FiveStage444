@@ -5,14 +5,11 @@ import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
 import cg.fivestage444.Stages.Stage1;
 
-public final class Corner1 {
+public final class Corner1 extends RawCoord {
 
 	public final static int N_COORD = 2187;
 	private final static int N_SYM = Stage1.N_SYM;
 	private final static int N_MOVES = Moves.N_FACE_MOVES;
-
-	/* Coordinates */
-	public int coord;
 
 	/* Tables */
 	private static short[][] move = new short[N_COORD][N_MOVES];
@@ -23,8 +20,17 @@ public final class Corner1 {
 		return conj[coord][sym] == 2173;
 	}
 
+	public int[] getSolvedStates(){
+		int[] ss = {2173};
+		return ss;
+	}
+
+	public int getSize(){
+		return N_COORD;
+	}
+
 	/* Move */
-	public void moveTo( int m, Corner1 c ){
+	public void moveTo( int m, RawCoord c ){
 		int face_move = Moves.stage2face[m];
 		c.coord = ( face_move >= 0 ) ? move[coord][face_move] : coord;
 	}
