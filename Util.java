@@ -1,10 +1,8 @@
 package cg.fivestage444;
 
-import java.util.Arrays;
-
 public final class Util {
 
-	public static final boolean FULL_PRUNING3 = true;
+	public static final boolean FULL_PRUNING3 = false;
 
 	public static final void init (){
 		initCnk();
@@ -40,7 +38,7 @@ public final class Util {
 	 * Converts an array of integers from off to off+4-1 into a corresponding number from 0 to 4!-1.
 	 * Faster version. Taken from Chen Shuang (min2phase).
 	 * @param array_in	permutation
-	 * @param offset	index of the first element where the permutation starts in the table
+	 * @param off	index of the first element where the permutation starts in the table
 	 * @return		an integer representing the permutation
 	 */
 	public static final int get4Perm (byte[] array_in, int off){
@@ -48,7 +46,7 @@ public final class Util {
 		int val = 0x3210;
 		for (int i=0; i<3; i++) {
 			int v = (array_in[i+off]-off) << 2;
-			idx = (4 - i) * idx + ((val >> v) & 07);
+			idx = (4 - i) * idx + ((val >> v) & 0x7);
 			val -= 0x1110 << v;
 		}
 		return idx;
@@ -58,7 +56,7 @@ public final class Util {
 	 * Converts an array of integers from off to off+8-1 into a corresponding number from 0 to 8!-1.
 	 * Faster version. Taken from Chen Shuang (min2phase).
 	 * @param array_in	permutation
-	 * @param offset	index of the first element where the permutation starts in the table
+	 * @param off	index of the first element where the permutation starts in the table
 	 * @return		an integer representing the permutation
 	 */
 	public static final int get8Perm (byte[] array_in, int off){
@@ -66,7 +64,7 @@ public final class Util {
 		int val = 0x76543210;
 		for (int i=0; i<7; i++) {
 			int v = (array_in[i+off]-off) << 2;
-			idx = (8 - i) * idx + ((val >> v) & 07);
+			idx = (8 - i) * idx + ((val >> v) & 0x7);
 			val -= 0x11111110 << v;
 		}
 		return idx;
@@ -84,7 +82,7 @@ public final class Util {
 			int v = idx / p;
 			idx -= v*p;
 			v <<= 2;
-			arr[i] = (byte) ((val >> v) & 07);
+			arr[i] = (byte) ((val >> v) & 0x7);
 			int m = (1 << v) - 1;
 			val = (val & m) + ((val >> 4) & ~m);
 		}
@@ -103,7 +101,7 @@ public final class Util {
 			int v = idx / p;
 			idx -= v*p;
 			v <<= 2;
-			arr[i] = (byte) ((val >> v) & 07);
+			arr[i] = (byte) ((val >> v) & 0x7);
 			int m = (1 << v) - 1;
 			val = (val & m) + ((val >> 4) & ~m);
 		}

@@ -15,7 +15,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,7 +47,7 @@ public class Tools {
 		}
 
 		if(fivephase_tables == null) {
-			fivephase_tables = new File("cg/fivestage444/fivephase_tables");
+			fivephase_tables = new File("fivephase_tables.rbk");
 		}
 
 		prepareTables();
@@ -64,8 +63,10 @@ public class Tools {
 		}
 		if( ! inited ) {
 			Stage1.init();
-			Stage3.init();
-			Stage4.init();
+            if( Util.FULL_PRUNING3 ){
+                Stage3.init();
+            }
+            Stage4.init();
 
 			try {
 				l.info("Writing to " + fivephase_tables);
@@ -78,7 +79,10 @@ public class Tools {
 			
 		}
 		Stage2.init();
-		Stage5.init();
+        if( ! Util.FULL_PRUNING3 ){
+            Stage3.init();
+        }
+        Stage5.init();
 		inited = true;
 	}
 	
