@@ -22,14 +22,14 @@ final class Search {
 	private final byte[] move_list_stage4 = new byte[50];
 	private final byte[] move_list_stage5 = new byte[50];
 	private int length1;
-    private int length2;
-    private int length3;
-    private int length4;
-    private int length5;
+	private int length2;
+	private int length3;
+	private int length4;
+	private int length5;
 	private int rotate;
-    private int rotate2;
+	private int rotate2;
 	private int rotate_sub;
-    private int rotate2_sub;
+	private int rotate2_sub;
 	private int total_length;
 
 	private final byte[] move_list_sub_stage1 = new byte[50];
@@ -38,10 +38,10 @@ final class Search {
 	private final byte[] move_list_sub_stage4 = new byte[50];
 	private final byte[] move_list_sub_stage5 = new byte[50];
 	private int length1_sub;
-    private int length2_sub;
-    private int length3_sub;
-    private int length4_sub;
-    private int length5_sub;
+	private int length2_sub;
+	private int length3_sub;
+	private int length4_sub;
+	private int length5_sub;
 	private boolean found_sol;
 
 	private static final int MAX_STAGE2 = 6;
@@ -66,9 +66,9 @@ final class Search {
 	private final CubePack[] cp4_list = new CubePack[20];
 
 	private int min1_list;
-    private int min2_list;
-    private int min3_list;
-    private int min4_list;
+	private int min2_list;
+	private int min3_list;
+	private int min4_list;
 
 	private static final int DEBUG_LEVEL = 0;
 	private static final boolean PRINT_LENGTH = true;
@@ -80,7 +80,7 @@ final class Search {
 		StringBuilder sb = new StringBuilder();
 		CubeState c = new CubeState();
 		cube.copyTo( c );
-		
+
 		for( j=0; j<3; j++){
 			init_cube[j] = new CubeState();
 			c.copyTo( init_cube[j] );
@@ -201,7 +201,7 @@ final class Search {
 
 	boolean search_stage1(int depth, int moves_done, int last_move){
 		if ( s1_list[moves_done].isSolved() ){
-            return depth == 0 && init_stage2();
+			return depth == 0 && init_stage2();
 		}
 		long mask = Moves.moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < Stage1.N_MOVES; move++, mask >>>= 1) {
@@ -246,7 +246,7 @@ final class Search {
 
 	boolean search_stage2(int depth, int moves_done, int last_move){
 		if( s2_list[moves_done].isSolved() ){
-            return depth == 0 && init_stage3();
+			return depth == 0 && init_stage3();
 		}
 
 		long mask = Moves.moves_mask[last_move];
@@ -293,7 +293,7 @@ final class Search {
 
 	boolean search_stage3(int depth, int moves_done, int last_move){
 		if( s3_list[moves_done].isSolved() ){
-            return depth == 0 && init_stage4();
+			return depth == 0 && init_stage4();
 		}
 
 		long mask = Moves.moves_mask[last_move];
@@ -337,7 +337,7 @@ final class Search {
 
 	boolean search_stage4(int depth, int moves_done, int last_move){
 		if( s4_list[moves_done].isSolved() ){
-            return depth == 0 && init_stage5();
+			return depth == 0 && init_stage5();
 		}
 
 		long mask = Moves.moves_mask[last_move];

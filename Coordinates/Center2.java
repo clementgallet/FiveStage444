@@ -6,7 +6,7 @@ import cg.fivestage444.Moves;
 import cg.fivestage444.Util;
 import cg.fivestage444.Stages.Stage2;
 
-public final class Center2 {
+public final class Center2 extends SymCoord {
 
 	public final static int N_COORD = 716;
 	private final static int N_RAW_COORD = 10626;
@@ -15,11 +15,9 @@ public final class Center2 {
 	private final static int SYM_MASK = ( 1 << SYM_SHIFT ) - 1;
 	private final static int N_MOVES = Stage2.N_MOVES;
 
-	public static final int SOLVED[] = { 122, 242, 243, 245, 246, 247 };
+	public static final int SolvedStates[] = { 122, 242, 243, 245, 246, 247 };
 
 	/* Coordinates */
-	public int coord;
-	public int sym;
 	public int raw_coord;
 
 	/* Tables */
@@ -30,17 +28,29 @@ public final class Center2 {
 
 	/* Check if solved */
 	public boolean isSolved(){
-		for (int s : SOLVED)
+		for (int s : SolvedStates)
 			if( coord == s)
 				return true;
 		return false;
 	}
 
+	public int[] getSolvedStates(){
+		return SolvedStates;
+	}
+
+	public int getSize(){
+		return N_COORD;
+	}
+
 	/* Move */
-	public void moveTo( int m, Center2 c ){
+	public void moveTo( int m, SymCoord c ){
 		c.coord = move[coord][Symmetry.moveConjugateStage[m][sym]];
 		c.sym = Symmetry.symIdxMultiply[c.coord & SYM_MASK][sym];
 		c.coord >>>= SYM_SHIFT;
+	}
+
+	public long getSyms(){
+		return hasSym[coord];
 	}
 
 	/* Unpack a raw coord to a cube */

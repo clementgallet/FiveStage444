@@ -108,21 +108,21 @@ public final class Util {
 		arr[7] = (byte)val;
 	}
 
-        public static void set1bit(byte[] table, int index) {
+		public static void set1bit(byte[] table, int index) {
 		table[index>>>3] |= (byte)( 1 << ( index & 0x7 ));
 	}
 
-        public static boolean get1bit(byte[] table, int index) {
+		public static boolean get1bit(byte[] table, int index) {
 		return (( table[index>>>3] >>> ( index & 0x7 )) & 1 ) != 0;
-        }
+		}
 
 	public static void setPrun2(byte[] table, int index, int value) {
 		table[index >> 1] ^= (0x0f ^ value) << ((index & 1) << 2);
 	}
 
-        public static int getPrun2(byte[] table, int index) {
-                return (table[index >> 1] >> ((index & 1) << 2)) & 0x0f;
-        }
+		public static int getPrun2(byte[] table, int index) {
+				return (table[index >> 1] >> ((index & 1) << 2)) & 0x0f;
+		}
 
 	/* We need to be able to convert a number between 0 and C^24_4 - 1 that represents the location of four elements among 24,
 	 * who in practice are only taking place in the 8 last places, into the number coding to the location of those four elements
@@ -184,7 +184,7 @@ public final class Util {
 				for (int i=15; i>=0; i--){
 					if( loc8 >= Cnk[i][r8] ){
 						loc8 -= Cnk[i][r8];
-						
+
 						if( loc4 >= Cnk[j][r4] ){
 							loc4 -= Cnk[j][r4];
 							loc4a += Cnk[i][r4];
@@ -362,7 +362,7 @@ public final class Util {
 			}
 		}
 	}
-	
+
 	private static final int FACT4 = 24;
 	static final int C8_4 = 70;
 

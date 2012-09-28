@@ -71,8 +71,8 @@ public final class Symmetry {
 		for (int i=0; i<N_SYM; i++)
 			for (int j=0; j<N_SYM; j++)
 				if( symEdges[i][symEdges[j][0]] == 0 &&
-				    symEdges[i][symEdges[j][7]] == 7 &&
-				    symEdges[i][symEdges[j][18]] == 18 ){
+					symEdges[i][symEdges[j][7]] == 7 &&
+					symEdges[i][symEdges[j][18]] == 18 ){
 					invSymIdx[i] = j;
 					break;
 				}
@@ -86,7 +86,7 @@ public final class Symmetry {
 			for (int j=0; j<N_SYM; j++)
 				for (int k=0; k<N_SYM; k++)
 					if( symEdges[k][0] == symEdges[i][symEdges[j][0]] &&
-					    symEdges[k][1] == symEdges[i][symEdges[j][1]] ){
+						symEdges[k][1] == symEdges[i][symEdges[j][1]] ){
 						symIdxMultiply[i][j] = k;
 						break;
 					}

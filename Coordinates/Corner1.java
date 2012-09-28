@@ -40,7 +40,7 @@ public final class Corner1 extends RawCoord {
 	}
 
 	/* Unpack a coord to a cube */
-    void unpack(CornerCubies cube)
+	void unpack(CornerCubies cube)
 	{
 		int i;
 		int orientc = this.coord;

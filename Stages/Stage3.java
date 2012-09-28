@@ -131,9 +131,9 @@ public final class Stage3 {
 			prunTableCenter[i] = -1;
 
 		/* Set the solved states */
-		for( int a=0; a<Center3.SOLVED.length; a++)
-			Util.setPrun2( prunTableCenter, Center3.SOLVED[a], 0 );
-		int done = Center3.SOLVED.length;
+		for( int a=0; a<Center3.SolvedStates.length; a++)
+			Util.setPrun2( prunTableCenter, Center3.SolvedStates[a], 0 );
+		int done = Center3.SolvedStates.length;
 
 		int depth = 0;
 		while (done < Center3.N_COORD) {
@@ -171,9 +171,9 @@ public final class Stage3 {
 			prunTable[i] = -1;
 
 		/* Set the solved states */
-		for( int a=0; a<Center3.SOLVED.length; a++)
-			Util.setPrun2( prunTable, Center3.SOLVED[a] * Edge3.N_COORD + 12375, 0 );
-		int done = Center3.SOLVED.length;
+		for( int a=0; a<Center3.SolvedStates.length; a++)
+			Util.setPrun2( prunTable, Center3.SolvedStates[a] * Edge3.N_COORD + 12375, 0 );
+		int done = Center3.SolvedStates.length;
 
 		int depth = 0;
 		while (done < N_SIZE) {

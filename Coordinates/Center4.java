@@ -23,9 +23,9 @@ public final class Center4 {
 
 	/* Check if solved */
 	public boolean isSolved(){
-        for (int s : SOLVED)
-            if (coord == s)
-                return true;
+		for (int s : SOLVED)
+			if (coord == s)
+				return true;
 		return false;
 	}
 

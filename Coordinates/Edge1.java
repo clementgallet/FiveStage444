@@ -16,12 +16,12 @@ public final class Edge1 extends SymCoord {
 	private final static int N_MOVES = Stage1.N_MOVES;
 
 	/* Coordinates */
-    private int raw_coord;
+	private int raw_coord;
 
 	/* Tables */
 	private static final int[] sym2raw = new int[N_COORD];
-    private static final int[] raw2sym = new int[N_RAW_COORD];
-    public static long[] hasSym;
+	private static final int[] raw2sym = new int[N_RAW_COORD];
+	public static long[] hasSym;
 	private static final int[][] move = new int[N_COORD][N_MOVES];
 
 	/* Check if solved */
@@ -76,14 +76,14 @@ public final class Edge1 extends SymCoord {
 		}
 	}
 
-    /* Compute the sym coordinate from the raw coordinate */
-    public void computeSym (){
-        int symcoord = raw2sym[raw_coord];
-        this.coord = symcoord >> SYM_SHIFT;
-        this.sym = symcoord & SYM_MASK;
-    }
+	/* Compute the sym coordinate from the raw coordinate */
+	public void computeSym (){
+		int symcoord = raw2sym[raw_coord];
+		this.coord = symcoord >> SYM_SHIFT;
+		this.sym = symcoord & SYM_MASK;
+	}
 
-    /* Initialisations */
+	/* Initialisations */
 	public static void init(){
 		initSym2Raw();
 		initMove();
@@ -98,15 +98,15 @@ public final class Edge1 extends SymCoord {
 		hasSym = new long[N_COORD];
 		for (int u = 0; u < N_RAW_COORD; ++u) {
 			if( Util.get1bit( isRepTable, u )) continue;
-            raw2sym[u] = repIdx << SYM_SHIFT;
-            e.raw_coord = u;
+			raw2sym[u] = repIdx << SYM_SHIFT;
+			e.raw_coord = u;
 			e.unpack(cube1);
 			for (int s = 1; s < N_SYM; ++s) {
 				cube1.rightMult (Symmetry.invSymIdx[s], cube2);
 				e.pack(cube2);
 				Util.set1bit( isRepTable, e.raw_coord );
-                raw2sym[e.raw_coord] = ( repIdx << SYM_SHIFT ) + Symmetry.invSymIdx[s];
-                if( e.raw_coord == u )
+				raw2sym[e.raw_coord] = ( repIdx << SYM_SHIFT ) + Symmetry.invSymIdx[s];
+				if( e.raw_coord == u )
 					hasSym[repIdx] |= (0x1L << s);
 			}
 			sym2raw[repIdx++] = u;

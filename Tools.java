@@ -63,10 +63,10 @@ class Tools {
 		}
 		if( ! inited ) {
 			Stage1.init();
-            if( Util.FULL_PRUNING3 ){
-                Stage3.init();
-            }
-            Stage4.init();
+			if( Util.FULL_PRUNING3 ){
+				Stage3.init();
+			}
+			Stage4.init();
 
 			try {
 				l.info("Writing to " + fivephase_tables);
@@ -76,16 +76,16 @@ class Tools {
 			} catch(IOException e) {
 				l.log(Level.INFO, "Failed to write to " + fivephase_tables, e);
 			}
-			
+
 		}
 		Stage2.init();
-        if( ! Util.FULL_PRUNING3 ){
-            Stage3.init();
-        }
-        Stage5.init();
+		if( ! Util.FULL_PRUNING3 ){
+			Stage3.init();
+		}
+		Stage5.init();
 		inited = true;
 	}
-	
+
 	private static boolean initFrom(DataInput in) {
 		try {
 			Stage1.prunTable = new byte[(Stage1.N_SIZE+1)/2];

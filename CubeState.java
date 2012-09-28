@@ -80,7 +80,7 @@ public final class CubeState{
 		}
 	}
 
-    public void copyTo (CubeState cube){
+	public void copyTo (CubeState cube){
 		edges.copyTo(cube.edges);
 		corners.copyTo(cube.corners);
 		centers.copyTo(cube.centers);

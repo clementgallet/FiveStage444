@@ -34,11 +34,11 @@ final class CubePack{
 	/** Coordinates **/
 
 	/* Corners */
-    private byte corner_top_loc; // Location of the top four corners (70).
+	private byte corner_top_loc; // Location of the top four corners (70).
 	private byte corner_top_perm;
-    private byte corner_bottom_perm; // Permutation of top and bottom corners (24).
+	private byte corner_bottom_perm; // Permutation of top and bottom corners (24).
 	/* Centers */
-    private final short[] centers = new short[6]; // Location of each center (10626).
+	private final short[] centers = new short[6]; // Location of each center (10626).
 	private final short[] edges_loc = new short[6]; // Location of each group of 4 edges (10626).
 	private final byte[] edges_perm = new byte[6]; // Permutation of each group of 4 edges (24).
 
@@ -289,9 +289,9 @@ final class CubePack{
 
 	void toEdge4(Edge4 e){
 		e.raw_coord = (( Util.perms_to_6[edges_perm[0]][edges_perm[1]]   * 6  +
-		             Util.perms_to_6[edges_perm[2]][edges_perm[3]] ) * 70 +
-		             Util.shiftC16[edges_loc[0]]                   ) * 70 +
-		             Util.shiftC16[edges_loc[1]];
+					 Util.perms_to_6[edges_perm[2]][edges_perm[3]] ) * 70 +
+					 Util.shiftC16[edges_loc[0]]				   ) * 70 +
+					 Util.shiftC16[edges_loc[1]];
 		e.computeSym();
 	}
 
@@ -303,8 +303,8 @@ final class CubePack{
 
 	void toEdge5(Edge5 e){
 		e.raw_coord = (( 4 * edges_perm[4] + edges_perm[5] / 6 ) * 96 +
-		                 4 * edges_perm[2] + edges_perm[3] / 6 ) * 96 +
-		                 4 * edges_perm[0] + edges_perm[1] / 6;
+						 4 * edges_perm[2] + edges_perm[3] / 6 ) * 96 +
+						 4 * edges_perm[0] + edges_perm[1] / 6;
 		e.computeSym();
 	}
 

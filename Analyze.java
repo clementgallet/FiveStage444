@@ -12,8 +12,8 @@ public final class Analyze {
 
 	private static int length4;
 	private static long unique;
-    private static long pos;
-    private static long done;
+	private static long pos;
+	private static long done;
 	private static final byte[] move_list_stage4 = new byte[30];
 
 	private static final byte[] allPos5 = new byte[N_SIZE5>>>3];

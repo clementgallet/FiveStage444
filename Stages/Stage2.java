@@ -23,10 +23,10 @@ public final class Stage2 {
 	/* Check if solved */
 	public boolean isSolved(){
 		return edge.isSolved()
-		       && ( centerF.coord == centerB.coord )
-		       && (( centerF.sym & 0x8 ) == ( centerB.sym & 0x8 ))
-		       && (( edge.coord == 0 ) ^ (( centerF.sym & 0x8 ) == 0 )) 
-		       && centerF.isSolved();
+			   && ( centerF.coord == centerB.coord )
+			   && (( centerF.sym & 0x8 ) == ( centerB.sym & 0x8 ))
+			   && (( edge.coord == 0 ) ^ (( centerF.sym & 0x8 ) == 0 ))
+			   && centerF.isSolved();
 	}
 
 	/* Move */
@@ -83,8 +83,8 @@ public final class Stage2 {
 			prunTable[i] = -1;
 
 		/* Set the solved states */
-		for( int a=0; a<Center2.SOLVED.length; a++){
-			s1.centerF.coord = Center2.SOLVED[a];
+		for( int a=0; a<Center2.SolvedStates.length; a++){
+			s1.centerF.coord = Center2.SolvedStates[a];
 			s1.edge.coord = 0;
 			Util.setPrun2( prunTable, s1.get(true), 0 );
 			s1.edge.coord = 414;
