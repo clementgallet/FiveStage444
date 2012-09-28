@@ -5,7 +5,6 @@ import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
 import cg.fivestage444.Util;
 import cg.fivestage444.Stages.Stage2;
-import java.util.Arrays;
 
 public final class Center2 {
 
@@ -45,7 +44,7 @@ public final class Center2 {
 	}
 
 	/* Unpack a raw coord to a cube */
-	private void unpackRaw (CenterCubies cube)
+	private void unpack(CenterCubies cube)
 	{
 		int center = raw_coord;
 		int r = 4;
@@ -61,7 +60,7 @@ public final class Center2 {
 	}
 
 	/* Pack a cube into the raw coord */
-	private void packRaw (CenterCubies cube, int c){
+	private void pack(CenterCubies cube, int c){
 		this.raw_coord = 0;
 		int r = 4;
 		for (int i=23; i>=0; i--) {
@@ -96,10 +95,10 @@ public final class Center2 {
 			if( Util.get1bit( isRepTable, u )) continue;
 			raw2sym[u] = (short)( repIdx << SYM_SHIFT );
 			c.raw_coord = u;
-			c.unpackRaw(cube1);
+			c.unpack(cube1);
 			for (int s = 1; s < N_SYM; ++s) {
 				cube1.rightMult (Symmetry.invSymIdx[s], cube2);
-				c.packRaw( cube2, 5 );
+				c.pack(cube2, 5);
 				Util.set1bit( isRepTable, c.raw_coord );
 				raw2sym[c.raw_coord] = (short)(( repIdx << SYM_SHIFT ) + Symmetry.invSymIdx[s]);
 				if( c.raw_coord == u )
@@ -116,10 +115,10 @@ public final class Center2 {
 		Center2 c = new Center2();
 		for (int u = 0; u < N_COORD; ++u) {
 			c.raw_coord = sym2raw[u];
-			c.unpackRaw( cube1 );
+			c.unpack(cube1);
 			for (int m = 0; m < N_MOVES; ++m) {
 				cube1.move (Moves.stage2moves[m], cube2);
-				c.packRaw( cube2, 5 );
+				c.pack(cube2, 5);
 				move[u][m] = raw2sym[c.raw_coord];
 			}
 		}

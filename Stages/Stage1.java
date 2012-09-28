@@ -22,7 +22,7 @@ public final class Stage1 {
 
 	/* Pack from CubeState */
 	public void pack(CubeState cube){
-		edge.packRaw(cube.edges);
+		edge.pack(cube.edges);
         edge.computeSym();
 		corner.pack(cube.corners);
 	}

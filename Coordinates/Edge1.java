@@ -49,7 +49,7 @@ public final class Edge1 extends SymCoord {
 	}
 
 	/* Unpack a raw coord to a cube */
-	private void unpackRaw (EdgeCubies cube)
+	private void unpack(EdgeCubies cube)
 	{
 		int c = this.raw_coord;
 		int r = 8;
@@ -66,7 +66,7 @@ public final class Edge1 extends SymCoord {
 	}
 
 	/* Pack a cube into the raw coord */
-	public void packRaw (EdgeCubies cube){
+	public void pack(EdgeCubies cube){
 		this.raw_coord = 0;
 		int r = 8;
 		for (int i=23; i>=0; i--) {
@@ -100,10 +100,10 @@ public final class Edge1 extends SymCoord {
 			if( Util.get1bit( isRepTable, u )) continue;
             raw2sym[u] = repIdx << SYM_SHIFT;
             e.raw_coord = u;
-			e.unpackRaw(cube1);
+			e.unpack(cube1);
 			for (int s = 1; s < N_SYM; ++s) {
 				cube1.rightMult (Symmetry.invSymIdx[s], cube2);
-				e.packRaw( cube2 );
+				e.pack(cube2);
 				Util.set1bit( isRepTable, e.raw_coord );
                 raw2sym[e.raw_coord] = ( repIdx << SYM_SHIFT ) + Symmetry.invSymIdx[s];
                 if( e.raw_coord == u )
@@ -119,10 +119,10 @@ public final class Edge1 extends SymCoord {
 		Edge1 e = new Edge1();
 		for (int u = 0; u < N_COORD; ++u) {
 			e.raw_coord = sym2raw[u];
-			e.unpackRaw( cube1 );
+			e.unpack(cube1);
 			for (int m = 0; m < N_MOVES; ++m) {
 				cube1.move (Moves.stage2moves[m], cube2);
-				e.packRaw( cube2 );
+				e.pack(cube2);
 				move[u][m] = raw2sym[e.raw_coord];
 			}
 		}

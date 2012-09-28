@@ -5,7 +5,6 @@ import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
 import cg.fivestage444.Util;
 import cg.fivestage444.Stages.Stage4;
-import java.util.Arrays;
 
 public final class Edge4 {
 
@@ -40,7 +39,7 @@ public final class Edge4 {
 	}
 
 	/* Unpack a raw coord to a cube */
-	private void unpackRaw (EdgeCubies cube)
+	private void unpack(EdgeCubies cube)
 	{
 		int ledge4of8 = raw_coord % 70;
 		int edge = raw_coord / 70;
@@ -81,7 +80,7 @@ public final class Edge4 {
 	}
 
 	/* Pack a cube into the raw coord */
-	private void packRaw (EdgeCubies cube){
+	private void pack(EdgeCubies cube){
 		int redge4of8 = 0;
 		int ledge4of8 = 0;
 		byte[] edges_rl = new byte[8];
@@ -143,7 +142,7 @@ public final class Edge4 {
 			if( Util.get1bit( isRepTable, u )) continue;
 			raw2sym[u] = repIdx << SYM_SHIFT;
 			e.raw_coord = u;
-			e.unpackRaw(cube1);
+			e.unpack(cube1);
 
 			/* Only retain configs without parity */
 			int ul = Util.get8Perm( cube1.cubies, 4 );
@@ -156,7 +155,7 @@ public final class Edge4 {
 
 			for (int s = 1; s < N_SYM; ++s) {
 				cube1.conjugate (s, cube2);
-				e.packRaw( cube2 );
+				e.pack(cube2);
 				Util.set1bit( isRepTable, e.raw_coord );
 				raw2sym[e.raw_coord] = ( repIdx << SYM_SHIFT ) + Symmetry.invSymIdx[s];
 				if( e.raw_coord == u )
@@ -172,10 +171,10 @@ public final class Edge4 {
 		Edge4 e = new Edge4();
 		for (int u = 0; u < N_COORD; ++u) {
 			e.raw_coord = sym2raw[u];
-			e.unpackRaw( cube1 );
+			e.unpack(cube1);
 			for (int m = 0; m < N_MOVES; ++m) {
 				cube1.move (Moves.stage2moves[m], cube2);
-				e.packRaw( cube2 );
+				e.pack(cube2);
 				move[u][m] = raw2sym[e.raw_coord];
 			}
 		}
