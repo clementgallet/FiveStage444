@@ -10,9 +10,9 @@ public final class Stage2 {
 	public final static int N_SYM = 16;
 	private static byte[] prunTable;
 
-	public Edge2 edge;
-	public Center2 centerF;
-	public Center2 centerB;
+	public final Edge2 edge;
+	public final Center2 centerF;
+	public final Center2 centerB;
 
 	public Stage2(){
 		edge = new Edge2();
@@ -61,15 +61,9 @@ public final class Stage2 {
 	}
 
 	/* Rotate so that sym is 0 */
-	private void normalise(boolean center){
-		if( center ){
-			edge.coord = edge.conjugate(centerF.sym);
-			centerF.sym = 0;
-		}
-		else {
-			edge.coord = edge.conjugate(centerB.sym);
-			centerB.sym = 0;
-		}
+	private void normalise(){
+		edge.coord = edge.conjugate(centerF.sym);
+		centerF.sym = 0;
 	}
 
 	/* Get pruning */
@@ -78,7 +72,7 @@ public final class Stage2 {
 	}
 
 	/* Init pruning table */
-	public static void initPruningTable(){
+	private static void initPruningTable(){
 		final int N_SIZE = Edge2.N_COORD * Center2.N_COORD;
 		final int INV_DEPTH = 7;
 		Stage2 s1 = new Stage2();
@@ -123,7 +117,7 @@ public final class Stage2 {
 						int nsym = 1;
 						unique++;
 						int symS = Center2.hasSym[s2.centerF.coord];
-						s2.normalise(true);
+						s2.normalise();
 						for (int k=0; symS != 0; symS>>=1, k++) {
 							if ((symS & 1) == 0) continue;
 							s2.centerF.sym = k;

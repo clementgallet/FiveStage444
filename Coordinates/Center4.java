@@ -18,14 +18,14 @@ public final class Center4 {
 	public int coord;
 
 	/* Tables */
-	private static short[][] move = new short[N_COORD][N_MOVES];
-	private static short[][] conj = new short[N_COORD][N_SYM];
+	private static final short[][] move = new short[N_COORD][N_MOVES];
+	private static final short[][] conj = new short[N_COORD][N_SYM];
 
 	/* Check if solved */
 	public boolean isSolved(){
-		for (int i=0; i < SOLVED.length; i++)
-			if( coord == SOLVED[i])
-				return true;
+        for (int s : SOLVED)
+            if (coord == s)
+                return true;
 		return false;
 	}
 

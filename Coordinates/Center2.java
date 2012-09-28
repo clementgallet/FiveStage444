@@ -23,10 +23,10 @@ public final class Center2 {
 	public int raw_coord;
 
 	/* Tables */
-	private static short[] sym2raw = new short[N_COORD];
-	private static short[] raw2sym = new short[N_RAW_COORD];
+	private static final short[] sym2raw = new short[N_COORD];
+	private static final short[] raw2sym = new short[N_RAW_COORD];
 	public static int[] hasSym;
-	private static int[][] move = new int[N_COORD][N_MOVES];
+	private static final int[][] move = new int[N_COORD][N_MOVES];
 
 	/* Check if solved */
 	public boolean isSolved(){
@@ -60,11 +60,11 @@ public final class Center2 {
 	}
 
 	/* Pack a cube into the raw coord */
-	private void pack(CenterCubies cube, int c){
+	private void pack(CenterCubies cube){
 		this.raw_coord = 0;
 		int r = 4;
 		for (int i=23; i>=0; i--) {
-			if (cube.cubies[i] == c) {
+			if (cube.cubies[i] == 5) {
 				this.raw_coord += Util.Cnk[i][r--];
 			}
 		}
@@ -98,7 +98,7 @@ public final class Center2 {
 			c.unpack(cube1);
 			for (int s = 1; s < N_SYM; ++s) {
 				cube1.rightMult (Symmetry.invSymIdx[s], cube2);
-				c.pack(cube2, 5);
+				c.pack(cube2);
 				Util.set1bit( isRepTable, c.raw_coord );
 				raw2sym[c.raw_coord] = (short)(( repIdx << SYM_SHIFT ) + Symmetry.invSymIdx[s]);
 				if( c.raw_coord == u )
@@ -118,7 +118,7 @@ public final class Center2 {
 			c.unpack(cube1);
 			for (int m = 0; m < N_MOVES; ++m) {
 				cube1.move (Moves.stage2moves[m], cube2);
-				c.pack(cube2, 5);
+				c.pack(cube2);
 				move[u][m] = raw2sym[c.raw_coord];
 			}
 		}

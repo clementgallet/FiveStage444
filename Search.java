@@ -14,57 +14,70 @@ import java.io.PipedOutputStream;
 import java.io.PipedInputStream;
 import java.io.File;
 
-public final class Search {
+final class Search {
 
-	byte[] move_list_stage1 = new byte[50];
-	byte[] move_list_stage2 = new byte[50];
-	byte[] move_list_stage3 = new byte[50];
-	byte[] move_list_stage4 = new byte[50];
-	byte[] move_list_stage5 = new byte[50];
-	int length1, length2, length3, length4, length5;
-	int rotate, rotate2;
-	int rotate_sub, rotate2_sub;
-	int total_length;
+	private final byte[] move_list_stage1 = new byte[50];
+	private final byte[] move_list_stage2 = new byte[50];
+	private final byte[] move_list_stage3 = new byte[50];
+	private final byte[] move_list_stage4 = new byte[50];
+	private final byte[] move_list_stage5 = new byte[50];
+	private int length1;
+    private int length2;
+    private int length3;
+    private int length4;
+    private int length5;
+	private int rotate;
+    private int rotate2;
+	private int rotate_sub;
+    private int rotate2_sub;
+	private int total_length;
 
-	byte[] move_list_sub_stage1 = new byte[50];
-	byte[] move_list_sub_stage2 = new byte[50];
-	byte[] move_list_sub_stage3 = new byte[50];
-	byte[] move_list_sub_stage4 = new byte[50];
-	byte[] move_list_sub_stage5 = new byte[50];
-	int length1_sub, length2_sub, length3_sub, length4_sub, length5_sub;
-	boolean found_sol;
+	private final byte[] move_list_sub_stage1 = new byte[50];
+	private final byte[] move_list_sub_stage2 = new byte[50];
+	private final byte[] move_list_sub_stage3 = new byte[50];
+	private final byte[] move_list_sub_stage4 = new byte[50];
+	private final byte[] move_list_sub_stage5 = new byte[50];
+	private int length1_sub;
+    private int length2_sub;
+    private int length3_sub;
+    private int length4_sub;
+    private int length5_sub;
+	private boolean found_sol;
 
-	static int MAX_STAGE2 = 6;
-	static int MAX_STAGE3 = 10;
-	static int MAX_STAGE4 = 14;
+	private static final int MAX_STAGE2 = 6;
+	private static final int MAX_STAGE3 = 10;
+	private static final int MAX_STAGE4 = 14;
 
-	static int MIN_STAGE3 = 8;
-	static int MIN_STAGE4 = 7;
-	static int MIN_STAGE5 = 8;
+	private static final int MIN_STAGE3 = 8;
+	private static final int MIN_STAGE4 = 7;
+	private static final int MIN_STAGE5 = 8;
 
-	CubeState[] init_cube = new CubeState[3];
+	private final CubeState[] init_cube = new CubeState[3];
 
-	Stage1[] s1_list = new Stage1[20];
-	Stage2[] s2_list = new Stage2[20];
-	Stage3[] s3_list = new Stage3[20];
-	Stage4[] s4_list = new Stage4[20];
-	Stage5[] s5_list = new Stage5[20];
+	private final Stage1[] s1_list = new Stage1[20];
+	private final Stage2[] s2_list = new Stage2[20];
+	private final Stage3[] s3_list = new Stage3[20];
+	private final Stage4[] s4_list = new Stage4[20];
+	private final Stage5[] s5_list = new Stage5[20];
 
-	CubePack[] cp1_list = new CubePack[20];
-	CubePack[] cp2_list = new CubePack[20];
-	CubePack[] cp3_list = new CubePack[20];
-	CubePack[] cp4_list = new CubePack[20];
+	private final CubePack[] cp1_list = new CubePack[20];
+	private final CubePack[] cp2_list = new CubePack[20];
+	private final CubePack[] cp3_list = new CubePack[20];
+	private final CubePack[] cp4_list = new CubePack[20];
 
-	int min1_list, min2_list, min3_list, min4_list;
+	private int min1_list;
+    private int min2_list;
+    private int min3_list;
+    private int min4_list;
 
-	static int DEBUG_LEVEL = 0;
-	static boolean PRINT_LENGTH = true;
+	private static final int DEBUG_LEVEL = 0;
+	private static final boolean PRINT_LENGTH = true;
 
 	public String solve (CubeState cube, int max_turns, boolean inverse) {
 		int i, j;
 
 		Tools.init();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		String sol = "";
 		CubeState c = new CubeState();
 		cube.copyTo( c );
@@ -143,7 +156,7 @@ public final class Search {
 		return sb.toString();
 	}
 
-	public void init_stage1 ( int max_turns ) {
+	void init_stage1(int max_turns) {
 		Stage1 s1 = new Stage1();
 		Stage1 s2 = new Stage1();
 		Stage1 s3 = new Stage1();
@@ -187,12 +200,9 @@ public final class Search {
 		}
 	}
 
-	public boolean search_stage1 (int depth, int moves_done, int last_move){
+	boolean search_stage1(int depth, int moves_done, int last_move){
 		if ( s1_list[moves_done].isSolved() ){
-			if (depth == 0)
-				return init_stage2 ();
-			else
-				return false;
+            return depth == 0 && init_stage2();
 		}
 		long mask = Moves.moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < Stage1.N_MOVES; move++, mask >>>= 1) {
@@ -207,7 +217,7 @@ public final class Search {
 		return false;
 	}
 
-	public boolean init_stage2 (){
+	boolean init_stage2(){
 		if( found_sol ) return true;
 
 		for (;min1_list<length1; min1_list++)
@@ -235,12 +245,9 @@ public final class Search {
 		return false;
 	}
 
-	public boolean search_stage2 (int depth, int moves_done, int last_move ){
+	boolean search_stage2(int depth, int moves_done, int last_move){
 		if( s2_list[moves_done].isSolved() ){
-			if (depth == 0)
-				return init_stage3 ();
-			else
-				return false;
+            return depth == 0 && init_stage3();
 		}
 
 		long mask = Moves.moves_mask[last_move];
@@ -258,7 +265,7 @@ public final class Search {
 		return false;
 	}
 
-	public boolean init_stage3 (){
+	boolean init_stage3(){
 		if ( found_sol ) return true;
 
 		for (;min2_list<length2; min2_list++)
@@ -285,12 +292,9 @@ public final class Search {
 		return false;
 	}
 
-	public boolean search_stage3 (int depth, int moves_done, int last_move){
+	boolean search_stage3(int depth, int moves_done, int last_move){
 		if( s3_list[moves_done].isSolved() ){
-			if (depth == 0)
-				return init_stage4 ();
-			else
-				return false;
+            return depth == 0 && init_stage4();
 		}
 
 		long mask = Moves.moves_mask[last_move];
@@ -307,7 +311,7 @@ public final class Search {
 		return false;
 	}
 
-	public boolean init_stage4 (){
+	boolean init_stage4(){
 		if ( found_sol ) return true;
 
 		for (;min3_list<length3; min3_list++)
@@ -332,12 +336,9 @@ public final class Search {
 		return false;
 	}
 
-	public boolean search_stage4 (int depth, int moves_done, int last_move){
+	boolean search_stage4(int depth, int moves_done, int last_move){
 		if( s4_list[moves_done].isSolved() ){
-			if (depth == 0)
-				return init_stage5 ();
-			else
-				return false;
+            return depth == 0 && init_stage5();
 		}
 
 		long mask = Moves.moves_mask[last_move];
@@ -354,7 +355,7 @@ public final class Search {
 		return false;
 	}
 
-	public boolean init_stage5 (){
+	boolean init_stage5(){
 
 		for (;min4_list<length4; min4_list++)
 			cp4_list[min4_list].moveTo( move_list_stage4[min4_list], cp4_list[min4_list+1] );
@@ -389,7 +390,7 @@ public final class Search {
 		return false;
 	}
 
-	public boolean search_stage5 (int depth, int moves_done, int last_move){
+	boolean search_stage5(int depth, int moves_done, int last_move){
 		if (depth == 0)
 			return( s5_list[moves_done].isSolved() );
 

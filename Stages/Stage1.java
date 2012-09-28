@@ -12,8 +12,8 @@ public final class Stage1 {
 	public final static int N_SIZE = Edge1.N_COORD * Corner1.N_COORD;
 	public static byte[] prunTable;
 
-	Edge1 edge;
-	Corner1 corner;
+	private final Edge1 edge;
+	private final Corner1 corner;
 
 	public Stage1(){
 		edge = new Edge1();
@@ -71,7 +71,7 @@ public final class Stage1 {
 	}
 
 	/* Init pruning table */
-	public static void initPruningTable(){
+	private static void initPruningTable(){
 		if( prunTable != null ) return;
 		final int INV_DEPTH = 7;
 		Stage1 s1 = new Stage1();

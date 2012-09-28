@@ -16,13 +16,13 @@ public final class Edge1 extends SymCoord {
 	private final static int N_MOVES = Stage1.N_MOVES;
 
 	/* Coordinates */
-	int raw_coord;
+    private int raw_coord;
 
 	/* Tables */
-	private static int[] sym2raw = new int[N_COORD];
-    private static int[] raw2sym = new int[N_RAW_COORD];
+	private static final int[] sym2raw = new int[N_COORD];
+    private static final int[] raw2sym = new int[N_RAW_COORD];
     public static long[] hasSym;
-	private static int[][] move = new int[N_COORD][N_MOVES];
+	private static final int[][] move = new int[N_COORD][N_MOVES];
 
 	/* Check if solved */
 	public boolean isSolved(){

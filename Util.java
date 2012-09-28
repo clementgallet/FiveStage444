@@ -18,9 +18,9 @@ public final class Util {
 	}
 
 	public static final int Cnk [][] = new int[25][25];
-	public static final int fact [] = new int[26];
+	private static final int[] fact  = new int[26];
 
-	public static void initCnk() {
+	private static void initCnk() {
 		fact[0] = 1;
 		for (int i=0; i<25; i++) {
 			Cnk[i][i] = 1;
@@ -94,7 +94,7 @@ public final class Util {
 	 * @param arr		the permutation coded as an array of integers
 	 * @param idx		an integer representing the permutation
 	 */
-	public static void set8Perm (byte[] arr, int idx) {
+	private static void set8Perm(byte[] arr, int idx) {
 		int val = 0x76543210;
 		for (int i=0; i<7; i++) {
 			int p = fact[7-i];
@@ -130,7 +130,7 @@ public final class Util {
 	static final int C24_4 = 10626;
 	public static final byte[] C24to8 = new byte[C24_4];
 
-	public static void initC24to8() {
+	private static void initC24to8() {
 		byte[] t = new byte[8];
 		for (int p=0; p<40320; p++){
 			int r = 4;
@@ -156,15 +156,15 @@ public final class Util {
 	 * Because of the swap thing from earlier, we need two arrays, the second array for when the input numbers are swapped.
 	 * Finally, we also compute the number of inversions between the eight elements coming from the two input numbers and the other eight elements.
 	 * We don't need to keep the exact number of inversion, just the parity. */
-	static final int C16_4 = 1820;
+	private static final int C16_4 = 1820;
 	static final int C15_4 = 1365;
-	static final int C16_8 = 12870;
+	private static final int C16_8 = 12870;
 	public static final int[][] C16to16 = new int[C16_4][C15_4];
 	public static final byte[] parityC16_4 = new byte[C16_4*C15_4/8+1];
 	public static final byte[] paritySwapC16_4 = new byte[C16_4*C15_4/8+1];
 	public static final byte[] parityC16_8 = new byte[C16_4*C15_4/8+1];
 
-	public static void initC16to16() {
+	private static void initC16to16() {
 		for (int i_loc8=0; i_loc8<C16_8; i_loc8++){
 			for (int i_loc4=0; i_loc4<C8_4/2; i_loc4++){
 				int loc8 = i_loc8;
@@ -221,7 +221,7 @@ public final class Util {
 
 	public static final int[] shiftC16 = new int[C16_4];
 
-	public static void initShiftC16() {
+	private static void initShiftC16() {
 		for (int p=0; p<C8_4; p++){
 			int t = p;
 			int r = 4;
@@ -240,7 +240,7 @@ public final class Util {
 	}
 
 	public static final byte[] C24_4to12 = new byte[C24_4];
-	public static void initC24_4to12(){
+	private static void initC24_4to12(){
 		final short squares_cen_map[] = { 15, 60, 85, 90, 102, 105, 150, 153, 165, 170, 195, 240 };
 		for (int i=0; i<12; i++){
 			int x = squares_cen_map[i];
@@ -285,7 +285,7 @@ public final class Util {
 		return parity;
 	}
 
-	public static void initParityTable (){
+	private static void initParityTable(){
 		int x;
 
 		for (x = 0; x < 40320; ++x) {
@@ -294,7 +294,7 @@ public final class Util {
 	}
 
 	/*** init map96 ***/
-	public static final byte[][] map96 = new byte[96][8];
+	private static final byte[][] map96 = new byte[96][8];
 
 	private static void initMap96 (){
 		int a1, i;
@@ -330,7 +330,7 @@ public final class Util {
 	public static final short[] perm_to_420 = new short[40320]; // (420)
 	public static final byte[][] perms_to_6 = new byte[24][24]; // (6)
 
-	public static void initPerm420 (){
+	private static void initPerm420(){
 		int i;
 		int u, v, w, u2;
 		byte[] t = new byte[8];
@@ -363,13 +363,13 @@ public final class Util {
 		}
 	}
 	
-	static final int FACT4 = 24;
+	private static final int FACT4 = 24;
 	static final int C8_4 = 70;
 
 	static final byte[][] s4mul = new byte[FACT4][FACT4];
 	static final byte[] parity_s4 = new byte[FACT4/8+1];
 
-	static void init_s4(){
+	private static void init_s4(){
 		byte[] t1 = new byte[4];
 		byte[] t2 = new byte[4];
 		byte[] t3 = new byte[4];

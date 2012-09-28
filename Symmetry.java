@@ -6,9 +6,9 @@ import cg.fivestage444.Cubies.EdgeCubies;
 public final class Symmetry {
 
 	public static final int N_SYM = 48;
-	public static byte[][] symEdges = new byte[N_SYM][24];
-	public static byte[][] symCorners = new byte[N_SYM][8];
-	public static byte[][] symCenters = new byte[N_SYM][24];
+	public static final byte[][] symEdges = new byte[N_SYM][24];
+	public static final byte[][] symCorners = new byte[N_SYM][8];
+	public static final byte[][] symCenters = new byte[N_SYM][24];
 
 	static void init (){
 		initSymTables();
@@ -19,13 +19,13 @@ public final class Symmetry {
 		initMoveConjugateStage();
 	}
 
-	static void initSymTables (){
+	private static void initSymTables(){
 
 		byte[] symRLEdges = {4, 5, 6, 7, 0, 1, 2, 3, 14, 15, 12, 13, 10, 11, 8, 9, 21, 20, 23, 22, 17, 16, 19, 18};
 		byte[] symRLCorners = {4, 5, 6, 7, 0, 1, 2, 3};
 		byte[] symRLCenters = {2, 3, 0, 1, 6, 7, 4, 5, 14, 15, 12, 13, 10, 11, 8, 9, 19, 18, 17, 16, 23, 22, 21, 20};
 
-		int i, a, b, c, d, e, idx=0;
+		int i, b, c, d, e, idx=0;
 		CubeState cube = new CubeState();
 		cube.init();
 		for (i = 0; i < 24; ++i)
@@ -64,9 +64,9 @@ public final class Symmetry {
 		}
 	}
 
-	public static int[] invSymIdx = new int[N_SYM];
+	public static final int[] invSymIdx = new int[N_SYM];
 
-	static void initInvSymIdx(){
+	private static void initInvSymIdx(){
 
 		for (int i=0; i<N_SYM; i++)
 			for (int j=0; j<N_SYM; j++)
@@ -78,9 +78,9 @@ public final class Symmetry {
 				}
 	}
 
-	public static int[][] symIdxMultiply = new int[N_SYM][N_SYM];
+	public static final int[][] symIdxMultiply = new int[N_SYM][N_SYM];
 
-	static void initSymIdxMultiply(){
+	private static void initSymIdxMultiply(){
 
 		for (int i=0; i<N_SYM; i++)
 			for (int j=0; j<N_SYM; j++)
@@ -92,18 +92,18 @@ public final class Symmetry {
 					}
 	}
 
-	public static int[][] symIdxCo4Multiply = new int[N_SYM*4][N_SYM*4];
+	public static final int[][] symIdxCo4Multiply = new int[N_SYM*4][N_SYM*4];
 
-	static void initSymIdxCo4Multiply(){
+	private static void initSymIdxCo4Multiply(){
 
 		for (int i=0; i<N_SYM*4; i++)
 			for (int j=0; j<N_SYM*4; j++)
 				symIdxCo4Multiply[i][j] = symIdxMultiply[symIdxMultiply[invSymIdx[j>>2]][i&3]][symIdxMultiply[j>>2][j&3]] + ( symIdxMultiply[i>>2][j>>2] << 2 );
 	}
 
-	static byte[][] moveConjugate = new byte[Moves.N_MOVES][N_SYM];
+	static final byte[][] moveConjugate = new byte[Moves.N_MOVES][N_SYM];
 
-	static void initMoveConjugate(){
+	private static void initMoveConjugate(){
 
 		EdgeCubies cube = new EdgeCubies();
 		EdgeCubies cube2 = new EdgeCubies();
@@ -133,10 +133,10 @@ public final class Symmetry {
 		}
 	}
 
-	public static int[][] moveConjugateStage = new int[Moves.N_STAGE_MOVES][N_SYM];
-	public static int[][] moveConjugateCo4Stage = new int[Moves.N_STAGE_MOVES][N_SYM*4];
+	public static final int[][] moveConjugateStage = new int[Moves.N_STAGE_MOVES][N_SYM];
+	public static final int[][] moveConjugateCo4Stage = new int[Moves.N_STAGE_MOVES][N_SYM*4];
 
-	static void initMoveConjugateStage(){
+	private static void initMoveConjugateStage(){
 
 		int i, j;
 

@@ -27,7 +27,7 @@ public final class Test {
 		}		
 	}
 
-	public static void randomScramble(CubeState cube, byte[] moves, int length, Random gen){
+	private static void randomScramble(CubeState cube, byte[] moves, int length, Random gen){
 
 		cube.init();
 		for( int i=0; i < 100; i++ ){
@@ -35,7 +35,7 @@ public final class Test {
 		}		
 	}
 
-	public static void testPack(){
+	private static void testPack(){
 		Random gen = new Random();
 		CubeState cube1 = new CubeState();
 		CubeState cube2 = new CubeState();

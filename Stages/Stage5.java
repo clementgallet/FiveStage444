@@ -12,9 +12,9 @@ public final class Stage5 {
 	private static byte[] prunTableEdgeCenter;
 	private static byte[] prunTableEdgeCorner;
 
-	public Edge5 edge;
-	public Center5 center;
-	public Corner5 corner;
+	public final Edge5 edge;
+	public final Center5 center;
+	public final Corner5 corner;
 
 	public Stage5(){
 		edge = new Edge5();
@@ -81,7 +81,7 @@ public final class Stage5 {
 	}
 
 	/* Init pruning table */
-	public static void initPruningTableEdgeCenter(){
+	private static void initPruningTableEdgeCenter(){
 		final int N_SIZE = Edge5.N_COORD * Center5.N_COORD;
 		final int INV_DEPTH = 10;
 		Stage5 s1 = new Stage5();
@@ -141,7 +141,7 @@ public final class Stage5 {
 		}
 	}
 
-	public static void initPruningTableEdgeCorner(){
+	private static void initPruningTableEdgeCorner(){
 		final int N_SIZE = Edge5.N_COORD * Corner5.N_COORD;
 		final int INV_DEPTH = 10;
 		Stage5 s1 = new Stage5();

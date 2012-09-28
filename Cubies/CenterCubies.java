@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public final class CenterCubies{
 
-	public byte[] cubies = new byte[24]; //what's at each center position
+	public final byte[] cubies = new byte[24]; //what's at each center position
 
 	public void init (){
 		for (int i = 0; i < 24; ++i)
@@ -124,11 +124,13 @@ public final class CenterCubies{
 		}
 	}
 
-	public void print (){
-		System.out.print("Centers: ");
-		for (int i=0; i<24; i++)
-			System.out.print(cubies[i]+"-");
-		System.out.println("");
-	}
+// --Commented out by Inspection START (28/09/12 19:19):
+//	public void print (){
+//		System.out.print("Centers: ");
+//		for (int i=0; i<24; i++)
+//			System.out.print(cubies[i]+"-");
+//		System.out.println("");
+//	}
+// --Commented out by Inspection STOP (28/09/12 19:19)
 }
 

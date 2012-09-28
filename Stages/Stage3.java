@@ -15,8 +15,8 @@ public final class Stage3 {
 	public static byte[] prunTable;
 	private static int moveParity;
 
-	public Edge3 edge;
-	public Center3 center;
+	public final Edge3 edge;
+	public final Center3 center;
 	public byte parity;
 
 	public Stage3(){
@@ -83,7 +83,7 @@ public final class Stage3 {
 	}
 
 	/* Init pruning table */
-	public static void initPruningTableEdge(){
+	private static void initPruningTableEdge(){
 		final int N_SIZE = Edge3.N_COORD;
 		final int INV_DEPTH = 7;
 		Edge3 e1 = new Edge3();
@@ -122,8 +122,7 @@ public final class Stage3 {
 		}
 	}
 
-	public static void initPruningTableCenter(){
-		final int N_SIZE = Center3.N_COORD;
+	private static void initPruningTableCenter(){
 		final int INV_DEPTH = 7;
 		Center3 c1 = new Center3();
 		Center3 c2 = new Center3();
@@ -162,7 +161,7 @@ public final class Stage3 {
 		}
 	}
 
-	public static void initPruningTable(){
+	private static void initPruningTable(){
 		if( prunTable != null ) return;
 		final int INV_DEPTH = 11;
 		Stage3 s1 = new Stage3();

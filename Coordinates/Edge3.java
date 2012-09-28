@@ -16,8 +16,8 @@ public final class Edge3 {
 	public int coord;
 
 	/* Tables */
-	private static short[][] move = new short[N_COORD][N_MOVES];
-	private static short[][] conj = new short[N_COORD][N_SYM];
+	private static final short[][] move = new short[N_COORD][N_MOVES];
+	private static final short[][] conj = new short[N_COORD][N_SYM];
 
 	/* Check if solved */
 	public boolean isSolved(){

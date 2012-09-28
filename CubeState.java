@@ -9,9 +9,9 @@ import java.util.Random;
 //CubeState structure: a cubie-level representation of the cube.
 public final class CubeState{
 
-	public EdgeCubies edges = new EdgeCubies();
-	public CornerCubies corners = new CornerCubies();
-	public CenterCubies centers = new CenterCubies();
+	public final EdgeCubies edges = new EdgeCubies();
+	public final CornerCubies corners = new CornerCubies();
+	public final CenterCubies centers = new CenterCubies();
 
 	public void init (){
 		edges.init();
@@ -34,11 +34,7 @@ public final class CubeState{
 	 * Generates a random cube.
 	 * @return A random cube in the string representation. Each cube of the cube space has the same probability.
 	 */
-	public void randomise() {
-		Random r = new Random();
-		randomise(r);
-	}
-	
+
 	public void randomise(Random r) {
 		init ();
 
@@ -84,14 +80,7 @@ public final class CubeState{
 		}
 	}
 
-	public void scramble (int move_count, byte[] move_arr, byte[] move_trans){
-		int i;
-		for (i = 0; i < move_count; ++i) {
-			move (move_trans[move_arr[i]]);
-		}
-	}
-
-	public void copyTo (CubeState cube){
+    public void copyTo (CubeState cube){
 		edges.copyTo(cube.edges);
 		corners.copyTo(cube.corners);
 		centers.copyTo(cube.centers);
@@ -112,10 +101,12 @@ public final class CubeState{
 		c.rightMultCorners (symIdx, this);
 	}*/
 
-	public void print (){
-		edges.print();
-		corners.print();
-		centers.print();
-	}
+// --Commented out by Inspection START (28/09/12 19:19):
+//	public void print (){
+//		edges.print();
+//		corners.print();
+//		centers.print();
+//	}
+// --Commented out by Inspection STOP (28/09/12 19:19)
 }
 

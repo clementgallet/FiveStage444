@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public final class EdgeCubies{
 
-	public byte[] cubies = new byte[24]; //what's at each edge position
+	public final byte[] cubies = new byte[24]; //what's at each edge position
 
 	public void init (){
 		for (byte i = 0; i < 24; ++i)
@@ -37,30 +37,6 @@ public final class EdgeCubies{
 	public void conjugate (int symIdx, EdgeCubies e){
 		rightMult( Symmetry.invSymIdx[symIdx], e );
 		e.leftMult( symIdx );
-	}
-
-	public int edgeUD_parity (){
-		int i, j;
-		int parity = 0;
-		byte[] t = new byte[16];
-
-		for (i = 0; i < 16; ++i) {
-			t[i] = cubies[i];
-		}
-		for (i = 0; i < 15; ++i) {
-			if (t[i] == i) {
-				continue;
-			}
-			for (j = i + 1; j < 16; ++j) {
-				if (t[j] == i) {
-					//"swap" the i & j elements, but don't bother updating the "i"-element
-					//as it isn't needed anymore.
-					t[j] = t[i];
-				}
-			}
-			parity ^= 1;
-		}
-		return parity;
 	}
 
 	public void move (int move_code, EdgeCubies e){
@@ -147,11 +123,13 @@ public final class EdgeCubies{
 		}
 	}
 
-	public void print (){
-		System.out.print("Edges: ");
-		for (int i=0; i<24; i++)
-			System.out.print(cubies[i]+"-");
-		System.out.println("");
-	}
+// --Commented out by Inspection START (28/09/12 19:20):
+//	public void print (){
+//		System.out.print("Edges: ");
+//		for (int i=0; i<24; i++)
+//			System.out.print(cubies[i]+"-");
+//		System.out.println("");
+//	}
+// --Commented out by Inspection STOP (28/09/12 19:20)
 }
 

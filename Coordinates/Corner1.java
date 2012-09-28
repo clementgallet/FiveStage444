@@ -12,8 +12,8 @@ public final class Corner1 extends RawCoord {
 	private final static int N_MOVES = Moves.N_FACE_MOVES;
 
 	/* Tables */
-	private static short[][] move = new short[N_COORD][N_MOVES];
-	private static short[][] conj = new short[N_COORD][N_SYM]; // (2187) 2187*48
+	private static final short[][] move = new short[N_COORD][N_MOVES];
+	private static final short[][] conj = new short[N_COORD][N_SYM]; // (2187) 2187*48
 
 	/* Check if solved */
 	public boolean isSolved(int sym){
@@ -40,7 +40,7 @@ public final class Corner1 extends RawCoord {
 	}
 
 	/* Unpack a coord to a cube */
-	public void unpack (CornerCubies cube)
+    void unpack(CornerCubies cube)
 	{
 		int i;
 		int orientc = this.coord;

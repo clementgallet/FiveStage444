@@ -29,29 +29,30 @@ import java.util.Arrays;
 /* CubePack structure: a (almost) full representation of the cube using a set of coordinates.
  * Some code and ideas are taken from cube20 */
 
-public final class CubePack{
+final class CubePack{
 
 	/** Coordinates **/
 
 	/* Corners */
-	byte corner_top_loc; // Location of the top four corners (70).
-	byte corner_top_perm, corner_bottom_perm; // Permutation of top and bottom corners (24).
+    private byte corner_top_loc; // Location of the top four corners (70).
+	private byte corner_top_perm;
+    private byte corner_bottom_perm; // Permutation of top and bottom corners (24).
 	/* Centers */
-	short[] centers = new short[6]; // Location of each center (10626).
-	short[] edges_loc = new short[6]; // Location of each group of 4 edges (10626).
-	byte[] edges_perm = new byte[6]; // Permutation of each group of 4 edges (24).
+    private final short[] centers = new short[6]; // Location of each center (10626).
+	private final short[] edges_loc = new short[6]; // Location of each group of 4 edges (10626).
+	private final byte[] edges_perm = new byte[6]; // Permutation of each group of 4 edges (24).
 
 	/** Tables **/
 
-	static final int N_ROT = 3;
-	static final int ROTATE_U = Moves.N_STAGE_MOVES + 0;
-	static final int ROTATE_UR3 = Moves.N_STAGE_MOVES + 1;
-	static final int ROTATE_RU3 = Moves.N_STAGE_MOVES + 2;
-	static final int[] rotations = {8, 16, 32};
+	private static final int N_ROT = 3;
+	private static final int ROTATE_U = Moves.N_STAGE_MOVES + 0;
+	private static final int ROTATE_UR3 = Moves.N_STAGE_MOVES + 1;
+	private static final int ROTATE_RU3 = Moves.N_STAGE_MOVES + 2;
+	private static final int[] rotations = {8, 16, 32};
 
-	static final int[][] move_cperm = new int[Util.C8_4][Moves.N_STAGE_MOVES+N_ROT];
-	static final int[][] move_edges = new int[Util.C24_4][Moves.N_STAGE_MOVES+N_ROT];
-	static final short[][] move_centers = new short[Util.C24_4][Moves.N_STAGE_MOVES+N_ROT];
+	private static final int[][] move_cperm = new int[Util.C8_4][Moves.N_STAGE_MOVES+N_ROT];
+	private static final int[][] move_edges = new int[Util.C24_4][Moves.N_STAGE_MOVES+N_ROT];
+	private static final short[][] move_centers = new short[Util.C24_4][Moves.N_STAGE_MOVES+N_ROT];
 
 
 	/** Packing and Unpacking **/
@@ -114,12 +115,12 @@ public final class CubePack{
 	}
 
 	void unpackCenters (CenterCubies cube, int c_idx){
-		int center = this.centers[c_idx];
+		int center = this.centers[3];
 		int r = 4;
 		for (int i=23; i>=0; i--) {
 			if (center >= Util.Cnk[i][r]) {
 				center -= Util.Cnk[i][r--];
-				cube.cubies[i] = (byte)c_idx;
+				cube.cubies[i] = (byte) 3;
 			}
 			else
 				cube.cubies[i] = -1;
@@ -128,7 +129,6 @@ public final class CubePack{
 
 	void packEdges( EdgeCubies cube, int e_idx ){
 		int r = 4;
-		int perm = 0;
 		this.edges_loc[e_idx] = 0;
 		byte[] t = new byte[4];
 		int it = 3;
@@ -165,7 +165,7 @@ public final class CubePack{
 		init_moveCenters();
 	}
 
-	static void init_moveCorners(){
+	private static void init_moveCorners(){
 		CubePack cp1 = new CubePack();
 		CubePack cp2 = new CubePack();
 		CornerCubies cube1 = new CornerCubies();
@@ -184,7 +184,7 @@ public final class CubePack{
 		}
 	}
 
-	static void init_moveEdges(){
+	private static void init_moveEdges(){
 		CubePack cp1 = new CubePack();
 		CubePack cp2 = new CubePack();
 		EdgeCubies cube1 = new EdgeCubies();
@@ -203,7 +203,7 @@ public final class CubePack{
 		}
 	}
 
-	static void init_moveCenters(){
+	private static void init_moveCenters(){
 		CubePack cp1 = new CubePack();
 		CubePack cp2 = new CubePack();
 		CenterCubies cube1 = new CenterCubies();
@@ -276,18 +276,18 @@ public final class CubePack{
 		s.parity = (byte)( parity ? 1 : 0 );
 	}
 
-	public void toCorner4( Corner4 c ){
+	void toCorner4(Corner4 c){
 		c.coord = 6 * corner_top_loc + Util.perms_to_6[corner_top_perm][corner_bottom_perm];
 	}
 
-	public void toCenter4( Center4 c ){
+	void toCenter4(Center4 c){
 		if( centers[0] < centers[1] )
 			c.coord = centers[0];
 		else
 			c.coord = centers[1];
 	}
 
-	public void toEdge4( Edge4 e ){
+	void toEdge4(Edge4 e){
 		e.raw_coord = (( Util.perms_to_6[edges_perm[0]][edges_perm[1]]   * 6  +
 		             Util.perms_to_6[edges_perm[2]][edges_perm[3]] ) * 70 +
 		             Util.shiftC16[edges_loc[0]]                   ) * 70 +
@@ -301,18 +301,18 @@ public final class CubePack{
 		toCorner4( s.corner );
 	}
 
-	public void toEdge5( Edge5 e ){
+	void toEdge5(Edge5 e){
 		e.raw_coord = (( 4 * edges_perm[4] + edges_perm[5] / 6 ) * 96 +
 		                 4 * edges_perm[2] + edges_perm[3] / 6 ) * 96 +
 		                 4 * edges_perm[0] + edges_perm[1] / 6;
 		e.computeSym();
 	}
 
-	public void toCorner5( Corner5 c ){
+	void toCorner5(Corner5 c){
 		c.coord = 4 * corner_top_perm + corner_bottom_perm / 6;
 	}
 
-	public void toCenter5( Center5 c ){
+	void toCenter5(Center5 c){
 		c.coord = ( Util.C24_4to12[centers[5]] * 12 + Util.C24_4to12[centers[3]] ) * 12 + Util.C24_4to12[centers[1]];
 	}
 
@@ -332,20 +332,20 @@ public final class CubePack{
 		}
 	}
 
-	public final void moveCorners(int m, CubePack cp){
+	final void moveCorners(int m, CubePack cp){
 		int t = move_cperm[corner_top_loc][m];
 		cp.corner_top_loc = (byte)(t >> 10);
 		cp.corner_top_perm = Util.s4mul[corner_top_perm][(t >> 5) & 31];
 		cp.corner_bottom_perm = Util.s4mul[corner_bottom_perm][t & 31];
 	}
 
-	public final void moveEdges(int m, int e_idx, CubePack cp){
+	final void moveEdges(int m, int e_idx, CubePack cp){
 		int t = move_edges[this.edges_loc[e_idx]][m];
 		cp.edges_loc[e_idx] = (short)(t >> 5);
 		cp.edges_perm[e_idx] = Util.s4mul[this.edges_perm[e_idx]][t & 31];
 	}
 
-	public final void moveCenters(int m, int c_idx, CubePack cp){
+	final void moveCenters(int m, int c_idx, CubePack cp){
 		cp.centers[c_idx] = move_centers[this.centers[c_idx]][m];
 	}
 

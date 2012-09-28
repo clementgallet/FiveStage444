@@ -8,21 +8,23 @@ import cg.fivestage444.Stages.Stage5;
 
 public final class Analyze {
 
-	static final int N_SIZE5 = Edge5.N_COORD*Corner5.N_COORD*Center5.N_COORD;
+	private static final int N_SIZE5 = Edge5.N_COORD*Corner5.N_COORD*Center5.N_COORD;
 
-	static int length4;
-	static long unique, pos, done;
-	static byte[] move_list_stage4 = new byte[30];
+	private static int length4;
+	private static long unique;
+    private static long pos;
+    private static long done;
+	private static final byte[] move_list_stage4 = new byte[30];
 
-	static byte[] allPos5 = new byte[N_SIZE5>>>3];
-	static byte[] allPos5_2 = new byte[N_SIZE5>>>3];
+	private static final byte[] allPos5 = new byte[N_SIZE5>>>3];
+	private static final byte[] allPos5_2 = new byte[N_SIZE5>>>3];
 
 	public static void main(String[] args){
 		Tools.init();
 		distTable5in4(0);
 	}
 
-	public static void distTable5in4 (int coset){
+	private static void distTable5in4(int coset){
 		System.out.println("Start analysing coset "+coset);
 
 		Stage4 s = new Stage4();
@@ -52,7 +54,7 @@ public final class Analyze {
 		}
 	}
 
-	public static void search_stage4 (Stage4 s, CubePack cp, int depth, int moves_done, int last_move){
+	private static void search_stage4(Stage4 s, CubePack cp, int depth, int moves_done, int last_move){
 		int mov_idx, j;
 		if (depth == 0 && s.isSolved() ){
 			save_stage5 (cp);
@@ -75,7 +77,7 @@ public final class Analyze {
 		}
 	}
 
-	public static void save_stage5 (CubePack cp){
+	private static void save_stage5(CubePack cp){
 		int i;
 
 		Stage5 s = new Stage5();
