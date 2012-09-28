@@ -46,14 +46,14 @@ public final class Stage2 {
 	/** Pruning functions **/
 
 	/* Set from an index */
-	private final void set( int idx ){
+	private void set( int idx ){
 		edge.coord = idx % Edge2.N_COORD;
 		centerF.coord = idx / Edge2.N_COORD;
 		centerF.sym = 0;
 	}
 
 	/* Get an index from this */
-	private final int get(boolean center){
+	private int get(boolean center){
 		if( center )
 			return centerF.coord * Edge2.N_COORD + edge.conjugate(centerF.sym);
 		else
@@ -61,7 +61,7 @@ public final class Stage2 {
 	}
 
 	/* Rotate so that sym is 0 */
-	private final void normalise(boolean center){
+	private void normalise(boolean center){
 		if( center ){
 			edge.coord = edge.conjugate(centerF.sym);
 			centerF.sym = 0;

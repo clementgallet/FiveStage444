@@ -46,7 +46,7 @@ public final class Stage5 {
 	/** Pruning functions **/
 
 	/* Set from an index */
-	private final void set( int idx, boolean useCenter ){
+	private void set( int idx, boolean useCenter ){
 		if( useCenter ){
 			center.coord = idx % Center5.N_COORD;
 			edge.coord = idx / Center5.N_COORD;
@@ -59,7 +59,7 @@ public final class Stage5 {
 	}
 
 	/* Get an index from this */
-	private final int get( boolean useCenter ){
+	private int get( boolean useCenter ){
 		if( useCenter )
 			return edge.coord * Center5.N_COORD + center.conjugate(edge.sym);
 		else
@@ -67,7 +67,7 @@ public final class Stage5 {
 	}
 
 	/* Rotate so that sym is 0 */
-	private final void normalise( boolean useCenter ){
+	private void normalise( boolean useCenter ){
 		if( useCenter )
 			center.coord = center.conjugate(edge.sym);
 		else

@@ -30,8 +30,8 @@ public final class Center2 {
 
 	/* Check if solved */
 	public boolean isSolved(){
-		for (int i=0; i < SOLVED.length; i++)
-			if( coord == SOLVED[i])
+		for (int s : SOLVED)
+			if( coord == s)
 				return true;
 		return false;
 	}

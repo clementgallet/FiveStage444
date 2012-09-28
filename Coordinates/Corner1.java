@@ -21,8 +21,7 @@ public final class Corner1 extends RawCoord {
 	}
 
 	public int[] getSolvedStates(){
-		int[] ss = {2173};
-		return ss;
+		return new int[]{2173};
 	}
 
 	public int getSize(){

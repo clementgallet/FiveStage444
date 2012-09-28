@@ -45,7 +45,7 @@ public final class Stage4 {
 	/** Pruning functions **/
 
 	/* Set from an index */
-	private final void set( int idx ){
+	private void set( int idx ){
 		center.coord = idx % Center4.N_COORD;
 		idx /= Center4.N_COORD;
 		corner.coord = idx % Corner4.N_COORD;
@@ -54,12 +54,12 @@ public final class Stage4 {
 	}
 
 	/* Get an index from this */
-	private final int get(){
+	private int get(){
 		return ( edge.coord * Corner4.N_COORD + corner.conjugate(edge.sym) ) * Center4.N_COORD + center.conjugate(edge.sym);
 	}
 
 	/* Get an index from this */
-	private final void normalise(){
+	private void normalise(){
 		corner.coord = corner.conjugate(edge.sym);
 		center.coord = center.conjugate(edge.sym);
 		edge.sym = 0;

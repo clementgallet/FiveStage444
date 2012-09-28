@@ -4,7 +4,7 @@ public final class Util {
 
 	public static final boolean FULL_PRUNING3 = false;
 
-	public static final void init (){
+	public static void init (){
 		initCnk();
 		initC24to8();
 		initC16to16();
@@ -20,7 +20,7 @@ public final class Util {
 	public static final int Cnk [][] = new int[25][25];
 	public static final int fact [] = new int[26];
 
-	public static final void initCnk() {
+	public static void initCnk() {
 		fact[0] = 1;
 		for (int i=0; i<25; i++) {
 			Cnk[i][i] = 1;
@@ -41,7 +41,7 @@ public final class Util {
 	 * @param off	index of the first element where the permutation starts in the table
 	 * @return		an integer representing the permutation
 	 */
-	public static final int get4Perm (byte[] array_in, int off){
+	public static int get4Perm (byte[] array_in, int off){
 		int idx = 0;
 		int val = 0x3210;
 		for (int i=0; i<3; i++) {
@@ -59,7 +59,7 @@ public final class Util {
 	 * @param off	index of the first element where the permutation starts in the table
 	 * @return		an integer representing the permutation
 	 */
-	public static final int get8Perm (byte[] array_in, int off){
+	public static int get8Perm (byte[] array_in, int off){
 		int idx = 0;
 		int val = 0x76543210;
 		for (int i=0; i<7; i++) {
@@ -75,7 +75,7 @@ public final class Util {
 	 * @param arr		the permutation coded as an array of integers
 	 * @param idx		an integer representing the permutation
 	 */
-	public static final void set4Perm (byte[] arr, int idx) {
+	public static void set4Perm (byte[] arr, int idx) {
 		int val = 0x3210;
 		for (int i=0; i<3; i++) {
 			int p = fact[3-i];
@@ -94,7 +94,7 @@ public final class Util {
 	 * @param arr		the permutation coded as an array of integers
 	 * @param idx		an integer representing the permutation
 	 */
-	public static final void set8Perm (byte[] arr, int idx) {
+	public static void set8Perm (byte[] arr, int idx) {
 		int val = 0x76543210;
 		for (int i=0; i<7; i++) {
 			int p = fact[7-i];
@@ -108,19 +108,19 @@ public final class Util {
 		arr[7] = (byte)val;
 	}
 
-        public static final void set1bit(byte[] table, int index) {
+        public static void set1bit(byte[] table, int index) {
 		table[index>>>3] |= (byte)( 1 << ( index & 0x7 ));
 	}
 
-        public static final boolean get1bit(byte[] table, int index) {
+        public static boolean get1bit(byte[] table, int index) {
 		return (( table[index>>>3] >>> ( index & 0x7 )) & 1 ) != 0;
         }
 
-	public static final void setPrun2(byte[] table, int index, int value) {
+	public static void setPrun2(byte[] table, int index, int value) {
 		table[index >> 1] ^= (0x0f ^ value) << ((index & 1) << 2);
 	}
 
-        public static final int getPrun2(byte[] table, int index) {
+        public static int getPrun2(byte[] table, int index) {
                 return (table[index >> 1] >> ((index & 1) << 2)) & 0x0f;
         }
 
@@ -130,7 +130,7 @@ public final class Util {
 	static final int C24_4 = 10626;
 	public static final byte[] C24to8 = new byte[C24_4];
 
-	public static final void initC24to8() {
+	public static void initC24to8() {
 		byte[] t = new byte[8];
 		for (int p=0; p<40320; p++){
 			int r = 4;
@@ -164,7 +164,7 @@ public final class Util {
 	public static final byte[] paritySwapC16_4 = new byte[C16_4*C15_4/8+1];
 	public static final byte[] parityC16_8 = new byte[C16_4*C15_4/8+1];
 
-	public static final void initC16to16() {
+	public static void initC16to16() {
 		for (int i_loc8=0; i_loc8<C16_8; i_loc8++){
 			for (int i_loc4=0; i_loc4<C8_4/2; i_loc4++){
 				int loc8 = i_loc8;
@@ -221,7 +221,7 @@ public final class Util {
 
 	public static final int[] shiftC16 = new int[C16_4];
 
-	public static final void initShiftC16() {
+	public static void initShiftC16() {
 		for (int p=0; p<C8_4; p++){
 			int t = p;
 			int r = 4;
@@ -240,7 +240,7 @@ public final class Util {
 	}
 
 	public static final byte[] C24_4to12 = new byte[C24_4];
-	public static final void initC24_4to12(){
+	public static void initC24_4to12(){
 		final short squares_cen_map[] = { 15, 60, 85, 90, 102, 105, 150, 153, 165, 170, 195, 240 };
 		for (int i=0; i<12; i++){
 			int x = squares_cen_map[i];
@@ -264,7 +264,7 @@ public final class Util {
 	/*** init_parity_table ***/
 	public static final boolean[] parity_perm8_table = new boolean[40320];
 
-	private static final int get_parity8 (int x){
+	private static int get_parity8 (int x){
 		int i, j;
 		int parity = 0;
 		byte[] t = new byte[8];

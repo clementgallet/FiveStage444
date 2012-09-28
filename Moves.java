@@ -136,16 +136,16 @@ public final class Moves{
 
 	  			/* Same slice. For example, Rf Rf2 is not permitted because Rf Rf2 = Rf3. */
 				if (m/3 == n/3)
-					moves_mask[i] &= -1L ^ ( 1L << j );
+					moves_mask[i] &= ~(1L << j);
 
 	  			/* Same face, only a specific order is allowed. Rf Ls2 is allowed but not Ls2 Rf. */
 				if ( (m/18 == n/18) && (m>n) )
-					moves_mask[i] &= -1L ^ ( 1L << j );
+					moves_mask[i] &= ~(1L << j);
 
 	  			/* If two successive moves are from the same face and the same rotation, the first one should be either Ufx, Rfx or Ffx.
 	  			 * For example Rf Ls3 is ok but Lf2 Rs2 is not permitted because Lf2 Rs2 = Rf2 Ls2. */
 				if ((m/18 == n/18) && ((m%3) == (n%3)) && ((m%18) >= 3))
-					moves_mask[i] &= -1L ^ ( 1L << j );
+					moves_mask[i] &= ~(1L << j);
 			}
 		}
 
