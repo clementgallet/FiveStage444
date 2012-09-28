@@ -115,12 +115,12 @@ final class CubePack{
 	}
 
 	void unpackCenters (CenterCubies cube, int c_idx){
-		int center = this.centers[3];
+		int center = this.centers[c_idx];
 		int r = 4;
 		for (int i=23; i>=0; i--) {
 			if (center >= Util.Cnk[i][r]) {
 				center -= Util.Cnk[i][r--];
-				cube.cubies[i] = (byte) 3;
+				cube.cubies[i] = (byte) c_idx;
 			}
 			else
 				cube.cubies[i] = -1;

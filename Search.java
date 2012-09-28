@@ -78,7 +78,6 @@ final class Search {
 
 		Tools.init();
 		StringBuilder sb = new StringBuilder();
-		String sol = "";
 		CubeState c = new CubeState();
 		cube.copyTo( c );
 		

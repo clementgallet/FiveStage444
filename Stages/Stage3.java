@@ -84,7 +84,6 @@ public final class Stage3 {
 
 	/* Init pruning table */
 	private static void initPruningTableEdge(){
-		final int N_SIZE = Edge3.N_COORD;
 		final int INV_DEPTH = 7;
 		Edge3 e1 = new Edge3();
 		Edge3 e2 = new Edge3();
