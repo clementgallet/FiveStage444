@@ -6,14 +6,11 @@ import cg.fivestage444.Moves;
 import cg.fivestage444.Util;
 import cg.fivestage444.Stages.Stage4;
 
-public final class Corner4 {
+public final class Corner4 extends RawCoord {
 
 	public final static int N_COORD = 420;
 	private final static int N_SYM = Stage4.N_SYM;
 	private final static int N_MOVES = 10;
-
-	/* Coordinates */
-	public int coord;
 
 	/* Tables */
 	private static final short[][] move = new short[N_COORD][N_MOVES];
@@ -24,8 +21,16 @@ public final class Corner4 {
 		return coord == 0;
 	}
 
+	public int[] getSolvedStates(){
+		return new int[]{0};
+	}
+
+	public int getSize(){
+		return N_COORD;
+	}
+
 	/* Move */
-	public void moveTo( int m, Corner4 c ){
+	public void moveTo( int m, RawCoord c ){
 		int face_move = Moves.stage2face[m];
 		c.coord = ( face_move >= 0 ) ? move[coord][face_move] : coord;
 	}

@@ -5,16 +5,13 @@ import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
 import cg.fivestage444.Stages.Stage5;
 
-public final class Center5 {
+public final class Center5 extends RawCoord {
 
 	public final static int N_COORD = 12*12*12;
 	private final static int N_SYM = Stage5.N_SYM;
 	private final static int N_MOVES = Stage5.N_MOVES;
 	private static final short squares_cen_map[] = { 15, 60, 85, 90, 102, 105, 150, 153, 165, 170, 195, 240 };
 	private static final byte[] squares_cen_revmap = new byte[256];
-
-	/* Coordinates */
-	public int coord;
 
 	/* Tables */
 	private static final short[][] move = new short[N_COORD][N_MOVES];
@@ -25,8 +22,16 @@ public final class Center5 {
 		return conj[coord][sym] == 0;
 	}
 
+	public int[] getSolvedStates(){
+		return new int[]{0};
+	}
+
+	public int getSize(){
+		return N_COORD;
+	}
+
 	/* Move */
-	public void moveTo( int m, Center5 c ){
+	public void moveTo( int m, RawCoord c ){
 		c.coord =  move[coord][m];
 	}
 

@@ -82,9 +82,9 @@ public final class Stage4 {
 			prunTable[i] = -1;
 
 		/* Set the solved states */
-		for( int a=0; a<Center4.SOLVED.length; a++)
-			Util.setPrun2( prunTable, Center4.SOLVED[a], 0 );
-		int done = Center4.SOLVED.length;
+		for( int a=0; a<Center4.SolvedStates.length; a++)
+			Util.setPrun2( prunTable, Center4.SolvedStates[a], 0 );
+		int done = Center4.SolvedStates.length;
 
 		int depth = 0;
 		while (( done < N_SIZE ) && ( depth < 15 )) {

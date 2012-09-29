@@ -1,21 +1,17 @@
 package cg.fivestage444.Coordinates;
 
 import cg.fivestage444.Cubies.CenterCubies;
-import cg.fivestage444.Symmetry;
 import cg.fivestage444.Moves;
 import cg.fivestage444.Util;
 import cg.fivestage444.Stages.Stage4;
 
-public final class Center4 {
+public final class Center4 extends RawCoord {
 
 	public final static int N_COORD = 35;
 	private final static int N_SYM = Stage4.N_SYM;
 	private final static int N_MOVES = Stage4.N_MOVES;
 
-	public static final int SOLVED[] = { 0, 14, 20, 23, 27, 28 };
-
-	/* Coordinates */
-	public int coord;
+	public static final int SolvedStates[] = { 0, 14, 20, 23, 27, 28 };
 
 	/* Tables */
 	private static final short[][] move = new short[N_COORD][N_MOVES];
@@ -23,14 +19,22 @@ public final class Center4 {
 
 	/* Check if solved */
 	public boolean isSolved(){
-		for (int s : SOLVED)
+		for (int s : SolvedStates)
 			if (coord == s)
 				return true;
 		return false;
 	}
 
+	public int[] getSolvedStates(){
+		return SolvedStates;
+	}
+
+	public int getSize(){
+		return N_COORD;
+	}
+
 	/* Move */
-	public void moveTo( int m, Center4 c ){
+	public void moveTo( int m, RawCoord c ){
 		c.coord =  move[coord][m];
 	}
 
