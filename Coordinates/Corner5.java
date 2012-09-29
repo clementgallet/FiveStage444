@@ -12,9 +12,6 @@ public final class Corner5 extends RawCoord {
 	private final static int N_SYM = Stage5.N_SYM;
 	private final static int N_MOVES = 6;
 
-	/* Coordinates */
-	public int coord;
-
 	/* Tables */
 	private static final short[][] move = new short[N_COORD][N_MOVES];
 	private static final short[][] conj = new short[N_COORD][N_SYM*4];
