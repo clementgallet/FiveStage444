@@ -1,6 +1,6 @@
 package cg.fivestage444.Coordinates;
 
-abstract class SymCoord {
+public abstract class SymCoord {
 
 	public int coord;
 	public int sym;

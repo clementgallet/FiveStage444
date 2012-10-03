@@ -1,6 +1,6 @@
 package cg.fivestage444.Coordinates;
 
-abstract class RawCoord {
+public abstract class RawCoord {
 
 	public int coord;
 
