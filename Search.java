@@ -76,7 +76,6 @@ final class Search {
 	public String solve (CubeState cube, int max_turns, boolean inverse) {
 		int i, j;
 
-		Tools.init();
 		StringBuilder sb = new StringBuilder();
 		CubeState c = new CubeState();
 		cube.copyTo( c );
