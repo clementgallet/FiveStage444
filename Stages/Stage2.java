@@ -9,7 +9,7 @@ public final class Stage2 {
 
 	public final static int N_MOVES = 28;
 	public final static int N_SYM = 16;
-	private static PruningTable pTable;
+	public static PruningTable pTable;
 
 	public final Edge2 edge;
 	public final Center2 centerF;
@@ -42,7 +42,7 @@ public final class Stage2 {
 		Edge2.init();
 		Center2.init();
 		pTable = new PruningTable(new Center2(), new Edge2(), N_MOVES);
-		pTable.fillTable();
+		pTable.initTable();
 	}
 
 	/** Pruning function **/

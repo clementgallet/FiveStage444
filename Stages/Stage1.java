@@ -3,7 +3,10 @@ package cg.fivestage444.Stages;
 import cg.fivestage444.Coordinates.Edge1;
 import cg.fivestage444.Coordinates.Corner1;
 import cg.fivestage444.CubeState;
+import cg.fivestage444.PruningTable;
 import cg.fivestage444.Util;
+
+import java.io.File;
 
 public final class Stage1 {
 
@@ -11,6 +14,7 @@ public final class Stage1 {
 	public final static int N_SYM = 48;
 	public final static int N_SIZE = Edge1.N_COORD * Corner1.N_COORD;
 	public static byte[] prunTable;
+	public static PruningTable pTable;
 
 	private final Edge1 edge;
 	private final Corner1 corner;
@@ -42,7 +46,9 @@ public final class Stage1 {
 	public static void init(){
 		Edge1.init();
 		Corner1.init();
-		initPruningTable();
+		//initPruningTable();
+		pTable = new PruningTable(new Edge1(), new Corner1(), N_MOVES);
+		pTable.initTable(new File("ptable_stage1.rbk"));
 	}
 
 	/** Pruning functions **/

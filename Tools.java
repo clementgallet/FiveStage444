@@ -37,6 +37,7 @@ class Tools {
 		Symmetry.init();
 		Util.init();
 		CubePack.init();
+		Stage1.init();
 	}
 
 	private static volatile boolean inited = false;
@@ -62,7 +63,6 @@ class Tools {
 			}
 		}
 		if( ! inited ) {
-			Stage1.init();
 			if( Util.FULL_PRUNING3 ){
 				Stage3.init();
 			}
@@ -88,9 +88,6 @@ class Tools {
 
 	private static boolean initFrom(DataInput in) {
 		try {
-			Stage1.prunTable = new byte[(Stage1.N_SIZE+1)/2];
-			read(Stage1.prunTable, in);
-			Stage1.init();
 			Stage4.prunTable = new byte[(Stage4.N_SIZE+1)/2];
 			read(Stage4.prunTable, in);
 			Stage4.init();
@@ -103,7 +100,6 @@ class Tools {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			Stage1.prunTable = null;
 			Stage3.prunTable = null;
 			Stage4.prunTable = null;
 			return false;
@@ -111,7 +107,6 @@ class Tools {
 	}
 
 	private static void initTo(DataOutput out) throws IOException {
-		write(Stage1.prunTable, out); // 15582 * 2187          / 2  =  17,038,917 B
 		write(Stage4.prunTable, out); // 420 * 35 * 5968       / 2  =  43,864,800 B
 		if( Util.FULL_PRUNING3 )
 			write(Stage3.prunTable, out); // 12870 * 56980 / 2  = 366,666,300 B

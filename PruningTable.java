@@ -3,11 +3,13 @@ package cg.fivestage444;
 import cg.fivestage444.Coordinates.RawCoord;
 import cg.fivestage444.Coordinates.SymCoord;
 
+import java.io.*;
+
 
 public class PruningTable {
 
 	int n_moves;
-
+	int n_size;
 	SymCoord sym;
 	RawCoord[] raws;
 
@@ -19,7 +21,13 @@ public class PruningTable {
 		this.sym = sym;
 		raws = new RawCoord[1];
 		raws[0] = raw;
+
 		this.n_moves = n_moves;
+
+		n_size = this.sym.getSize();
+		for ( int i = 0; i < raws.length; i++){
+			n_size *= raws[i].getSize();
+		}
 	}
 
 	private void moveTo( int m, PruningTable p ){
@@ -61,7 +69,27 @@ public class PruningTable {
 		sym.sym = 0;
 	}
 
-	public void fillTable(){
+	public void initTable(){
+		fillTable();
+	}
+
+	public void initTable(File f){
+		table = new byte[(n_size+1)/2];
+		try {
+			DataInputStream in = new DataInputStream(new FileInputStream(f));
+			in.readFully(table);
+		} catch (Exception e) {
+			fillTable();
+			try {
+				DataOutputStream out = new DataOutputStream(new FileOutputStream(f));
+				out.write(table);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+
+	private void fillTable(){
 		final int INV_DEPTH = 7;
 
 		/* Create a new instance of PruningTable with the same classes in it */
@@ -79,15 +107,9 @@ public class PruningTable {
 		catch (IllegalAccessException e) {
 		}
 
-		/* Compute the total size */
-		int N_SIZE = sym.getSize();
-		for ( int i = 0; i < raws.length; i++){
-			N_SIZE *= raws[i].getSize();
-		}
-
 		/* Create the pruning table and fill with the solved states */
-		table = new byte[(N_SIZE+1)/2];
-		for (int i = 0; i < (N_SIZE+1)/2; i++)
+		table = new byte[(n_size+1)/2];
+		for (int i = 0; i < (n_size+1)/2; i++)
 			table[i] = -1;
 
 		int done = sym.getSolvedStates().length;
@@ -107,14 +129,14 @@ public class PruningTable {
 
 		/* Build the table */
 		int depth = 0;
-		while (( done < N_SIZE ) && ( depth < 15 )) {
+		while (( done < n_size ) && ( depth < 15 )) {
 			boolean inv = depth > INV_DEPTH;
 			int select = inv ? 0x0f : depth;
 			int check = inv ? depth : 0x0f;
 			depth++;
 			int pos = 0;
 			int unique = 0;
-			for (int i=0; i<N_SIZE; i++) {
+			for (int i=0; i<n_size; i++) {
 				if (readTable(i) != select) continue;
 				set(i);
 				for (int m=0; m<n_moves; m++) {
@@ -142,7 +164,7 @@ public class PruningTable {
 								done++;
 							}
 						}
-						pos += 16/nsym; // TODO: find the correct value or drop off
+						pos += 48/nsym; // TODO: find the correct value or drop off
 					}
 				}
 			}
