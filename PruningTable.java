@@ -6,7 +6,7 @@ import cg.fivestage444.Coordinates.SymCoord;
 
 public class PruningTable {
 
-	int N_MOVES;
+	int n_moves;
 
 	SymCoord sym;
 	RawCoord[] raws;
@@ -15,10 +15,11 @@ public class PruningTable {
 
 	public PruningTable(){}
 
-	public PruningTable(SymCoord sym, RawCoord raw){
+	public PruningTable(SymCoord sym, RawCoord raw, int n_moves){
 		this.sym = sym;
 		raws = new RawCoord[1];
 		raws[0] = raw;
+		this.n_moves = n_moves;
 	}
 
 	private void moveTo( int m, PruningTable p ){
@@ -32,7 +33,7 @@ public class PruningTable {
 		table[index >> 1] ^= (0x0f ^ value) << ((index & 1) << 2);
 	}
 
-	private int readTable (int index) {
+	public int readTable (int index) {
 		return (table[index >> 1] >> ((index & 1) << 2)) & 0x0f;
 	}
 
@@ -99,12 +100,14 @@ public class PruningTable {
 				raws[i].coord = raws[i].getSolvedStates()[dd % raws[i].getSolvedStates().length];
 				dd /= raws[i].getSolvedStates().length;
 			}
-			sym.coord = dd;
+			sym.coord = sym.getSolvedStates()[dd];
+			sym.sym = 0;
 			writeTable(get(), 0);
 		}
 
+		/* Build the table */
 		int depth = 0;
-		while (done < N_SIZE) {
+		while (( done < N_SIZE ) && ( depth < 15 )) {
 			boolean inv = depth > INV_DEPTH;
 			int select = inv ? 0x0f : depth;
 			int check = inv ? depth : 0x0f;
@@ -114,7 +117,7 @@ public class PruningTable {
 			for (int i=0; i<N_SIZE; i++) {
 				if (readTable(i) != select) continue;
 				set(i);
-				for (int m=0; m<N_MOVES; m++) {
+				for (int m=0; m<n_moves; m++) {
 					moveTo(m, p);
 					int idx = p.get();
 					if (readTable(idx) != check) continue;
@@ -126,7 +129,7 @@ public class PruningTable {
 						writeTable(idx, depth);
 						int nsym = 1;
 						unique++;
-						long symS = sym.getSyms();
+						long symS = p.sym.getSyms();
 						p.normalise();
 						for (int k=0; symS != 0; symS>>=1, k++) {
 							if ((symS & 0x1L) == 0) continue;
@@ -139,7 +142,7 @@ public class PruningTable {
 								done++;
 							}
 						}
-						pos += 48/nsym; // TODO: find the correct value or drop off
+						pos += 16/nsym; // TODO: find the correct value or drop off
 					}
 				}
 			}
