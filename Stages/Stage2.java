@@ -41,7 +41,7 @@ public final class Stage2 {
 	public static void init(){
 		Edge2.init();
 		Center2.init();
-		pTable = new PruningTable(new Center2(), new Edge2(), N_MOVES);
+		pTable = new PruningTable(new Center2(), new Edge2(), N_MOVES, 7);
 		pTable.initTable();
 	}
 

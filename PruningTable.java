@@ -10,6 +10,7 @@ public class PruningTable {
 
 	int n_moves;
 	int n_size;
+	int inv_depth;
 	SymCoord sym;
 	RawCoord[] raws;
 
@@ -17,12 +18,28 @@ public class PruningTable {
 
 	public PruningTable(){}
 
-	public PruningTable(SymCoord sym, RawCoord raw, int n_moves){
+	public PruningTable(SymCoord sym, RawCoord raw, int n_moves, int inv_depth){
 		this.sym = sym;
 		raws = new RawCoord[1];
 		raws[0] = raw;
 
 		this.n_moves = n_moves;
+		this.inv_depth = inv_depth;
+
+		n_size = this.sym.getSize();
+		for ( int i = 0; i < raws.length; i++){
+			n_size *= raws[i].getSize();
+		}
+	}
+
+	public PruningTable(SymCoord sym, RawCoord raw, RawCoord raw2, int n_moves, int inv_depth){
+		this.sym = sym;
+		raws = new RawCoord[2];
+		raws[0] = raw;
+		raws[1] = raw2;
+
+		this.n_moves = n_moves;
+		this.inv_depth = inv_depth;
 
 		n_size = this.sym.getSize();
 		for ( int i = 0; i < raws.length; i++){
@@ -90,8 +107,6 @@ public class PruningTable {
 	}
 
 	private void fillTable(){
-		final int INV_DEPTH = 7;
-
 		/* Create a new instance of PruningTable with the same classes in it */
 		PruningTable p = new PruningTable();
 		try{
@@ -130,7 +145,7 @@ public class PruningTable {
 		/* Build the table */
 		int depth = 0;
 		while (( done < n_size ) && ( depth < 15 )) {
-			boolean inv = depth > INV_DEPTH;
+			boolean inv = depth > inv_depth;
 			int select = inv ? 0x0f : depth;
 			int check = inv ? depth : 0x0f;
 			depth++;

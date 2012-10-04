@@ -38,6 +38,7 @@ class Tools {
 		Util.init();
 		CubePack.init();
 		Stage1.init();
+		Stage4.init();
 	}
 
 	private static volatile boolean inited = false;
@@ -88,9 +89,6 @@ class Tools {
 
 	private static boolean initFrom(DataInput in) {
 		try {
-			Stage4.prunTable = new byte[(Stage4.N_SIZE+1)/2];
-			read(Stage4.prunTable, in);
-			Stage4.init();
 			if( Util.FULL_PRUNING3 ){
 				Stage3.prunTable = new byte[(Stage3.N_SIZE+1)/2];
 				read(Stage3.prunTable, in);
@@ -101,13 +99,11 @@ class Tools {
 		} catch (Exception e) {
 			e.printStackTrace();
 			Stage3.prunTable = null;
-			Stage4.prunTable = null;
 			return false;
 		}
 	}
 
 	private static void initTo(DataOutput out) throws IOException {
-		write(Stage4.prunTable, out); // 420 * 35 * 5968       / 2  =  43,864,800 B
 		if( Util.FULL_PRUNING3 )
 			write(Stage3.prunTable, out); // 12870 * 56980 / 2  = 366,666,300 B
 	}
