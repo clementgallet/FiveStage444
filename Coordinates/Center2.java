@@ -49,8 +49,8 @@ public final class Center2 extends SymCoord {
 		c.coord >>>= SYM_SHIFT;
 	}
 
-	public long getSyms(){
-		return hasSym[coord];
+	public long[] getSyms(){
+		return new long[]{hasSym[coord]};
 	}
 
 	/* Unpack a raw coord to a cube */

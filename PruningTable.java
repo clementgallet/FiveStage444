@@ -165,17 +165,19 @@ public class PruningTable {
 						writeTable(idx, depth);
 						int nsym = 1;
 						unique++;
-						long symS = p.sym.getSyms();
 						p.normalise();
-						for (int k=0; symS != 0; symS>>=1, k++) {
-							if ((symS & 0x1L) == 0) continue;
-							p.sym.sym = k;
-							int sym_idx = p.get();
-							if( sym_idx == idx )
-								nsym++;
-							if (readTable(sym_idx) == 0x0f) {
-								writeTable(sym_idx, depth);
-								done++;
+						for (int j=0; j<p.sym.getSyms().length; j++) {
+							long symS = p.sym.getSyms()[j];
+							for (int k=0; symS != 0; symS>>=1, k++) {
+								if ((symS & 0x1L) == 0) continue;
+								p.sym.sym = k*p.sym.getSyms().length + j;
+								int sym_idx = p.get();
+								if( sym_idx == idx )
+									nsym++;
+								if (readTable(sym_idx) == 0x0f) {
+									writeTable(sym_idx, depth);
+									done++;
+								}
 							}
 						}
 						pos += 48/nsym; // TODO: find the correct value or drop off

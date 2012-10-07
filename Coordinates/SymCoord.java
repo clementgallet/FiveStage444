@@ -8,6 +8,6 @@ public abstract class SymCoord {
 	abstract public int getSize();
 	abstract public int[] getSolvedStates();
 	abstract public void moveTo( int m, SymCoord rc );
-	abstract public long getSyms();
+	abstract public long[] getSyms();
 
 }

@@ -6,7 +6,7 @@ import cg.fivestage444.Moves;
 import cg.fivestage444.Util;
 import cg.fivestage444.Stages.Stage5;
 
-public final class Edge5 {
+public final class Edge5 extends SymCoord {
 
 	public final static int N_COORD = 7444;
 	private final static int N_RAW_COORD = 96*96*96;
@@ -16,8 +16,6 @@ public final class Edge5 {
 	private final static int N_MOVES = Stage5.N_MOVES;
 
 	/* Coordinates */
-	public int coord;
-	public int sym;
 	public int raw_coord;
 
 	/* Tables */
@@ -31,11 +29,23 @@ public final class Edge5 {
 		return coord == 0;
 	}
 
+	public int[] getSolvedStates(){
+		return new int[]{0};
+	}
+
+	public int getSize(){
+		return N_COORD;
+	}
+
 	/* Move */
-	public void moveTo( int m, Edge5 e ){
+	public void moveTo( int m, SymCoord e ){
 		e.coord = move[coord][Symmetry.moveConjugateCo4Stage[m][sym]];
 		e.sym = Symmetry.symIdxCo4Multiply[e.coord & SYM_MASK][sym];
 		e.coord >>>= SYM_SHIFT;
+	}
+
+	public long[] getSyms(){
+		return hasSym[coord];
 	}
 
 	/* Unpack a raw coord to a cube */

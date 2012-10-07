@@ -44,8 +44,8 @@ public final class Edge4 extends SymCoord {
 		e.coord >>>= SYM_SHIFT;
 	}
 
-	public long getSyms(){
-		return hasSym[coord];
+	public long[] getSyms(){
+		return new long[]{hasSym[coord]};
 	}
 
 	/* Unpack a raw coord to a cube */
