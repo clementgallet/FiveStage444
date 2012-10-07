@@ -13,7 +13,7 @@ public final class Stage3 {
 	public final static int N_MOVES = 20;
 	public final static int N_SYM = 8;
 	private static int moveParity;
-	public static PruningTable pTable;
+	private static PruningTable pTable;
 
 	public final Edge3 edge;
 	public final Center3 center;

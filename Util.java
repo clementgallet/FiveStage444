@@ -2,8 +2,6 @@ package cg.fivestage444;
 
 public final class Util {
 
-	public static final boolean FULL_PRUNING3 = false;
-
 	public static void init (){
 		initCnk();
 		initC24to8();

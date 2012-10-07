@@ -11,7 +11,7 @@ public final class Center4 extends RawCoord {
 	private final static int N_SYM = Stage4.N_SYM;
 	private final static int N_MOVES = Stage4.N_MOVES;
 
-	public static final int SolvedStates[] = { 0, 14, 20, 23, 27, 28 };
+	private static final int[] SolvedStates = { 0, 14, 20, 23, 27, 28 };
 
 	/* Tables */
 	private static final short[][] move = new short[N_COORD][N_MOVES];

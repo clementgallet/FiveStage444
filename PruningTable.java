@@ -8,15 +8,15 @@ import java.io.*;
 
 public class PruningTable {
 
-	int n_moves;
-	int n_size;
-	int inv_depth;
-	SymCoord sym;
-	RawCoord[] raws;
+	private int n_moves;
+	private int n_size;
+	private int inv_depth;
+	private SymCoord sym;
+	private RawCoord[] raws;
 
-	byte[] table;
+	private byte[] table;
 
-	public PruningTable(){}
+	private PruningTable(){}
 
 	public PruningTable(SymCoord sym, RawCoord raw, int n_moves, int inv_depth){
 		this.sym = sym;
@@ -27,8 +27,8 @@ public class PruningTable {
 		this.inv_depth = inv_depth;
 
 		n_size = this.sym.getSize();
-		for ( int i = 0; i < raws.length; i++){
-			n_size *= raws[i].getSize();
+		for (RawCoord raw1 : raws) {
+			n_size *= raw1.getSize();
 		}
 	}
 
@@ -42,8 +42,8 @@ public class PruningTable {
 		this.inv_depth = inv_depth;
 
 		n_size = this.sym.getSize();
-		for ( int i = 0; i < raws.length; i++){
-			n_size *= raws[i].getSize();
+		for (RawCoord raw1 : raws) {
+			n_size *= raw1.getSize();
 		}
 	}
 
@@ -64,8 +64,8 @@ public class PruningTable {
 
 	private int get(){
 		int idx = sym.coord;
-		for ( int i = 0; i < raws.length; i++){
-			idx = idx * raws[i].getSize() + raws[i].conjugate(sym.sym);
+		for (RawCoord raw : raws) {
+			idx = idx * raw.getSize() + raw.conjugate(sym.sym);
 		}
 		return idx;
 	}
@@ -80,8 +80,8 @@ public class PruningTable {
 	}
 
 	private void normalise(){
-		for ( int i = 0; i < raws.length; i++){
-			raws[i].coord = raws[i].conjugate(sym.sym);
+		for (RawCoord raw : raws) {
+			raw.coord = raw.conjugate(sym.sym);
 		}
 		sym.sym = 0;
 	}
@@ -117,9 +117,9 @@ public class PruningTable {
 			}
 
 		}
-		catch (InstantiationException e) {
+		catch (InstantiationException ignored) {
 		}
-		catch (IllegalAccessException e) {
+		catch (IllegalAccessException ignored) {
 		}
 
 		/* Create the pruning table and fill with the solved states */
@@ -128,14 +128,13 @@ public class PruningTable {
 			table[i] = -1;
 
 		int done = sym.getSolvedStates().length;
-		for (int i = 0; i < raws.length; i++)
-			done *= raws[i].getSolvedStates().length;
+		for (RawCoord raw1 : raws) done *= raw1.getSolvedStates().length;
 
 		for (int d = 0; d < done; d++){
 			int dd = d;
-			for (int i = 0; i < raws.length; i++){
-				raws[i].coord = raws[i].getSolvedStates()[dd % raws[i].getSolvedStates().length];
-				dd /= raws[i].getSolvedStates().length;
+			for (RawCoord raw : raws) {
+				raw.coord = raw.getSolvedStates()[dd % raw.getSolvedStates().length];
+				dd /= raw.getSolvedStates().length;
 			}
 			sym.coord = sym.getSolvedStates()[dd];
 			sym.sym = 0;

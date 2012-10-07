@@ -8,7 +8,7 @@ import cg.fivestage444.Stages.Stage4;
 
 public final class Edge4 extends SymCoord {
 
-	public final static int N_COORD = 5968;
+	private final static int N_COORD = 5968;
 	private final static int N_RAW_COORD = 88200*2;
 	private final static int N_SYM = Stage4.N_SYM;
 	private final static int SYM_SHIFT = 4;
@@ -21,7 +21,7 @@ public final class Edge4 extends SymCoord {
 	/* Tables */
 	private static final int[] sym2raw = new int[N_COORD];
 	private static final int[] raw2sym = new int[N_RAW_COORD];
-	public static int[] hasSym;
+	private static int[] hasSym;
 	private static final int[][] move = new int[N_COORD][N_MOVES];
 
 	/* Check if solved */

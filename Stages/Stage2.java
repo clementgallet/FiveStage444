@@ -9,7 +9,7 @@ public final class Stage2 {
 
 	public final static int N_MOVES = 28;
 	public final static int N_SYM = 16;
-	public static PruningTable pTable;
+	private static PruningTable pTable;
 
 	public final Edge2 edge;
 	public final Center2 centerF;

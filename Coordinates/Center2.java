@@ -8,14 +8,14 @@ import cg.fivestage444.Stages.Stage2;
 
 public final class Center2 extends SymCoord {
 
-	public final static int N_COORD = 716;
+	private final static int N_COORD = 716;
 	private final static int N_RAW_COORD = 10626;
 	private final static int N_SYM = Stage2.N_SYM;
 	private final static int SYM_SHIFT = 4;
 	private final static int SYM_MASK = ( 1 << SYM_SHIFT ) - 1;
 	private final static int N_MOVES = Stage2.N_MOVES;
 
-	public static final int SolvedStates[] = { 122, 242, 243, 245, 246, 247 };
+	private static final int[] SolvedStates = { 122, 242, 243, 245, 246, 247 };
 
 	/* Coordinates */
 	public int raw_coord;
@@ -23,7 +23,7 @@ public final class Center2 extends SymCoord {
 	/* Tables */
 	private static final short[] sym2raw = new short[N_COORD];
 	private static final short[] raw2sym = new short[N_RAW_COORD];
-	public static int[] hasSym;
+	private static int[] hasSym;
 	private static final int[][] move = new int[N_COORD][N_MOVES];
 
 	/* Check if solved */
