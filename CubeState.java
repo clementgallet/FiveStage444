@@ -32,7 +32,25 @@ public final class CubeState{
 
 	/**
 	 * Generates a random cube.
-	 * @return A random cube in the string representation. Each cube of the cube space has the same probability.
+	 */
+
+	public void randomise(Random r, int n) {
+		init ();
+
+		int move;
+		int last_move = Moves.N_STAGE_MOVES;
+		for (int i=0; i<n; i++){
+			move = r.nextInt(Moves.N_STAGE_MOVES);
+			while ((( Moves.moves_mask[last_move] >>> move ) & 1L ) == 0){
+				move = r.nextInt(Moves.N_STAGE_MOVES);
+			}
+			move(Moves.stage2moves[move]);
+			last_move = move;
+		}
+	}
+
+	/**
+	 * Generates a random cube. Each cube of the cube space has the same probability.
 	 */
 
 	public void randomise(Random r) {

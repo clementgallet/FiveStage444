@@ -44,13 +44,13 @@ final class Search {
 	private int length5_sub;
 	private boolean found_sol;
 
-	private static final int MAX_STAGE2 = 6;
-	private static final int MAX_STAGE3 = 10;
-	private static final int MAX_STAGE4 = 14;
+	public static int MAX_STAGE2 = 6;
+	public static int MAX_STAGE3 = 10;
+	public static int MAX_STAGE4 = 14;
 
-	private static final int MIN_STAGE3 = 8;
-	private static final int MIN_STAGE4 = 7;
-	private static final int MIN_STAGE5 = 8;
+	public static int MIN_STAGE3 = 8;
+	public static int MIN_STAGE4 = 7;
+	public static int MIN_STAGE5 = 8;
 
 	private final CubeState[] init_cube = new CubeState[3];
 
@@ -99,6 +99,9 @@ final class Search {
 		}
 
 		init_stage1 ( max_turns );
+
+		if( ! found_sol )
+			return "";
 
 		/* Transform rotations before outputing the solution */
 		for (i = 0; i < length1_sub; ++i)

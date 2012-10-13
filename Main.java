@@ -3,33 +3,43 @@ import java.util.Random;
 
 public final class Main {
 
+	private final static boolean OPTIMAL = true;
+	private final static int SCRAMBLE_LENGTH = 5;
+
 	public static void main(String[] args){
 
 		int random_count = 100;
 		Tools.init();
 		CubeState c = new CubeState();
 		Search s = new Search();
-		Random gen = new Random(43);
-/*		for (int j=6; j<7; j++)
-		for (int k=10; k<12; k++)
-		for (int l=12; l<15; l++)
-		for (int m=6; m<10; m++)
-		for (int n=6; n<10; n++)
-		for (int o=8; o<9; o++){
-		s.MAX_STAGE2 = j;
-		s.MAX_STAGE3 = k;
-		s.MAX_STAGE4 = l;
-		s.MIN_STAGE3 = m;
-		s.MIN_STAGE4 = n;
-		s.MIN_STAGE5 = o;*/
+		Random gen = new Random();
+		String sol = "";
+		int sol_length;
+		if (OPTIMAL){
+			s.MAX_STAGE2 = 100;
+			s.MAX_STAGE3 = 100;
+			s.MAX_STAGE4 = 100;
+			s.MIN_STAGE3 = 0;
+			s.MIN_STAGE4 = 0;
+			s.MIN_STAGE5 = 0;
+		}
 		long time = System.currentTimeMillis();	
 		for (int i = 0; i < random_count; ++i) {
-			c.randomise(gen);
-			System.out.println(s.solve( c, 45, true));
-			//s.solve( c, 45, true);
+			if (OPTIMAL){
+				c.randomise(gen, SCRAMBLE_LENGTH);
+				sol_length = 0;
+				sol = "";
+				while ("".equals(sol)){
+					System.out.println("length "+sol_length);
+					sol = s.solve( c, sol_length++, true);
+				}
+				System.out.println(sol);
+			}
+			else {
+				c.randomise(gen);
+				System.out.println(s.solve( c, 45, true));
+			}
 		}
 		System.out.println(System.currentTimeMillis() - time);
-		//System.out.println(j+"-"+k+"-"+l+"-"+m+"-"+n+"-"+o+"-"+(System.currentTimeMillis() - time));
-		//}
 	}
 }
