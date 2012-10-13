@@ -16,6 +16,10 @@ import java.io.File;
 
 final class Search {
 
+	private static final int DEBUG_LEVEL = 0;
+	private static final boolean PRINT_LENGTH = true;
+	private static final String STAGE_SEP = " * ";
+
 	private final byte[] move_list_stage1 = new byte[50];
 	private final byte[] move_list_stage2 = new byte[50];
 	private final byte[] move_list_stage3 = new byte[50];
@@ -69,9 +73,6 @@ final class Search {
 	private int min2_list;
 	private int min3_list;
 	private int min4_list;
-
-	private static final int DEBUG_LEVEL = 0;
-	private static final boolean PRINT_LENGTH = true;
 
 	public String solve (CubeState cube, int max_turns, boolean inverse) {
 		int i, j;
@@ -147,9 +148,13 @@ final class Search {
 		}
 		else{
 			sb.append(Moves.print_move_list (length1_sub, move_list_sub_stage1, false));
+			sb.append(STAGE_SEP);
 			sb.append(Moves.print_move_list (length2_sub, move_list_sub_stage2, false));
+			sb.append(STAGE_SEP);
 			sb.append(Moves.print_move_list (length3_sub, move_list_sub_stage3, false));
+			sb.append(STAGE_SEP);
 			sb.append(Moves.print_move_list (length4_sub, move_list_sub_stage4, false));
+			sb.append(STAGE_SEP);
 			sb.append(Moves.print_move_list (length5_sub, move_list_sub_stage5, false));
 		}
 		if( PRINT_LENGTH )
@@ -202,8 +207,10 @@ final class Search {
 	}
 
 	boolean search_stage1(int depth, int moves_done, int last_move){
-		if ( s1_list[moves_done].isSolved() ){
-			return depth == 0 && init_stage2();
+		if ( depth == 0 ){
+			if ( s1_list[moves_done].isSolved() ){
+				return init_stage2();
+			}
 		}
 		long mask = Moves.moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < Stage1.N_MOVES; move++, mask >>>= 1) {

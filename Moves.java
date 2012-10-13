@@ -153,7 +153,7 @@ public final class Moves{
 		moves_mask[N_STAGE_MOVES] = ( 1L << N_STAGE_MOVES ) - 1L;
 	}
 
-	private static final String[] move_strings = {
+	public static final String[] move_strings = {
 	"U", "U'", "U2", "u", "u'", "u2", "Uw", "Uw'", "Uw2",
 	"D", "D'", "D2", "d", "d'", "d2", "Dw", "Dw'", "Dw2",
 	"L", "L'", "L2", "l", "l'", "l2", "Lw", "Lw'", "Lw2",

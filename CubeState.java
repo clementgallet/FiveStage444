@@ -45,8 +45,10 @@ public final class CubeState{
 				move = r.nextInt(Moves.N_STAGE_MOVES);
 			}
 			move(Moves.stage2moves[move]);
+			System.out.print(Moves.move_strings[Moves.stage2moves[move]] + " ");
 			last_move = move;
 		}
+		System.out.println();
 	}
 
 	/**

@@ -8,11 +8,11 @@ public final class Main {
 
 	public static void main(String[] args){
 
-		int random_count = 100;
+		int random_count = 1;
 		Tools.init();
 		CubeState c = new CubeState();
 		Search s = new Search();
-		Random gen = new Random();
+		Random gen = new Random(43);
 		String sol = "";
 		int sol_length;
 		if (OPTIMAL){
@@ -31,13 +31,13 @@ public final class Main {
 				sol = "";
 				while ("".equals(sol)){
 					System.out.println("length "+sol_length);
-					sol = s.solve( c, sol_length++, true);
+					sol = s.solve( c, sol_length++, false);
 				}
 				System.out.println(sol);
 			}
 			else {
 				c.randomise(gen);
-				System.out.println(s.solve( c, 45, true));
+				System.out.println(s.solve( c, 43, true));
 			}
 		}
 		System.out.println(System.currentTimeMillis() - time);
