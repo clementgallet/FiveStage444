@@ -111,22 +111,5 @@ public final class CubeState{
 		corners.leftMult (symIdx);
 		centers.leftMult (symIdx);
 	}
-
-	/*
-	public void rightMult (int symIdx){
-		CubeState c = new CubeState();
-		copyTo(c);
-		c.rightMultEdges (symIdx, this);
-		c.rightMultCenters (symIdx, this);
-		c.rightMultCorners (symIdx, this);
-	}*/
-
-// --Commented out by Inspection START (28/09/12 19:19):
-//	public void print (){
-//		edges.print();
-//		corners.print();
-//		centers.print();
-//	}
-// --Commented out by Inspection STOP (28/09/12 19:19)
 }
 

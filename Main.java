@@ -8,7 +8,7 @@ public final class Main {
 
 	public static void main(String[] args){
 
-		int random_count = 1;
+		int random_count = 10;
 		Tools.init();
 		CubeState c = new CubeState();
 		Search s = new Search();

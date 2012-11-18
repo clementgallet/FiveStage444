@@ -1,6 +1,5 @@
 package cg.fivestage444;
 
-//import static cg.fivestage444.Constants.*;
 import cg.fivestage444.Stages.Stage1;
 import cg.fivestage444.Stages.Stage2;
 import cg.fivestage444.Stages.Stage3;
@@ -207,10 +206,8 @@ final class Search {
 	}
 
 	boolean search_stage1(int depth, int moves_done, int last_move){
-		if ( depth == 0 ){
-			if ( s1_list[moves_done].isSolved() ){
-				return init_stage2();
-			}
+		if( s1_list[moves_done].isSolved() ){
+			return depth == 0 && init_stage2();
 		}
 		long mask = Moves.moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < Stage1.N_MOVES; move++, mask >>>= 1) {

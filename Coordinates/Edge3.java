@@ -27,7 +27,7 @@ public final class Edge3 extends RawCoord {
 	}
 
 	public int[] getSolvedStates(){
-		return new int[]{12375};
+		return new int[]{494, 12375};
 	}
 
 	public int getSize(){
