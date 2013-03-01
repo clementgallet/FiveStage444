@@ -1,14 +1,13 @@
 package cg.fivestage444.Stages;
 
-import cg.fivestage444.Coordinates.Edge5;
 import cg.fivestage444.Coordinates.Center5;
 import cg.fivestage444.Coordinates.Corner5;
+import cg.fivestage444.Coordinates.Edge5;
 import cg.fivestage444.PruningTable;
-import cg.fivestage444.Util;
 
 import java.io.File;
 
-public final class Stage5 {
+public final class Stage5 extends Stage {
 
 	public final static int N_MOVES = 12;
 	public final static int N_SYM = 48;
@@ -26,12 +25,15 @@ public final class Stage5 {
 	}
 
 	/* Check if solved */
+	@Override
 	public boolean isSolved(){
 		return edge.isSolved() && corner.isSolved(edge.sym) && center.isSolved(edge.sym);
 	}
 
 	/* Move */
-	public void moveTo( int m, Stage5 s ){
+	@Override
+	public void moveTo( int m, Stage t ){
+		Stage5 s = (Stage5)t;
 		edge.moveTo( m, s.edge );
 		center.moveTo( m, s.center );
 		corner.moveTo( m, s.corner );
@@ -50,8 +52,14 @@ public final class Stage5 {
 
 	/** Pruning functions **/
 
+	@Override
 	public int pruning(){
 		return Math.max( pTableEdgeCenter.readTable(edge.coord * Center5.N_COORD + center.conjugate(edge.sym)),
 		                 pTableEdgeCorner.readTable(edge.coord * Corner5.N_COORD + corner.conjugate(edge.sym)));
+	}
+
+	@Override
+	public int getMovesNumber() {
+		return N_MOVES;
 	}
 }

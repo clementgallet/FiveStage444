@@ -3,7 +3,7 @@ import java.util.Random;
 
 public final class Main {
 
-	private final static boolean OPTIMAL = true;
+	private final static boolean OPTIMAL = false;
 	private final static int SCRAMBLE_LENGTH = 5;
 
 	public static void main(String[] args){
