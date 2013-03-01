@@ -8,9 +8,17 @@ public class StageSolver {
 	byte[] move_list = new byte[100];
 	int n_moves;
 
-	boolean search(int depth, int moves_done, int last_move){
+	public StageSolver(Stage s){
+		stage_list[0] = s;
+	}
+
+	public boolean search(int depth){
+		return search(depth, 0, Moves.N_STAGE_MOVES);
+	}
+
+	private boolean search(int depth, int moves_done, int last_move){
 		if( stage_list[moves_done].isSolved() ){
-			return depth == 0 && found();
+			if( depth == 0 && push() );
 		}
 		long mask = Moves.moves_mask[last_move];
 		for (int move = 0; mask != 0 && move < n_moves; move++, mask >>>= 1) {
@@ -25,7 +33,7 @@ public class StageSolver {
 		return false;
 	}
 
-	boolean found(){
+	boolean push(){
 		return true;
 	}
 }

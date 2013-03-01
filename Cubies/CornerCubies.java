@@ -6,11 +6,18 @@ import java.util.Arrays;
 
 public final class CornerCubies{
 
-	public final byte[] cubies = new byte[8]; //what's at each corner position (3*cubie + orientation)
+	public byte[] cubies = new byte[8]; //what's at each corner position (3*cubie + orientation)
 
 	public void init (){
 		for (byte i = 0; i < 8; ++i)
 			cubies[i] = i;
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException{
+		CornerCubies corner = (CornerCubies) super.clone();
+		corner.cubies = new byte[cubies.length];
+		System.arraycopy(cubies, 0, corner.cubies, 0, cubies.length);
 	}
 
 	public boolean is_solved(){

@@ -6,11 +6,18 @@ import java.util.Arrays;
 
 public final class EdgeCubies{
 
-	public final byte[] cubies = new byte[24]; //what's at each edge position
+	public byte[] cubies = new byte[24]; //what's at each edge position
 
 	public void init (){
 		for (byte i = 0; i < 24; ++i)
 			cubies[i] = i;
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException{
+		EdgeCubies edge = (EdgeCubies) super.clone();
+		edge.cubies = new byte[cubies.length];
+		System.arraycopy(cubies, 0, edge.cubies, 0, cubies.length);
 	}
 
 	public boolean is_solved(){

@@ -1,22 +1,31 @@
 package cg.fivestage444;
 
-import cg.fivestage444.Cubies.EdgeCubies;
-import cg.fivestage444.Cubies.CornerCubies;
 import cg.fivestage444.Cubies.CenterCubies;
-import java.util.Arrays;
+import cg.fivestage444.Cubies.CornerCubies;
+import cg.fivestage444.Cubies.EdgeCubies;
+
 import java.util.Random;
 
 //CubeState structure: a cubie-level representation of the cube.
-public final class CubeState{
+public final class CubeState implements Cloneable {
 
-	public final EdgeCubies edges = new EdgeCubies();
-	public final CornerCubies corners = new CornerCubies();
-	public final CenterCubies centers = new CenterCubies();
+	public EdgeCubies edges = new EdgeCubies();
+	public CornerCubies corners = new CornerCubies();
+	public CenterCubies centers = new CenterCubies();
 
 	public void init (){
 		edges.init();
 		corners.init();
 		centers.init();
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException{
+		CubeState cube = (CubeState) super.clone();
+		cube.edges = (EdgeCubies) edges.clone();
+		cube.corners = (CornerCubies) corners.clone();
+		cube.centers = (CenterCubies) centers.clone();
+		return cube;
 	}
 
 	public int is_solved (){

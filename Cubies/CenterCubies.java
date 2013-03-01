@@ -1,16 +1,22 @@
 package cg.fivestage444.Cubies;
 
-import cg.fivestage444.Util;
 import cg.fivestage444.Symmetry;
-import java.util.Arrays;
+import cg.fivestage444.Util;
 
-public final class CenterCubies{
+public final class CenterCubies implements Cloneable{
 
-	public final byte[] cubies = new byte[24]; //what's at each center position
+	public byte[] cubies = new byte[24]; //what's at each center position
 
 	public void init (){
 		for (int i = 0; i < 24; ++i)
 			cubies[i] = (byte)(i/4);
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException{
+		CenterCubies center = (CenterCubies) super.clone();
+		center.cubies = new byte[cubies.length];
+		System.arraycopy(cubies, 0, center.cubies, 0, cubies.length);
 	}
 
 	public boolean is_solved(){
