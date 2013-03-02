@@ -1,6 +1,6 @@
 package cg.fivestage444;
 
-import cg.fivestage444.Stages.Stage;
+import cg.fivestage444.Stages.*;
 
 public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 
@@ -54,7 +54,29 @@ public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 	 * @return the stage structure
 	 */
 	public Stage toCurrentStage(){
-
+		switch (current_stage){
+			case 1:
+				Stage1 stage1 = new Stage1();
+				stage1.pack(cube);
+				return stage1;
+			case 2:
+				Stage2 stage2 = new Stage2();
+				stage2.pack(cube);
+				return stage2;
+			case 3:
+				Stage3 stage3 = new Stage3();
+				stage3.pack(cube);
+				return stage3;
+			case 4:
+				Stage4 stage4 = new Stage4();
+				stage4.pack(cube);
+				return stage4;
+			case 5:
+				Stage5 stage5 = new Stage5();
+				stage5.pack(cube);
+				return stage5;
+		}
+		return null;
 	}
 
 	public Stage toNextStage(){
