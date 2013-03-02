@@ -120,5 +120,13 @@ public final class CubeState implements Cloneable {
 		corners.leftMult (symIdx);
 		centers.leftMult (symIdx);
 	}
+
+	public void rightMult (int symIdx){
+		CubeState cube = new CubeState();
+		edges.rightMult(symIdx, cube.edges);
+		corners.rightMult(symIdx, cube.corners);
+		centers.rightMult(symIdx, cube.centers);
+		cube.copyTo(this);
+	}
 }
 

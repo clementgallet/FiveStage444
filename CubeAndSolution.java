@@ -6,7 +6,8 @@ public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 
 	CubeState cube; /* the cube structure */
 	byte[] move_list = new byte[100]; /* the list of moves that has been applied to the cube */
-	int move_length = 0; /* the length of the current move list */
+	int move_length = 0;
+	int[] stage_length = new int[5]; /* the length of the move list at each stage */
 	int comparator = 0; /* the value used to sort objects */
 	int current_stage = 1; /* at which stage are we. TODO: use a better struct than an int */
 	int rotate12 = 0; /* which rotation was applied between stage 1 and 2. TODO: same */
@@ -21,7 +22,9 @@ public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 		CubeAndSolution cas = (CubeAndSolution) super.clone();
 		cas.cube = (CubeState)cube.clone();
 		cas.move_list = new byte[move_list.length];
-		System.arraycopy(move_list, 0, cas.move_list, 0, move_length);
+		System.arraycopy(move_list, 0, cas.move_list, 0, move_list.length);
+		cas.stage_length = new int[stage_length.length];
+		System.arraycopy(stage_length, 0, cas.stage_length, 0, stage_length.length);
 		return cas;
 	}
 
@@ -45,7 +48,28 @@ public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 	 * We also keep track of the rotations to be able to print the correct move sequence at the end.
 	 */
 	public void rotate(){
-
+		if (current_stage == 1){
+			switch (cube.corners.cubies[0] >> 3) {
+				case 0:
+					rotate12 = 0;
+					break;	//no whole cube rotation
+				case 1:
+					rotate12 = 32;
+					break;
+				case 2:
+					rotate12 = 16;
+					break;
+				default:
+					System.out.println ("Invalid cube rotation state.");
+			}
+			cube.rightMult(rotate12);
+		}
+		if (current_stage == 2){
+			if (cube.centers.cubies[16] < 4) {
+				cube.rightMult(8);
+				rotate23 += 8;
+			}
+		}
 	}
 
 	/**
@@ -83,5 +107,4 @@ public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 		current_stage++;
 		return toCurrentStage();
 	}
-
 }
