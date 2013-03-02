@@ -64,7 +64,7 @@ public final class Center4 extends RawCoord {
 	}
 
 	/* Pack a cube into the coord */
-	private void pack (CenterCubies cube){
+	public void pack(CenterCubies cube){
 		int i;
 		this.coord = 0;
 		int r = 4;

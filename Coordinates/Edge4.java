@@ -90,7 +90,7 @@ public final class Edge4 extends SymCoord {
 	}
 
 	/* Pack a cube into the raw coord */
-	private void pack(EdgeCubies cube){
+	public void pack(EdgeCubies cube){
 		int redge4of8 = 0;
 		int ledge4of8 = 0;
 		byte[] edges_rl = new byte[8];

@@ -87,7 +87,7 @@ public final class Center3 extends SymCoord {
 	}
 
 	/* Pack a cube into the raw coord */
-	private void pack(CenterCubies cube){
+	public void pack(CenterCubies cube){
 		int cenbm = 0;
 		int cenbm4of8 = 0;
 		int j = 7;

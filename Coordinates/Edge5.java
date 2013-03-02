@@ -101,7 +101,7 @@ public final class Edge5 extends SymCoord {
 	}
 
 	/* Pack a cube into the raw coord */
-	private void pack(EdgeCubies cube){
+	public void pack(EdgeCubies cube){
 		int ep1 = Util.get4Perm (cube.cubies, 0);
 		int ep2 = Util.get4Perm (cube.cubies, 8);
 		int ep3 = Util.get4Perm (cube.cubies, 16);

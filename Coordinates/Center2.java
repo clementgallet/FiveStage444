@@ -70,14 +70,19 @@ public final class Center2 extends SymCoord {
 	}
 
 	/* Pack a cube into the raw coord */
-	private void pack(CenterCubies cube){
+	public void pack(CenterCubies cube, int c){
 		this.raw_coord = 0;
 		int r = 4;
 		for (int i=23; i>=0; i--) {
-			if (cube.cubies[i] == 5) {
+			if (cube.cubies[i] == c) {
 				this.raw_coord += Util.Cnk[i][r--];
 			}
 		}
+	}
+
+	/* Pack a cube into the raw coord */
+	private void pack(CenterCubies cube){
+		pack(cube, 5);
 	}
 
 	/* Compute the sym coordinate from the raw coordinate */

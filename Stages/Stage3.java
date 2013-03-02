@@ -2,6 +2,7 @@ package cg.fivestage444.Stages;
 
 import cg.fivestage444.Coordinates.Center3;
 import cg.fivestage444.Coordinates.Edge3;
+import cg.fivestage444.CubeState;
 import cg.fivestage444.Moves;
 import cg.fivestage444.PruningTable;
 
@@ -21,6 +22,13 @@ public final class Stage3 extends Stage {
 	public Stage3(){
 		edge = new Edge3();
 		center = new Center3();
+	}
+
+	/* Pack from CubeState */
+	public void pack(CubeState cube){
+		edge.pack(cube.edges);
+		center.pack(cube.centers);
+		center.computeSym();
 	}
 
 	/* Check if solved */

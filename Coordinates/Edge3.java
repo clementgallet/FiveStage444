@@ -63,7 +63,7 @@ public final class Edge3 extends RawCoord {
 	}
 
 	/* Pack a cube into the coord */
-	private void pack (EdgeCubies cube){
+	public void pack(EdgeCubies cube){
 		this.coord = 0;
 		int r = 8;
 		for (int i=15; i>=0; i--) {

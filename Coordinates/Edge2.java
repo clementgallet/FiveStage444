@@ -63,7 +63,7 @@ public final class Edge2 extends RawCoord {
 	}
 
 	/* Pack a cube into the coord */
-	private void pack (EdgeCubies cube){
+	public void pack(EdgeCubies cube){
 		int u = Util.get8Perm (cube.cubies, 16);
 		this.coord = Util.perm_to_420[u];
 	}

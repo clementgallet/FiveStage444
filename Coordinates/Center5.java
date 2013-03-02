@@ -55,7 +55,7 @@ public final class Center5 extends RawCoord {
 	}
 
 	/* Pack a cube into the coord */
-	private void pack (CenterCubies cube){
+	public void pack(CenterCubies cube){
 		int x = 0;
 		int b = 0x800000;
 		for (int i = 0; i < 24; ++i) {

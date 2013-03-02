@@ -61,7 +61,7 @@ public final class Corner4 extends RawCoord {
 	}
 
 	/* Pack a cube into the coord */
-	private void pack (CornerCubies cube){
+	public void pack(CornerCubies cube){
 		int u = Util.get8Perm (cube.cubies, 0);
 		this.coord = Util.perm_to_420[u];
 	}

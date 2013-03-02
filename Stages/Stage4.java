@@ -3,6 +3,7 @@ package cg.fivestage444.Stages;
 import cg.fivestage444.Coordinates.Center4;
 import cg.fivestage444.Coordinates.Corner4;
 import cg.fivestage444.Coordinates.Edge4;
+import cg.fivestage444.CubeState;
 import cg.fivestage444.PruningTable;
 
 import java.io.File;
@@ -21,6 +22,14 @@ public final class Stage4 extends Stage {
 		edge = new Edge4();
 		corner = new Corner4();
 		center = new Center4();
+	}
+
+	/* Pack from CubeState */
+	public void pack(CubeState cube){
+		edge.pack(cube.edges);
+		edge.computeSym();
+		corner.pack(cube.corners);
+		center.pack(cube.centers);
 	}
 
 	/* Check if solved */
