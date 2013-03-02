@@ -4,12 +4,15 @@ import cg.fivestage444.Stages.Stage;
 
 public class StageSolver {
 
+	CubeAndSolution cas;
 	Stage[] stage_list = new Stage[20];
 	byte[] move_list = new byte[100];
 	int n_moves;
 
-	public StageSolver(Stage s){
-		stage_list[0] = s;
+	public StageSolver(CubeAndSolution cas){
+		this.cas = cas;
+		stage_list[0] = cas.toCurrentStage();
+		n_moves = stage_list[0].getMovesNumber();
 	}
 
 	public boolean search(int depth){
@@ -34,6 +37,18 @@ public class StageSolver {
 	}
 
 	boolean push(){
+		CubeAndSolution newCas = null;
+		try {
+			newCas = (CubeAndSolution) cas.clone();
+		} catch (CloneNotSupportedException e) {
+		}
+		for (int move = 0; move < n_moves; move++ ){
+			newCas.move(Moves.stage2moves[move]);
+		}
+		newCas.rotate();
+		Stage s = newCas.toNextStage();
+		newCas.comparator = newCas.move_length + s.pruning();
+
 		return true;
 	}
 }
