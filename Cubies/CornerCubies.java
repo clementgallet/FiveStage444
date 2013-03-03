@@ -14,7 +14,7 @@ public final class CornerCubies{
 
 	@Override
 	public Object clone() throws CloneNotSupportedException{
-		CornerCubies corner = (CornerCubies) super.clone();
+		CornerCubies corner = new CornerCubies();
 		corner.cubies = new byte[cubies.length];
 		System.arraycopy(cubies, 0, corner.cubies, 0, cubies.length);
 		return corner;

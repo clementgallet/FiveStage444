@@ -14,7 +14,7 @@ public final class EdgeCubies{
 
 	@Override
 	public Object clone() throws CloneNotSupportedException{
-		EdgeCubies edge = (EdgeCubies) super.clone();
+		EdgeCubies edge = new EdgeCubies();
 		edge.cubies = new byte[cubies.length];
 		System.arraycopy(cubies, 0, edge.cubies, 0, cubies.length);
 		return edge;

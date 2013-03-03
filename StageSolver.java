@@ -16,6 +16,14 @@ public class StageSolver {
 		this.queue = queue;
 		this.cas = cas;
 		stage_list[0] = cas.toCurrentStage();
+		try {
+			for (int s=1; s<20; s++)
+				stage_list[s] = stage_list[0].getClass().newInstance();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
 		n_moves = stage_list[0].getMovesNumber();
 	}
 
@@ -67,6 +75,7 @@ public class StageSolver {
 		try {
 			newCas = (CubeAndSolution) cas.clone();
 		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
 		}
 		for (int move = 0; move < n_moves; move++ ){
 			newCas.move(Moves.stage2moves[move]);
