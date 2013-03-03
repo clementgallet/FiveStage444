@@ -107,4 +107,8 @@ public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 		current_stage++;
 		return toCurrentStage();
 	}
+
+	public String outputSolution(){
+		return "";
+	}
 }

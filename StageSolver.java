@@ -24,9 +24,10 @@ public class StageSolver {
 	 * Each time a solution is found, the push method is called.
 	 * The search can be stopped at any time depending on what the push function returns.
 	 * @param length the maximum length of the solution
+	 * @return false: continue to search, true: don't go further.
 	 */
-	public void search(int length){
-		search(length, 0, Moves.N_STAGE_MOVES);
+	public boolean search(int length){
+		return search(length, 0, Moves.N_STAGE_MOVES);
 	}
 
 	/**

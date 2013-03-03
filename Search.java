@@ -1,17 +1,9 @@
 package cg.fivestage444;
 
-import cg.fivestage444.Stages.Stage1;
-import cg.fivestage444.Stages.Stage2;
-import cg.fivestage444.Stages.Stage3;
-import cg.fivestage444.Stages.Stage4;
-import cg.fivestage444.Stages.Stage5;
+import cg.fivestage444.Stages.*;
 
-import java.util.Random;
-import java.io.ObjectOutputStream;
-import java.io.ObjectInputStream;
-import java.io.PipedOutputStream;
-import java.io.PipedInputStream;
-import java.io.File;
+import java.util.Arrays;
+import java.util.PriorityQueue;
 
 final class Search {
 
@@ -73,35 +65,69 @@ final class Search {
 	private int min3_list;
 	private int min4_list;
 
-	public String solve (CubeState cube, int max_turns, boolean inverse) {
-		int i, j;
+	public String solve (CubeState cube, boolean inverse) {
+		int i;
 
-		StringBuilder sb = new StringBuilder();
-		CubeState c = new CubeState();
-		cube.copyTo( c );
+		/* We use a priority queue to store the partial solutions.
+		 * The value used to order the solutions is:
+		 * the length of the current solution + the lower bound of the best solution of the next stage.
+		 */
+		PriorityQueue<CubeAndSolution> solutionQueue = new PriorityQueue<CubeAndSolution>();
 
-		for( j=0; j<3; j++){
-			init_cube[j] = new CubeState();
-			c.copyTo( init_cube[j] );
-			c.leftMult ( 16 );
+		/* We use a temporary array to export the priority queue to, before converting to... */
+		CubeAndSolution[] solutionArray = new CubeAndSolution[3];
+
+		/* ... the StageSolver objects, which prepare for the next stage search to come. */
+		StageSolver[] solversSet;
+
+		/* The initial positions to search from.
+		 * We have 3 starting cubes because we can choose to either solve with
+		 * white/yellow, red/orange or blue/green on front/back.
+		 * We cannot use the inverse trick used on 3x3x3 solvers to add 3 more positions to solve,
+		 * because we would need to inverse a position, and centers do not form a group structure,
+		 * so we are not allowed to do that.
+		 */
+		for(int j=0; j<3; j++){
+			CubeState startingCube = new CubeState();
+			cube.copyTo(startingCube);
+			startingCube.leftMult(j * 16); /* Repaint colors using the rotation along the UFL-DBR axis j times */
+			solutionArray[j] = new CubeAndSolution(startingCube);
 		}
 
-		for (i=0; i<20; i++){
-			s1_list[i] = new Stage1();
-			s2_list[i] = new Stage2();
-			s3_list[i] = new Stage3();
-			s4_list[i] = new Stage4();
-			s5_list[i] = new Stage5();
-			cp1_list[i] = new CubePack();
-			cp2_list[i] = new CubePack();
-			cp3_list[i] = new CubePack();
-			cp4_list[i] = new CubePack();
+		/* We now start the main loop to find a solution, going through every stage.
+		 */
+		while(solutionArray.length != 1){
+
+			/* We will process better solutions earlier if we sort the array of partial solutions. */
+			Arrays.sort(solutionArray);
+
+			/* We build our StageSolver objects, one for each partial solution we found.
+			 */
+			solversSet = new StageSolver[solutionArray.length];
+			for(int length=0; length<solutionArray.length; length++){
+				solversSet[length] = new StageSolver(solutionArray[length], solutionQueue);
+			}
+
+			/* Now, we seach for a solution of incremental length on every StageSolver.
+			 * If one of the StageSolvers outputs true, it means that the search must be stopped,
+			 * as we reached the limit.
+			 */
+			OUT: for(int length=0; length<100; length++){
+				for(int solver=0; solver<solversSet.length; solver++){
+					if(solversSet[0].search(length))
+						break OUT;
+				}
+			}
+
+			/* Then we convert all our partial solutions with a new stage solved to our array,
+			 * and we clear the priority queue.
+			 */
+			solutionArray = solutionQueue.toArray(new CubeAndSolution[0]);
+			solutionQueue.clear();
 		}
 
-		init_stage1 ( max_turns );
-
-		if( ! found_sol )
-			return "";
+		CubeAndSolution fullSolution = solutionArray[0]; /* This is *the* solution! */
+		return fullSolution.outputSolution();
 
 		/* Transform rotations before outputing the solution */
 		for (i = 0; i < length1_sub; ++i)
