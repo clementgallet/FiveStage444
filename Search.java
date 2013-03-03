@@ -2,8 +2,10 @@ package cg.fivestage444;
 
 import java.util.Arrays;
 import java.util.PriorityQueue;
+import java.util.logging.Logger;
 
 final class Search {
+	private static final Logger l = Logger.getLogger(StageSolver.class.getName());
 
 	public String solve (CubeState cube, boolean inverse) {
 		int i;
@@ -36,7 +38,8 @@ final class Search {
 
 		/* We now start the main loop to find a solution, going through every stage.
 		 */
-		while(solutionArray.length != 1){
+		for (int s=0; s<5; s++){
+			l.info("Start a new stage search");
 
 			/* We will process better solutions earlier if we sort the array of partial solutions. */
 			Arrays.sort(solutionArray);

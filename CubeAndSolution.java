@@ -2,7 +2,10 @@ package cg.fivestage444;
 
 import cg.fivestage444.Stages.*;
 
+import java.util.logging.Logger;
+
 public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
+	private static final Logger l = Logger.getLogger(StageSolver.class.getName());
 
 	CubeState cube; /* the cube structure */
 	byte[] move_list = new byte[100]; /* the list of moves that has been applied to the cube */
@@ -60,7 +63,7 @@ public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 					rotate12 = 16;
 					break;
 				default:
-					System.out.println ("Invalid cube rotation state.");
+					l.severe("Invalid cube rotation state.");
 			}
 			cube.rightMult(rotate12);
 		}
@@ -139,7 +142,7 @@ public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 		 */
 		int finalOrientation = cube.isSolvedAndOrientation();
 		if( finalOrientation == -1 ){
-			System.out.println("Not a solution!");
+			l.severe("Not a solution!");
 			return "";
 		}
 		for (int l=0; l<move_length; l++)

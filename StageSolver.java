@@ -50,7 +50,7 @@ public class StageSolver {
 	 */
 	private boolean search(int depth, int moves_done, int last_move){
 		if( stage_list[moves_done].isSolved() ){
-			if( depth == 0 && push(moves_done) );
+			return depth == 0 && push(moves_done);
 		}
 		long mask = Moves.moves_mask[last_move]; /* we use a mask to filter certain combinasion of moves. */
 		for (int move = 0; mask != 0 && move < n_moves; move++, mask >>>= 1) {
