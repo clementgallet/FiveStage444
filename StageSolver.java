@@ -3,8 +3,10 @@ package cg.fivestage444;
 import cg.fivestage444.Stages.Stage;
 
 import java.util.PriorityQueue;
+import java.util.logging.Logger;
 
 public class StageSolver {
+	private static final Logger l = Logger.getLogger(StageSolver.class.getName());
 
 	PriorityQueue<CubeAndSolution> queue; /* the queue to push solutions of this stage to */
 	CubeAndSolution cas; /* the starting position */
@@ -25,6 +27,7 @@ public class StageSolver {
 			e.printStackTrace();
 		}
 		n_moves = stage_list[0].getMovesNumber();
+		l.info("Initialise with class "+stage_list[0].getClass().getName());
 	}
 
 	/**
@@ -47,7 +50,7 @@ public class StageSolver {
 	 */
 	private boolean search(int depth, int moves_done, int last_move){
 		if( stage_list[moves_done].isSolved() ){
-			if( depth == 0 && push() );
+			if( depth == 0 && push(moves_done) );
 		}
 		long mask = Moves.moves_mask[last_move]; /* we use a mask to filter certain combinasion of moves. */
 		for (int move = 0; mask != 0 && move < n_moves; move++, mask >>>= 1) {
@@ -68,18 +71,21 @@ public class StageSolver {
 	 * Then we convert to the next stage structure to peek at the pruning value,
 	 * which is a lower bound of the best solution of the next stage.
 	 * We use the current solution length + this lower bound to sort the current solutions we found.
+	 * @param solution_length the length of the solution.
 	 * @return if we want to stop the search.
 	 */
-	boolean push(){
+	boolean push(int solution_length){
+		l.finer("Found a solution.");
 		CubeAndSolution newCas = null;
 		try {
 			newCas = (CubeAndSolution) cas.clone();
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
-		for (int move = 0; move < n_moves; move++ ){
-			newCas.move(Moves.stage2moves[move]);
+		for (int move = 0; move < solution_length; move++ ){
+			newCas.move(Moves.stage2moves[move_list[move]]);
 		}
+		l.finest("Solution is "+newCas.debugOutputMoves());
 		newCas.rotate();
 		Stage s = newCas.toNextStage();
 		if(s != null)

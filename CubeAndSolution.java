@@ -147,4 +147,8 @@ public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 
 		return Moves.print_move_list(move_length, move_list, true);
 	}
+
+	public String debugOutputMoves(){
+		return Moves.print_move_list(move_length, move_list, false);
+	}
 }
