@@ -1,8 +1,7 @@
 package cg.fivestage444.Cubies;
 
-import cg.fivestage444.Util;
 import cg.fivestage444.Symmetry;
-import java.util.Arrays;
+import cg.fivestage444.Util;
 
 public final class EdgeCubies{
 
@@ -18,6 +17,7 @@ public final class EdgeCubies{
 		EdgeCubies edge = (EdgeCubies) super.clone();
 		edge.cubies = new byte[cubies.length];
 		System.arraycopy(cubies, 0, edge.cubies, 0, cubies.length);
+		return edge;
 	}
 
 	public boolean is_solved(){

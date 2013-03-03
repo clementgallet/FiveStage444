@@ -1,8 +1,7 @@
 package cg.fivestage444.Cubies;
 
-import cg.fivestage444.Util;
 import cg.fivestage444.Symmetry;
-import java.util.Arrays;
+import cg.fivestage444.Util;
 
 public final class CornerCubies{
 
@@ -18,6 +17,7 @@ public final class CornerCubies{
 		CornerCubies corner = (CornerCubies) super.clone();
 		corner.cubies = new byte[cubies.length];
 		System.arraycopy(cubies, 0, corner.cubies, 0, cubies.length);
+		return corner;
 	}
 
 	public boolean is_solved(){

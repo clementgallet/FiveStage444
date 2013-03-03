@@ -17,6 +17,7 @@ public final class CenterCubies implements Cloneable{
 		CenterCubies center = (CenterCubies) super.clone();
 		center.cubies = new byte[cubies.length];
 		System.arraycopy(cubies, 0, center.cubies, 0, cubies.length);
+		return center;
 	}
 
 	public boolean is_solved(){
