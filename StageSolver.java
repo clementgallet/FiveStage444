@@ -27,7 +27,7 @@ public class StageSolver {
 			e.printStackTrace();
 		}
 		n_moves = stage_list[0].getMovesNumber();
-		l.info("Initialise with class "+stage_list[0].getClass().getName());
+		l.fine("Initialise with class "+stage_list[0].getClass().getName());
 	}
 
 	/**

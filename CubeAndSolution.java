@@ -70,7 +70,7 @@ public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 		if (current_stage == 2){
 			if (cube.centers.cubies[16] < 4) {
 				cube.rightMult(8);
-				rotate23 += 8;
+				rotate23 = 8;
 			}
 		}
 	}
