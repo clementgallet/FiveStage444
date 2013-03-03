@@ -28,7 +28,7 @@ public final class CubeState implements Cloneable {
 		return cube;
 	}
 
-	public int is_solved (){
+	public int isSolvedAndOrientation (){
 		CubeState cube = new CubeState();
 		for (int sym=0; sym<Symmetry.N_SYM; sym++){
 			copyTo( cube );

@@ -1,12 +1,5 @@
 package cg.fivestage444;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
-
-
 /**
  * Class containing all the constants used in the program, and some useful functions.
  */
@@ -178,6 +171,6 @@ public final class Moves{
 				sb.append(move_strings[m]).append(' ');
 			}
 		}
-		return sb.toString();
+		return sb.toString().trim();
 	}
 }

@@ -104,11 +104,47 @@ public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 	}
 
 	public Stage toNextStage(){
+		stage_length[current_stage-1] = move_length;
 		current_stage++;
 		return toCurrentStage();
 	}
 
+	public boolean isSolved(){
+		return cube.isSolvedAndOrientation() >= 0;
+	}
+
+	public void processSolution(){
+		/** Because of the cube rotations between some stages, we need to modify the rotations
+		 * to take into accounts these cube rotations.
+		 */
+		for (int l=stage_length[0]; l<stage_length[1]; l++)
+			move_list[l] = Symmetry.moveConjugate[move_list[l]][rotate12];
+		for (int l=stage_length[1]; l<move_length; l++)
+			move_list[l] = Symmetry.moveConjugate[move_list[l]][rotate12+rotate23];
+	}
+
 	public String outputSolution(){
-		return "";
+		processSolution();
+		return Moves.print_move_list(move_length, move_list, false);
+	}
+
+	public String outputGenerator(){
+		processSolution();
+
+		/** As noted by Bruce, the solved cube has a arbitrary orientation.
+		 *  However, if we want to output a generator,
+		 *  it will be applied to a solved state with a fixed orientation
+		 *  (e.g. white on top/green on front according to WCA regulations 2013)
+		 *  Because of that, we need to transform all moves according to the orientation of the solved state.
+		 */
+		int finalOrientation = cube.isSolvedAndOrientation();
+		if( finalOrientation == -1 ){
+			System.out.println("Not a solution!");
+			return "";
+		}
+		for (int l=0; l<move_length; l++)
+			move_list[l] = Symmetry.moveConjugate[move_list[l]][finalOrientation];
+
+		return Moves.print_move_list(move_length, move_list, true);
 	}
 }
