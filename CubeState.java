@@ -128,5 +128,67 @@ public final class CubeState implements Cloneable {
 		centers.rightMult(symIdx, cube.centers);
 		cube.copyTo(this);
 	}
+
+	/** Here is a list of checks to see if this position is included in a specific subgroup.
+	 * The checks are easy to do, but the list is not exhaustive,
+	 * as some positions that are not inside a subgroup may pass the test.
+	 * This must be only intended to reveal some bugs in the program.
+	 */
+
+	public boolean isInSubgroup2(){
+		for(int i=0; i<corners.cubies.length; i++)
+			if((corners.cubies[i] >>> 3) != 0)
+				return false;
+
+		for(int i=16; i<24; i++)
+			if(edges.cubies[i] < 16)
+				return false;
+
+		return true;
+	}
+
+	public boolean isInSubgroup3(){
+		if (!isInSubgroup2())
+			return false;
+
+		for(int i=16; i<24; i++)
+			if(centers.cubies[i] < 4)
+				return false;
+
+		return true;
+	}
+
+	public boolean isInSubgroup4(){
+		if (!(isInSubgroup2() && isInSubgroup3()))
+			return false;
+
+		for(int i=8; i<16; i++)
+			if(centers.cubies[i] < 2)
+				return false;
+
+		for(int i=4; i<12; i++)
+			if((edges.cubies[i] < 4) || (edges.cubies[i] >= 12))
+				return false;
+
+		return true;
+	}
+
+	public boolean isInSubgroup5(){
+		if (!(isInSubgroup2() && isInSubgroup3() && isInSubgroup4()))
+			return false;
+
+		for(int i=0; i<4; i++)
+			if(corners.cubies[i] >= 4)
+				return false;
+
+		for(int i=0; i<4; i++)
+			if(edges.cubies[i] >= 4)
+				return false;
+		for(int i=4; i<8; i++)
+			if(edges.cubies[i] >= 8)
+				return false;
+
+		return true;
+	}
 }
 

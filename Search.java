@@ -70,8 +70,10 @@ final class Search {
 		}
 
 		CubeAndSolution fullSolution = solutionArray[0]; /* This is *the* solution! */
+		if(!fullSolution.isSolved())
+			l.severe("Not a solution!");
 		if(inverse)
-			return fullSolution.outputGenerator();
+			return fullSolution.outputGenerator(cube);
 		else
 			return fullSolution.outputSolution();
 	}

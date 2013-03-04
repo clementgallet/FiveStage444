@@ -3,7 +3,7 @@ package cg.fivestage444.Cubies;
 import cg.fivestage444.Symmetry;
 import cg.fivestage444.Util;
 
-public final class CornerCubies{
+public final class CornerCubies implements Cloneable{
 
 	public byte[] cubies = new byte[8]; //what's at each corner position (3*cubie + orientation)
 

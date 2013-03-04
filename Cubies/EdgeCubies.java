@@ -3,7 +3,7 @@ package cg.fivestage444.Cubies;
 import cg.fivestage444.Symmetry;
 import cg.fivestage444.Util;
 
-public final class EdgeCubies{
+public final class EdgeCubies implements Cloneable{
 
 	public byte[] cubies = new byte[24]; //what's at each edge position
 
