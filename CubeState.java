@@ -190,5 +190,10 @@ public final class CubeState implements Cloneable {
 
 		return true;
 	}
+
+	@Override
+	public String toString(){
+		return edges.toString() + corners.toString() + centers.toString();
+	}
 }
 

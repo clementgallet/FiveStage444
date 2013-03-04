@@ -3,6 +3,8 @@ package cg.fivestage444.Cubies;
 import cg.fivestage444.Symmetry;
 import cg.fivestage444.Util;
 
+import java.util.Arrays;
+
 public final class CenterCubies implements Cloneable{
 
 	public byte[] cubies = new byte[24]; //what's at each center position
@@ -131,13 +133,9 @@ public final class CenterCubies implements Cloneable{
 		}
 	}
 
-// --Commented out by Inspection START (28/09/12 19:19):
-//	public void print (){
-//		System.out.print("Centers: ");
-//		for (int i=0; i<24; i++)
-//			System.out.print(cubies[i]+"-");
-//		System.out.println("");
-//	}
-// --Commented out by Inspection STOP (28/09/12 19:19)
+	@Override
+	public String toString (){
+		return "Centers: " + Arrays.toString(cubies);
+	}
 }
 

@@ -87,26 +87,34 @@ public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 				stage1.pack(cube);
 				return stage1;
 			case 2:
-				if(!cube.isInSubgroup2())
+				if(!cube.isInSubgroup2()){
 					l.severe("Convertion to Stage2 not allowed");
+					l.info(cube.toString());
+				}
 				Stage2 stage2 = new Stage2();
 				stage2.pack(cube);
 				return stage2;
 			case 3:
-				if(!cube.isInSubgroup3())
+				if(!cube.isInSubgroup3()){
 					l.severe("Convertion to Stage3 not allowed");
+					l.info(cube.toString());
+				}
 				Stage3 stage3 = new Stage3();
 				stage3.pack(cube);
 				return stage3;
 			case 4:
-				if(!cube.isInSubgroup4())
+				if(!cube.isInSubgroup4()){
 					l.severe("Convertion to Stage4 not allowed");
+					l.info(cube.toString());
+				}
 				Stage4 stage4 = new Stage4();
 				stage4.pack(cube);
 				return stage4;
 			case 5:
-				if(!cube.isInSubgroup5())
+				if(!cube.isInSubgroup5()){
 					l.severe("Convertion to Stage5 not allowed");
+					l.info(cube.toString());
+				}
 				Stage5 stage5 = new Stage5();
 				stage5.pack(cube);
 				return stage5;
