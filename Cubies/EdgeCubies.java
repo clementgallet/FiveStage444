@@ -132,6 +132,30 @@ public final class EdgeCubies implements Cloneable{
 		}
 	}
 
+	public int parityUD (){
+		int i, j;
+		int parity = 0;
+		byte[] t = new byte[16];
+
+		for (i = 0; i < 16; ++i) {
+			t[i] = cubies[i];
+		}
+		for (i = 0; i < 15; ++i) {
+			if (t[i] == i) {
+				continue;
+			}
+			for (j = i + 1; j < 16; ++j) {
+				if (t[j] == i) {
+					//"swap" the i & j elements, but don't bother updating the "i"-element
+					//as it isn't needed anymore.
+					t[j] = t[i];
+				}
+			}
+			parity ^= 1;
+		}
+		return parity;
+	}
+
 	@Override
 	public String toString (){
 		return "Edges: " + Arrays.toString(cubies);

@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class Main {
-	private static final Level DEFAULT_LOG_LEVEL = Level.INFO;
+	private static final Level DEFAULT_LOG_LEVEL = Level.WARNING;
 
 	public static void main(String[] args){
 		Logger rootLogger = Logger.getLogger("");

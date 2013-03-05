@@ -29,6 +29,7 @@ public final class Stage3 extends Stage {
 		edge.pack(cube.edges);
 		center.pack(cube.centers);
 		center.computeSym();
+		parity = (byte)cube.edges.parityUD();
 	}
 
 	/* Check if solved */
