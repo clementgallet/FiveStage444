@@ -29,4 +29,17 @@ abstract public class Stage {
 	 * @return how many moves are allowed in this stage.
 	 */
 	abstract public int getMovesNumber();
+
+	/**
+	 * We are searching for a limited number of solutions, to store the best ones into our priority queue.
+	 * @return how many solutions do we have to find during this stage search. Not all solutions will be kept.
+	 */
+	abstract public int howManySolutions();
+
+	/**
+	 * We keep a limited number of solutions of this stage for the next stage search.
+	 * It is usually lower than the result of howManySolutions().
+	 * @return how many solutions are we keeping for the next search.
+	 */
+	abstract public int howManyAttempts();
 }

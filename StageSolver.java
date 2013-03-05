@@ -13,6 +13,7 @@ public class StageSolver {
 	Stage[] stage_list = new Stage[20]; /* a set of stages to use during the search, to avoid creating objects */
 	byte[] move_list = new byte[100]; /* the current stage move list */
 	int n_moves; /* the number of moves in this stage. Set to this_stage.getMovesNumber() */
+	static int n_solutions; /* the number of solutions found */
 
 	public StageSolver(CubeAndSolution cas, PriorityQueue<CubeAndSolution> queue){
 		this.queue = queue;
@@ -71,11 +72,13 @@ public class StageSolver {
 	 * Then we convert to the next stage structure to peek at the pruning value,
 	 * which is a lower bound of the best solution of the next stage.
 	 * We use the current solution length + this lower bound to sort the current solutions we found.
+	 * Then, we decide if we should insert that solution into the priority queue.
 	 * @param solution_length the length of the solution.
 	 * @return if we want to stop the search.
 	 */
 	boolean push(int solution_length){
 		l.finer("Found a solution.");
+		n_solutions++;
 		CubeAndSolution newCas = null;
 		try {
 			newCas = (CubeAndSolution) cas.clone();
@@ -93,7 +96,21 @@ public class StageSolver {
 		else
 			newCas.comparator = newCas.move_length;
 
-		queue.add(newCas);
-		return true;
+		/* We have to determine if we need to insert this solution into the queue. */
+		if(queue.size() < stage_list[0].howManyAttempts()) /* We still have room for this solution */
+			queue.add(newCas);
+		else{
+			/* We don't have room anymore. To know if we need to insert this solution,
+			 * we peek at the worst solution of the queue, and compare against this solution.
+			 * If this solution is better, we replace the worst solution with this one.
+			 * If not, we do nothing.
+			 */
+			CubeAndSolution worseCubeYet = queue.peek();
+			if(worseCubeYet.comparator > newCas.comparator){
+				queue.poll();
+				queue.add(newCas);
+			}
+		}
+		return n_solutions >= stage_list[0].howManySolutions();
 	}
 }

@@ -14,7 +14,7 @@ final class Search {
 		 * The value used to order the solutions is:
 		 * the length of the current solution + the lower bound of the best solution of the next stage.
 		 */
-		PriorityQueue<CubeAndSolution> solutionQueue = new PriorityQueue<CubeAndSolution>();
+		PriorityQueue<CubeAndSolution> solutionQueue = new PriorityQueue<CubeAndSolution>(10, new CubeAndSolution.QueueComparator());
 
 		/* We use a temporary array to export the priority queue to, before converting to... */
 		CubeAndSolution[] solutionArray = new CubeAndSolution[3];
@@ -51,6 +51,11 @@ final class Search {
 				solversSet[length] = new StageSolver(solutionArray[length], solutionQueue);
 			}
 
+			/* We initialise the number of solutions to 0.
+			 * As a remainder, we are searching for a total of stageSolver.howManySolutions() solutions.
+			 */
+			StageSolver.n_solutions = 0;
+
 			/* Now, we seach for a solution of incremental length on every StageSolver.
 			 * If one of the StageSolvers outputs true, it means that the search must be stopped,
 			 * as we reached the limit.
@@ -72,6 +77,7 @@ final class Search {
 		CubeAndSolution fullSolution = solutionArray[0]; /* This is *the* solution! */
 		if(!fullSolution.isSolved())
 			l.severe("Not a solution!");
+		System.out.print(fullSolution.move_length+" ");
 		if(inverse)
 			return fullSolution.outputGenerator(cube);
 		else

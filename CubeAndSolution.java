@@ -2,6 +2,7 @@ package cg.fivestage444;
 
 import cg.fivestage444.Stages.*;
 
+import java.util.Comparator;
 import java.util.logging.Logger;
 
 public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
@@ -29,6 +30,12 @@ public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 		cas.stage_length = new int[stage_length.length];
 		System.arraycopy(stage_length, 0, cas.stage_length, 0, stage_length.length);
 		return cas;
+	}
+
+	public static class QueueComparator implements Comparator<CubeAndSolution> {
+		public int compare(CubeAndSolution c1, CubeAndSolution c2) {
+			return c2.comparator - c1.comparator;
+		}
 	}
 
 	@Override
