@@ -5,14 +5,14 @@ import cg.fivestage444.Stages.Stage;
 import java.util.PriorityQueue;
 import java.util.logging.Logger;
 
-public class StageSolver {
+class StageSolver {
 	private static final Logger l = Logger.getLogger(StageSolver.class.getName());
 
-	PriorityQueue<CubeAndSolution> queue; /* the queue to push solutions of this stage to */
-	CubeAndSolution cas; /* the starting position */
-	Stage[] stage_list = new Stage[20]; /* a set of stages to use during the search, to avoid creating objects */
-	byte[] move_list = new byte[100]; /* the current stage move list */
-	int n_moves; /* the number of moves in this stage. Set to this_stage.getMovesNumber() */
+	private final PriorityQueue<CubeAndSolution> queue; /* the queue to push solutions of this stage to */
+	private final CubeAndSolution cas; /* the starting position */
+	private final Stage[] stage_list = new Stage[20]; /* a set of stages to use during the search, to avoid creating objects */
+	private final byte[] move_list = new byte[100]; /* the current stage move list */
+	private final int n_moves; /* the number of moves in this stage. Set to this_stage.getMovesNumber() */
 	static int n_solutions; /* the number of solutions found */
 
 	public StageSolver(CubeAndSolution cas, PriorityQueue<CubeAndSolution> queue){

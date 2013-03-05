@@ -5,17 +5,17 @@ import cg.fivestage444.Stages.*;
 import java.util.Comparator;
 import java.util.logging.Logger;
 
-public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
+class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 	private static final Logger l = Logger.getLogger(StageSolver.class.getName());
 
-	CubeState cube; /* the cube structure */
-	byte[] move_list = new byte[100]; /* the list of moves that has been applied to the cube */
+	private CubeState cube; /* the cube structure */
+	private byte[] move_list = new byte[100]; /* the list of moves that has been applied to the cube */
 	int move_length = 0;
-	int[] stage_length = new int[5]; /* the length of the move list at each stage */
+	private int[] stage_length = new int[5]; /* the length of the move list at each stage */
 	int comparator = 0; /* the value used to sort objects */
-	int current_stage = 1; /* at which stage are we. TODO: use a better struct than an int */
-	int rotate12 = 0; /* which rotation was applied between stage 1 and 2. TODO: same */
-	int rotate23 = 0; /* which rotation was applied between stage 2 and 3. TODO: same */
+	private int current_stage = 1; /* at which stage are we. TODO: use a better struct than an int */
+	private int rotate12 = 0; /* which rotation was applied between stage 1 and 2. TODO: same */
+	private int rotate23 = 0; /* which rotation was applied between stage 2 and 3. TODO: same */
 
 	public CubeAndSolution(CubeState cube){
 		this.cube = cube;
@@ -139,7 +139,7 @@ public class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 		return cube.isSolvedAndOrientation() >= 0;
 	}
 
-	public void processSolution(){
+	void processSolution(){
 		/** Because of the cube rotations between some stages, we need to modify the rotations
 		 * to take into accounts these cube rotations.
 		 */

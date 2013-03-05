@@ -8,8 +8,6 @@ final class Search {
 	private static final Logger l = Logger.getLogger(StageSolver.class.getName());
 
 	public String solve (CubeState cube, boolean inverse) {
-		int i;
-
 		/* We use a priority queue to store the partial solutions.
 		 * The value used to order the solutions is:
 		 * the length of the current solution + the lower bound of the best solution of the next stage.
@@ -61,8 +59,8 @@ final class Search {
 			 * as we reached the limit.
 			 */
 			OUT: for(int length=0; length<100; length++){
-				for(int solver=0; solver<solversSet.length; solver++){
-					if(solversSet[0].search(length))
+				for (StageSolver solver : solversSet) {
+					if (solver.search(length))
 						break OUT;
 				}
 			}
