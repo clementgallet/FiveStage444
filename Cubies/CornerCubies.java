@@ -5,9 +5,11 @@ import cg.fivestage444.Util;
 
 import java.util.Arrays;
 
-public final class CornerCubies implements Cloneable{
+public final class CornerCubies extends Cubies implements Cloneable{
 
-	public byte[] cubies = new byte[8]; //what's at each corner position (3*cubie + orientation)
+	public CornerCubies(){
+		cubies = new byte[8];
+	}
 
 	public void init (){
 		for (byte i = 0; i < 8; ++i)
@@ -21,17 +23,6 @@ public final class CornerCubies implements Cloneable{
 		System.arraycopy(cubies, 0, corner.cubies, 0, cubies.length);
 		return corner;
 	}
-
-	public boolean is_solved(){
-		for (byte i = 0; i < 8; ++i)
-			if( cubies[i] != i )
-				return false;
-		return true;
-	}
-
-	public void copyTo( CornerCubies c ){
-		System.arraycopy(cubies, 0, c.cubies, 0, 8);
-	}	
 
 	private int multD3( int oriA, int oriB){
 		int ori;
@@ -58,6 +49,7 @@ public final class CornerCubies implements Cloneable{
 		return -1;
 	}
 
+	@Override
 	public void leftMult (int symIdx){
 		for (int i = 0; i < 8; ++i){
 			int corner = Symmetry.symCorners[symIdx][(cubies[i] & 0x7)];
@@ -65,7 +57,8 @@ public final class CornerCubies implements Cloneable{
 		}
 	}
 
-	public void rightMult (int symIdx, CornerCubies c){
+	@Override
+	public void rightMult (int symIdx, Cubies c){
 		for (int i = 0; i < 8; ++i){
 			int corner = Symmetry.symCorners[symIdx][i];
 			c.cubies[i] = (byte) (( multD3(cubies[corner & 0x7] >>> 3, corner >>> 3) << 3 ) + (cubies[corner & 0x7] & 0x7));
@@ -82,16 +75,19 @@ public final class CornerCubies implements Cloneable{
 		}
 	}
 
-	public void conjugate (int symIdx, CornerCubies c){
+	@Override
+	public void conjugate (int symIdx, Cubies c){
 		rightMult( Symmetry.invSymIdx[symIdx], c );
 		c.leftMult( symIdx );
 	}
 
-	public void move (int move_code, CornerCubies c){
+	@Override
+	public void move (int move_code, Cubies c){
 		System.arraycopy(cubies, 0, c.cubies, 0, 8);
 		c.move( move_code );
 	}
 
+	@Override
 	public void move (int move_code){
 		int rot = move_code % 3;
 		int layer = move_code / 3;

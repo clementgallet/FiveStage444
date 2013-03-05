@@ -5,10 +5,13 @@ import cg.fivestage444.Util;
 
 import java.util.Arrays;
 
-public final class EdgeCubies implements Cloneable{
+public final class EdgeCubies extends Cubies implements Cloneable{
 
-	public byte[] cubies = new byte[24]; //what's at each edge position
+	public EdgeCubies(){
+		cubies = new byte[24];
+	}
 
+	@Override
 	public void init (){
 		for (byte i = 0; i < 24; ++i)
 			cubies[i] = i;
@@ -22,37 +25,31 @@ public final class EdgeCubies implements Cloneable{
 		return edge;
 	}
 
-	public boolean is_solved(){
-		for (byte i = 0; i < 24; ++i)
-			if( cubies[i] != i )
-				return false;
-		return true;
-	}
-
-	public void copyTo( EdgeCubies e ){
-		System.arraycopy(cubies, 0, e.cubies, 0, 24);
-	}	
-
+	@Override
 	public void leftMult (int symIdx){
 		for (int i = 0; i < 24; ++i)
 			cubies[i] = Symmetry.symEdges[symIdx][cubies[i]];
 	}
 
-	public void rightMult (int symIdx, EdgeCubies e){
+	@Override
+	public void rightMult (int symIdx, Cubies e){
 		for (int i = 0; i < 24; ++i)
 			e.cubies[i] = cubies[Symmetry.symEdges[symIdx][i]];
 	}
 
-	public void conjugate (int symIdx, EdgeCubies e){
+	@Override
+	public void conjugate (int symIdx, Cubies e){
 		rightMult( Symmetry.invSymIdx[symIdx], e );
 		e.leftMult( symIdx );
 	}
 
-	public void move (int move_code, EdgeCubies e){
+	@Override
+	public void move (int move_code, Cubies e){
 		System.arraycopy(cubies, 0, e.cubies, 0, 24);
 		e.move( move_code );
 	}
 
+	@Override
 	public void move (int move_code){
 		int rot = move_code % 3;
 		int layer = move_code / 3;

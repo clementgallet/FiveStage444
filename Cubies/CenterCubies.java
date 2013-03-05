@@ -5,10 +5,13 @@ import cg.fivestage444.Util;
 
 import java.util.Arrays;
 
-public final class CenterCubies implements Cloneable{
+public final class CenterCubies extends Cubies implements Cloneable{
 
-	public byte[] cubies = new byte[24]; //what's at each center position
+	public CenterCubies(){
+		cubies = new byte[24];
+	}
 
+	@Override
 	public void init (){
 		for (int i = 0; i < 24; ++i)
 			cubies[i] = (byte)(i/4);
@@ -22,38 +25,32 @@ public final class CenterCubies implements Cloneable{
 		return center;
 	}
 
-	public boolean is_solved(){
-		for (byte i = 0; i < 24; ++i)
-			if( cubies[i] != (byte)(i/4) )
-				return false;
-		return true;
-	}
-
-	public void copyTo( CenterCubies c ){
-		System.arraycopy(cubies, 0, c.cubies, 0, 24);
-	}	
-
+	@Override
 	public void leftMult (int symIdx){
 		int[] cenN = new int[6]; // Transform centers into unique facelets.
 		for (int i = 0; i < 24; ++i)
 			cubies[i] = (byte)(Symmetry.symCenters[symIdx][cubies[i]*4+cenN[cubies[i]]++] / 4);
 	}
 
-	public void rightMult (int symIdx, CenterCubies c){
+	@Override
+	public void rightMult (int symIdx, Cubies c){
 		for (int i = 0; i < 24; ++i)
 			c.cubies[i] = cubies[Symmetry.symCenters[symIdx][i]];
 	}
 
-	public void conjugate (int symIdx, CenterCubies c){
+	@Override
+	public void conjugate (int symIdx, Cubies c){
 		rightMult( Symmetry.invSymIdx[symIdx], c );
 		c.leftMult( symIdx );
 	}
 
-	public void move (int move_code, CenterCubies c){
+	@Override
+	public void move (int move_code, Cubies c){
 		System.arraycopy(cubies, 0, c.cubies, 0, 24);
 		c.move( move_code );
 	}
 
+	@Override
 	public void move (int move_code){
 		int rot = move_code % 3;
 		int layer = move_code / 3;
