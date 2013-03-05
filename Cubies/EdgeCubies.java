@@ -18,14 +18,6 @@ public final class EdgeCubies extends Cubies implements Cloneable{
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException{
-		EdgeCubies edge = new EdgeCubies();
-		edge.cubies = new byte[cubies.length];
-		System.arraycopy(cubies, 0, edge.cubies, 0, cubies.length);
-		return edge;
-	}
-
-	@Override
 	public void leftMult (int symIdx){
 		for (int i = 0; i < 24; ++i)
 			cubies[i] = Symmetry.symEdges[symIdx][cubies[i]];

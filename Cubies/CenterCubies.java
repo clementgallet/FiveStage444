@@ -18,14 +18,6 @@ public final class CenterCubies extends Cubies implements Cloneable{
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException{
-		CenterCubies center = new CenterCubies();
-		center.cubies = new byte[cubies.length];
-		System.arraycopy(cubies, 0, center.cubies, 0, cubies.length);
-		return center;
-	}
-
-	@Override
 	public void leftMult (int symIdx){
 		int[] cenN = new int[6]; // Transform centers into unique facelets.
 		for (int i = 0; i < 24; ++i)

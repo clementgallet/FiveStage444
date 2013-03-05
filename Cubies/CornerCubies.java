@@ -16,14 +16,6 @@ public final class CornerCubies extends Cubies implements Cloneable{
 			cubies[i] = i;
 	}
 
-	@Override
-	public Object clone() throws CloneNotSupportedException{
-		CornerCubies corner = new CornerCubies();
-		corner.cubies = new byte[cubies.length];
-		System.arraycopy(cubies, 0, corner.cubies, 0, cubies.length);
-		return corner;
-	}
-
 	private int multD3( int oriA, int oriB){
 		int ori;
 		if (oriA<3 && oriB<3){ //if both cubes are regular cubes... 

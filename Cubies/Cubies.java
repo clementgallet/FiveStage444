@@ -4,6 +4,14 @@ abstract public class Cubies {
 
 	public byte[] cubies;
 
+	@Override
+	public Object clone() throws CloneNotSupportedException{
+		Cubies c = (Cubies) super.clone();
+		c.cubies = new byte[cubies.length];
+		System.arraycopy(cubies, 0, c.cubies, 0, cubies.length);
+		return c;
+	}
+
 	abstract public void init ();
 
 	public boolean is_solved(){
@@ -11,9 +19,9 @@ abstract public class Cubies {
 		try {
 			solved = this.getClass().newInstance();
 		} catch (InstantiationException e) {
-			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+			e.printStackTrace();
 		}
 		solved.init();
 		for (int i=0; i<cubies.length; i++)
