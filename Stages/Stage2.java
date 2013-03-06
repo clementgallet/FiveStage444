@@ -2,6 +2,8 @@ package cg.fivestage444.Stages;
 
 import cg.fivestage444.Coordinates.Center2;
 import cg.fivestage444.Coordinates.Edge2;
+import cg.fivestage444.Coordinates.RawCoordState;
+import cg.fivestage444.Coordinates.SymCoordState;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.PruningTable;
 
@@ -11,19 +13,20 @@ public final class Stage2 extends Stage {
 	public final static int N_SYM = 16;
 	private static PruningTable pTable;
 
-	public final Edge2 edge;
-	public final Center2 centerF;
-	public final Center2 centerB;
+	public final RawCoordState edge;
+	public final SymCoordState centerF;
+	public final SymCoordState centerB;
 
 	public Stage2(){
-		edge = new Edge2();
-		centerF = new Center2();
-		centerB = new Center2();
+		edge = new RawCoordState(new Edge2());
+		centerF = new SymCoordState(new Center2());
+		centerB = new SymCoordState(new Center2());
 	}
 
 	/* Pack from CubeState */
 	public void pack(CubeState cube){
 		edge.pack(cube.edges);
+		/* TODO: Deal with the two centers thing */
 		centerF.pack(cube.centers, 4);
 		centerF.computeSym();
 		centerB.pack(cube.centers, 5);
@@ -50,19 +53,20 @@ public final class Stage2 extends Stage {
 	}
 
 	/* Init */
-	public static void init(){
-		Edge2.init();
+/*	public static void init(){
+		edge.init();
 		Center2.init();
 		pTable = new PruningTable(new Center2(), new Edge2(), N_MOVES, 7);
 		pTable.initTable();
 	}
+*/
 
 	/** Pruning function **/
 
 	@Override
 	public int pruning(){
-		return Math.max( pTable.readTable(centerF.coord * Edge2.N_COORD + edge.conjugate(centerF.sym)),
-		                 pTable.readTable(centerB.coord * Edge2.N_COORD + edge.conjugate(centerB.sym)));
+		return Math.max( pTable.readTable(centerF.coord * edge.rc.N_COORD + edge.conjugate(centerF.sym)),
+		                 pTable.readTable(centerB.coord * edge.rc.N_COORD + edge.conjugate(centerB.sym)));
 	}
 
 	@Override

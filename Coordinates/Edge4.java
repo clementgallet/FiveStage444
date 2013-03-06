@@ -1,55 +1,27 @@
 package cg.fivestage444.Coordinates;
 
+import cg.fivestage444.Cubies.Cubies;
 import cg.fivestage444.Cubies.EdgeCubies;
-import cg.fivestage444.Symmetry;
-import cg.fivestage444.Moves;
-import cg.fivestage444.Util;
 import cg.fivestage444.Stages.Stage4;
+import cg.fivestage444.Symmetry;
+import cg.fivestage444.Util;
 
 public final class Edge4 extends SymCoord {
 
-	private final static int N_COORD = 5968;
-	private final static int N_RAW_COORD = 88200*2;
-	private final static int N_SYM = Stage4.N_SYM;
-	private final static int SYM_SHIFT = 4;
-	private final static int SYM_MASK = ( 1 << SYM_SHIFT ) - 1;
-	private final static int N_MOVES = Stage4.N_MOVES;
+	public Edge4(){
+		N_COORD = 5968;
+		N_RAW_COORD = 88200*2;
+		N_SYM = Stage4.N_SYM;
+		SYM_SHIFT = 4;
+		SYM_MASK = ( 1 << SYM_SHIFT ) - 1;
+		N_MOVES = Stage4.N_MOVES;
 
-	/* Coordinates */
-	public int raw_coord;
-
-	/* Tables */
-	private static final int[] sym2raw = new int[N_COORD];
-	private static final int[] raw2sym = new int[N_RAW_COORD];
-	private static int[] hasSym;
-	private static final int[][] move = new int[N_COORD][N_MOVES];
-
-	/* Check if solved */
-	public boolean isSolved(){
-		return coord == 0;
-	}
-
-	public int[] getSolvedStates(){
-		return new int[]{0};
-	}
-
-	public int getSize(){
-		return N_COORD;
-	}
-
-	/* Move */
-	public void moveTo( int m, SymCoord e ){
-		e.coord = move[coord][Symmetry.moveConjugateStage[m][sym]];
-		e.sym = Symmetry.symIdxMultiply[e.coord & SYM_MASK][sym];
-		e.coord >>>= SYM_SHIFT;
-	}
-
-	public long[] getSyms(){
-		return new long[]{hasSym[coord]};
+		SolvedStates = new int[]{0};
+		cubieType = new EdgeCubies();
 	}
 
 	/* Unpack a raw coord to a cube */
-	private void unpack(EdgeCubies cube)
+	public void unpack(Cubies cube, int raw_coord)
 	{
 		int ledge4of8 = raw_coord % 70;
 		int edge = raw_coord / 70;
@@ -90,7 +62,7 @@ public final class Edge4 extends SymCoord {
 	}
 
 	/* Pack a cube into the raw coord */
-	public void pack(EdgeCubies cube){
+	public int pack(Cubies cube){
 		int redge4of8 = 0;
 		int ledge4of8 = 0;
 		byte[] edges_rl = new byte[8];
@@ -124,35 +96,21 @@ public final class Edge4 extends SymCoord {
 		int perm6_rl = Util.perm_to_420[Util.get8Perm (edges_rl, 0)]%6;
 		int perm6_fb = Util.perm_to_420[Util.get8Perm (edges_fb, 0)]%6;
 
-		this.raw_coord = ((( perm6_rl * 6 + perm6_fb ) * 70 + redge4of8 ) * 70 + ledge4of8 );
+		return ((( perm6_rl * 6 + perm6_fb ) * 70 + redge4of8 ) * 70 + ledge4of8 );
 	}
 
-	/* Compute the sym coordinate from a cube */
-	public void computeSym (){
-		int symcoord = raw2sym[raw_coord];
-		this.coord = symcoord >> SYM_SHIFT;
-		this.sym = symcoord & SYM_MASK;
-	}
-
-	/* Initialisations */
-	public static void init(){
-		initSym2Raw();
-		initMove();
-	}
-
-	private static void initSym2Raw (){
+	@Override
+	public void initSym2Raw (){
 		int repIdx = 0;
 		EdgeCubies cube1 = new EdgeCubies();
 		EdgeCubies cube2 = new EdgeCubies();
-		Edge4 e = new Edge4();
 		byte[] t = new byte[8];
 		byte[] isRepTable = new byte[(N_RAW_COORD>>3) + 1];
 		hasSym = new int[N_COORD];
 		for (int u = 0; u < N_RAW_COORD; ++u) {
 			if( Util.get1bit( isRepTable, u )) continue;
 			raw2sym[u] = repIdx << SYM_SHIFT;
-			e.raw_coord = u;
-			e.unpack(cube1);
+			unpack(cube1, u);
 
 			/* Only retain configs without parity */
 			int ul = Util.get8Perm( cube1.cubies, 4 );
@@ -165,28 +123,13 @@ public final class Edge4 extends SymCoord {
 
 			for (int s = 1; s < N_SYM; ++s) {
 				cube1.conjugate (s, cube2);
-				e.pack(cube2);
-				Util.set1bit( isRepTable, e.raw_coord );
-				raw2sym[e.raw_coord] = ( repIdx << SYM_SHIFT ) + Symmetry.invSymIdx[s];
-				if( e.raw_coord == u )
+				int raw_coord = pack(cube2);
+				Util.set1bit( isRepTable, raw_coord );
+				raw2sym[raw_coord] = ( repIdx << SYM_SHIFT ) + Symmetry.invSymIdx[s];
+				if( raw_coord == u )
 					hasSym[repIdx] |= (1 << s);
 			}
 			sym2raw[repIdx++] = u;
-		}
-	}
-
-	private static void initMove (){
-		EdgeCubies cube1 = new EdgeCubies();
-		EdgeCubies cube2 = new EdgeCubies();
-		Edge4 e = new Edge4();
-		for (int u = 0; u < N_COORD; ++u) {
-			e.raw_coord = sym2raw[u];
-			e.unpack(cube1);
-			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.move (Moves.stage2moves[m], cube2);
-				e.pack(cube2);
-				move[u][m] = raw2sym[e.raw_coord];
-			}
 		}
 	}
 }

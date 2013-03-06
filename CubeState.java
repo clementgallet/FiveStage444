@@ -2,6 +2,7 @@ package cg.fivestage444;
 
 import cg.fivestage444.Cubies.CenterCubies;
 import cg.fivestage444.Cubies.CornerCubies;
+import cg.fivestage444.Cubies.Cubies;
 import cg.fivestage444.Cubies.EdgeCubies;
 
 import java.util.Random;
@@ -12,6 +13,7 @@ public final class CubeState implements Cloneable {
 	public EdgeCubies edges = new EdgeCubies();
 	public CornerCubies corners = new CornerCubies();
 	public CenterCubies centers = new CenterCubies();
+	public Cubies[] cubies = {edges, corners, centers};
 
 	public void init (){
 		edges.init();

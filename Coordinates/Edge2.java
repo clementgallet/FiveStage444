@@ -1,51 +1,27 @@
 package cg.fivestage444.Coordinates;
 
+import cg.fivestage444.Cubies.Cubies;
 import cg.fivestage444.Cubies.EdgeCubies;
-import cg.fivestage444.Symmetry;
-import cg.fivestage444.Moves;
-import cg.fivestage444.Util;
 import cg.fivestage444.Stages.Stage2;
+import cg.fivestage444.Util;
 
 public final class Edge2 extends RawCoord {
 
-	public final static int N_COORD = 420;
-	private final static int N_SYM = Stage2.N_SYM;
-	private final static int N_MOVES = Stage2.N_MOVES;
-
-	/* Tables */
-	private static final short[][] move = new short[N_COORD][N_MOVES];
-	private static final short[][] conj = new short[N_COORD][N_SYM];
-
-	/* Check if solved */
-	public boolean isSolved(){
-		return ( coord == 0 ) || ( coord == 414 );
-	}
-
-	public int[] getSolvedStates(){
-		return new int[]{0, 414};
-	}
-
-	public int getSize(){
-		return N_COORD;
-	}
-
-	/* Move */
-	public void moveTo( int m, RawCoord e ){
-		e.coord =  move[coord][m];
-	}
-
-	/* Get the conjugated coordinate */
-	public int conjugate( int sym ){
-		return conj[coord][sym];
+	public Edge2(){
+		N_COORD = 420;
+		N_SYM = Stage2.N_SYM;
+		N_MOVES = Stage2.N_MOVES;
+		solvedStates = new int[]{0, 414};
+		cubieType = new EdgeCubies();
 	}
 
 	/* Unpack a coord to a cube */
-	private void unpack (EdgeCubies cube)
+	public void unpack (Cubies cube, int coord)
 	{
 		int i;
 		byte[] t6 = new byte[4];
-		int edgeFbm = this.coord / 6;
-		Util.set4Perm (t6, this.coord % 6);
+		int edgeFbm = coord / 6;
+		Util.set4Perm (t6, coord % 6);
 		for (i = 0; i < 16; ++i)
 			cube.cubies[i] = (byte)i;
 
@@ -63,29 +39,8 @@ public final class Edge2 extends RawCoord {
 	}
 
 	/* Pack a cube into the coord */
-	public void pack(EdgeCubies cube){
+	public int pack(Cubies cube){
 		int u = Util.get8Perm (cube.cubies, 16);
-		this.coord = Util.perm_to_420[u];
-	}
-
-	/* Initialisations */
-	public static void init(){
-		EdgeCubies cube1 = new EdgeCubies();
-		EdgeCubies cube2 = new EdgeCubies();
-		Edge2 e = new Edge2();
-		for (int u = 0; u < N_COORD; ++u) {
-			e.coord = u;
-			e.unpack( cube1 );
-			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.move (Moves.stage2moves[m], cube2);
-				e.pack( cube2 );
-				move[u][m] = (short)(e.coord);
-			}
-			for (int s = 0; s < N_SYM; ++s) {
-				cube1.rightMult (Symmetry.invSymIdx[s], cube2);
-				e.pack( cube2 );
-				conj[u][s] = (short)(e.coord);
-			}
-		}
+		return Util.perm_to_420[u];
 	}
 }
