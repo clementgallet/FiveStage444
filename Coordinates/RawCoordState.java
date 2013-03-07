@@ -35,7 +35,7 @@ public class RawCoordState {
 	}
 
 	public void pack(CubeState cube){
-		for (Cubies cubie : cube.cubies){
+		for (Cubies cubie : cube.cubies)
 			if(cubie.getClass() == rc.cubieType.getClass())
 				coord = rc.pack(cubie);
 	}

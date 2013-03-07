@@ -43,7 +43,8 @@ public class SymCoordState {
 	}
 
 	public void pack(Cubies cubie){
-		coord = sc.pack(cubie);
+		raw_coord = sc.pack(cubie);
+		computeSym();
 	}
 
 }
