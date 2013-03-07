@@ -6,10 +6,14 @@ import cg.fivestage444.Symmetry;
 
 public abstract class RawCoord {
 
+	public static final int RIGHTMULT = 0;
+	public static final int CONJUGATE = 1;
+
 	public int N_COORD;
 	public int N_SYM;
 	public int N_MOVES;
 	public int[] solvedStates;
+	public int rightMultOrConjugate;
 
 	/* Tables */
 	public short[][] move = new short[N_COORD][N_MOVES];
@@ -39,7 +43,10 @@ public abstract class RawCoord {
 				move[u][m] = (short) pack(cube2);
 			}
 			for (int s = 0; s < N_SYM; ++s) {
-				cube1.rightMult (Symmetry.invSymIdx[s], cube2);
+				if(rightMultOrConjugate == RIGHTMULT)
+					cube1.rightMult (Symmetry.invSymIdx[s], cube2);
+				if(rightMultOrConjugate == CONJUGATE)
+					cube1.conjugate (s, cube2);
 				conj[u][s] = (short) pack(cube2);
 			}
 		}

@@ -9,9 +9,10 @@ public final class Corner1 extends RawCoord {
 	public Corner1(){
 		N_COORD = 2187;
 		N_SYM = Stage1.N_SYM;
-		N_MOVES = Stage1.N_MOVES;
+		N_MOVES = Stage1.N_MOVES; // Change to face moves.
 		solvedStates = new int[]{2173};
 		cubieType = new CornerCubies();
+		rightMultOrConjugate = RIGHTMULT;
 	}
 
 	/* Unpack a coord to a cube */

@@ -1,47 +1,26 @@
 package cg.fivestage444.Coordinates;
 
 import cg.fivestage444.Cubies.CornerCubies;
-import cg.fivestage444.Symmetry;
+import cg.fivestage444.Cubies.Cubies;
 import cg.fivestage444.Moves;
-import cg.fivestage444.Util;
 import cg.fivestage444.Stages.Stage5;
+import cg.fivestage444.Symmetry;
+import cg.fivestage444.Util;
 
 public final class Corner5 extends RawCoord {
 
-	public final static int N_COORD = 96;
-	private final static int N_SYM = Stage5.N_SYM;
-	private final static int N_MOVES = 6;
-
-	/* Tables */
-	private static final short[][] move = new short[N_COORD][N_MOVES];
-	private static final short[][] conj = new short[N_COORD][N_SYM*4];
-
-	/* Check if solved */
-	public boolean isSolved( int sym ){
-		return conj[coord][sym] == 0;
-	}
-
-	public int[] getSolvedStates(){
-		return new int[]{0};
-	}
-
-	public int getSize(){
-		return N_COORD;
-	}
-
-	/* Move */
-	public void moveTo( int m, RawCoord c ){
-		int face_move = Moves.stage2face[m];
-		c.coord = ( face_move >= 0 ) ? move[coord][face_move] : coord;
-	}
-
-	/* Get the conjugated coordinate */
-	public int conjugate( int sym ){
-		return conj[coord][sym];
+	public Corner5(){
+		N_COORD = 96;
+		N_SYM = Stage5.N_SYM * 4;
+		N_MOVES = Stage5.N_MOVES; // Was 6. TODO: Change back to face moves.
+		solvedStates = new int[]{0};
+		cubieType = new CornerCubies();
+		rightMultOrConjugate = CONJUGATE;
 	}
 
 	/* Unpack a coord to a cube */
-	private void unpack (CornerCubies cube)
+	@Override
+	public void unpack (Cubies cube, int coord)
 	{
 		final int sqs_rep_to_perm[][] = {
 			{  0,  7, 16, 23 },
@@ -60,37 +39,35 @@ public final class Corner5 extends RawCoord {
 		};
 		int i;
 		byte[] t = new byte[4];
-		Util.set4Perm (cube.cubies, this.coord/4);
-		Util.set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[this.coord/4]][this.coord % 4]);
+		Util.set4Perm (cube.cubies, coord/4);
+		Util.set4Perm (t, sqs_rep_to_perm[sqs_perm_to_rep[coord/4]][coord % 4]);
 		for (i = 0; i < 4; ++i) {
 			cube.cubies[i+4] = (byte)(t[i]+4);
 		}
 	}
 
 	/* Pack a cube into the coord */
-	public void pack(CornerCubies cube){
-		this.coord = 4*Util.get4Perm (cube.cubies, 0) + (cube.cubies[4] - 4);
+	@Override
+	public int pack(Cubies cube){
+		return 4*Util.get4Perm (cube.cubies, 0) + (cube.cubies[4] - 4);
 	}
 
 	/* Initialisations */
-	public static void init(){
+	@Override
+	public void init(){
 		CornerCubies cube1 = new CornerCubies();
 		CornerCubies cube2 = new CornerCubies();
-		Corner5 c = new Corner5();
 		for (int u = 0; u < N_COORD; ++u) {
-			c.coord = u;
-			c.unpack( cube1 );
+			unpack( cube1, u );
 			for (int m = 0; m < N_MOVES; ++m) {
 				cube1.move (Moves.face2moves[m], cube2);
-				c.pack( cube2 );
-				move[u][m] = (short)(c.coord);
+				move[u][m] = (short)(pack( cube2 ));
 			}
-			for (int s = 0; s < N_SYM; ++s) {
+			for (int s = 0; s < N_SYM/4; ++s) {
 				for (int cs = 0; cs < 4; ++cs) {
 					cube1.rightMult(Symmetry.invSymIdx[Symmetry.symIdxMultiply[s][cs]], cube2);
 					cube2.leftMult(s);
-					c.pack( cube2 );
-					conj[u][(s<<2)|cs] = (short)(c.coord);
+					conj[u][(s<<2)|cs] = (short)(pack( cube2 ));
 				}
 			}
 		}

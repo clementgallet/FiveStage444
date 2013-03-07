@@ -17,6 +17,7 @@ public final class Edge1 extends SymCoord {
 
 		SolvedStates = new int[]{0};
 		cubieType = new EdgeCubies();
+		rightMultOrConjugate = RIGHTMULT;
 	}
 
 	/* Unpack a raw coord to a cube */

@@ -7,13 +7,16 @@ import cg.fivestage444.Util;
 
 public abstract class SymCoord {
 
+	public static final int RIGHTMULT = 0;
+	public static final int CONJUGATE = 1;
+
 	public int N_COORD;
 	public int N_RAW_COORD;
 	public int N_SYM;
 	public int SYM_SHIFT;
 	public int SYM_MASK;
 	public int N_MOVES;
-	public boolean rightMultOrConjugate; // TODO: Set this !!!
+	public int rightMultOrConjugate;
 
 	public int[] SolvedStates;
 	public Cubies cubieType;
@@ -55,7 +58,10 @@ public abstract class SymCoord {
 			raw2sym[u] = repIdx << SYM_SHIFT;
 			unpack(cube1, u);
 			for (int s = 1; s < N_SYM; ++s) {
-				cube1.rightMult (Symmetry.invSymIdx[s], cube2);
+				if(rightMultOrConjugate == RIGHTMULT)
+					cube1.rightMult (Symmetry.invSymIdx[s], cube2);
+				if(rightMultOrConjugate == CONJUGATE)
+					cube1.conjugate(s, cube2);
 				int raw_coord = pack(cube2);
 				Util.set1bit( isRepTable, raw_coord );
 				raw2sym[raw_coord] = ( repIdx << SYM_SHIFT ) + Symmetry.invSymIdx[s];

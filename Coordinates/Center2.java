@@ -17,6 +17,7 @@ public final class Center2 extends SymCoord {
 
 		SolvedStates = new int[]{ 122, 242, 243, 245, 246, 247 };
 		cubieType = new CenterCubies();
+		rightMultOrConjugate = RIGHTMULT;
 	}
 
 	/* Unpack a raw coord to a cube */

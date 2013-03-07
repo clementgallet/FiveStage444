@@ -11,9 +11,9 @@ public final class Edge3 extends RawCoord {
 		N_COORD = 12870;
 		N_SYM = Stage3.N_SYM;
 		N_MOVES = Stage3.N_MOVES;
-		solvedStates = new int[]{494, 12375};
-		/* TODO: ok for pruning, but for stage solve, it's only 12375 ! */
+		solvedStates = new int[]{494, 12375}; /* ok for pruning, but for stage solve, it's only 12375 ! */
 		cubieType = new EdgeCubies();
+		rightMultOrConjugate = RIGHTMULT;
 	}
 
 	/* Unpack a coord to a cube */

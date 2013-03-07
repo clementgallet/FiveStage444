@@ -13,6 +13,7 @@ public final class Edge2 extends RawCoord {
 		N_MOVES = Stage2.N_MOVES;
 		solvedStates = new int[]{0, 414};
 		cubieType = new EdgeCubies();
+		rightMultOrConjugate = RIGHTMULT;
 	}
 
 	/* Unpack a coord to a cube */
