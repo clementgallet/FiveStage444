@@ -1,7 +1,7 @@
 package cg.fivestage444;
 
-import cg.fivestage444.Coordinates.RawCoord;
-import cg.fivestage444.Coordinates.SymCoord;
+import cg.fivestage444.Coordinates.RawCoordState;
+import cg.fivestage444.Coordinates.SymCoordState;
 
 import java.io.*;
 
@@ -11,39 +11,39 @@ public class PruningTable {
 	private int n_moves;
 	private int n_size;
 	private int inv_depth;
-	private SymCoord sym;
-	private RawCoord[] raws;
+	private SymCoordState sym;
+	private RawCoordState[] raws;
 
 	private byte[] table;
 
 	private PruningTable(){}
 
-	public PruningTable(SymCoord sym, RawCoord raw, int n_moves, int inv_depth){
+	public PruningTable(SymCoordState sym, RawCoordState raw, int n_moves, int inv_depth){
 		this.sym = sym;
-		raws = new RawCoord[1];
+		raws = new RawCoordState[1];
 		raws[0] = raw;
 
 		this.n_moves = n_moves;
 		this.inv_depth = inv_depth;
 
-		n_size = this.sym.getSize();
-		for (RawCoord raw1 : raws) {
-			n_size *= raw1.getSize();
+		n_size = this.sym.sc.N_COORD;
+		for (RawCoordState raw1 : raws) {
+			n_size *= raw1.rc.N_COORD;
 		}
 	}
 
-	public PruningTable(SymCoord sym, RawCoord raw, RawCoord raw2, int n_moves, int inv_depth){
+	public PruningTable(SymCoordState sym, RawCoordState raw, RawCoordState raw2, int n_moves, int inv_depth){
 		this.sym = sym;
-		raws = new RawCoord[2];
+		raws = new RawCoordState[2];
 		raws[0] = raw;
 		raws[1] = raw2;
 
 		this.n_moves = n_moves;
 		this.inv_depth = inv_depth;
 
-		n_size = this.sym.getSize();
-		for (RawCoord raw1 : raws) {
-			n_size *= raw1.getSize();
+		n_size = this.sym.sc.N_COORD;
+		for (RawCoordState raw1 : raws) {
+			n_size *= raw1.rc.N_COORD;
 		}
 	}
 
@@ -64,23 +64,23 @@ public class PruningTable {
 
 	private int get(){
 		int idx = sym.coord;
-		for (RawCoord raw : raws) {
-			idx = idx * raw.getSize() + raw.conjugate(sym.sym);
+		for (RawCoordState raw : raws) {
+			idx = idx * raw.rc.N_COORD + raw.conjugate(sym.sym);
 		}
 		return idx;
 	}
 
 	private void set( int idx ){
 		for ( int i = raws.length - 1; i >= 0; i--){
-			raws[i].coord = idx % raws[i].getSize();
-			idx /= raws[i].getSize();
+			raws[i].coord = idx % raws[i].rc.N_COORD;
+			idx /= raws[i].rc.N_COORD;
 		}
 		sym.coord = idx;
 		sym.sym = 0;
 	}
 
 	private void normalise(){
-		for (RawCoord raw : raws) {
+		for (RawCoordState raw : raws) {
 			raw.coord = raw.conjugate(sym.sym);
 		}
 		sym.sym = 0;
@@ -111,7 +111,7 @@ public class PruningTable {
 		PruningTable p = new PruningTable();
 		try{
 			p.sym = sym.getClass().newInstance();
-			p.raws = new RawCoord[raws.length];
+			p.raws = new RawCoordState[raws.length];
 			for ( int i = 0; i < raws.length; i++){
 				p.raws[i] = raws[i].getClass().newInstance();
 			}
@@ -127,16 +127,16 @@ public class PruningTable {
 		for (int i = 0; i < (n_size+1)/2; i++)
 			table[i] = -1;
 
-		int done = sym.getSolvedStates().length;
-		for (RawCoord raw1 : raws) done *= raw1.getSolvedStates().length;
+		int done = sym.sc.SolvedStates.length;
+		for (RawCoordState raw1 : raws) done *= raw1.rc.solvedStates.length;
 
 		for (int d = 0; d < done; d++){
 			int dd = d;
-			for (RawCoord raw : raws) {
-				raw.coord = raw.getSolvedStates()[dd % raw.getSolvedStates().length];
-				dd /= raw.getSolvedStates().length;
+			for (RawCoordState raw : raws) {
+				raw.coord = raw.rc.solvedStates[dd % raw.rc.solvedStates.length];
+				dd /= raw.rc.solvedStates.length;
 			}
-			sym.coord = sym.getSolvedStates()[dd];
+			sym.coord = sym.sc.SolvedStates[dd];
 			sym.sym = 0;
 			writeTable(get(), 0);
 		}
