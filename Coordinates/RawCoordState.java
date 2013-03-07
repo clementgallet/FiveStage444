@@ -20,6 +20,15 @@ public class RawCoordState {
 		return false;
 	}
 
+	/* Check if solved */
+	public boolean isSolved(int sym){
+		int symed_coord = rc.conj[coord][sym];
+		for (int solved : rc.solvedStates)
+			if(symed_coord == solved)
+				return true;
+		return false;
+	}
+
 	/* Move */
 	public void moveTo( int m, RawCoordState e ){
 		e.coord =  rc.move[coord][m];

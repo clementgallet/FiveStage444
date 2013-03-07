@@ -1,9 +1,6 @@
 package cg.fivestage444.Stages;
 
-import cg.fivestage444.Coordinates.Center2;
-import cg.fivestage444.Coordinates.Edge2;
-import cg.fivestage444.Coordinates.RawCoordState;
-import cg.fivestage444.Coordinates.SymCoordState;
+import cg.fivestage444.Coordinates.*;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.PruningTable;
 
@@ -14,13 +11,13 @@ public final class Stage2 extends Stage {
 	private static PruningTable pTable;
 
 	public final RawCoordState edge;
-	public final SymCoordState centerF;
-	public final SymCoordState centerB;
+	public final Center2State centerF;
+	public final Center2State centerB;
 
 	public Stage2(){
 		edge = new RawCoordState(new Edge2());
-		centerF = new SymCoordState(new Center2());
-		centerB = new SymCoordState(new Center2());
+		centerF = new Center2State(new Center2());
+		centerB = new Center2State(new Center2());
 	}
 
 	/* Pack from CubeState */
@@ -28,9 +25,7 @@ public final class Stage2 extends Stage {
 		edge.pack(cube.edges);
 		/* TODO: Deal with the two centers thing */
 		centerF.pack(cube.centers, 4);
-		centerF.computeSym();
 		centerB.pack(cube.centers, 5);
-		centerB.computeSym();
 	}
 
 	/* Check if solved */
@@ -53,13 +48,13 @@ public final class Stage2 extends Stage {
 	}
 
 	/* Init */
-/*	public static void init(){
-		edge.init();
-		Center2.init();
+	public static void init(){
+		//edge.init();
+		//Center2.init();
 		pTable = new PruningTable(new Center2(), new Edge2(), N_MOVES, 7);
 		pTable.initTable();
 	}
-*/
+
 
 	/** Pruning function **/
 

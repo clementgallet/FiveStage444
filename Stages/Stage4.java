@@ -1,8 +1,6 @@
 package cg.fivestage444.Stages;
 
-import cg.fivestage444.Coordinates.Center4;
-import cg.fivestage444.Coordinates.Corner4;
-import cg.fivestage444.Coordinates.Edge4;
+import cg.fivestage444.Coordinates.*;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.PruningTable;
 
@@ -14,20 +12,19 @@ public final class Stage4 extends Stage {
 	public final static int N_SYM = 16;
 	private static PruningTable pTable;
 
-	public final Edge4 edge;
-	public final Corner4 corner;
-	public final Center4 center;
+	public final SymCoordState edge;
+	public final RawCoordState corner;
+	public final RawCoordState center;
 
 	public Stage4(){
-		edge = new Edge4();
-		corner = new Corner4();
-		center = new Center4();
+		edge = new SymCoordState(new Edge4());
+		corner = new RawCoordState(new Corner4());
+		center = new RawCoordState(new Center4());
 	}
 
 	/* Pack from CubeState */
 	public void pack(CubeState cube){
 		edge.pack(cube.edges);
-		edge.computeSym();
 		corner.pack(cube.corners);
 		center.pack(cube.centers);
 	}
@@ -49,9 +46,9 @@ public final class Stage4 extends Stage {
 
 	/* Init */
 	public static void init(){
-		Edge4.init();
-		Corner4.init();
-		Center4.init();
+		//Edge4.init();
+		//Corner4.init();
+		//Center4.init();
 		pTable = new PruningTable(new Edge4(), new Corner4(), new Center4(), N_MOVES, 11);
 		pTable.initTable(new File("ptable_stage4.rbk"));
 	}
@@ -60,7 +57,7 @@ public final class Stage4 extends Stage {
 
 	@Override
 	public int pruning(){
-		return pTable.readTable((edge.coord * Corner4.N_COORD + corner.conjugate(edge.sym) ) * Center4.N_COORD + center.conjugate(edge.sym));
+		return pTable.readTable((edge.coord * corner.rc.N_COORD + corner.conjugate(edge.sym) ) * center.rc.N_COORD + center.conjugate(edge.sym));
 	}
 
 	@Override

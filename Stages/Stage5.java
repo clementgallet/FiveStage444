@@ -1,8 +1,6 @@
 package cg.fivestage444.Stages;
 
-import cg.fivestage444.Coordinates.Center5;
-import cg.fivestage444.Coordinates.Corner5;
-import cg.fivestage444.Coordinates.Edge5;
+import cg.fivestage444.Coordinates.*;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.PruningTable;
 
@@ -15,20 +13,19 @@ public final class Stage5 extends Stage {
 	private static PruningTable pTableEdgeCenter;
 	private static PruningTable pTableEdgeCorner;
 
-	public final Edge5 edge;
-	public final Center5 center;
-	public final Corner5 corner;
+	public final Edge5State edge;
+	public final RawCoordState center;
+	public final RawCoordState corner;
 
 	public Stage5(){
-		edge = new Edge5();
-		center = new Center5();
-		corner = new Corner5();
+		edge = new Edge5State(new Edge5());
+		center = new RawCoordState(new Center5());
+		corner = new RawCoordState(new Corner5());
 	}
 
 	/* Pack from CubeState */
 	public void pack(CubeState cube){
 		edge.pack(cube.edges);
-		edge.computeSym();
 		corner.pack(cube.corners);
 		center.pack(cube.centers);
 	}
@@ -50,9 +47,9 @@ public final class Stage5 extends Stage {
 
 	/* Init */
 	public static void init(){
-		Edge5.init();
-		Center5.init();
-		Corner5.init();
+		//Edge5.init();
+		//Center5.init();
+		//Corner5.init();
 		pTableEdgeCenter = new PruningTable(new Edge5(), new Center5(), N_MOVES, 11);
 		pTableEdgeCenter.initTable(new File("ptable_stage5_edgcen.rbk"));
 		pTableEdgeCorner = new PruningTable(new Edge5(), new Corner5(), N_MOVES, 11);
@@ -63,8 +60,8 @@ public final class Stage5 extends Stage {
 
 	@Override
 	public int pruning(){
-		return Math.max( pTableEdgeCenter.readTable(edge.coord * Center5.N_COORD + center.conjugate(edge.sym)),
-		                 pTableEdgeCorner.readTable(edge.coord * Corner5.N_COORD + corner.conjugate(edge.sym)));
+		return Math.max( pTableEdgeCenter.readTable(edge.coord * center.rc.N_COORD + center.conjugate(edge.sym)),
+		                 pTableEdgeCorner.readTable(edge.coord * corner.rc.N_COORD + corner.conjugate(edge.sym)));
 	}
 
 	@Override

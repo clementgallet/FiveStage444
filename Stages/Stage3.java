@@ -1,7 +1,6 @@
 package cg.fivestage444.Stages;
 
-import cg.fivestage444.Coordinates.Center3;
-import cg.fivestage444.Coordinates.Edge3;
+import cg.fivestage444.Coordinates.*;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.Moves;
 import cg.fivestage444.PruningTable;
@@ -15,20 +14,19 @@ public final class Stage3 extends Stage {
 	private static int moveParity;
 	private static PruningTable pTable;
 
-	public final Edge3 edge;
-	public final Center3 center;
+	public final Edge3State edge;
+	public final SymCoordState center;
 	public byte parity;
 
 	public Stage3(){
-		edge = new Edge3();
-		center = new Center3();
+		edge = new Edge3State(new Edge3());
+		center = new SymCoordState(new Center3());
 	}
 
 	/* Pack from CubeState */
 	public void pack(CubeState cube){
 		edge.pack(cube.edges);
 		center.pack(cube.centers);
-		center.computeSym();
 		parity = (byte)cube.edges.parityUD();
 	}
 
@@ -55,8 +53,8 @@ public final class Stage3 extends Stage {
 			if (((( m / 3 ) % 3 ) == 1 ) && (( m % 3 ) < 2 ))
 				moveParity |= 1 << i;
 		}
-		Edge3.init();
-		Center3.init();
+		//Edge3.init();
+		//Center3.init();
 		pTable = new PruningTable(new Center3(), new Edge3(), N_MOVES, 11);
 		pTable.initTable(new File("ptable_stage3.rbk"));
 
@@ -66,7 +64,7 @@ public final class Stage3 extends Stage {
 
 	@Override
 	public int pruning(){
-		return pTable.readTable(center.coord * Edge3.N_COORD + edge.conjugate(center.sym));
+		return pTable.readTable(center.coord * edge.rc.N_COORD + edge.conjugate(center.sym));
 	}
 
 	@Override

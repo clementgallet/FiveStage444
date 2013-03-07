@@ -4,7 +4,7 @@ import cg.fivestage444.Symmetry;
 
 public class Edge5State extends SymCoordState {
 
-	Edge5State(SymCoord sc){
+	public Edge5State(SymCoord sc){
 		super(sc);
 	}
 
