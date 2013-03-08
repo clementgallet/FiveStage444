@@ -12,6 +12,7 @@ class Tools {
 		Symmetry.init();
 		Util.init();
 		CubePack.init();
+		CoordsHandler.init();
 		Stage1.init();
 		Stage2.init();
 		Stage3.init();
