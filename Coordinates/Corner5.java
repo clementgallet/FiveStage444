@@ -65,7 +65,7 @@ public final class Corner5 extends RawCoord {
 		for (int u = 0; u < N_COORD; ++u) {
 			unpack( cube1, u );
 			for (int m = 0; m < N_MOVES; ++m) {
-				cube1.move (Moves.face2moves[m], cube2);
+				cube1.move (Moves.stage2moves[m], cube2);
 				move[u][m] = (short)(pack( cube2 ));
 			}
 			for (int s = 0; s < N_SYM/4; ++s) {
