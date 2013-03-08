@@ -32,7 +32,7 @@ public abstract class SymCoord {
 	/* Tables */
 	public int[] sym2raw;
 	public int[] raw2sym;
-	public int[] hasSym;
+	public long[] hasSym;
 	public int[][] move;
 
 	abstract void unpack(Cubies cube, int coord);
@@ -60,7 +60,7 @@ public abstract class SymCoord {
 		}
 
 		byte[] isRepTable = new byte[(N_RAW_COORD>>3) + 1];
-		hasSym = new int[N_COORD];
+		hasSym = new long[N_COORD];
 		for (int u = 0; u < N_RAW_COORD; ++u) {
 			if( Util.get1bit(isRepTable, u)) continue;
 			raw2sym[u] = repIdx << SYM_SHIFT;
@@ -74,7 +74,7 @@ public abstract class SymCoord {
 				Util.set1bit( isRepTable, raw_coord );
 				raw2sym[raw_coord] = ( repIdx << SYM_SHIFT ) + Symmetry.invSymIdx[s];
 				if( raw_coord == u )
-					hasSym[repIdx] |= (1 << s);
+					hasSym[repIdx] |= (0x1L << s);
 			}
 			sym2raw[repIdx++] = u;
 		}

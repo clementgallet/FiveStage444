@@ -1,5 +1,7 @@
 TODO:
 
+- Store in the pruning table which moves are leading closer from solved.
+- Try to find a way to remove the double sym in stage 5.
 - Cancel moves between stages.
 - Doc the code !
 - Compute distance tables (unique and sym)

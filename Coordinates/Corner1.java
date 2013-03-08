@@ -6,7 +6,11 @@ import cg.fivestage444.Moves;
 import cg.fivestage444.Stages.Stage1;
 import cg.fivestage444.Symmetry;
 
+import java.util.Arrays;
+import java.util.logging.Logger;
+
 public final class Corner1 extends RawCoord {
+	private static final Logger l = Logger.getLogger(Corner1.class.getName());
 
 	public Corner1(){
 		N_COORD = 2187;
@@ -63,6 +67,10 @@ public final class Corner1 extends RawCoord {
 				conj[u][s] = (short) pack(cube2);
 			}
 		}
+		if((HASHCODE_MOVE != -1) && (Arrays.deepHashCode(move) != HASHCODE_MOVE))
+			l.severe("Array move has not been filled correctly!");
+		if((HASHCODE_CONJ != -1) && (Arrays.deepHashCode(conj) != HASHCODE_CONJ))
+			l.severe("Array conj has not been filled correctly!");
 	}
 
 }

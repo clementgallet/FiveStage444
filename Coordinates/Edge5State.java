@@ -18,4 +18,9 @@ public class Edge5State extends SymCoordState {
 		e.coord >>>= sc.SYM_SHIFT;
 	}
 
+	@Override
+	public long[] getSyms(){
+		return ((Edge5)sc).hasSym[coord];
+	}
+
 }
