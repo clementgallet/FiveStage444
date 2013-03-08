@@ -1,30 +1,14 @@
 package cg.fivestage444;
 
-import cg.fivestage444.Coordinates.Edge2;
-import cg.fivestage444.Coordinates.Center2;
-
-import cg.fivestage444.Coordinates.Edge3;
-import cg.fivestage444.Coordinates.Center3;
-
-import cg.fivestage444.Coordinates.Corner4;
-import cg.fivestage444.Coordinates.Edge4;
-import cg.fivestage444.Coordinates.Center4;
-
-import cg.fivestage444.Coordinates.Corner5;
-import cg.fivestage444.Coordinates.Edge5;
-import cg.fivestage444.Coordinates.Center5;
-
+import cg.fivestage444.Coordinates.RawCoordState;
+import cg.fivestage444.Coordinates.SymCoordState;
+import cg.fivestage444.Cubies.CenterCubies;
+import cg.fivestage444.Cubies.CornerCubies;
+import cg.fivestage444.Cubies.EdgeCubies;
 import cg.fivestage444.Stages.Stage2;
 import cg.fivestage444.Stages.Stage3;
 import cg.fivestage444.Stages.Stage4;
 import cg.fivestage444.Stages.Stage5;
-
-import cg.fivestage444.Cubies.EdgeCubies;
-import cg.fivestage444.Cubies.CenterCubies;
-import cg.fivestage444.Cubies.CornerCubies;
-
-
-import java.util.Arrays;
 
 /* CubePack structure: a (almost) full representation of the cube using a set of coordinates.
  * Some code and ideas are taken from cube20 */
@@ -224,11 +208,11 @@ final class CubePack{
 
 	/** Convert to Coordinates **/
 
-	void toEdge2( Edge2 e ){
+	void toEdge2( RawCoordState e ){
 		e.coord = 6 * Util.C24to8[edges_loc[4]] + Util.perms_to_6[edges_perm[4]][edges_perm[5]];
 	}
 
-	void toCenter2( Center2 c, int c_idx ){
+	void toCenter2( SymCoordState c, int c_idx ){
 		c.raw_coord = centers[c_idx];
 		c.computeSym();
 	}
@@ -239,7 +223,7 @@ final class CubePack{
 		toCenter2( s.centerB, 5 );
 	}
 
-	void toCenter3( Center3 c ){
+	void toCenter3( SymCoordState c ){
 		if( centers[2] > centers[3] )
 			c.raw_coord = Util.C16to16[centers[2]][centers[3]];
 		else
@@ -247,7 +231,7 @@ final class CubePack{
 		c.computeSym();
 	}
 
-	void toEdge3( Edge3 e ){
+	void toEdge3( RawCoordState e ){
 		if( edges_loc[0] > edges_loc[3] )
 			e.coord = Util.C16to16[edges_loc[0]][edges_loc[3]]/35;
 		else
@@ -276,18 +260,18 @@ final class CubePack{
 		s.parity = (byte)( parity ? 1 : 0 );
 	}
 
-	void toCorner4(Corner4 c){
+	void toCorner4(RawCoordState c){
 		c.coord = 6 * corner_top_loc + Util.perms_to_6[corner_top_perm][corner_bottom_perm];
 	}
 
-	void toCenter4(Center4 c){
+	void toCenter4(RawCoordState c){
 		if( centers[0] < centers[1] )
 			c.coord = centers[0];
 		else
 			c.coord = centers[1];
 	}
 
-	void toEdge4(Edge4 e){
+	void toEdge4(SymCoordState e){
 		e.raw_coord = (( Util.perms_to_6[edges_perm[0]][edges_perm[1]]   * 6  +
 					 Util.perms_to_6[edges_perm[2]][edges_perm[3]] ) * 70 +
 					 Util.shiftC16[edges_loc[0]]				   ) * 70 +
@@ -301,18 +285,18 @@ final class CubePack{
 		toCorner4( s.corner );
 	}
 
-	void toEdge5(Edge5 e){
+	void toEdge5(SymCoordState e){
 		e.raw_coord = (( 4 * edges_perm[4] + edges_perm[5] / 6 ) * 96 +
 						 4 * edges_perm[2] + edges_perm[3] / 6 ) * 96 +
 						 4 * edges_perm[0] + edges_perm[1] / 6;
 		e.computeSym();
 	}
 
-	void toCorner5(Corner5 c){
+	void toCorner5(RawCoordState c){
 		c.coord = 4 * corner_top_perm + corner_bottom_perm / 6;
 	}
 
-	void toCenter5(Center5 c){
+	void toCenter5(RawCoordState c){
 		c.coord = ( Util.C24_4to12[centers[5]] * 12 + Util.C24_4to12[centers[3]] ) * 12 + Util.C24_4to12[centers[1]];
 	}
 
