@@ -1,6 +1,9 @@
 package cg.fivestage444.Coordinates;
 
 public class Edge3State extends RawCoordState{
+
+	public Edge3State(){};
+
 	public Edge3State(RawCoord rc){
 		super(rc);
 	}

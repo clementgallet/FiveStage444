@@ -4,6 +4,8 @@ import cg.fivestage444.Cubies.Cubies;
 
 public class Center2State extends SymCoordState{
 
+	public Center2State(){};
+
 	public Center2State(SymCoord sc){
 		super(sc);
 	}

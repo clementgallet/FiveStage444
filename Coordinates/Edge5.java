@@ -20,6 +20,9 @@ public final class Edge5 extends SymCoord {
 		SolvedStates = new int[]{0};
 		cubieType = new EdgeCubies();
 		rightMultOrConjugate = CONJUGATE;
+		HASHCODE_RAW2SYM = -990244243;
+		HASHCODE_SYM2RAW = -1356505959;
+		HASHCODE_MOVE = -2123193957;
 	}
 
 	public static long[][] hasSym;

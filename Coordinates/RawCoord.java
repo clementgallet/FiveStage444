@@ -4,7 +4,11 @@ import cg.fivestage444.Cubies.Cubies;
 import cg.fivestage444.Moves;
 import cg.fivestage444.Symmetry;
 
+import java.util.Arrays;
+import java.util.logging.Logger;
+
 public abstract class RawCoord {
+	private static final Logger l = Logger.getLogger(RawCoord.class.getName());
 
 	public static final int RIGHTMULT = 0;
 	public static final int CONJUGATE = 1;
@@ -14,6 +18,9 @@ public abstract class RawCoord {
 	public int N_MOVES;
 	public int[] solvedStates;
 	public int rightMultOrConjugate;
+	public int HASHCODE_MOVE = -1;
+	public int HASHCODE_CONJ = -1;
+
 
 	/* Tables */
 	public short[][] move;
@@ -53,6 +60,10 @@ public abstract class RawCoord {
 				conj[u][s] = (short) pack(cube2);
 			}
 		}
+		if((HASHCODE_MOVE != -1) && (Arrays.deepHashCode(move) != HASHCODE_MOVE))
+			l.severe("Array move has not been filled correctly!");
+		if((HASHCODE_CONJ != -1) && (Arrays.deepHashCode(conj) != HASHCODE_CONJ))
+			l.severe("Array conj has not been filled correctly!");
 	}
 
 }

@@ -14,6 +14,8 @@ public final class Edge2 extends RawCoord {
 		solvedStates = new int[]{0, 414};
 		cubieType = new EdgeCubies();
 		rightMultOrConjugate = RIGHTMULT;
+		HASHCODE_MOVE = -619515515;
+		HASHCODE_CONJ = -1576838975;
 	}
 
 	/* Unpack a coord to a cube */

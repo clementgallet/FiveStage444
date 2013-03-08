@@ -5,7 +5,7 @@ import java.util.PriorityQueue;
 import java.util.logging.Logger;
 
 final class Search {
-	private static final Logger l = Logger.getLogger(StageSolver.class.getName());
+	private static final Logger l = Logger.getLogger(Search.class.getName());
 
 	public String solve (CubeState cube, boolean inverse) {
 		/* We use a priority queue to store the partial solutions.

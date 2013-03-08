@@ -18,6 +18,9 @@ public final class Center3 extends SymCoord {
 		SolvedStates = new int[]{ 56966, 56974, 56975, 56977, 56978, 56979 };
 		cubieType = new CenterCubies();
 		rightMultOrConjugate = RIGHTMULT;
+		HASHCODE_RAW2SYM = -848393161;
+		HASHCODE_SYM2RAW = 1998413802;
+		HASHCODE_MOVE = -2092031671;
 	}
 
 	/* Unpack a raw coord to a cube */

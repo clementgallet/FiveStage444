@@ -14,6 +14,8 @@ public final class Edge3 extends RawCoord {
 		solvedStates = new int[]{494, 12375}; /* ok for pruning, but for stage solve, it's only 12375 ! */
 		cubieType = new EdgeCubies();
 		rightMultOrConjugate = RIGHTMULT;
+		HASHCODE_MOVE = 629540689;
+		HASHCODE_CONJ = -540377615;
 	}
 
 	/* Unpack a coord to a cube */

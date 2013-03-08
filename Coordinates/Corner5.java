@@ -16,6 +16,8 @@ public final class Corner5 extends RawCoord {
 		solvedStates = new int[]{0};
 		cubieType = new CornerCubies();
 		rightMultOrConjugate = CONJUGATE;
+		HASHCODE_MOVE = 1753223873;
+		HASHCODE_CONJ = 566953985;
 	}
 
 	/* Unpack a coord to a cube */

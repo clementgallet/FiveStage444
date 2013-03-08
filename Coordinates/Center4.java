@@ -14,6 +14,8 @@ public final class Center4 extends RawCoord {
 		solvedStates = new int[]{ 0, 14, 20, 23, 27, 28 };
 		cubieType = new CenterCubies();
 		rightMultOrConjugate = CONJUGATE;
+		HASHCODE_MOVE = 1470952688;
+		HASHCODE_CONJ = -246949800;
 	}
 
 	/* Unpack a coord to a cube */

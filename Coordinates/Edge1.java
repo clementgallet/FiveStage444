@@ -18,6 +18,9 @@ public final class Edge1 extends SymCoord {
 		SolvedStates = new int[]{0};
 		cubieType = new EdgeCubies();
 		rightMultOrConjugate = RIGHTMULT;
+		HASHCODE_RAW2SYM = -960431297;
+		HASHCODE_SYM2RAW = -1678978061;
+		HASHCODE_MOVE = -20502585;
 	}
 
 	/* Unpack a raw coord to a cube */

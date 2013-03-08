@@ -17,6 +17,8 @@ public final class Center5 extends RawCoord {
 		N_MOVES = Stage5.N_MOVES;
 		solvedStates = new int[]{0};
 		rightMultOrConjugate = CONJUGATE;
+		HASHCODE_MOVE = 1662689153;
+		HASHCODE_CONJ = 1129812993;
 	}
 
 	/* Unpack a coord to a cube */

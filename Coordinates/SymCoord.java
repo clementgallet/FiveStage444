@@ -5,7 +5,11 @@ import cg.fivestage444.Moves;
 import cg.fivestage444.Symmetry;
 import cg.fivestage444.Util;
 
+import java.util.Arrays;
+import java.util.logging.Logger;
+
 public abstract class SymCoord {
+	private static final Logger l = Logger.getLogger(RawCoord.class.getName());
 
 	public static final int RIGHTMULT = 0;
 	public static final int CONJUGATE = 1;
@@ -17,6 +21,10 @@ public abstract class SymCoord {
 	public int SYM_MASK;
 	public int N_MOVES;
 	public int rightMultOrConjugate;
+	public int HASHCODE_RAW2SYM = -1;
+	public int HASHCODE_SYM2RAW = -1;
+	public int HASHCODE_MOVE = -1;
+
 
 	public int[] SolvedStates;
 	public Cubies cubieType;
@@ -70,6 +78,12 @@ public abstract class SymCoord {
 			}
 			sym2raw[repIdx++] = u;
 		}
+		if(repIdx != N_COORD)
+			l.severe("The number of sym coordinates is not correct!");
+		if((HASHCODE_RAW2SYM != -1) && (Arrays.hashCode(raw2sym) != HASHCODE_RAW2SYM))
+			l.severe("Array raw2sym has not been filled correctly!");
+		if((HASHCODE_SYM2RAW != -1) && (Arrays.hashCode(sym2raw) != HASHCODE_SYM2RAW))
+			l.severe("Array sym2raw has not been filled correctly!");
 	}
 
 	public void initMove (){
@@ -92,6 +106,8 @@ public abstract class SymCoord {
 				move[u][m] = raw2sym[pack(cube2)];
 			}
 		}
+		if((HASHCODE_MOVE != -1) && (Arrays.deepHashCode(move) != HASHCODE_MOVE))
+			l.severe("Array move has not been filled correctly!");
 	}
 
 }
