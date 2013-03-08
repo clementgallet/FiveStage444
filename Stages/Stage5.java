@@ -50,9 +50,9 @@ public final class Stage5 extends Stage {
 		//Edge5.init();
 		//Center5.init();
 		//Corner5.init();
-		pTableEdgeCenter = new PruningTable(new Edge5(), new Center5(), N_MOVES, 11);
+		pTableEdgeCenter = new PruningTable(new Edge5State(new Edge5()), new RawCoordState(new Center5()), N_MOVES, 11);
 		pTableEdgeCenter.initTable(new File("ptable_stage5_edgcen.rbk"));
-		pTableEdgeCorner = new PruningTable(new Edge5(), new Corner5(), N_MOVES, 11);
+		pTableEdgeCorner = new PruningTable(new Edge5State(new Edge5()), new RawCoordState(new Corner5()), N_MOVES, 11);
 		pTableEdgeCorner.initTable(new File("ptable_stage5_edgcor.rbk"));
 	}
 

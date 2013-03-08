@@ -55,7 +55,7 @@ public final class Stage3 extends Stage {
 		}
 		//Edge3.init();
 		//Center3.init();
-		pTable = new PruningTable(new Center3(), new Edge3(), N_MOVES, 11);
+		pTable = new PruningTable(new SymCoordState(new Center3()), new Edge3State(new Edge3()), N_MOVES, 11);
 		pTable.initTable(new File("ptable_stage3.rbk"));
 
 	}

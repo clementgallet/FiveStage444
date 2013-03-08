@@ -51,7 +51,7 @@ public final class Stage2 extends Stage {
 	public static void init(){
 		//edge.init();
 		//Center2.init();
-		pTable = new PruningTable(new Center2(), new Edge2(), N_MOVES, 7);
+		pTable = new PruningTable(new Center2State(new Center2()), new RawCoordState(new Edge2()), N_MOVES, 7);
 		pTable.initTable();
 	}
 

@@ -49,7 +49,7 @@ public final class Stage4 extends Stage {
 		//Edge4.init();
 		//Corner4.init();
 		//Center4.init();
-		pTable = new PruningTable(new Edge4(), new Corner4(), new Center4(), N_MOVES, 11);
+		pTable = new PruningTable(new SymCoordState(new Edge4()), new RawCoordState(new Corner4()), new RawCoordState(new Center4()), N_MOVES, 11);
 		pTable.initTable(new File("ptable_stage4.rbk"));
 	}
 
