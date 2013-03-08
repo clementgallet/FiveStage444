@@ -7,6 +7,8 @@ public class SymCoordState {
 
 	public SymCoord sc;
 
+	public SymCoordState(){}
+
 	public SymCoordState(SymCoord sc){
 		this.sc = sc;
 	}

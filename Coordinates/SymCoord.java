@@ -22,10 +22,10 @@ public abstract class SymCoord {
 	public Cubies cubieType;
 
 	/* Tables */
-	public int[] sym2raw = new int[N_COORD];
-	public int[] raw2sym = new int[N_RAW_COORD];
+	public int[] sym2raw;
+	public int[] raw2sym;
 	public int[] hasSym;
-	public int[][] move = new int[N_COORD][N_MOVES];
+	public int[][] move;
 
 	abstract void unpack(Cubies cube, int coord);
 	abstract int pack(Cubies cube);

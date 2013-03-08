@@ -6,6 +6,8 @@ import cg.fivestage444.Cubies.Cubies;
 public class RawCoordState {
 	public RawCoord rc;
 
+	public RawCoordState(){}
+
 	public RawCoordState(RawCoord rc){
 		this.rc = rc;
 	}

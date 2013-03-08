@@ -1,6 +1,7 @@
 package cg.fivestage444.Stages;
 
 import cg.fivestage444.Coordinates.*;
+import cg.fivestage444.CoordsHandler;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.Moves;
 import cg.fivestage444.PruningTable;
@@ -19,8 +20,8 @@ public final class Stage3 extends Stage {
 	public byte parity;
 
 	public Stage3(){
-		edge = new Edge3State(new Edge3());
-		center = new SymCoordState(new Center3());
+		edge = new Edge3State(CoordsHandler.edge3);
+		center = new SymCoordState(CoordsHandler.center3);
 	}
 
 	/* Pack from CubeState */
@@ -55,7 +56,7 @@ public final class Stage3 extends Stage {
 		}
 		//Edge3.init();
 		//Center3.init();
-		pTable = new PruningTable(new SymCoordState(new Center3()), new Edge3State(new Edge3()), N_MOVES, 11);
+		pTable = new PruningTable(new SymCoordState(CoordsHandler.center3), new Edge3State(CoordsHandler.edge3), N_MOVES, 11);
 		pTable.initTable(new File("ptable_stage3.rbk"));
 
 	}

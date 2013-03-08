@@ -55,6 +55,9 @@ public final class Corner5 extends RawCoord {
 	/* Initialisations */
 	@Override
 	public void init(){
+		move = new short[N_COORD][N_MOVES];
+		conj = new short[N_COORD][N_SYM];
+
 		CornerCubies cube1 = new CornerCubies();
 		CornerCubies cube2 = new CornerCubies();
 		for (int u = 0; u < N_COORD; ++u) {

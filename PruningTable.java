@@ -109,17 +109,18 @@ public class PruningTable {
 	private void fillTable(){
 		/* Create a new instance of PruningTable with the same classes in it */
 		PruningTable p = new PruningTable();
-		try{
+		try {
 			p.sym = sym.getClass().newInstance();
+			p.sym.sc = sym.sc;
 			p.raws = new RawCoordState[raws.length];
 			for ( int i = 0; i < raws.length; i++){
 				p.raws[i] = raws[i].getClass().newInstance();
+				p.raws[i].rc = raws[i].rc;
 			}
-
-		}
-		catch (InstantiationException ignored) {
-		}
-		catch (IllegalAccessException ignored) {
+		} catch (InstantiationException e) {
+			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 		}
 
 		/* Create the pruning table and fill with the solved states */

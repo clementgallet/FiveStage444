@@ -16,8 +16,8 @@ public abstract class RawCoord {
 	public int rightMultOrConjugate;
 
 	/* Tables */
-	public short[][] move = new short[N_COORD][N_MOVES];
-	public short[][] conj = new short[N_COORD][N_SYM];
+	public short[][] move;
+	public short[][] conj;
 
 	public Cubies cubieType;
 
@@ -25,6 +25,9 @@ public abstract class RawCoord {
 	abstract int pack(Cubies cube);
 
 	public void init(){
+		move = new short[N_COORD][N_MOVES];
+		conj = new short[N_COORD][N_SYM];
+
 		Cubies cube1 = null;
 		Cubies cube2 = null;
 		try {

@@ -1,6 +1,7 @@
 package cg.fivestage444.Stages;
 
 import cg.fivestage444.Coordinates.*;
+import cg.fivestage444.CoordsHandler;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.PruningTable;
 
@@ -18,9 +19,9 @@ public final class Stage5 extends Stage {
 	public final RawCoordState corner;
 
 	public Stage5(){
-		edge = new Edge5State(new Edge5());
-		center = new RawCoordState(new Center5());
-		corner = new RawCoordState(new Corner5());
+		edge = new Edge5State(CoordsHandler.edge5);
+		center = new RawCoordState(CoordsHandler.center5);
+		corner = new RawCoordState(CoordsHandler.corner5);
 	}
 
 	/* Pack from CubeState */
@@ -50,9 +51,9 @@ public final class Stage5 extends Stage {
 		//Edge5.init();
 		//Center5.init();
 		//Corner5.init();
-		pTableEdgeCenter = new PruningTable(new Edge5State(new Edge5()), new RawCoordState(new Center5()), N_MOVES, 11);
+		pTableEdgeCenter = new PruningTable(new Edge5State(CoordsHandler.edge5), new RawCoordState(CoordsHandler.center5), N_MOVES, 11);
 		pTableEdgeCenter.initTable(new File("ptable_stage5_edgcen.rbk"));
-		pTableEdgeCorner = new PruningTable(new Edge5State(new Edge5()), new RawCoordState(new Corner5()), N_MOVES, 11);
+		pTableEdgeCorner = new PruningTable(new Edge5State(CoordsHandler.edge5), new RawCoordState(CoordsHandler.center5), N_MOVES, 11);
 		pTableEdgeCorner.initTable(new File("ptable_stage5_edgcor.rbk"));
 	}
 

@@ -86,6 +86,9 @@ public final class Edge5 extends SymCoord {
 
 	@Override
 	public void initSym2Raw (){
+		sym2raw = new int[N_COORD];
+		raw2sym = new int[N_RAW_COORD];
+
 		int repIdx = 0;
 		EdgeCubies cube1 = new EdgeCubies();
 		EdgeCubies cube2 = new EdgeCubies();
@@ -114,6 +117,8 @@ public final class Edge5 extends SymCoord {
 
 	@Override
 	public void initMove (){
+		move = new int[N_COORD][N_MOVES];
+
 		EdgeCubies cube1 = new EdgeCubies();
 		EdgeCubies cube2 = new EdgeCubies();
 		for (int u = 0; u < N_COORD; ++u) {

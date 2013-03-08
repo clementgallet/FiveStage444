@@ -54,6 +54,9 @@ public final class Center5 extends RawCoord {
 	/* Initialisations */
 	@Override
 	public void init(){
+		move = new short[N_COORD][N_MOVES];
+		conj = new short[N_COORD][N_SYM];
+
 		for (int i = 0; i < 12; ++i) {
 			squares_cen_revmap[squares_cen_map[i]] = (byte)i;
 		}
@@ -65,7 +68,7 @@ public final class Center5 extends RawCoord {
 				cube1.move (Moves.stage2moves[m], cube2);
 				move[u][m] = (short)(pack( cube2 ));
 			}
-			for (int s = 0; s < N_SYM; ++s) {
+			for (int s = 0; s < N_SYM/4; ++s) {
 				for (int cs = 0; cs < 4; ++cs) {
 					cube1.rightMult(Symmetry.invSymIdx[Symmetry.symIdxMultiply[s][cs]], cube2);
 					cube2.leftMult(s);
