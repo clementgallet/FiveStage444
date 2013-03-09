@@ -5,6 +5,8 @@ import cg.fivestage444.CoordsHandler;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.PruningTable;
 
+import java.io.File;
+
 public final class Stage2 extends Stage {
 
 	public final static int N_MOVES = 28;
@@ -53,7 +55,7 @@ public final class Stage2 extends Stage {
 		//edge.init();
 		//Center2.init();
 		pTable = new PruningTable(new Center2State(CoordsHandler.center2), new RawCoordState(CoordsHandler.edge2), N_MOVES, 7);
-		pTable.initTable();
+		pTable.initTable(new File("ptable_stage2.rbk"));
 	}
 
 
