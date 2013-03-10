@@ -43,80 +43,87 @@ public final class EdgeCubies extends Cubies implements Cloneable{
 
 	@Override
 	public void move (int move_code){
-		int rot = move_code % 3;
+		/* move_code%3 determine the rotation angle to apply.
+		 * However, in our code, 0 is +quarter turn, 1 is -quarter turn and 2 is half turn.
+		 * We have to map this to the number of quarter turns to apply.
+		 * In practice, we have to map 0->1, 1->3 and 2->2.
+		 * That is the purpose of the following obscure operation.
+		 */
+		int rot = (((-(move_code % 3))+3)%3)+1;
+
 		int layer = move_code / 3;
 		switch (layer){
 			case 0: // U
-				Util.swap(cubies, 0, 12, 1, 14, rot);
-				Util.swap(cubies, 4, 8, 5, 10, rot);
+				Util.cycle(cubies, 0, 12, 1, 14, rot);
+				Util.cycle(cubies, 4, 8, 5, 10, rot);
 				break;
 			case 1: // u
-				Util.swap(cubies, 16, 22, 19, 21, rot);
+				Util.cycle(cubies, 16, 22, 19, 21, rot);
 				break;
 			case 2: // Uw
-				Util.swap(cubies, 0, 12, 1, 14, rot);
-				Util.swap(cubies, 4, 8, 5, 10, rot);
-				Util.swap(cubies, 16, 22, 19, 21, rot);
+				Util.cycle(cubies, 0, 12, 1, 14, rot);
+				Util.cycle(cubies, 4, 8, 5, 10, rot);
+				Util.cycle(cubies, 16, 22, 19, 21, rot);
 				break;
 			case 3: // D
-				Util.swap(cubies, 2, 15, 3, 13, rot);
-				Util.swap(cubies, 6, 11, 7, 9, rot);
+				Util.cycle(cubies, 2, 15, 3, 13, rot);
+				Util.cycle(cubies, 6, 11, 7, 9, rot);
 				break;
 			case 4: // d
-				Util.swap(cubies, 17, 23, 18, 20, rot);
+				Util.cycle(cubies, 17, 23, 18, 20, rot);
 				break;
 			case 5: // Dw
-				Util.swap(cubies, 2, 15, 3, 13, rot);
-				Util.swap(cubies, 6, 11, 7, 9, rot);
-				Util.swap(cubies, 17, 23, 18, 20, rot);
+				Util.cycle(cubies, 2, 15, 3, 13, rot);
+				Util.cycle(cubies, 6, 11, 7, 9, rot);
+				Util.cycle(cubies, 17, 23, 18, 20, rot);
 				break;
 			case 6: // L
-				Util.swap(cubies, 8, 20, 9, 22, rot);
-				Util.swap(cubies, 12, 16, 13, 18, rot);
+				Util.cycle(cubies, 8, 20, 9, 22, rot);
+				Util.cycle(cubies, 12, 16, 13, 18, rot);
 				break;
 			case 7: // l
-				Util.swap(cubies, 0, 6, 3, 5, rot);
+				Util.cycle(cubies, 0, 6, 3, 5, rot);
 				break;
 			case 8: // Lw
-				Util.swap(cubies, 8, 20, 9, 22, rot);
-				Util.swap(cubies, 12, 16, 13, 18, rot);
-				Util.swap(cubies, 0, 6, 3, 5, rot);
+				Util.cycle(cubies, 8, 20, 9, 22, rot);
+				Util.cycle(cubies, 12, 16, 13, 18, rot);
+				Util.cycle(cubies, 0, 6, 3, 5, rot);
 				break;
 			case 9: // R
-				Util.swap(cubies, 10, 23, 11, 21, rot);
-				Util.swap(cubies, 14, 19, 15, 17, rot);
+				Util.cycle(cubies, 10, 23, 11, 21, rot);
+				Util.cycle(cubies, 14, 19, 15, 17, rot);
 				break;
 			case 10: // r
-				Util.swap(cubies, 1, 7, 2, 4, rot);
+				Util.cycle(cubies, 1, 7, 2, 4, rot);
 				break;
 			case 11: // Rw
-				Util.swap(cubies, 10, 23, 11, 21, rot);
-				Util.swap(cubies, 14, 19, 15, 17, rot);
-				Util.swap(cubies, 1, 7, 2, 4, rot);
+				Util.cycle(cubies, 10, 23, 11, 21, rot);
+				Util.cycle(cubies, 14, 19, 15, 17, rot);
+				Util.cycle(cubies, 1, 7, 2, 4, rot);
 				break;
 			case 12: // F
-				Util.swap(cubies, 0, 21, 2, 20, rot);
-				Util.swap(cubies, 4, 17, 6, 16, rot);
+				Util.cycle(cubies, 0, 21, 2, 20, rot);
+				Util.cycle(cubies, 4, 17, 6, 16, rot);
 				break;
 			case 13: // f
-				Util.swap(cubies, 8, 14, 11, 13, rot);
+				Util.cycle(cubies, 8, 14, 11, 13, rot);
 				break;
 			case 14: // Fw
-				Util.swap(cubies, 0, 21, 2, 20, rot);
-				Util.swap(cubies, 4, 17, 6, 16, rot);
-				Util.swap(cubies, 8, 14, 11, 13, rot);
+				Util.cycle(cubies, 0, 21, 2, 20, rot);
+				Util.cycle(cubies, 4, 17, 6, 16, rot);
+				Util.cycle(cubies, 8, 14, 11, 13, rot);
 				break;
 			case 15: // B
-				Util.swap(cubies, 1, 22, 3, 23, rot);
-				Util.swap(cubies, 5, 18, 7, 19, rot);
+				Util.cycle(cubies, 1, 22, 3, 23, rot);
+				Util.cycle(cubies, 5, 18, 7, 19, rot);
 				break;
 			case 16: // b
-				Util.swap(cubies, 9, 15, 10, 12, rot);
+				Util.cycle(cubies, 9, 15, 10, 12, rot);
 				break;
 			case 17: // Bw
-				Util.swap(cubies, 1, 22, 3, 23, rot);
-				Util.swap(cubies, 5, 18, 7, 19, rot);
-				Util.swap(cubies, 9, 15, 10, 12, rot);
+				Util.cycle(cubies, 1, 22, 3, 23, rot);
+				Util.cycle(cubies, 5, 18, 7, 19, rot);
+				Util.cycle(cubies, 9, 15, 10, 12, rot);
 				break;
 		}
 	}

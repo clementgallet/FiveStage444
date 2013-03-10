@@ -11,7 +11,6 @@ class Tools {
 	public static synchronized void init() {
 		Symmetry.init();
 		Util.init();
-		CubePack.init();
 		CoordsHandler.init();
 		Stage1.init();
 		Stage2.init();

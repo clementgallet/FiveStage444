@@ -81,28 +81,35 @@ public final class CornerCubies extends Cubies implements Cloneable{
 
 	@Override
 	public void move (int move_code){
-		int rot = move_code % 3;
+		/* move_code%3 determine the rotation angle to apply.
+		 * However, in our code, 0 is +quarter turn, 1 is -quarter turn and 2 is half turn.
+		 * We have to map this to the number of quarter turns to apply.
+		 * In practice, we have to map 0->1, 1->3 and 2->2.
+		 * That is the purpose of the following obscure operation.
+		 */
+		int rot = (((-(move_code % 3))+3)%3)+1;
+
 		int layer = move_code / 3;
-		if(( layer % 3 ) == 1 ) return;
+		if(( layer % 3 ) == 1 ) return; /* We are rotating an inner layer, which is unaffected by the corners. */
 		int face = layer / 3;
 		switch (face){
 			case 0: // U
-				Util.swap(cubies, 0, 5, 1, 4, rot);
+				Util.cycle(cubies, 0, 5, 1, 4, rot);
 				break;
 			case 1: // D
-				Util.swap(cubies, 6, 2, 7, 3, rot);
+				Util.cycle(cubies, 6, 2, 7, 3, rot);
 				break;
 			case 2: // L
-				Util.swapCorners(cubies, 5, 0, 6, 3, rot);
+				Util.cycleAndOrient(cubies, 5, 0, 6, 3, rot);
 				break;
 			case 3: // R
-				Util.swapCorners(cubies, 4, 1, 7, 2, rot);
+				Util.cycleAndOrient(cubies, 4, 1, 7, 2, rot);
 				break;
 			case 4: // F
-				Util.swapCorners(cubies, 0, 4, 2, 6, rot);
+				Util.cycleAndOrient(cubies, 0, 4, 2, 6, rot);
 				break;
 			case 5: // B
-				Util.swapCorners(cubies, 1, 5, 3, 7, rot);
+				Util.cycleAndOrient(cubies, 1, 5, 3, 7, rot);
 				break;
 		}
 	}

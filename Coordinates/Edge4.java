@@ -120,6 +120,9 @@ public final class Edge4 extends SymCoord {
 			unpack(cube1, u);
 
 			/* Only retain configs without parity */
+			/* TODO: Try in the pack/unpack functions to only produce correct positions,
+			 * so that we would not have to do this filter.
+			 */
 			int ul = Util.get8Perm( cube1.cubies, 4 );
 			for (int i=0; i<4; i++)
 				t[i] = ( cube1.cubies[i] > 4 ) ? (byte)(cube1.cubies[i]-8) : cube1.cubies[i];
