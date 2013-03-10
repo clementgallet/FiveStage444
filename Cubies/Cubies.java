@@ -1,6 +1,8 @@
 package cg.fivestage444.Cubies;
 
-abstract public class Cubies {
+import cg.fivestage444.Symmetry;
+
+abstract public class Cubies implements Cloneable {
 
 	public byte[] cubies;
 
@@ -38,9 +40,15 @@ abstract public class Cubies {
 
 	abstract public void rightMult (int symIdx, Cubies e);
 
-	abstract public void conjugate (int symIdx, Cubies e);
+	public void conjugate (int symIdx, Cubies c){
+		rightMult( Symmetry.invSymIdx[symIdx], c );
+		c.leftMult( symIdx );
+	}
 
-	abstract public void move (int move_code, Cubies e);
+	public void move (int move_code, Cubies c){
+		System.arraycopy(cubies, 0, c.cubies, 0, cubies.length);
+		c.move( move_code );
+	}
 
 	abstract public void move (int move_code);
 

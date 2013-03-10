@@ -5,7 +5,7 @@ import cg.fivestage444.Util;
 
 import java.util.Arrays;
 
-public final class CenterCubies extends Cubies implements Cloneable{
+public final class CenterCubies extends Cubies {
 
 	public CenterCubies(){
 		cubies = new byte[24];
@@ -28,18 +28,6 @@ public final class CenterCubies extends Cubies implements Cloneable{
 	public void rightMult (int symIdx, Cubies c){
 		for (int i = 0; i < 24; ++i)
 			c.cubies[i] = cubies[Symmetry.symCenters[symIdx][i]];
-	}
-
-	@Override
-	public void conjugate (int symIdx, Cubies c){
-		rightMult( Symmetry.invSymIdx[symIdx], c );
-		c.leftMult( symIdx );
-	}
-
-	@Override
-	public void move (int move_code, Cubies c){
-		System.arraycopy(cubies, 0, c.cubies, 0, 24);
-		c.move( move_code );
 	}
 
 	@Override
