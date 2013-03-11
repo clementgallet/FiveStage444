@@ -2,21 +2,19 @@ package cg.fivestage444;
 
 import cg.fivestage444.Stages.Stage;
 
-import java.util.PriorityQueue;
 import java.util.logging.Logger;
 
 class StageSolver {
 	private static final Logger l = Logger.getLogger(StageSolver.class.getName());
 
-	private final PriorityQueue<CubeAndSolution> queue; /* the queue to push solutions of this stage to */
+	private final Strategy strategy; /* what to do when we find a solution */
 	private final CubeAndSolution cas; /* the starting position */
 	private final Stage[] stage_list = new Stage[20]; /* a set of stages to use during the search, to avoid creating objects */
 	private final byte[] move_list = new byte[100]; /* the current stage move list */
 	private final int n_moves; /* the number of moves in this stage. Set to this_stage.getMovesNumber() */
-	static int n_solutions; /* the number of solutions found */
 
-	public StageSolver(CubeAndSolution cas, PriorityQueue<CubeAndSolution> queue){
-		this.queue = queue;
+	public StageSolver(CubeAndSolution cas, Strategy strategy){
+		this.strategy = strategy;
 		this.cas = cas;
 		stage_list[0] = cas.toCurrentStage();
 		try {
@@ -78,7 +76,6 @@ class StageSolver {
 	 */
 	boolean push(int solution_length){
 		l.finer("Found a solution.");
-		n_solutions++;
 		CubeAndSolution newCas = null;
 		try {
 			newCas = (CubeAndSolution) cas.clone();
@@ -90,27 +87,7 @@ class StageSolver {
 		}
 		l.finest("Solution is "+newCas.debugOutputMoves());
 		newCas.rotate();
-		Stage s = newCas.toNextStage();
-		if(s != null)
-			newCas.comparator = newCas.move_length + s.pruning();
-		else
-			newCas.comparator = newCas.move_length;
-
-		/* We have to determine if we need to insert this solution into the queue. */
-		if(queue.size() < stage_list[0].howManyAttempts()) /* We still have room for this solution */
-			queue.add(newCas);
-		else{
-			/* We don't have room anymore. To know if we need to insert this solution,
-			 * we peek at the worst solution of the queue, and compare against this solution.
-			 * If this solution is better, we replace the worst solution with this one.
-			 * If not, we do nothing.
-			 */
-			CubeAndSolution worseCubeYet = queue.peek();
-			if(worseCubeYet.comparator > newCas.comparator){
-				queue.poll();
-				queue.add(newCas);
-			}
-		}
-		return n_solutions >= stage_list[0].howManySolutions();
+		boolean doWeStop = strategy.processSolution(newCas);
+		return doWeStop;
 	}
 }

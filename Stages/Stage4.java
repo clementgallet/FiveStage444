@@ -65,14 +65,4 @@ public final class Stage4 extends Stage {
 	public int getMovesNumber() {
 		return N_MOVES;
 	}
-
-	@Override
-	public int howManySolutions() {
-		return 10;
-	}
-
-	@Override
-	public int howManyAttempts() {
-		return 5;
-	}
 }

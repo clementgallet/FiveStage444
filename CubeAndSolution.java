@@ -13,7 +13,7 @@ class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 	int move_length = 0;
 	private int[] stage_length = new int[5]; /* the length of the move list at each stage */
 	int comparator = 0; /* the value used to sort objects */
-	private int current_stage = 1; /* at which stage are we. TODO: use a better struct than an int */
+	public int current_stage = 1; /* at which stage are we. TODO: use a better struct than an int */
 	private int rotate12 = 0; /* which rotation was applied between stage 1 and 2. TODO: same */
 	private int rotate23 = 0; /* which rotation was applied between stage 2 and 3. TODO: same */
 

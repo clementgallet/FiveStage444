@@ -17,7 +17,7 @@ public final class Main {
 		int random_count = 10;
 		Tools.init();
 		CubeState c = new CubeState();
-		Search s = new Search();
+		SolverHeap s = new SolverHeap();
 		Random gen = new Random(43);
 		long time = System.currentTimeMillis();
 		for (int i = 0; i < random_count; ++i) {

@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.logging.Logger;
 
-final class Search {
-	private static final Logger l = Logger.getLogger(Search.class.getName());
+final class SolverHeap {
+	private static final Logger l = Logger.getLogger(SolverHeap.class.getName());
 
 	public String solve (CubeState cube, boolean inverse) {
 		/* We use a priority queue to store the partial solutions.
@@ -13,6 +13,7 @@ final class Search {
 		 * the length of the current solution + the lower bound of the best solution of the next stage.
 		 */
 		PriorityQueue<CubeAndSolution> solutionQueue = new PriorityQueue<CubeAndSolution>(10, new CubeAndSolution.QueueComparator());
+		StrategyHeap strategy = new StrategyHeap(solutionQueue);
 
 		/* We use a temporary array to export the priority queue to, before converting to... */
 		CubeAndSolution[] solutionArray = new CubeAndSolution[3];
@@ -46,13 +47,11 @@ final class Search {
 			 */
 			solversSet = new StageSolver[solutionArray.length];
 			for(int length=0; length<solutionArray.length; length++){
-				solversSet[length] = new StageSolver(solutionArray[length], solutionQueue);
+				solversSet[length] = new StageSolver(solutionArray[length], strategy);
 			}
 
-			/* We initialise the number of solutions to 0.
-			 * As a remainder, we are searching for a total of stageSolver.howManySolutions() solutions.
-			 */
-			StageSolver.n_solutions = 0;
+			/* We initialise the strategy constants. */
+			strategy.n_solutions = 0;
 
 			/* Now, we seach for a solution of incremental length on every StageSolver.
 			 * If one of the StageSolvers outputs true, it means that the search must be stopped,

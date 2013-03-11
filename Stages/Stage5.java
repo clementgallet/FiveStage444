@@ -70,13 +70,4 @@ public final class Stage5 extends Stage {
 		return N_MOVES;
 	}
 
-	@Override
-	public int howManySolutions() {
-		return 1;
-	}
-
-	@Override
-	public int howManyAttempts() {
-		return 1;
-	}
 }
