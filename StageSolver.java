@@ -12,6 +12,7 @@ class StageSolver {
 	private final Stage[] stage_list = new Stage[20]; /* a set of stages to use during the search, to avoid creating objects */
 	private final byte[] move_list = new byte[100]; /* the current stage move list */
 	private final int n_moves; /* the number of moves in this stage. Set to this_stage.getMovesNumber() */
+	public boolean solution_found = false; /* did a solution have been found? */
 
 	public StageSolver(CubeAndSolution cas, Strategy strategy){
 		this.strategy = strategy;
@@ -76,6 +77,7 @@ class StageSolver {
 	 */
 	boolean push(int solution_length){
 		l.finer("Found a solution.");
+		solution_found = true;
 		CubeAndSolution newCas = null;
 		try {
 			newCas = (CubeAndSolution) cas.clone();

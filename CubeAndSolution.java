@@ -130,7 +130,8 @@ class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 	}
 
 	public Stage toNextStage(){
-		stage_length[current_stage-1] = move_length;
+		if(current_stage>0)
+			stage_length[current_stage-1] = move_length;
 		current_stage++;
 		return toCurrentStage();
 	}
