@@ -41,6 +41,10 @@ public class RawCoordState {
 		return rc.conj[coord][sym];
 	}
 
+	public void unpack(Cubies cubie){
+		rc.unpack(cubie, coord);
+	}
+
 	public void pack(Cubies cubie){
 		coord = rc.pack(cubie);
 	}

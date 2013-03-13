@@ -13,7 +13,7 @@ public final class Center5 extends RawCoord {
 
 	public Center5(){
 		N_COORD = 12*12*12;
-		N_SYM = Stage5.N_SYM * 4;
+		N_SYM = Stage5.N_SYM;
 		N_MOVES = Stage5.N_MOVES;
 		solvedStates = new int[]{0};
 		rightMultOrConjugate = CONJUGATE;

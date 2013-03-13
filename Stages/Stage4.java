@@ -30,6 +30,13 @@ public final class Stage4 extends Stage {
 		center.pack(cube.centers);
 	}
 
+	/* Pack from CubeState */
+	public void unpack(CubeState cube){
+		edge.unpack(cube.edges);
+		corner.unpack(cube.corners);
+		center.unpack(cube.centers);
+	}
+
 	/* Check if solved */
 	@Override
 	public boolean isSolved(){
@@ -47,9 +54,6 @@ public final class Stage4 extends Stage {
 
 	/* Init */
 	public static void init(){
-		//Edge4.init();
-		//Corner4.init();
-		//Center4.init();
 		pTable = new PruningTable(new SymCoordState(CoordsHandler.edge4), new RawCoordState(CoordsHandler.corner4), new RawCoordState(CoordsHandler.center4), N_MOVES, 11);
 		pTable.initTable(new File("ptable_stage4.rbk"));
 	}
@@ -64,5 +68,17 @@ public final class Stage4 extends Stage {
 	@Override
 	public int getMovesNumber() {
 		return N_MOVES;
+	}
+
+	public int getId(){
+		return (edge.coord * corner.rc.N_COORD + corner.conjugate(edge.sym) ) * center.rc.N_COORD + center.conjugate(edge.sym);
+	}
+
+	public void setId(int id){
+		center.coord = id % center.rc.N_COORD;
+		id /= center.rc.N_COORD;
+		corner.coord = id % corner.rc.N_COORD;
+		edge.coord = id / corner.rc.N_COORD;
+		edge.sym = 0;
 	}
 }

@@ -49,4 +49,9 @@ public class SymCoordState {
 		computeSym();
 	}
 
+	public void unpack(Cubies cubie){
+		raw_coord = sc.sym2raw[coord];
+		sc.unpack(cubie, raw_coord);
+	}
+
 }

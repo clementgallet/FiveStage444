@@ -102,7 +102,7 @@ public final class Edge5 extends SymCoord {
 			raw2sym[u] = repIdx << SYM_SHIFT;
 			unpack(cube1, u);
 
-			for (int s = 0; s < N_SYM; ++s) {
+			for (int s = 0; s < N_SYM/4; ++s) {
 				for (int cs = 0; cs < 4; ++cs) {
 					if(s==0 && cs==0) continue;
 					cube1.rightMult(Symmetry.symIdxMultiply[Symmetry.invSymIdx[s]][Symmetry.invSymIdx[cs]], cube2);

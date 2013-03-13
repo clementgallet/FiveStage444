@@ -11,7 +11,7 @@ public final class Corner5 extends RawCoord {
 
 	public Corner5(){
 		N_COORD = 96;
-		N_SYM = Stage5.N_SYM * 4;
+		N_SYM = Stage5.N_SYM;
 		N_MOVES = Stage5.N_MOVES; // Was 6. TODO: Change back to face moves.
 		solvedStates = new int[]{0};
 		cubieType = new CornerCubies();

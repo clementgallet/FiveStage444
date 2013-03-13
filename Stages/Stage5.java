@@ -10,7 +10,7 @@ import java.io.File;
 public final class Stage5 extends Stage {
 
 	public final static int N_MOVES = 12;
-	public final static int N_SYM = 48;
+	public final static int N_SYM = 192;
 	private static PruningTable pTableEdgeCenter;
 	private static PruningTable pTableEdgeCorner;
 
@@ -48,9 +48,6 @@ public final class Stage5 extends Stage {
 
 	/* Init */
 	public static void init(){
-		//Edge5.init();
-		//Center5.init();
-		//Corner5.init();
 		pTableEdgeCenter = new PruningTable(new Edge5State(CoordsHandler.edge5), new RawCoordState(CoordsHandler.center5), N_MOVES, 11);
 		pTableEdgeCenter.initTable(new File("ptable_stage5_edgcen.rbk"));
 		pTableEdgeCorner = new PruningTable(new Edge5State(CoordsHandler.edge5), new RawCoordState(CoordsHandler.corner5), N_MOVES, 11);
@@ -68,6 +65,28 @@ public final class Stage5 extends Stage {
 	@Override
 	public int getMovesNumber() {
 		return N_MOVES;
+	}
+
+	public int getId(){
+		return (edge.coord * corner.rc.N_COORD + corner.conjugate(edge.sym) ) * center.rc.N_COORD + center.conjugate(edge.sym);
+	}
+
+	public int getId(int sym){
+		return (edge.coord * corner.rc.N_COORD + corner.conjugate(sym) ) * center.rc.N_COORD + center.conjugate(sym);
+	}
+
+	public void setId(int id){
+		center.coord = id % center.rc.N_COORD;
+		id /= center.rc.N_COORD;
+		corner.coord = id % corner.rc.N_COORD;
+		edge.coord = id / corner.rc.N_COORD;
+		edge.sym = 0;
+	}
+
+	public void normalize(){
+		corner.coord = corner.conjugate(edge.sym);
+		center.coord = center.conjugate(edge.sym);
+		edge.sym = 0;
 	}
 
 }
