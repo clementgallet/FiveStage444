@@ -111,7 +111,7 @@ public final class Edge5 extends SymCoord {
 					Util.set1bit( isRepTable, raw_coord );
 					raw2sym[raw_coord] = ( repIdx << SYM_SHIFT ) + ( Symmetry.invSymIdx[s] << 2 ) + Symmetry.invSymIdx[cs];
 					if( raw_coord == u )
-						hasSym[repIdx][cs] |= (0x1L << s);
+						hasSym[repIdx][cs] |= (0x1L << Symmetry.invSymIdx[s]);
 				}
 			}
 			sym2raw[repIdx++] = u;
