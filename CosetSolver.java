@@ -37,7 +37,10 @@ public final class CosetSolver {
 		for (int length4 = 0; length4 < 19; ++length4) {
 			unique = 0;
 			pos = 0;
-			move_stage();
+			if(length4<14)
+				move_stage();
+			else
+				move_stage_backward();
 			/* Copy from allPos5_2 to allPos5 */
 			for( int idx=0; idx<N_SIZE5>>>3; idx++ )
 				allPos5[idx] |= allPos5_2[idx];
@@ -78,30 +81,34 @@ public final class CosetSolver {
 		save_stage(s, allPos5);
 	}
 
-
 	private static void save_stage(Stage5 s, byte[] array){
 		int idx = s.getId();
 		if(!Util.get1bit(array, idx)){
-			unique++;
-			int nsym = 1;
-			Util.set1bit(array, idx);
-			done++;
-			s.normalize();
-			for (int j=0; j<4; j++) {
-				long symS = s.edge.getSyms()[j];
-				for (int k=0; symS != 0; symS>>=1, k++) {
-					if ((symS & 0x1L) == 0) continue;
-					int idx_sym = s.getId(k*4+j);
-					if(!Util.get1bit(array, idx_sym)){
-						Util.set1bit(array, idx_sym);
-						done++;
-					}
-					if (idx_sym == idx)
-						nsym++;
-				}
-			}
-			pos += Stage5.N_SYM/nsym;
+			save_stage(s, idx, array);
 		}
+	}
+
+	private static void save_stage(Stage5 s, int idx, byte[] array){
+		unique++;
+		int nsym = 1;
+		Util.set1bit(array, idx);
+		done++;
+		s.normalize();
+		long[] symSs = s.edge.getSyms();
+		for (int j=0; j<4; j++) {
+			long symS = symSs[j];
+			for (int k=0; symS != 0; symS>>=1, k++) {
+				if ((symS & 0x1L) == 0) continue;
+				int idx_sym = s.getId(k*4+j);
+				if(!Util.get1bit(array, idx_sym)){
+					Util.set1bit(array, idx_sym);
+					done++;
+				}
+				if (idx_sym == idx)
+					nsym++;
+			}
+		}
+		pos += Stage5.N_SYM/nsym;
 	}
 
 	public static void move_stage (){
@@ -109,6 +116,10 @@ public final class CosetSolver {
 		Stage5 s2 = new Stage5();
 
 		for( int idx=0; idx<N_SIZE5; idx++){
+			if(allPos5[idx>>>3] == 0){
+				idx += 7;
+				continue;
+			}
 			if (!Util.get1bit(allPos5, idx)) continue;
 			s1.setId(idx);
 			for (int m=0; m<Stage5.N_MOVES; m++){
@@ -116,5 +127,26 @@ public final class CosetSolver {
 				save_stage(s2, allPos5_2);
 			}
 		}	
+	}
+
+	public static void move_stage_backward (){
+		Stage5 s1 = new Stage5();
+		Stage5 s2 = new Stage5();
+
+		for( int idx=0; idx<N_SIZE5; idx++){
+			if(allPos5_2[idx>>>3] == -1){
+				idx += 7;
+				continue;
+			}
+			if (Util.get1bit(allPos5_2, idx)) continue;
+			s1.setId(idx);
+			for (int m=0; m<Stage5.N_MOVES; m++){
+				s1.moveTo( m, s2 );
+				if(Util.get1bit(allPos5, s2.getId())){
+					save_stage(s1, idx, allPos5_2);
+					break;
+				}
+			}
+		}
 	}
 }

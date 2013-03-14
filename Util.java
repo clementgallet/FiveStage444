@@ -120,7 +120,7 @@ public final class Util {
 	 * @param index index at which the bit is fetched
 	 * @return the state of the bit
 	 */
-	public static boolean get1bit(byte[] table, int index) {
+	public static boolean get1bit(final byte[] table, int index) {
 		return (( table[index>>>3] >>> ( index & 0x7 )) & 1 ) != 0;
 	}
 
