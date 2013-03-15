@@ -72,19 +72,19 @@ public final class Stage4 extends Stage {
 		return N_MOVES;
 	}
 
-	public int getId(){
+	public long getId(){
 		return (edge.coord * corner.rc.N_COORD + corner.conjugate(edge.sym) ) * center.rc.N_COORD + center.conjugate(edge.sym);
 	}
 
-	public int getId(int sym){
+	public long getId(int sym){
 		return (edge.coord * corner.rc.N_COORD + corner.conjugate(sym) ) * center.rc.N_COORD + center.conjugate(sym);
 	}
 
-	public void setId(int id){
-		center.coord = id % center.rc.N_COORD;
+	public void setId(long id){
+		center.coord = (int)(id % center.rc.N_COORD);
 		id /= center.rc.N_COORD;
-		corner.coord = id % corner.rc.N_COORD;
-		edge.coord = id / corner.rc.N_COORD;
+		corner.coord = (int)(id % corner.rc.N_COORD);
+		edge.coord = (int)(id / corner.rc.N_COORD);
 		edge.sym = 0;
 	}
 

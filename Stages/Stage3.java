@@ -23,7 +23,7 @@ public final class Stage3 extends Stage {
 		edge = new Edge3State(CoordsHandler.edge3);
 		center = new SymCoordState(CoordsHandler.center3);
 		symState = center;
-		STAGE_SIZE = edge.rc.N_COORD * center.sc.N_COORD;
+		STAGE_SIZE = 2 * edge.rc.N_COORD * center.sc.N_COORD;
 	}
 
 	/* Pack from CubeState */
@@ -73,19 +73,19 @@ public final class Stage3 extends Stage {
 		return N_MOVES;
 	}
 
-	public int getId(){
+	public long getId(){
 		return ((center.coord * edge.rc.N_COORD + edge.conjugate(center.sym)) << 1) + parity;
 	}
 
-	public int getId(int sym){
+	public long getId(int sym){
 		return ((center.coord * edge.rc.N_COORD + edge.conjugate(sym)) << 1) + parity;
 	}
 
-	public void setId(int id){
+	public void setId(long id){
 		parity = (byte)(id & 1);
 		id >>= 1;
-		edge.coord = id % edge.rc.N_COORD;
-		center.coord = id / edge.rc.N_COORD;
+		edge.coord = (int)(id % edge.rc.N_COORD);
+		center.coord = (int)(id / edge.rc.N_COORD);
 		center.sym = 0;
 	}
 

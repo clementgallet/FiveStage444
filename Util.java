@@ -110,8 +110,8 @@ public final class Util {
 	 * @param table table where the bit is set
 	 * @param index index at which the bit is set
 	 */
-	public static void set1bit(byte[] table, int index) {
-		table[index>>>3] |= (byte)( 1 << ( index & 0x7 ));
+	public static void set1bit(byte[] table, long index) {
+		table[(int)(index>>>3)] |= (byte)( 1 << ( index & 0x7L ));
 	}
 
 	/**
@@ -120,8 +120,8 @@ public final class Util {
 	 * @param index index at which the bit is fetched
 	 * @return the state of the bit
 	 */
-	public static boolean get1bit(final byte[] table, int index) {
-		return (( table[index>>>3] >>> ( index & 0x7 )) & 1 ) != 0;
+	public static boolean get1bit(final byte[] table, long index) {
+		return (( table[(int)(index>>>3)] >>> ( index & 0x7L )) & 1 ) != 0;
 	}
 
 	/*** init_parity_table ***/

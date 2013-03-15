@@ -23,7 +23,7 @@ public final class Stage2 extends Stage {
 		centerF = new Center2State(CoordsHandler.center2);
 		symState = centerF;
 		centerB = new Center2State(CoordsHandler.center2);
-		STAGE_SIZE = edge.rc.N_COORD * centerF.sc.N_COORD * centerB.sc.N_COORD * centerB.sc.N_SYM;
+		STAGE_SIZE = (long) edge.rc.N_COORD * centerF.sc.N_COORD * centerB.sc.N_COORD * centerB.sc.N_SYM;
 	}
 
 	/* Pack from CubeState */
@@ -75,24 +75,24 @@ public final class Stage2 extends Stage {
 		return N_MOVES;
 	}
 
-	public int getId(){
-		return (centerF.coord * centerB.sc.N_COORD + centerB.coord )
-				              * centerB.sc.N_SYM   + Symmetry.symIdxMultiply[centerB.sym][centerF.sym] // TODO: Untested!!
+	public long getId(){
+		return (((long)centerF.coord * centerB.sc.N_COORD + centerB.coord )
+				              * centerB.sc.N_SYM   + Symmetry.symIdxMultiply[centerB.sym][centerF.sym]) // TODO: Untested!!
                               * edge.rc.N_COORD    + edge.conjugate(centerF.sym);
  	}
 
-	public int getId(int sym){
+	public long getId(int sym){
 		centerF.sym = sym;
 		return getId();
 	}
 
-	public void setId(int id){
-		edge.coord = id % edge.rc.N_COORD;
+	public void setId(long id){
+		edge.coord = (int)(id % edge.rc.N_COORD);
 		id /= edge.rc.N_COORD;
-		centerB.sym = id % centerB.sc.N_SYM;
+		centerB.sym = (int)(id % centerB.sc.N_SYM);
 		id /= centerB.sc.N_SYM;
-		centerB.coord = id % centerB.sc.N_COORD;
-		centerF.coord = id / centerB.sc.N_COORD;
+		centerB.coord = (int)(id % centerB.sc.N_COORD);
+		centerF.coord = (int)(id / centerB.sc.N_COORD);
 		centerF.sym = 0; // TODO: Untested either
 	}
 

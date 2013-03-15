@@ -47,7 +47,7 @@ abstract public class Stage {
 	 * The state is symmetry-reduced using the symmetry in the SymState.
 	 * @return the integer representing the state.
 	 */
-	abstract public int getId();
+	abstract public long getId();
 
 	/**
 	 * Returns an integer representing the stage state.
@@ -55,13 +55,13 @@ abstract public class Stage {
 	 * It is used when the SymState present some symmetries.
 	 * @return the integer representing the state.
 	 */
-	abstract public int getId(int sym);
+	abstract public long getId(int sym);
 
 	/**
 	 * Set the state corresponding to the given id.
 	 * @param id integer representing the state.
 	 */
-	abstract public void setId(int id);
+	abstract public void setId(long id);
 
 	/**
 	 * Compute the canonical form of the state.

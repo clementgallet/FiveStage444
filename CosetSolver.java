@@ -1,8 +1,6 @@
 package cg.fivestage444;
 
-import cg.fivestage444.Stages.Stage;
-import cg.fivestage444.Stages.Stage3;
-import cg.fivestage444.Stages.Stage4;
+import cg.fivestage444.Stages.*;
 
 public final class CosetSolver {
 
@@ -99,13 +97,13 @@ public final class CosetSolver {
 	}
 
 	private static void save_stage(Stage s, byte[] array){
-		int idx = s.getId();
+		long idx = s.getId();
 		if(!Util.get1bit(array, idx)){
 			save_stage(s, idx, array);
 		}
 	}
 
-	private static void save_stage(Stage s, int idx, byte[] array){
+	private static void save_stage(Stage s, long idx, byte[] array){
 		unique++;
 		int nsym = 1;
 		Util.set1bit(array, idx);
@@ -116,7 +114,7 @@ public final class CosetSolver {
 			long symS = symSs[j];
 			for (int k=0; symS != 0; symS>>=1, k++) {
 				if ((symS & 0x1L) == 0) continue;
-				int idx_sym = s.getId(k*symSs.length+j);
+				long idx_sym = s.getId(k*symSs.length+j);
 				if(!Util.get1bit(array, idx_sym)){
 					Util.set1bit(array, idx_sym);
 					done++;
@@ -132,8 +130,8 @@ public final class CosetSolver {
 		Stage s1 = subgroup_stage.newOne();
 		Stage s2 = subgroup_stage.newOne();
 
-		for( int idx=0; idx< subgroup_stage.STAGE_SIZE; idx++){
-			if(visited[idx>>>3] == 0){
+		for( long idx=0; idx< subgroup_stage.STAGE_SIZE; idx++){
+			if(visited[(int)(idx>>>3)] == 0){
 				idx += 7;
 				continue;
 			}
@@ -150,8 +148,8 @@ public final class CosetSolver {
 		Stage s1 = subgroup_stage.newOne();
 		Stage s2 = subgroup_stage.newOne();
 
-		for( int idx=0; idx< subgroup_stage.STAGE_SIZE; idx++){
-			if(visited_copy[idx>>>3] == 0xFF){
+		for( long idx=0; idx< subgroup_stage.STAGE_SIZE; idx++){
+			if(visited_copy[(int)(idx>>>3)] == 0xFF){
 				idx += 7;
 				continue;
 			}

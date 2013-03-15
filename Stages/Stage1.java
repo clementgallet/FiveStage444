@@ -46,8 +46,6 @@ public final class Stage1 extends Stage {
 
 	/* Init */
 	public static void init(){
-		//Edge1.init();
-		//Corner1.init();
 		pTable = new PruningTable(new SymCoordState(CoordsHandler.edge1), new RawCoordState(CoordsHandler.corner1), N_MOVES, 7);
 		pTable.initTable(new File("ptable_stage1.rbk"));
 	}
@@ -64,17 +62,17 @@ public final class Stage1 extends Stage {
 		return N_MOVES;
 	}
 
-	public int getId(){
+	public long getId(){
 		return edge.coord * corner.rc.N_COORD + corner.conjugate(edge.sym);
 	}
 
-	public int getId(int sym){
+	public long getId(int sym){
 		return edge.coord * corner.rc.N_COORD + corner.conjugate(sym);
 	}
 
-	public void setId(int id){
-		corner.coord = id % corner.rc.N_COORD;
-		edge.coord = id / corner.rc.N_COORD;
+	public void setId(long id){
+		corner.coord = (int)(id % corner.rc.N_COORD);
+		edge.coord = (int)(id / corner.rc.N_COORD);
 		edge.sym = 0;
 	}
 
