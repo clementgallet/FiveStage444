@@ -20,8 +20,10 @@ public final class Stage5 extends Stage {
 
 	public Stage5(){
 		edge = new Edge5State(CoordsHandler.edge5);
+		symState = edge;
 		center = new RawCoordState(CoordsHandler.center5);
 		corner = new RawCoordState(CoordsHandler.corner5);
+		STAGE_SIZE = edge.sc.N_COORD * corner.rc.N_COORD * center.rc.N_COORD;
 	}
 
 	/* Pack from CubeState */

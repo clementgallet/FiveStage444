@@ -22,6 +22,8 @@ public final class Stage3 extends Stage {
 	public Stage3(){
 		edge = new Edge3State(CoordsHandler.edge3);
 		center = new SymCoordState(CoordsHandler.center3);
+		symState = center;
+		STAGE_SIZE = edge.rc.N_COORD * center.sc.N_COORD;
 	}
 
 	/* Pack from CubeState */
@@ -54,8 +56,6 @@ public final class Stage3 extends Stage {
 			if (((( m / 3 ) % 3 ) == 1 ) && (( m % 3 ) < 2 ))
 				moveParity |= 1 << i;
 		}
-		//Edge3.init();
-		//Center3.init();
 		pTable = new PruningTable(new SymCoordState(CoordsHandler.center3), new Edge3State(CoordsHandler.edge3), N_MOVES, 11);
 		pTable.initTable(new File("ptable_stage3.rbk"));
 

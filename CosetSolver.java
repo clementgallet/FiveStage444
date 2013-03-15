@@ -1,83 +1,92 @@
 package cg.fivestage444;
 
+import cg.fivestage444.Stages.Stage;
+import cg.fivestage444.Stages.Stage3;
 import cg.fivestage444.Stages.Stage4;
-import cg.fivestage444.Stages.Stage5;
 
 public final class CosetSolver {
 
-	private static final int N_SIZE5 = 12*12*12*96*7444;
-
 	private static long unique;
 	private static long pos;
-	private static long sum_unique;
-	private static long sum_pos;
 	private static long done;
 
-	private static final byte[] allPos5 = new byte[N_SIZE5>>>3];
-	private static final byte[] allPos5_2 = new byte[N_SIZE5>>>3];
+	private static Stage subgroup_stage;
+	private static int N_MOVES_COSET;
+	private static int N_MOVES_SUBGROUP;
+
+	private static byte[] visited;
+	private static byte[] visited_copy;
 
 	public static void main(String[] args){
 		Symmetry.init();
 		Util.init();
 		CoordsHandler.init();
+		Stage3.init();
 		Stage4.init();
-		Stage5.init();
-		distTable5in4(0);
+		solve_coset(0, new Stage3(), new Stage4());
 	}
 
-	private static void distTable5in4(int coset){
+	private static void solve_coset(int coset, Stage cs, Stage ss){
+		Stage coset_stage = cs;
+		N_MOVES_COSET = cs.getMovesNumber();
+		subgroup_stage = ss;
+		N_MOVES_SUBGROUP = ss.getMovesNumber();
+
+		visited = new byte[(int)(ss.STAGE_SIZE>>>3)];
+		visited_copy = new byte[(int)(ss.STAGE_SIZE>>>3)];
+
 		System.out.println("Start analysing coset "+coset);
 
-		Stage4 s = new Stage4();
-		s.setId(coset);
+		coset_stage.setId(coset);
 
 		CubeState cube = new CubeState();
 		//s.unpack(cube);
 		cube.init();
+		coset_stage.pack(cube);
 
 		done = 0;
-		sum_pos = 0;
-		sum_unique = 0;
-		for (int length4 = 0; length4 < 20; ++length4) {
+		long sum_pos = 0;
+		long sum_unique = 0;
+		for (int length = 0; (length < 20) && (done < ss.STAGE_SIZE); ++length) {
 			unique = 0;
 			pos = 0;
-			if(length4<14)
+			if(length<13)
 				move_stage();
 			else
 				move_stage_backward();
 			/* Copy from allPos5_2 to allPos5 */
-			for( int idx=0; idx<N_SIZE5>>>3; idx++ )
-				allPos5[idx] |= allPos5_2[idx];
-			if(length4==0)
-				search_stage(s, cube, length4, 0, Moves.N_STAGE_MOVES);
+			for( int idx=0; idx< subgroup_stage.STAGE_SIZE >>>3; idx++ )
+				visited[idx] |= visited_copy[idx];
+			if(length<13)
+				search_stage(coset_stage, cube, length, 0, Moves.N_STAGE_MOVES);
 			/* Copy from allPos5 to allPos5_2 */
-			for( int idx=0; idx<N_SIZE5>>>3; idx++ )
-				allPos5_2[idx] |= allPos5[idx];
-			System.out.println(String.format("%2d%14d%12d", length4, pos, unique));
+			for( int idx=0; idx< subgroup_stage.STAGE_SIZE >>>3; idx++ )
+				visited_copy[idx] |= visited[idx];
+			System.out.println(String.format("%2d%14d%12d", length, pos, unique));
 			sum_pos += pos;
 			sum_unique += unique;
 		}
 		System.out.println(String.format("A %14d%12d", sum_pos, sum_unique));
 	}
 
-	private static void search_stage(Stage4 s, CubeState cube, int depth, int moves_done, int last_move){
+	private static void search_stage(Stage s, CubeState cube, int depth, int moves_done, int last_move){
 		if (depth == 0 && s.isSolved() ){
 			save_stage(cube);
 			return;
 		}
-		Stage4 t = new Stage4();
+		Stage t = s.newOne();
 		CubeState cube2 = new CubeState();
 		long mask = Moves.moves_mask[last_move];
-		if(depth==1)
-			mask &= 0xF000; // We only try moves not in stage 5.
-		for (int move = 0; mask != 0 && move < Stage4.N_MOVES; move++, mask >>>= 1) {
+		//if(depth==1)
+		//	mask &= 0xF000; // We only try moves not in stage 5.
+		for (int move = 0; mask != 0 && move < N_MOVES_COSET; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;
 
 			s.moveTo( move, t );
-			int dist4 = t.pruning();
-			if (dist4 > depth-1) continue;
-			if( ( (depth-1)!=dist4 ) && (depth+dist4<6) ) continue;
+			int dist = t.pruning();
+			if (dist > depth-1) continue;
+			if( ( (depth-1)!=dist ) && (depth+dist<6) ) continue;
 			cube.copyTo(cube2);
 			cube2.move(Moves.stage2moves[move]);
 			search_stage(t, cube2, depth - 1, moves_done + 1, move);
@@ -85,30 +94,29 @@ public final class CosetSolver {
 	}
 
 	private static void save_stage(CubeState cube){
-		Stage5 s = new Stage5();
-		s.pack(cube);
-		save_stage(s, allPos5);
+		subgroup_stage.pack(cube);
+		save_stage(subgroup_stage, visited);
 	}
 
-	private static void save_stage(Stage5 s, byte[] array){
+	private static void save_stage(Stage s, byte[] array){
 		int idx = s.getId();
 		if(!Util.get1bit(array, idx)){
 			save_stage(s, idx, array);
 		}
 	}
 
-	private static void save_stage(Stage5 s, int idx, byte[] array){
+	private static void save_stage(Stage s, int idx, byte[] array){
 		unique++;
 		int nsym = 1;
 		Util.set1bit(array, idx);
 		done++;
 		s.normalize();
-		long[] symSs = s.edge.getSyms();
-		for (int j=0; j<4; j++) {
+		long[] symSs = s.symState.getSyms();
+		for (int j=0; j<symSs.length; j++) {
 			long symS = symSs[j];
 			for (int k=0; symS != 0; symS>>=1, k++) {
 				if ((symS & 0x1L) == 0) continue;
-				int idx_sym = s.getId(k*4+j);
+				int idx_sym = s.getId(k*symSs.length+j);
 				if(!Util.get1bit(array, idx_sym)){
 					Util.set1bit(array, idx_sym);
 					done++;
@@ -117,42 +125,42 @@ public final class CosetSolver {
 					nsym++;
 			}
 		}
-		pos += Stage5.N_SYM/nsym;
+		pos += s.symState.sc.N_SYM/nsym;
 	}
 
 	public static void move_stage (){
-		Stage5 s1 = new Stage5();
-		Stage5 s2 = new Stage5();
+		Stage s1 = subgroup_stage.newOne();
+		Stage s2 = subgroup_stage.newOne();
 
-		for( int idx=0; idx<N_SIZE5; idx++){
-			if(allPos5[idx>>>3] == 0){
+		for( int idx=0; idx< subgroup_stage.STAGE_SIZE; idx++){
+			if(visited[idx>>>3] == 0){
 				idx += 7;
 				continue;
 			}
-			if (!Util.get1bit(allPos5, idx)) continue;
+			if (!Util.get1bit(visited, idx)) continue;
 			s1.setId(idx);
-			for (int m=0; m<Stage5.N_MOVES; m++){
+			for (int m=0; m<N_MOVES_SUBGROUP; m++){
 				s1.moveTo( m, s2 );
-				save_stage(s2, allPos5_2);
+				save_stage(s2, visited_copy);
 			}
 		}	
 	}
 
 	public static void move_stage_backward (){
-		Stage5 s1 = new Stage5();
-		Stage5 s2 = new Stage5();
+		Stage s1 = subgroup_stage.newOne();
+		Stage s2 = subgroup_stage.newOne();
 
-		for( int idx=0; idx<N_SIZE5; idx++){
-			if(allPos5_2[idx>>>3] == 0xFF){
+		for( int idx=0; idx< subgroup_stage.STAGE_SIZE; idx++){
+			if(visited_copy[idx>>>3] == 0xFF){
 				idx += 7;
 				continue;
 			}
-			if (Util.get1bit(allPos5_2, idx)) continue;
+			if (Util.get1bit(visited_copy, idx)) continue;
 			s1.setId(idx);
-			for (int m=0; m<Stage5.N_MOVES; m++){
+			for (int m=0; m<N_MOVES_SUBGROUP; m++){
 				s1.moveTo( m, s2 );
-				if(Util.get1bit(allPos5, s2.getId())){
-					save_stage(s1, idx, allPos5_2);
+				if(Util.get1bit(visited, s2.getId())){
+					save_stage(s1, idx, visited_copy);
 					break;
 				}
 			}

@@ -21,7 +21,9 @@ public final class Stage2 extends Stage {
 	public Stage2(){
 		edge = new RawCoordState(CoordsHandler.edge2);
 		centerF = new Center2State(CoordsHandler.center2);
+		symState = centerF;
 		centerB = new Center2State(CoordsHandler.center2);
+		STAGE_SIZE = edge.rc.N_COORD * centerF.sc.N_COORD * centerB.sc.N_COORD * centerB.sc.N_SYM;
 	}
 
 	/* Pack from CubeState */

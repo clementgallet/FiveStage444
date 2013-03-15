@@ -1,6 +1,18 @@
 package cg.fivestage444.Stages;
 
+import cg.fivestage444.Coordinates.SymCoordState;
+import cg.fivestage444.CubeState;
+
 abstract public class Stage {
+
+	public long STAGE_SIZE; /* Size of the stage. */
+	public SymCoordState symState;
+
+	/**
+	 * Convert a CubeState into the stage coordinates.
+	 * @param cube cube to convert from.
+	 */
+	abstract public void pack(CubeState cube);
 
 	/**
 	 * Check if the state is solved.
@@ -56,4 +68,15 @@ abstract public class Stage {
 	 */
 	abstract public void normalize();
 
+	public Stage newOne(){
+		Stage s = null;
+		try {
+			s = this.getClass().newInstance();
+		} catch (InstantiationException e) {
+			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+		}
+		return s;
+	}
 }

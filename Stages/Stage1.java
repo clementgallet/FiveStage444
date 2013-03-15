@@ -19,7 +19,9 @@ public final class Stage1 extends Stage {
 
 	public Stage1(){
 		edge = new SymCoordState(CoordsHandler.edge1);
+		symState = edge;
 		corner = new RawCoordState(CoordsHandler.corner1);
+		STAGE_SIZE = edge.sc.N_COORD * corner.rc.N_COORD;
 	}
 
 	/* Pack from CubeState */
