@@ -4,6 +4,7 @@ import cg.fivestage444.Coordinates.*;
 import cg.fivestage444.CoordsHandler;
 import cg.fivestage444.CubeState;
 import cg.fivestage444.PruningTable;
+import cg.fivestage444.Symmetry;
 
 import java.io.File;
 
@@ -70,6 +71,33 @@ public final class Stage2 extends Stage {
 	@Override
 	public int getMovesNumber() {
 		return N_MOVES;
+	}
+
+	public int getId(){
+		return (centerF.coord * centerB.sc.N_COORD + centerB.coord )
+				              * centerB.sc.N_SYM   + Symmetry.symIdxMultiply[centerB.sym][centerF.sym] // TODO: Untested!!
+                              * edge.rc.N_COORD    + edge.conjugate(centerF.sym);
+ 	}
+
+	public int getId(int sym){
+		centerF.sym = sym;
+		return getId();
+	}
+
+	public void setId(int id){
+		edge.coord = id % edge.rc.N_COORD;
+		id /= edge.rc.N_COORD;
+		centerB.sym = id % centerB.sc.N_SYM;
+		id /= centerB.sc.N_SYM;
+		centerB.coord = id % centerB.sc.N_COORD;
+		centerF.coord = id / centerB.sc.N_COORD;
+		centerF.sym = 0; // TODO: Untested either
+	}
+
+	public void normalize(){
+		edge.coord = edge.conjugate(centerF.sym);
+		centerB.sym = Symmetry.symIdxMultiply[centerB.sym][centerF.sym];
+		centerF.sym = 0;
 	}
 
 }

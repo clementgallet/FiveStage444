@@ -74,6 +74,10 @@ public final class Stage4 extends Stage {
 		return (edge.coord * corner.rc.N_COORD + corner.conjugate(edge.sym) ) * center.rc.N_COORD + center.conjugate(edge.sym);
 	}
 
+	public int getId(int sym){
+		return (edge.coord * corner.rc.N_COORD + corner.conjugate(sym) ) * center.rc.N_COORD + center.conjugate(sym);
+	}
+
 	public void setId(int id){
 		center.coord = id % center.rc.N_COORD;
 		id /= center.rc.N_COORD;
@@ -81,4 +85,11 @@ public final class Stage4 extends Stage {
 		edge.coord = id / corner.rc.N_COORD;
 		edge.sym = 0;
 	}
+
+	public void normalize(){
+		corner.coord = corner.conjugate(edge.sym);
+		center.coord = center.conjugate(edge.sym);
+		edge.sym = 0;
+	}
+
 }

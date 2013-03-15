@@ -73,4 +73,25 @@ public final class Stage3 extends Stage {
 		return N_MOVES;
 	}
 
+	public int getId(){
+		return ((center.coord * edge.rc.N_COORD + edge.conjugate(center.sym)) << 1) + parity;
+	}
+
+	public int getId(int sym){
+		return ((center.coord * edge.rc.N_COORD + edge.conjugate(sym)) << 1) + parity;
+	}
+
+	public void setId(int id){
+		parity = (byte)(id & 1);
+		id >>= 1;
+		edge.coord = id % edge.rc.N_COORD;
+		center.coord = id / edge.rc.N_COORD;
+		center.sym = 0;
+	}
+
+	public void normalize(){
+		edge.coord = edge.conjugate(center.sym);
+		center.sym = 0;
+	}
+
 }

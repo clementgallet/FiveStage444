@@ -30,4 +30,30 @@ abstract public class Stage {
 	 */
 	abstract public int getMovesNumber();
 
+	/**
+	 * Returns an integer representing the stage state.
+	 * The state is symmetry-reduced using the symmetry in the SymState.
+	 * @return the integer representing the state.
+	 */
+	abstract public int getId();
+
+	/**
+	 * Returns an integer representing the stage state.
+	 * The state is symmetry-reduced using the given symmetry identifier.
+	 * It is used when the SymState present some symmetries.
+	 * @return the integer representing the state.
+	 */
+	abstract public int getId(int sym);
+
+	/**
+	 * Set the state corresponding to the given id.
+	 * @param id integer representing the state.
+	 */
+	abstract public void setId(int id);
+
+	/**
+	 * Compute the canonical form of the state.
+	 */
+	abstract public void normalize();
+
 }
