@@ -161,6 +161,23 @@ public class PruningTable {
 					done++;
 					if (inv) {
 						writeTable(i, depth);
+						int nsym = 1;
+						unique++;
+						for (int j=0; j<sym.getSyms().length; j++) {
+							long symS = sym.getSyms()[j];
+							for (int k=0; symS != 0; symS>>=1, k++) {
+								if ((symS & 0x1L) == 0) continue;
+								sym.sym = k*sym.getSyms().length + j;
+								int sym_idx = get();
+								if( sym_idx == i )
+									nsym++;
+								if (readTable(sym_idx) == 0x0f) {
+									writeTable(sym_idx, depth);
+									done++;
+								}
+							}
+						}
+						pos += 48/nsym; // TODO: find the correct value or drop off
 						break;
 					} else {
 						writeTable(idx, depth);

@@ -134,7 +134,7 @@ public final class CosetSolver {
 		Stage5 s2 = new Stage5();
 
 		for( int idx=0; idx<N_SIZE5; idx++){
-			if(allPos5_2[idx>>>3] == -1){
+			if(allPos5_2[idx>>>3] == 0xFF){
 				idx += 7;
 				continue;
 			}
