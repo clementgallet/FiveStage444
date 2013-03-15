@@ -9,6 +9,8 @@ public final class CosetSolver {
 
 	private static long unique;
 	private static long pos;
+	private static long sum_unique;
+	private static long sum_pos;
 	private static long done;
 
 	private static final byte[] allPos5 = new byte[N_SIZE5>>>3];
@@ -34,7 +36,9 @@ public final class CosetSolver {
 		cube.init();
 
 		done = 0;
-		for (int length4 = 0; length4 < 19; ++length4) {
+		sum_pos = 0;
+		sum_unique = 0;
+		for (int length4 = 0; length4 < 20; ++length4) {
 			unique = 0;
 			pos = 0;
 			if(length4<14)
@@ -49,8 +53,11 @@ public final class CosetSolver {
 			/* Copy from allPos5 to allPos5_2 */
 			for( int idx=0; idx<N_SIZE5>>>3; idx++ )
 				allPos5_2[idx] |= allPos5[idx];
-			System.out.println(String.format("%2d%12d%10d", length4, pos, unique));
+			System.out.println(String.format("%2d%14d%12d", length4, pos, unique));
+			sum_pos += pos;
+			sum_unique += unique;
 		}
+		System.out.println(String.format("A %14d%12d", sum_pos, sum_unique));
 	}
 
 	private static void search_stage(Stage4 s, CubeState cube, int depth, int moves_done, int last_move){
@@ -61,6 +68,8 @@ public final class CosetSolver {
 		Stage4 t = new Stage4();
 		CubeState cube2 = new CubeState();
 		long mask = Moves.moves_mask[last_move];
+		if(depth==1)
+			mask &= 0xF000; // We only try moves not in stage 5.
 		for (int move = 0; mask != 0 && move < Stage4.N_MOVES; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;
