@@ -147,7 +147,7 @@ public final class CosetSolver {
 		CubeState cube2 = new CubeState();
 		long mask = Moves.moves_mask[last_move];
 		if(depth==1)
-			mask &= 0xF000; // We only try moves not in stage 5.
+			mask &= (1 << N_MOVES_COSET) - (1 << N_MOVES_SUBGROUP); // We only try moves not in subgroup stage.
 		for (int move = 0; mask != 0 && move < N_MOVES_COSET; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;
