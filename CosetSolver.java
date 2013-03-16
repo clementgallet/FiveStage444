@@ -30,10 +30,11 @@ public final class CosetSolver implements Runnable {
 		CoordsHandler.init();
 		Stage4.init();
 		Stage5.init();
-		solve_coset(0, new Stage4(), new Stage5());
+		CosetSolver coset_solver = new CosetSolver();
+		coset_solver.solve_coset(0, new Stage4(), new Stage5());
 	}
 
-	private static void solve_coset(int coset, Stage cs, Stage ss){
+	private void solve_coset(int coset, Stage cs, Stage ss){
 		coset_stage = cs;
 		N_MOVES_COSET = cs.getMovesNumber();
 		subgroup_stage = ss;
@@ -57,15 +58,15 @@ public final class CosetSolver implements Runnable {
 		for (length = 0; (length < 20) && (global_done < ss.STAGE_SIZE); ++length) {
 			global_unique = 0;
 			global_pos = 0;
-			//if(length<13)
-			//	move_stage();
-			//else
-			//	move_stage_backward();
+			if(length<14)
+				move_stage();
+			else
+				move_stage_backward();
 			/* Copy from allPos5_2 to allPos5 */
 			for( int idx=0; idx< subgroup_stage.STAGE_SIZE >>>3; idx++ )
 				visited[idx] |= visited_copy[idx];
-			//if(length<13)
-			search_stage(length);
+			if(length<13)
+				search_stage(length);
 			/* Copy from allPos5 to allPos5_2 */
 			for( int idx=0; idx< subgroup_stage.STAGE_SIZE >>>3; idx++ )
 				visited_copy[idx] |= visited[idx];
@@ -90,9 +91,11 @@ public final class CosetSolver implements Runnable {
 	}
 
 	public void update_values(){
-		global_pos += pos;
-		global_unique += unique;
-		global_done += done;
+		synchronized (visited){
+			global_pos += pos;
+			global_unique += unique;
+			global_done += done;
+		}
 	}
 
 	public void run(){
@@ -153,8 +156,8 @@ public final class CosetSolver implements Runnable {
 		Stage t = s.newOne();
 		CubeState cube2 = new CubeState();
 		long mask = Moves.moves_mask[last_move];
-		//if(depth==1)
-		//	mask &= 0xF000; // We only try moves not in stage 5.
+		if(depth==1)
+			mask &= 0xF000; // We only try moves not in stage 5.
 		for (int move = 0; mask != 0 && move < N_MOVES_COSET; move++, mask >>>= 1) {
 			if (( mask & 1 ) == 0)
 				continue;
@@ -162,7 +165,7 @@ public final class CosetSolver implements Runnable {
 			s.moveTo( move, t );
 			int dist = t.pruning();
 			if (dist > depth-1) continue;
-			//if( ( (depth-1)!=dist ) && (depth+dist<6) ) continue;
+			if( ( (depth-1)!=dist ) && (depth+dist<6) ) continue;
 			cube.copyTo(cube2);
 			cube2.move(Moves.stage2moves[move]);
 			search_stage(t, cube2, depth - 1, moves_done + 1, move);
@@ -210,6 +213,9 @@ public final class CosetSolver implements Runnable {
 	public void move_stage (){
 		Stage s1 = subgroup_stage.newOne();
 		Stage s2 = subgroup_stage.newOne();
+		unique = 0;
+		pos = 0;
+		done = 0;
 
 		for( long idx=0; idx< subgroup_stage.STAGE_SIZE; idx++){
 			if(visited[(int)(idx>>>3)] == 0){
@@ -222,12 +228,16 @@ public final class CosetSolver implements Runnable {
 				s1.moveTo( m, s2 );
 				save_stage(s2, visited_copy);
 			}
-		}	
+		}
+		update_values();
 	}
 
 	public void move_stage_backward (){
 		Stage s1 = subgroup_stage.newOne();
 		Stage s2 = subgroup_stage.newOne();
+		unique = 0;
+		pos = 0;
+		done = 0;
 
 		for( long idx=0; idx< subgroup_stage.STAGE_SIZE; idx++){
 			if(visited_copy[(int)(idx>>>3)] == 0xFF){
@@ -244,5 +254,6 @@ public final class CosetSolver implements Runnable {
 				}
 			}
 		}
+		update_values();
 	}
 }
