@@ -89,7 +89,7 @@ public final class CosetSolver implements Runnable {
 		}
 	}
 
-	public synchronized void update_values(){
+	public void update_values(){
 		global_pos += pos;
 		global_unique += unique;
 		global_done += done;
@@ -169,19 +169,22 @@ public final class CosetSolver implements Runnable {
 		}
 	}
 
-	private synchronized void save_stage(CubeState cube){
-		subgroup_stage.pack(cube);
-		save_stage(subgroup_stage, visited);
+	private void save_stage(CubeState cube){
+		Stage s = subgroup_stage.newOne();
+		s.pack(cube);
+		save_stage(s, visited);
 	}
 
-	private synchronized void save_stage(Stage s, byte[] array){
+	private void save_stage(Stage s, byte[] array){
 		long idx = s.getId();
-		if(!Util.get1bit(array, idx)){
-			save_stage(s, idx, array);
+		synchronized (array){
+			if(!Util.get1bit(array, idx)){
+				save_stage(s, idx, array);
+			}
 		}
 	}
 
-	private synchronized void save_stage(Stage s, long idx, byte[] array){
+	private void save_stage(Stage s, long idx, byte[] array){
 		unique++;
 		int nsym = 1;
 		Util.set1bit(array, idx);
