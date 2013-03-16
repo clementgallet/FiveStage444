@@ -2,16 +2,12 @@ package cg.fivestage444;
 
 import cg.fivestage444.Stages.*;
 
-public final class CosetSolver implements Runnable {
+public final class CosetSolver {
 	public static int length;
 
-	private long unique = 0;
-	private long pos = 0;
-	private long done = 0;
-
-	private static long global_unique;
-	private static long global_pos;
-	private static long global_done;
+	private static long unique = 0;
+	private static long pos = 0;
+	private static long done = 0;
 
 	public static CubeState init_cube;
 	public static Stage coset_stage;
@@ -52,81 +48,75 @@ public final class CosetSolver implements Runnable {
 		init_cube.init();
 		coset_stage.pack(init_cube);
 
-		global_done = 0;
+		done = 0;
 		long sum_pos = 0;
 		long sum_unique = 0;
-		for (length = 0; (length < 20) && (global_done < ss.STAGE_SIZE); ++length) {
-			global_unique = 0;
-			global_pos = 0;
-			if(length<14)
-				move_stage();
-			else
-				move_stage_backward();
+		for (length = 0; (length < 20) && (done < ss.STAGE_SIZE); ++length) {
+			unique = 0;
+			pos = 0;
+			//if(length<14)
+			//	move_stage();
+			//else
+			//	move_stage_backward();
 			/* Copy from allPos5_2 to allPos5 */
 			for( int idx=0; idx< subgroup_stage.STAGE_SIZE >>>3; idx++ )
 				visited[idx] |= visited_copy[idx];
-			if(length<13)
+			//if(length<1)
 				search_stage(length);
 			/* Copy from allPos5 to allPos5_2 */
 			for( int idx=0; idx< subgroup_stage.STAGE_SIZE >>>3; idx++ )
 				visited_copy[idx] |= visited[idx];
-			System.out.println(String.format("%2d%14d%12d", length, global_pos, global_unique));
-			sum_pos += global_pos;
-			sum_unique += global_unique;
+			System.out.println(String.format("%2d%14d%12d", length, pos, unique));
+			sum_pos += pos;
+			sum_unique += unique;
 		}
 		System.out.println(String.format("A %14d%12d", sum_pos, sum_unique));
 	}
 
-	private static synchronized int get_starting_moves(){
-		while(true){
-			int starting_moves = current_starting_moves++;
-			if(starting_moves >= N_MOVES_COSET*N_MOVES_COSET)
-				return -1;
-			int move1 = starting_moves / N_MOVES_COSET;
-			int move2 = starting_moves % N_MOVES_COSET;
-			long mask = Moves.moves_mask[move1];
-			if(((mask >> move2) & 1) == 1)
-				return starting_moves;
-		}
-	}
+	private class CosetSolverThread extends Thread{
 
-	public void update_values(){
-		synchronized (visited){
-			global_pos += pos;
-			global_unique += unique;
-			global_done += done;
-		}
-	}
-
-	public void run(){
-		if(length <= 3)
-			search_stage(coset_stage, init_cube, length, 0, Moves.N_STAGE_MOVES);
-		else{
-			int starting_moves = get_starting_moves();
-			while(starting_moves != -1){ //  TODO: Use a do-while instead.
-				int move1 = starting_moves / N_MOVES_COSET;
-				int move2 = starting_moves % N_MOVES_COSET;
-				Stage s = coset_stage.newOne();
-				Stage t = coset_stage.newOne();
-				CubeState cube = new CubeState();
-				init_cube.copyTo(cube);
-				s.moveTo(move1, t);
-				t.moveTo(move2, s);
-				cube.move(Moves.stage2moves[move1]);
-				cube.move(Moves.stage2moves[move2]);
-				search_stage(s, cube, length-2, 2, move2);
-				starting_moves = get_starting_moves();
+		public void run(){
+			if(length <= 3)
+				search_stage(coset_stage, init_cube, length, 0, Moves.N_STAGE_MOVES);
+			else{
+				int starting_moves = get_starting_moves();
+				while(starting_moves != -1){ //  TODO: Use a do-while instead.
+					int move1 = starting_moves / N_MOVES_COSET;
+					int move2 = starting_moves % N_MOVES_COSET;
+					Stage s = coset_stage.newOne();
+					Stage t = coset_stage.newOne();
+					CubeState cube = new CubeState();
+					init_cube.copyTo(cube);
+					s.moveTo(move1, t);
+					t.moveTo(move2, s);
+					cube.move(Moves.stage2moves[move1]);
+					cube.move(Moves.stage2moves[move2]);
+					search_stage(s, cube, length-2, 2, move2);
+					starting_moves = get_starting_moves();
+				}
 			}
 		}
-		update_values();
+
+		private synchronized int get_starting_moves(){
+			while(true){
+				int starting_moves = current_starting_moves++;
+				if(starting_moves >= N_MOVES_COSET*N_MOVES_COSET)
+					return -1;
+				int move1 = starting_moves / N_MOVES_COSET;
+				int move2 = starting_moves % N_MOVES_COSET;
+				long mask = Moves.moves_mask[move1];
+				if(((mask >> move2) & 1) == 1)
+					return starting_moves;
+			}
+		}
 	}
 
-	private static void search_stage(int depth){
+	private void search_stage(int depth){
 		int N_THREADS = 4;
 		Thread[] threads = new Thread[N_THREADS];
 		current_starting_moves = 0;
 		if(depth <= 3){
-			threads[0] = new Thread(new CosetSolver());
+			threads[0] = new CosetSolverThread();
 			threads[0].start();
 			try {
 				threads[0].join();
@@ -136,7 +126,7 @@ public final class CosetSolver implements Runnable {
 		}
 		else{
 			for (int t=0; t<N_THREADS; t++){
-				threads[t] = new Thread(new CosetSolver());
+				threads[t] = new CosetSolverThread();
 				threads[t].start();
 			}
 			try {
@@ -199,12 +189,12 @@ public final class CosetSolver implements Runnable {
 			for (int k=0; symS != 0; symS>>=1, k++) {
 				if ((symS & 0x1L) == 0) continue;
 				long idx_sym = s.getId(k*symSs.length+j);
-				if(!Util.get1bit(array, idx_sym)){
+				if (idx_sym == idx)
+					nsym++;
+				else if(!Util.get1bit(array, idx_sym)){
 					Util.set1bit(array, idx_sym);
 					done++;
 				}
-				if (idx_sym == idx)
-					nsym++;
 			}
 		}
 		pos += s.symState.sc.N_SYM/nsym;
@@ -229,7 +219,6 @@ public final class CosetSolver implements Runnable {
 				save_stage(s2, visited_copy);
 			}
 		}
-		update_values();
 	}
 
 	public void move_stage_backward (){
@@ -254,6 +243,5 @@ public final class CosetSolver implements Runnable {
 				}
 			}
 		}
-		update_values();
 	}
 }
