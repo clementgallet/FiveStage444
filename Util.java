@@ -110,7 +110,7 @@ public final class Util {
 	 * @param table table where the bit is set
 	 * @param index index at which the bit is set
 	 */
-	public static void set1bit(byte[] table, long index) {
+	public static synchronized void set1bit(byte[] table, long index) {
 		table[(int)(index>>>3)] |= (byte)( 1 << ( index & 0x7L ));
 	}
 
@@ -120,7 +120,7 @@ public final class Util {
 	 * @param index index at which the bit is fetched
 	 * @return the state of the bit
 	 */
-	public static boolean get1bit(final byte[] table, long index) {
+	public static synchronized boolean get1bit(final byte[] table, long index) {
 		return (( table[(int)(index>>>3)] >>> ( index & 0x7L )) & 1 ) != 0;
 	}
 
