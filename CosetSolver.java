@@ -19,6 +19,7 @@ public final class CosetSolver {
 	private static byte[] visited_copy;
 
 	private static int current_starting_moves;
+	private static long current_idx;
 
 	public static void main(String[] args){
 		Symmetry.init();
@@ -54,14 +55,11 @@ public final class CosetSolver {
 		for (length = 0; (length < 20) && (done < ss.STAGE_SIZE); ++length) {
 			unique = 0;
 			pos = 0;
-			//if(length<14)
-			//	move_stage();
-			//else
-			//	move_stage_backward();
+			move_stage_threaded();
 			/* Copy from allPos5_2 to allPos5 */
 			for( int idx=0; idx< subgroup_stage.STAGE_SIZE >>>3; idx++ )
 				visited[idx] |= visited_copy[idx];
-			//if(length<1)
+			if(length<1)
 				search_stage(length);
 			/* Copy from allPos5 to allPos5_2 */
 			for( int idx=0; idx< subgroup_stage.STAGE_SIZE >>>3; idx++ )
@@ -108,6 +106,58 @@ public final class CosetSolver {
 				if(((mask >> move2) & 1) == 1)
 					return starting_moves;
 			}
+		}
+	}
+
+	private class SubgroupSolverThread extends Thread{
+		long BATCH_SIZE = 7444;
+
+		public void run(){
+			Stage s1 = subgroup_stage.newOne();
+			Stage s2 = subgroup_stage.newOne();
+
+			long idxBatch=getNewIdxBatch();
+			while (idxBatch >= 0){
+				for( long idx=idxBatch; idx< idxBatch + BATCH_SIZE; idx++){
+					if(length<15){
+						if(visited[(int)(idx>>>3)] == 0){
+							idx += 7;
+							continue;
+						}
+						if (!Util.get1bit(visited, idx)) continue;
+						s1.setId(idx);
+						for (int m=0; m<N_MOVES_SUBGROUP; m++){
+							s1.moveTo( m, s2 );
+							save_stage(s2, visited_copy);
+						}
+					}
+					else{
+						if(visited_copy[(int)(idx>>>3)] == 0xFF){
+							idx += 7;
+							continue;
+						}
+						if (Util.get1bit(visited_copy, idx)) continue;
+						s1.setId(idx);
+						for (int m=0; m<N_MOVES_SUBGROUP; m++){
+							s1.moveTo( m, s2 );
+							if(Util.get1bit(visited, s2.getId())){
+								Util.set1bit(visited_copy, idx);
+								break;
+							}
+						}
+					}
+				}
+				idxBatch=getNewIdxBatch();
+			}
+		}
+
+		public synchronized long getNewIdxBatch(){
+			long idx = current_idx;
+			current_idx += BATCH_SIZE;
+			if(idx >= subgroup_stage.STAGE_SIZE)
+				return -1;
+			else
+				return idx;
 		}
 	}
 
@@ -170,18 +220,11 @@ public final class CosetSolver {
 
 	private void save_stage(Stage s, byte[] array){
 		long idx = s.getId();
-		synchronized (array){
-			if(!Util.get1bit(array, idx)){
-				save_stage(s, idx, array);
-			}
-		}
-	}
-
-	private void save_stage(Stage s, long idx, byte[] array){
-		unique++;
-		int nsym = 1;
+		if(Util.get1bit(array, idx)) return;
+		//unique++;
+		//int nsym = 1;
 		Util.set1bit(array, idx);
-		done++;
+		//done++;
 		s.normalize();
 		long[] symSs = s.symState.getSyms();
 		for (int j=0; j<symSs.length; j++) {
@@ -189,59 +232,30 @@ public final class CosetSolver {
 			for (int k=0; symS != 0; symS>>=1, k++) {
 				if ((symS & 0x1L) == 0) continue;
 				long idx_sym = s.getId(k*symSs.length+j);
-				if (idx_sym == idx)
-					nsym++;
-				else if(!Util.get1bit(array, idx_sym)){
+				//if (idx_sym == idx)
+				//	nsym++;
+				//else if(!Util.get1bit(array, idx_sym)){
 					Util.set1bit(array, idx_sym);
-					done++;
-				}
+				//	done++;
+				//}
 			}
 		}
-		pos += s.symState.sc.N_SYM/nsym;
+		//pos += s.symState.sc.N_SYM/nsym;
 	}
 
-	public void move_stage (){
-		Stage s1 = subgroup_stage.newOne();
-		Stage s2 = subgroup_stage.newOne();
-		unique = 0;
-		pos = 0;
-		done = 0;
-
-		for( long idx=0; idx< subgroup_stage.STAGE_SIZE; idx++){
-			if(visited[(int)(idx>>>3)] == 0){
-				idx += 7;
-				continue;
-			}
-			if (!Util.get1bit(visited, idx)) continue;
-			s1.setId(idx);
-			for (int m=0; m<N_MOVES_SUBGROUP; m++){
-				s1.moveTo( m, s2 );
-				save_stage(s2, visited_copy);
-			}
+	public void move_stage_threaded (){
+		int N_THREADS = 4;
+		Thread[] threads = new Thread[N_THREADS];
+		current_idx = 0;
+		for (int t=0; t<N_THREADS; t++){
+			threads[t] = new SubgroupSolverThread();
+			threads[t].start();
 		}
-	}
-
-	public void move_stage_backward (){
-		Stage s1 = subgroup_stage.newOne();
-		Stage s2 = subgroup_stage.newOne();
-		unique = 0;
-		pos = 0;
-		done = 0;
-
-		for( long idx=0; idx< subgroup_stage.STAGE_SIZE; idx++){
-			if(visited_copy[(int)(idx>>>3)] == 0xFF){
-				idx += 7;
-				continue;
-			}
-			if (Util.get1bit(visited_copy, idx)) continue;
-			s1.setId(idx);
-			for (int m=0; m<N_MOVES_SUBGROUP; m++){
-				s1.moveTo( m, s2 );
-				if(Util.get1bit(visited, s2.getId())){
-					save_stage(s1, idx, visited_copy);
-					break;
-				}
-			}
+		try {
+			for (int t=0; t<N_THREADS; t++)
+				threads[t].join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 }
