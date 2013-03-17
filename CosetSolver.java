@@ -111,7 +111,7 @@ public final class CosetSolver {
 
 			long idxBatch=getNewIdxBatch();
 			while (idxBatch >= 0){
-				for( long idx=idxBatch; idx< idxBatch + BATCH_SIZE; idx++){
+				for( long idx=idxBatch; idx< Math.min(idxBatch + BATCH_SIZE,subgroup_stage.STAGE_SIZE); idx++){
 					if(length<15){
 						if(visited[(int)(idx>>>3)] == 0){
 							idx = (((idx>>>3)+1)<<3)-1;
@@ -227,7 +227,7 @@ public final class CosetSolver {
 				long idx_sym = s.getId(k*symSs.length+j);
 				//	nsym++;
 				//else if(!Util.get1bit(array, idx_sym)){
-				if (idx_sym == idx)
+				if (idx_sym != idx)
 					Util.set1bit(array, idx_sym);
 				//	done++;
 				//}
