@@ -286,4 +286,19 @@ public final class Util {
 		if(times > 1)
 			cycleAndOrient(tab, a, b, c, d, times - 1);
 	}
+
+	public static long bitCount(final byte[] tab){
+		long count = 0;
+		for (byte elem : tab){
+			//while(elem!=0){
+			//	count += elem & 1;
+			//	elem >>>= 1;
+			//}
+			while(elem != 0){
+				elem &= elem-1;
+				count++;
+			}
+		}
+		return count;
+	}
 }

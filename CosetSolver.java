@@ -5,10 +5,7 @@ import cg.fivestage444.Stages.*;
 public final class CosetSolver {
 	public static int length;
 
-	private static long unique = 0;
-	private static long pos = 0;
-	private static long done = 0;
-
+	public static long unique;
 	public static CubeState init_cube;
 	public static Stage coset_stage;
 	private static Stage subgroup_stage;
@@ -49,12 +46,9 @@ public final class CosetSolver {
 		init_cube.init();
 		coset_stage.pack(init_cube);
 
-		done = 0;
-		long sum_pos = 0;
-		long sum_unique = 0;
-		for (length = 0; (length < 20) && (done < ss.STAGE_SIZE); ++length) {
+		long count = 0;
+		for (length = 0; (length < 20) && (count < ss.STAGE_SIZE); ++length) {
 			unique = 0;
-			pos = 0;
 			move_stage_threaded();
 			/* Copy from allPos5_2 to allPos5 */
 			for( int idx=0; idx< subgroup_stage.STAGE_SIZE >>>3; idx++ )
@@ -64,11 +58,10 @@ public final class CosetSolver {
 			/* Copy from allPos5 to allPos5_2 */
 			for( int idx=0; idx< subgroup_stage.STAGE_SIZE >>>3; idx++ )
 				visited_copy[idx] |= visited[idx];
-			System.out.println(String.format("%2d%14d%12d", length, pos, unique));
-			sum_pos += pos;
-			sum_unique += unique;
+			count = Util.bitCount(visited);
+			System.out.println(String.format("%2d%14d%14d", length, count, unique));
 		}
-		System.out.println(String.format("A %14d%12d", sum_pos, sum_unique));
+		System.out.println(String.format("A %14d", count));
 	}
 
 	private class CosetSolverThread extends Thread{
@@ -121,7 +114,7 @@ public final class CosetSolver {
 				for( long idx=idxBatch; idx< idxBatch + BATCH_SIZE; idx++){
 					if(length<15){
 						if(visited[(int)(idx>>>3)] == 0){
-							idx += 7;
+							idx = (((idx>>>3)+1)<<3)-1;
 							continue;
 						}
 						if (!Util.get1bit(visited, idx)) continue;
@@ -232,9 +225,9 @@ public final class CosetSolver {
 			for (int k=0; symS != 0; symS>>=1, k++) {
 				if ((symS & 0x1L) == 0) continue;
 				long idx_sym = s.getId(k*symSs.length+j);
-				//if (idx_sym == idx)
 				//	nsym++;
 				//else if(!Util.get1bit(array, idx_sym)){
+				if (idx_sym == idx)
 					Util.set1bit(array, idx_sym);
 				//	done++;
 				//}
