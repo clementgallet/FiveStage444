@@ -126,7 +126,7 @@ public final class CosetSolver {
 					}
 					else{
 						if(visited_copy[(int)(idx>>>3)] == 0xFF){
-							idx += 7;
+							idx = (((idx>>>3)+1)<<3)-1;
 							continue;
 						}
 						if (Util.get1bit(visited_copy, idx)) continue;
