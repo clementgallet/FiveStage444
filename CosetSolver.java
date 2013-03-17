@@ -144,9 +144,12 @@ public final class CosetSolver {
 			}
 		}
 
-		public synchronized long getNewIdxBatch(){
-			long idx = current_idx;
-			current_idx += BATCH_SIZE;
+		public long getNewIdxBatch(){
+			long idx;
+			synchronized (visited){
+				idx = current_idx;
+				current_idx += BATCH_SIZE;
+			}
 			if(idx >= subgroup_stage.STAGE_SIZE)
 				return -1;
 			else
