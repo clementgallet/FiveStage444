@@ -49,7 +49,7 @@ public final class Stage5 extends Stage {
 
 	/* Init */
 	public static void init(){
-		pTable = new PruningTable(new Edge5State(CoordsHandler.edge5), new RawCoordState(CoordsHandler.center5), new RawCoordState(CoordsHandler.corner5), N_MOVES, 16);
+		pTable = new PruningTable(new Edge5State(CoordsHandler.edge5), new RawCoordState(CoordsHandler.corner5), new RawCoordState(CoordsHandler.center5), N_MOVES, 16);
 		pTable.initTable(new File("ptable_stage5.rbk"));
 	}
 

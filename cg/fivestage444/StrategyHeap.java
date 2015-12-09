@@ -9,12 +9,12 @@ public class StrategyHeap extends Strategy {
 	public int n_solutions; /* the number of solutions found */
 
 	/* We are searching for a limited number of solutions, to store the best ones into our heap. */
-	public int[] max_solutions = {100, 100, 100, 100, 1};
+	public int[] max_solutions = {1000, 1000, 1000, 1000, 1};
 
 	/* We keep a limited number of solutions of this stage for the next stage search.
 	 * It is usually lower than the result of howManySolutions().
 	 */
-	public int[] max_attempts = {50, 50, 50, 50, 1};
+	public int[] max_attempts = {500, 500, 500, 500, 1};
 
 	public StrategyHeap(PriorityQueue<CubeAndSolution> heap){
 		this.heap = heap;

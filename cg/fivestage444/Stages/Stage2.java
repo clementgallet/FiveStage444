@@ -33,7 +33,7 @@ public final class Stage2 extends Stage {
 	/* Check if solved */
 	@Override
 	public boolean isSolved(){
-		return edge.isSolved() && center.isSolved(); // FIXME! Seems to be e==414 & sym==7 or e==0 & sym==14. Why???
+		return center.isSolved() && edge.isSolved() && ((edge.coord == 0) ^ (center.sym < 8)); // Seems to be e==414 & sym==7 or e==0 & sym==14. Why???
 	}
 
 	/* Move */
@@ -46,7 +46,7 @@ public final class Stage2 extends Stage {
 
 	/* Init */
 	public static void init(){
-		pTable = new PruningTable(new SymCoordState(CoordsHandler.center2), new RawCoordState(CoordsHandler.edge2), N_MOVES, 11);
+		pTable = new PruningTable(new SymCoordState(CoordsHandler.center2), new RawCoordState(CoordsHandler.edge2), N_MOVES, 13);
 		pTable.initTable(new File("ptable_stage2.rbk"));
 	}
 

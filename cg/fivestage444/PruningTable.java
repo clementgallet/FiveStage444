@@ -128,10 +128,15 @@ public class PruningTable {
 		for (int i = 0; i < (n_size+1)/2; i++)
 			table[i] = -1;
 
-		int done = sym.sc.SolvedStates.length;
-		for (RawCoordState raw1 : raws) done *= raw1.rc.solvedStates.length;
 
-		for (int d = 0; d < done; d++){
+		int starting_pos = sym.sc.SolvedStates.length;
+		for (RawCoordState raw1 : raws) starting_pos *= raw1.rc.solvedStates.length;
+
+		long pos = 0;
+		long unique = 0;
+		long done = 0;
+
+		for (int d = 0; d < starting_pos; d++){
 			int dd = d;
 			for (RawCoordState raw : raws) {
 				raw.coord = raw.rc.solvedStates[dd % raw.rc.solvedStates.length];
@@ -139,8 +144,29 @@ public class PruningTable {
 			}
 			sym.coord = sym.sc.SolvedStates[dd];
 			sym.sym = 0;
-			writeTable(get(), 0);
+			int idx = get();
+			writeTable(idx, 0);
+			done++;
+
+			int nsym = 1;
+			unique++;
+			for (int j=0; j<sym.getSyms().length; j++) {
+				long symS = sym.getSyms()[j];
+				for (int k=0; symS != 0; symS>>=1, k++) {
+					if ((symS & 0x1L) == 0) continue;
+					sym.sym = k*sym.getSyms().length + j;
+					int sym_idx = get();
+					if( sym_idx == idx )
+						nsym++;
+					if (readTable(sym_idx) == 0x0f) {
+						writeTable(sym_idx, 0);
+						done++;
+					}
+				}
+			}
+			pos += sym.sc.N_SYM/nsym;
 		}
+		System.out.println(String.format("%2d%12d%10d", 0, pos, unique));
 
 		/* Build the table */
 		int depth = 0;
@@ -149,8 +175,8 @@ public class PruningTable {
 			int select = inv ? 0x0f : depth;
 			int check = inv ? depth : 0x0f;
 			depth++;
-			int pos = 0;
-			int unique = 0;
+			pos = 0;
+			unique = 0;
 			for (int i=0; i<n_size; i++) {
 				if (readTable(i) != select) continue;
 				set(i);
@@ -177,7 +203,7 @@ public class PruningTable {
 								}
 							}
 						}
-						pos += 48/nsym; // TODO: find the correct value or drop off
+						pos += sym.sc.N_SYM/nsym;
 						break;
 					} else {
 						writeTable(idx, depth);
@@ -198,7 +224,7 @@ public class PruningTable {
 								}
 							}
 						}
-						pos += 48/nsym; // TODO: find the correct value or drop off
+						pos += sym.sc.N_SYM/nsym;
 					}
 				}
 			}
