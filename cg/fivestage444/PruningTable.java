@@ -145,6 +145,8 @@ public class PruningTable {
 			sym.coord = sym.sc.SolvedStates[dd];
 			sym.sym = 0;
 			int idx = get();
+			if (readTable(idx) == 0)
+				continue;
 			writeTable(idx, 0);
 			done++;
 
