@@ -15,33 +15,25 @@ public final class Stage2 extends Stage {
 	private static PruningTable pTable;
 
 	public final RawCoordState edge;
-	public final Center2State centerF;
-	public final Center2State centerB;
+	public final SymCoordState center;
 
 	public Stage2(){
 		edge = new RawCoordState(CoordsHandler.edge2);
-		centerF = new Center2State(CoordsHandler.center2);
-		symState = centerF;
-		centerB = new Center2State(CoordsHandler.center2);
-		STAGE_SIZE = (long) edge.rc.N_COORD * centerF.sc.N_COORD * centerB.sc.N_COORD * centerB.sc.N_SYM;
+		center = new SymCoordState(CoordsHandler.center2);
+		symState = center;
+		STAGE_SIZE = (long) edge.rc.N_COORD * center.sc.N_COORD;
 	}
 
 	/* Pack from CubeState */
 	public void pack(CubeState cube){
 		edge.pack(cube.edges);
-		/* TODO: Deal with the two centers thing */
-		centerF.pack(cube.centers, 4);
-		centerB.pack(cube.centers, 5);
+		center.pack(cube.centers);
 	}
 
 	/* Check if solved */
 	@Override
 	public boolean isSolved(){
-		return edge.isSolved()
-			   && ( centerF.coord == centerB.coord )
-			   && (( centerF.sym & 0x8 ) == ( centerB.sym & 0x8 ))
-			   && (( edge.coord == 0 ) ^ (( centerF.sym & 0x8 ) == 0 ))
-			   && centerF.isSolved();
+		return edge.isSolved() && center.isSolved(); // FIXME! Seems to be e==414 & sym==7 or e==0 & sym==14. Why???
 	}
 
 	/* Move */
@@ -49,15 +41,12 @@ public final class Stage2 extends Stage {
 	public void moveTo( int m, Stage t ){
 		Stage2 s = (Stage2)t;
 		edge.moveTo( m, s.edge );
-		centerF.moveTo( m, s.centerF );
-		centerB.moveTo( m, s.centerB );
+		center.moveTo( m, s.center );
 	}
 
 	/* Init */
 	public static void init(){
-		//edge.init();
-		//Center2.init();
-		pTable = new PruningTable(new Center2State(CoordsHandler.center2), new RawCoordState(CoordsHandler.edge2), N_MOVES, 7);
+		pTable = new PruningTable(new SymCoordState(CoordsHandler.center2), new RawCoordState(CoordsHandler.edge2), N_MOVES, 11);
 		pTable.initTable(new File("ptable_stage2.rbk"));
 	}
 
@@ -66,8 +55,7 @@ public final class Stage2 extends Stage {
 
 	@Override
 	public int pruning(){
-		return Math.max( pTable.readTable(centerF.coord * edge.rc.N_COORD + edge.conjugate(centerF.sym)),
-		                 pTable.readTable(centerB.coord * edge.rc.N_COORD + edge.conjugate(centerB.sym)));
+		return pTable.readTable(center.coord * edge.rc.N_COORD + edge.conjugate(center.sym));
 	}
 
 	@Override
@@ -76,30 +64,22 @@ public final class Stage2 extends Stage {
 	}
 
 	public long getId(){
-		return (((long)centerF.coord * centerB.sc.N_COORD + centerB.coord )
-				              * centerB.sc.N_SYM   + Symmetry.symIdxMultiply[centerB.sym][centerF.sym]) // TODO: Untested!!
-                              * edge.rc.N_COORD    + edge.conjugate(centerF.sym);
+		return (long)center.coord * center.sc.N_COORD + edge.conjugate(center.sym);
  	}
 
 	public long getId(int sym){
-		centerF.sym = sym;
-		return getId();
+		return (long)center.coord * center.sc.N_COORD + edge.conjugate(sym);
 	}
 
 	public void setId(long id){
 		edge.coord = (int)(id % edge.rc.N_COORD);
-		id /= edge.rc.N_COORD;
-		centerB.sym = (int)(id % centerB.sc.N_SYM);
-		id /= centerB.sc.N_SYM;
-		centerB.coord = (int)(id % centerB.sc.N_COORD);
-		centerF.coord = (int)(id / centerB.sc.N_COORD);
-		centerF.sym = 0; // TODO: Untested either
+		center.coord = (int)(id / edge.rc.N_COORD);
+		center.sym = 0;
 	}
 
 	public void normalize(){
-		edge.coord = edge.conjugate(centerF.sym);
-		centerB.sym = Symmetry.symIdxMultiply[centerB.sym][centerF.sym];
-		centerF.sym = 0;
+		edge.coord = edge.conjugate(center.sym);
+		center.sym = 0;
 	}
 
 }

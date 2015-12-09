@@ -32,16 +32,11 @@ public final class Center3 extends SymCoord {
 		int j = 7;
 		int r = 8;
 		int s = 4;
-		int last_c = -1;
 		for (int i = 15; i >= 0; --i) {
 			if (cenbm < Util.Cnk[i][r] ) {
 				cube.cubies[i] = (byte)(ud++/4);
 			} else {
 				cenbm -= Util.Cnk[i][r--];
-				if (last_c == -1){
-					cube.cubies[i] = 3;
-					last_c = i;
-				}
 				if (cenbm4of8 < Util.Cnk[j][s]) {
 					cube.cubies[i] = 3;
 				} else {

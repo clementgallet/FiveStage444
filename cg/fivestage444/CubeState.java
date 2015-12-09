@@ -4,6 +4,8 @@ import cg.fivestage444.Cubies.CenterCubies;
 import cg.fivestage444.Cubies.CornerCubies;
 import cg.fivestage444.Cubies.Cubies;
 import cg.fivestage444.Cubies.EdgeCubies;
+import cg.fivestage444.Stages.Stage;
+import cg.fivestage444.Stages.Stage1;
 
 import java.util.Random;
 
@@ -46,14 +48,23 @@ public final class CubeState implements Cloneable {
 	 */
 
 	public void randomise(Random r, int n) {
+		randomise(r, n, new Stage1());
+	}
+
+	/**
+	 * Generates a random cube inside a stage subgroup
+	 */
+
+	public void randomise(Random r, int n, Stage stage) {
 		init ();
 
+		int moves_allowed = stage.getMovesNumber();
 		int move;
 		int last_move = Moves.N_STAGE_MOVES;
 		for (int i=0; i<n; i++){
-			move = r.nextInt(Moves.N_STAGE_MOVES);
+			move = r.nextInt(moves_allowed);
 			while ((( Moves.moves_mask[last_move] >>> move ) & 1L ) == 0){
-				move = r.nextInt(Moves.N_STAGE_MOVES);
+				move = r.nextInt(moves_allowed);
 			}
 			move(Moves.stage2moves[move]);
 			System.out.print(Moves.move_strings[Moves.stage2moves[move]] + " ");

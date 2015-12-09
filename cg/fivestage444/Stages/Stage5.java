@@ -11,8 +11,7 @@ public final class Stage5 extends Stage {
 
 	public final static int N_MOVES = 12;
 	public final static int N_SYM = 192;
-	private static PruningTable pTableEdgeCenter;
-	private static PruningTable pTableEdgeCorner;
+	private static PruningTable pTable;
 
 	public final Edge5State edge;
 	public final RawCoordState center;
@@ -50,18 +49,15 @@ public final class Stage5 extends Stage {
 
 	/* Init */
 	public static void init(){
-		pTableEdgeCenter = new PruningTable(new Edge5State(CoordsHandler.edge5), new RawCoordState(CoordsHandler.center5), N_MOVES, 11);
-		pTableEdgeCenter.initTable(new File("ptable_stage5_edgcen.rbk"));
-		pTableEdgeCorner = new PruningTable(new Edge5State(CoordsHandler.edge5), new RawCoordState(CoordsHandler.corner5), N_MOVES, 11);
-		pTableEdgeCorner.initTable(new File("ptable_stage5_edgcor.rbk"));
+		pTable = new PruningTable(new Edge5State(CoordsHandler.edge5), new RawCoordState(CoordsHandler.center5), new RawCoordState(CoordsHandler.corner5), N_MOVES, 16);
+		pTable.initTable(new File("ptable_stage5.rbk"));
 	}
 
 	/** Pruning functions **/
 
 	@Override
 	public int pruning(){
-		return Math.max( pTableEdgeCenter.readTable(edge.coord * center.rc.N_COORD + center.conjugate(edge.sym)),
-		                 pTableEdgeCorner.readTable(edge.coord * corner.rc.N_COORD + corner.conjugate(edge.sym)));
+		return pTable.readTable((edge.coord * corner.rc.N_COORD + corner.conjugate(edge.sym) ) * center.rc.N_COORD + center.conjugate(edge.sym));
 	}
 
 	@Override
