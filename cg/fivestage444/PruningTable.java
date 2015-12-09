@@ -87,6 +87,7 @@ public class PruningTable {
 	}
 
 	public void initTable(){
+		table = new byte[(n_size+1)/2];
 		fillTable();
 	}
 
@@ -124,7 +125,6 @@ public class PruningTable {
 		}
 
 		/* Create the pruning table and fill with the solved states */
-		table = new byte[(n_size+1)/2];
 		for (int i = 0; i < (n_size+1)/2; i++)
 			table[i] = -1;
 
