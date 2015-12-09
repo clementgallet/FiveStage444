@@ -33,7 +33,7 @@ public final class Stage2 extends Stage {
 	/* Check if solved */
 	@Override
 	public boolean isSolved(){
-		return edge.isSolved() && center.isSolved(); // FIXME!
+		return edge.isSolved() && center.isSolved(); // FIXME! Seems to be e==414 & sym==7 or e==0 & sym==14. Why???
 	}
 
 	/* Move */

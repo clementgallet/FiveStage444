@@ -15,7 +15,7 @@ public final class Center2 extends SymCoord {
 		SYM_MASK = ( 1 << SYM_SHIFT ) - 1;
 		N_MOVES = Stage2.N_MOVES;
 
-		SolvedStates = new int[]{ 122, 242, 243, 245, 246, 247 }; // FIXME!
+		SolvedStates = new int[]{ 56962, 56970, 56971, 56973, 56974, 56975 };
 		cubieType = new CenterCubies();
 		rightMultOrConjugate = RIGHTMULT;
 		HASHCODE_RAW2SYM = -1;
