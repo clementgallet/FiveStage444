@@ -15,12 +15,12 @@ public final class Stage3 extends Stage {
 	private static int moveParity;
 	private static PruningTable pTable;
 
-	public final Edge3State edge;
+	public final RawCoordState edge;
 	public final SymCoordState center;
 	public byte parity;
 
 	public Stage3(){
-		edge = new Edge3State(CoordsHandler.edge3);
+		edge = new RawCoordState(CoordsHandler.edge3);
 		center = new SymCoordState(CoordsHandler.center3);
 		symState = center;
 		STAGE_SIZE = 2 * edge.rc.N_COORD * center.sc.N_COORD;
@@ -56,7 +56,7 @@ public final class Stage3 extends Stage {
 			if (((( m / 3 ) % 3 ) == 1 ) && (( m % 3 ) < 2 ))
 				moveParity |= 1 << i;
 		}
-		pTable = new PruningTable(new SymCoordState(CoordsHandler.center3), new Edge3State(CoordsHandler.edge3), N_MOVES, 11);
+		pTable = new PruningTable(new SymCoordState(CoordsHandler.center3), new RawCoordState(CoordsHandler.edge3), N_MOVES, 11);
 		pTable.initTable(new File("ptable_stage3.rbk"));
 
 	}
