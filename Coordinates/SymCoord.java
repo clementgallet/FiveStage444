@@ -78,8 +78,10 @@ public abstract class SymCoord {
 			}
 			sym2raw[repIdx++] = u;
 		}
-		if(repIdx != N_COORD)
+		if(repIdx != N_COORD) {
 			l.severe("The number of sym coordinates is not correct!");
+			System.out.println(repIdx);
+		}
 		if((HASHCODE_RAW2SYM != -1) && (Arrays.hashCode(raw2sym) != HASHCODE_RAW2SYM))
 			l.severe("Array raw2sym has not been filled correctly!");
 		if((HASHCODE_SYM2RAW != -1) && (Arrays.hashCode(sym2raw) != HASHCODE_SYM2RAW))
