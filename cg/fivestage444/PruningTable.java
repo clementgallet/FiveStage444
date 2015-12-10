@@ -8,6 +8,7 @@ import java.io.*;
 
 public class PruningTable {
 
+	private final static boolean FULL_PRUNING = true;
 	private int n_moves;
 	private int n_size;
 	private int inv_depth;
@@ -55,11 +56,17 @@ public class PruningTable {
 	}
 
 	private void writeTable (int index, int value) {
-		table[index >> 1] ^= (0x0f ^ value) << ((index & 1) << 2);
+		if (FULL_PRUNING)
+			table[index] = (byte)value;
+		else
+			table[index >> 1] ^= (0x0f ^ value) << ((index & 1) << 2);
 	}
 
 	public int readTable (int index) {
-		return (table[index >> 1] >> ((index & 1) << 2)) & 0x0f;
+		if (FULL_PRUNING)
+			return table[index];
+		else
+			return (table[index >> 1] >> ((index & 1) << 2)) & 0x0f;
 	}
 
 	private int get(){
@@ -87,12 +94,18 @@ public class PruningTable {
 	}
 
 	public void initTable(){
-		table = new byte[(n_size+1)/2];
+		if (FULL_PRUNING)
+			table = new byte[n_size];
+		else
+			table = new byte[(n_size+1)/2];
 		fillTable();
 	}
 
 	public void initTable(File f){
-		table = new byte[(n_size+1)/2];
+		if (FULL_PRUNING)
+			table = new byte[n_size];
+		else
+			table = new byte[(n_size+1)/2];
 		try {
 			DataInputStream in = new DataInputStream(new FileInputStream(f));
 			in.readFully(table);
@@ -124,8 +137,19 @@ public class PruningTable {
 			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 		}
 
+		int table_size;
+		int empty_value;
+		if (FULL_PRUNING) {
+			table_size = n_size;
+			empty_value = -1;
+		}
+		else {
+			table_size = (n_size+1)/2;
+			empty_value = 0x0f;
+		}
+
 		/* Create the pruning table and fill with the solved states */
-		for (int i = 0; i < (n_size+1)/2; i++)
+		for (int i = 0; i < table_size; i++)
 			table[i] = -1;
 
 
@@ -162,7 +186,7 @@ public class PruningTable {
 					int sym_idx = get();
 					if( sym_idx == idx )
 						nsym++;
-					if (readTable(sym_idx) == 0x0f) {
+					if (readTable(sym_idx) == empty_value) {
 						writeTable(sym_idx, 0);
 						done++;
 					}
@@ -176,10 +200,10 @@ public class PruningTable {
 
 		/* Build the table */
 		int depth = 0;
-		while (( done < n_size ) && ( depth < 15 )) {
+		while (( done < n_size ) && ( depth < (FULL_PRUNING?21:15) )) {
 			boolean inv = depth > inv_depth;
-			int select = inv ? 0x0f : depth;
-			int check = inv ? depth : 0x0f;
+			int select = inv ? empty_value : depth;
+			int check = inv ? depth : empty_value;
 			depth++;
 			pos = 0;
 			unique = 0;
@@ -203,7 +227,7 @@ public class PruningTable {
 								int sym_idx = get();
 								if( sym_idx == i )
 									nsym++;
-								if (readTable(sym_idx) == 0x0f) {
+								if (readTable(sym_idx) == empty_value) {
 									writeTable(sym_idx, depth);
 									done++;
 								}
@@ -224,7 +248,7 @@ public class PruningTable {
 								int sym_idx = p.get();
 								if( sym_idx == idx )
 									nsym++;
-								if (readTable(sym_idx) == 0x0f) {
+								if (readTable(sym_idx) == empty_value) {
 									writeTable(sym_idx, depth);
 									done++;
 								}
