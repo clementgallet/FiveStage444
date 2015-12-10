@@ -4,6 +4,8 @@ import cg.fivestage444.Cubies.Cubies;
 import cg.fivestage444.Cubies.EdgeCubies;
 import cg.fivestage444.Stages.Stage2;
 import cg.fivestage444.Util;
+import cg.fivestage444.Moves;
+import cg.fivestage444.Symmetry;
 
 public final class Edge2 extends RawCoord {
 
@@ -11,7 +13,7 @@ public final class Edge2 extends RawCoord {
 		N_COORD = 420;
 		N_SYM = Stage2.N_SYM;
 		N_MOVES = Stage2.N_MOVES;
-		solvedStates = new int[]{0, 414};
+		solvedStates = new int[]{414};
 		cubieType = new EdgeCubies();
 		rightMultOrConjugate = RIGHTMULT;
 		HASHCODE_MOVE = -619515515;
@@ -46,4 +48,27 @@ public final class Edge2 extends RawCoord {
 		int u = Util.get8Perm (cube.cubies, 16);
 		return Util.perm_to_420[u];
 	}
+
+	/* Initialisations */
+	@Override
+	public void init(){
+		move = new short[N_COORD][N_MOVES];
+		conj = new short[N_COORD][N_SYM];
+
+		EdgeCubies cube1 = new EdgeCubies();
+		EdgeCubies cube2 = new EdgeCubies();
+		for (int u = 0; u < N_COORD; ++u) {
+			unpack( cube1, u );
+			for (int m = 0; m < N_MOVES; ++m) {
+				cube1.move (Moves.stage2moves[m], cube2);
+				move[u][m] = (short)(pack( cube2 ));
+			}
+			for (int s = 0; s < N_SYM; ++s) {
+				cube1.rightMult (Symmetry.symIdxMultiply[s & 0x04][Symmetry.invSymIdx[s & 0xfb]], cube2);
+				cube2.leftMult (s & 0x04); // conjugate the mirror symmetry only
+				conj[u][s] = (short) pack(cube2);
+			}
+		}
+	}
+
 }

@@ -33,7 +33,7 @@ public final class Stage2 extends Stage {
 	/* Check if solved */
 	@Override
 	public boolean isSolved(){
-		return center.isSolved() && edge.isSolved() && ((edge.coord == 0) ^ (center.sym < 8)); // Seems to be e==414 & sym==7 or e==0 & sym==14. Why???
+		return center.isSolved() && edge.isSolved(center.sym);
 	}
 
 	/* Move */
