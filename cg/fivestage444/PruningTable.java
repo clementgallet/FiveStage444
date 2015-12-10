@@ -133,7 +133,9 @@ public class PruningTable {
 		for (RawCoordState raw1 : raws) starting_pos *= raw1.rc.solvedStates.length;
 
 		long pos = 0;
+		long total_pos = 0;
 		long unique = 0;
+		long total_unique = 0;
 		long done = 0;
 
 		for (int d = 0; d < starting_pos; d++){
@@ -168,7 +170,9 @@ public class PruningTable {
 			}
 			pos += sym.sc.N_SYM/nsym;
 		}
-		System.out.println(String.format("%2d%12d%10d", 0, pos, unique));
+		total_pos += pos;
+		total_unique += unique;
+		System.out.println(String.format("%2d %12d %10d", 0, pos, unique));
 
 		/* Build the table */
 		int depth = 0;
@@ -230,7 +234,11 @@ public class PruningTable {
 					}
 				}
 			}
-			System.out.println(String.format("%2d%12d%10d", depth, pos, unique));
+			total_pos += pos;
+			total_unique += unique;
+			System.out.println(String.format("%2d %12d %10d", depth, pos, unique));
 		}
+		System.out.println("-- ------------ ----------");
+		System.out.println(String.format("   %12d %10d", total_pos, total_unique));
 	}
 }

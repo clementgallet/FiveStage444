@@ -15,12 +15,13 @@ Turns allowed:
     L, L', L2, l, l', l2, R, R', R2, r, r', r2,
     F, F', F2, f, f', f2, B, B', B2, b, b', b2
 
-One-time whole cube rotations allowed:
-120-degree turns (either direction) about the UFL-DBR axis.
+One-time whole cube rotations allowed: 120-degree turns (either direction) about the UFL-DBR axis.
 
 There are 3 possibilities for each corner orientation and 8 corners so 3^8 possibilities. However, when setting the orientation of 7 corners, the 8th is fixed so only 3^7 = 2,187 cases.
+
 For the edges, we have to record the position of 8 edges among 24 slots, so C^24_8 = 735,471 cases. This coordinate is reduced by symmetry. There are 48 symmetries, which let to only 15582 cases.
-The overall space of this stage is 2,187*15,582 = 34,077,834 which is small enough to allow using a single pruning table.
+
+The overall space of this stage is 2,187 x 15,582 = 34,077,834.
 
 Stage 2
 -------
@@ -35,11 +36,13 @@ Turns allowed:
            L2, l, l', l2,        R2, r, r', r2,
            F2, f, f', f2,        B2, b, b', b2
 
-One-time whole cube rotations allowed:
-90-degree turn about U-D axis.
+One-time whole cube rotations allowed: 90-degree turn about U-D axis.
 
-As for edges of stage 1, there are C^24_8 = 735,471 cases for storing the position of the 8 F/B centers, and we also need to keep track of which center are F and which are B, requiring another C^8_4 = 70, so a total of 735,471*70=51,482,970. This is a bit too much for a single coordinate, so we split the centers into fcenterF and centerB coordinates, each one having C^24_4 = 10626 positions. With symmetry reduction (16 symmetries), both coordinates are reduced to 716.
+As for edges of stage 1, there are C^24_8 = 735,471 cases for storing the position of the 8 F/B centers, and we also need to keep track of which center are F and which are B, requiring another C^8_4 = 70, so a total of 735,471 x 70 = 51,482,970. However, we don't need to track the exactly colour of those centers, but only if two centers are from the same or different colours. This reduce by a factor of two, giving 735,471 x 35 = 25,741,485. This (large) coordinate is reduced by symmetry (16 symmetries), giving 1,612,515 unique coordinates.
+
 For the edges, the total number of permutations is 8! = 40,320 and there are 96 configurations that are considered solved (square group), so the coordinate is 40,320/96 = 420.
+
+The overall space of this stage is 1,612,515 x 420 = 677,256,300
 
 Stage 3
 -------
@@ -54,9 +57,11 @@ Turns allowed:
            L2,        l2,        R2,        r2,
            F2, f, f', f2,        B2, b, b', b2
 
-For centers, this is the same as for stage 2, except that now there are only 16 remaining slots for one center, as F and B faces are filled during stage 2. Using the same principle, the center coordinate is C^16_8 * C^8_4 = 12,870 * 70 = 900,900. Moreover, we don't need to keep track of which center is the U center and which one is the D center. This allows to cut in half the number of cases, so 450,450. Using symmetry reduction (8 in this stage), we only need to store 56,980 positions.
+For centers, this is the same as for stage 2, except that now there are only 16 remaining slots for one center, as F and B faces are filled during stage 2. Using the same principle, the center coordinate is C^16_8 x C^8_4 = 12,870 x 35 = 450,450. Using symmetry reduction (8 in this stage), we only need to store 56,980 positions.
+
 For edges, we need to put half of the edges in half of the positions, so C^16_8 = 12,870 cases. The even permutation required gives a extra factor of 2.
-The total size of this stage is 56,980 * 12,870 * 2 = 1,466,665,200.
+
+The overall space of this stage is 56,980 x 12,870 x 2 = 1,466,665,200.
 
 Stage 4
 -------
@@ -73,9 +78,12 @@ Turns allowed:
           F2, f2,        B2, b2
 
 The corner coordinate is exactly like the edge coordinate from stage 2, which gives 420 cases.
-The remaining centers are already in the right faces, so we only need to put them in the right order: C^8_4 = 70. Using the same trick as for stage 3, we only need to keep 35 cases.
-The edges are as the corners, except that there are two groups of edges so 420*420=176,400. In fact, only half of the cases happen, because of the parity condition from stage 3, so 88,200 real cases. We are doing the symmetry reduction on this coordinate (16 symmetries), which leave only 5,968 cases.
-The overall size is 420*35*5,968 = 87,729,600
+
+The remaining centers are already in the right faces, so we only need to put them in the right order: C^8_4 = 70. Using the same trick as for stage 2 and 3, we only need to keep 35 cases.
+
+The edges are as the corners, except that there are two groups of edges so 420 x 420 = 176,400. In fact, only half of the cases happen, because of the parity condition from stage 3, so 88,200 real cases. We are doing the symmetry reduction on this coordinate (16 symmetries), which leave only 5,968 cases.
+
+The overall size is 420 x 35 x 5,968 = 87,729,600
 
 Stage 5
 -------
@@ -90,8 +98,11 @@ Turns allowed:
     F2, f2, B2, b2
 
 There are 96 positions for corners.
-Edges are like 3 independent groups of corners, so 96*96*96 = 884,736 positions. We are doing a symmetry reduction, and we use a trick to get as much as 192 different symmetries, so that this coordinate has only 7,444 positions (see the appropriate section).
+
+Edges are like 3 independent groups of corners, so 96 x 96 x 96 = 884,736 positions. We are doing a symmetry reduction, and we use a trick to get as much as 192 different symmetries, so that this coordinate has only 7,444 positions. In addition to the usual 48 symmetries of the cube, we add 4 cube rotations (generated by x2 and y2) because the cube can be in four different solved positions. This allows us to reduce this coordinate by a factor of 48 x 4 = 192.
+
 For centers, each pairs of opposite centers have 12 different configurations, so 12*12*12 = 1,728 positions.
+
 The overall size is 96*7,444*1,728 = 1,234,870,272
 
 ==============
@@ -220,29 +231,29 @@ Stage 2 - *** not updated ***
            ------------  -------------
          21,622,847,400  2,703,114,810
 
-Stage 3 - *** not updated ***
+Stage 3 - 8 symmetries
 
                      Slice turns
                ------------------------
     distance   positions         unique
     --------   ---------         ------
-       0              12              7
-       1              24              6
-       2             300             47
-       3           3,112            427
-       4          32,620          4,241
-       5         338,480         42,806
-       6       3,434,920        430,920
-       7      33,776,210      4,227,153
-       8     311,683,476     38,977,409
-       9   2,439,504,410    304,981,049
-      10  10,729,223,804  1,341,243,036
-      11   9,375,305,144  1,171,989,581
-      12     295,853,444     36,991,377
-      13          10,042          1,360
-      14               2              1
+       0               6              6
+       1              12              4
+       2             150             28
+       3           1,556            230
+       4          16,310          2,185
+       5         169,240         21,630
+       6       1,717,460        216,142
+       7      16,888,105      2,115,779
+       8     155,841,738     19,496,147
+       9   1,219,752,205    152,510,075
+      10   5,364,611,902    670,664,810
+      11   4,687,652,572    586,031,875
+      12     147,926,722     18,500,776
+      13           5,021            732
+      14               1              1
           --------------  -------------
-          23,189,166,000  2,898,889,420
+          11,594,583,000  1,466,665,200
 
 
 Stage 4 - 16 symmetries - problem with positions, not correct.
