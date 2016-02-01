@@ -14,10 +14,10 @@ public final class Main {
 		for(Handler h : rootLogger.getHandlers()) {
 			h.setLevel(DEFAULT_LOG_LEVEL);
 		}
-		int random_count = 10;
+		int random_count = 1;
 		Tools.init();
 		CubeState c = new CubeState();
-		SolverHeap s = new SolverHeap();
+		SolverSlack s = new SolverSlack();
 		Random gen = new Random(43);
 		long time = System.currentTimeMillis();
 		for (int i = 0; i < random_count; ++i) {

@@ -147,12 +147,12 @@ public final class Moves{
 	}
 
 	public static final String[] move_strings = {
-	"U", "U'", "U2", "2U", "2U'", "2U2", "Uw", "Uw'", "Uw2",
-	"D", "D'", "D2", "2D", "2D'", "2D2", "Dw", "Dw'", "Dw2",
-	"L", "L'", "L2", "2L", "2L'", "2L2", "Lw", "Lw'", "Lw2",
-	"R", "R'", "R2", "2R", "2R'", "2R2", "Rw", "Rw'", "Rw2",
-	"F", "F'", "F2", "2F", "2F'", "2F2", "Fw", "Fw'", "Fw2",
-	"B", "B'", "B2", "2B", "2B'", "2B2", "Bw", "Bw'", "Bw2"
+	"U", "U'", "U2", "2U", "2U'", "2U2", "u", "u'", "u2",
+	"D", "D'", "D2", "2D", "2D'", "2D2", "d", "d'", "d2",
+	"L", "L'", "L2", "2L", "2L'", "2L2", "l", "l'", "l2",
+	"R", "R'", "R2", "2R", "2R'", "2R2", "r", "r'", "r2",
+	"F", "F'", "F2", "2F", "2F'", "2F2", "f", "f'", "f2",
+	"B", "B'", "B2", "2B", "2B'", "2B2", "b", "b'", "b2"
 	};
 
 	public static String print_move_list (int count, byte[] move_list, boolean inverse){

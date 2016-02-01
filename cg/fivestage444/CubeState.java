@@ -122,6 +122,21 @@ public final class CubeState implements Cloneable {
 		}
 	}
 
+	public void scramble (String sc){
+		init();
+		String[] moves = sc.split(" ");
+		for (String amove : moves) {
+			int mi = 0;
+			for (String ms : Moves.move_strings) {
+				if (amove.equals(ms)) {
+					move(mi);
+					break;
+				}
+				mi = mi + 1;
+			}
+		}
+	}
+
 	public void copyTo (CubeState cube){
 		edges.copyTo(cube.edges);
 		corners.copyTo(cube.corners);
