@@ -17,11 +17,12 @@ public final class Main {
 		int random_count = 1;
 		Tools.init();
 		CubeState c = new CubeState();
-		SolverSlack s = new SolverSlack();
+		SolverOptimal s = new SolverOptimal();
 		Random gen = new Random(43);
 		long time = System.currentTimeMillis();
 		for (int i = 0; i < random_count; ++i) {
-			c.randomise(gen);
+			//c.randomise(gen);
+			c.scramble("F2 U r2 U2 F2 2R2 F2 U2 r2 U' F2");
 			System.out.println(s.solve( c, true));
 		}
 		System.out.println(System.currentTimeMillis() - time);
