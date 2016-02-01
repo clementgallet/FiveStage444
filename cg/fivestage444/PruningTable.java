@@ -8,7 +8,7 @@ import java.io.*;
 
 public class PruningTable {
 
-	private final static boolean FULL_PRUNING = true;
+	private final static boolean FULL_PRUNING = false;
 	private int n_moves;
 	private int n_size;
 	private int inv_depth;

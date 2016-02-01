@@ -32,7 +32,7 @@ public class StrategySlack extends Strategy{
 			ss.search(length);
 			if(ss.solution_found) break;
 		}
-		for (int extra=1; extra<=slack; extra++){
+		for (int extra=1; (extra<=slack) && ((length+extra)<(best_solution_length-solution.move_length)); extra++){
 			ss = new StageSolver(solution, new StrategySlack(slack-extra));
 			ss.search(length+extra);
 		}
