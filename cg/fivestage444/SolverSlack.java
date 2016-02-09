@@ -4,23 +4,41 @@ import java.util.logging.Logger;
 
 public class SolverSlack {
 	private static final Logger l = Logger.getLogger(SolverSlack.class.getName());
+	private int max_slack = 5;
+
+	public SolverSlack(int max_slack){
+		this.max_slack = max_slack;
+	}
 
 	public String solve (CubeState cube, boolean inverse) {
 		StrategySlack strategy;
 
-		CubeAndSolution[] solutionArray = new CubeAndSolution[3];
+		CubeAndSolution[] solutionArray = new CubeAndSolution[12];
+		Thread[] threads = new Thread[12];
 
-		for (int slack=0; slack<4; slack++){
-			for(int j=0; j<3; j++){
+		for (int slack=0; slack<=max_slack; slack++){
+			System.out.println("Testing slack "+slack);
+			for(int j=0; j<12; j++){
 				CubeState startingCube = new CubeState();
 				cube.copyTo(startingCube);
-				startingCube.leftMult(j * 16); /* Repaint colors using the rotation along the UFL-DBR axis j times */
-				solutionArray[j] = new CubeAndSolution(startingCube);
-				solutionArray[j].current_stage = 0;
+				if ((j/3) > 0)
+					startingCube.move((j/3)-1);
+				startingCube.leftMult((j%3) * 16); /* Repaint colors using the rotation along the UFL-DBR axis j times */
+				Worker wk = new Worker();
+				wk.st = new StrategySlack(slack);
+				wk.cas = new CubeAndSolution(startingCube);
+				wk.cas.current_stage = 0;
+				threads[j] = new Thread(wk);
 			}
-			for (int i=0; i<solutionArray.length; i++){
-				strategy = new StrategySlack(slack);
-				strategy.processSolution(solutionArray[i]);
+			for (int j=0; j<12; j++) {
+				threads[j].start();
+			}
+			for (int j=0; j<12; j++) {
+				try {
+					threads[j].join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 

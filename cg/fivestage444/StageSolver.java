@@ -38,24 +38,31 @@ class StageSolver {
 	 * @return false: continue to search, true: don't go further.
 	 */
 	public boolean search(int length){
-		return search(length, 0, Moves.N_STAGE_MOVES);
+		/* Add the special case of length 1 here */
+		if ((length == 1) && (stage_list[0].isSolved()))
+			return false;
+		long mask; // Filter certain moves
+/*		if (cas.current_stage == 1)
+			mask = 0b001000101001100100000000000011001010L;
+		else*/
+			mask = Moves.moves_mask[Moves.N_STAGE_MOVES];
+		return search(length, 0, mask);
 	}
 
 	/**
 	 * The main recursive search function.
 	 * @param depth the current number of moves we can still apply.
 	 * @param moves_done the current number of moves we have already applied.
-	 * @param last_move what was the last move applied
+	 * @param mask which moves are allowed.
 	 * @return false: continue to search, true: don't go further.
 	 */
-	private boolean search(int depth, int moves_done, int last_move){
+	private boolean search(int depth, int moves_done, long mask){
 		if (depth == 0){
 			if( stage_list[moves_done].isSolved() ) {
 				return push(moves_done);
 			}
 			return false;
 		}
-		long mask = Moves.moves_mask[last_move]; /* we use a mask to filter certain combinasion of moves. */
 		for (int move = 0; mask != 0 && move < n_moves; move++, mask >>>= 1) {
 			if (( mask & 1L ) == 0) /* not necessary to try this move */
 				continue;
@@ -65,7 +72,7 @@ class StageSolver {
 			if ((nd != depth-1) && (nd + depth - 1 < 5)) continue; /* When we are too close, we must not solved too early */
 			move_list[moves_done] = (byte)move; /* append the move to the move list */
 			//min1_list = Math.min( min1_list, moves_done );
-			if (search (depth - 1, moves_done + 1, move)) return true; /* recursive call */
+			if (search (depth - 1, moves_done + 1, Moves.moves_mask[move])) return true; /* recursive call */
 		}
 		return false;
 	}

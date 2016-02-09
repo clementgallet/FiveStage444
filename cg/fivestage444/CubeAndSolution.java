@@ -155,6 +155,24 @@ class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 		return Moves.print_move_list(move_length, move_list, false);
 	}
 
+	public String outputSolutionSep(){
+		processSolution();
+		StringBuilder sb = new StringBuilder();
+
+		int s, b = 0, j, m;
+		for (s = 0; s < 5; s++) {
+			for (j = b; j < stage_length[s]; ++j) {
+				m = move_list[j];
+				sb.append(Moves.move_strings[m]).append(' ');
+			}
+			b = stage_length[s];
+			if (s < 4)
+				sb.append("| ");
+		}
+
+		return sb.toString().trim();
+	}
+
 	public String outputGenerator(CubeState initialCube){
 		processSolution();
 

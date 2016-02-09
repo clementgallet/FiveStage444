@@ -23,6 +23,7 @@ public class StrategyOptimal extends Strategy{
 				if (!solution.isSolved())
 					l.severe("Not a solution!");
 				System.out.println(solution.move_length + " " + solution.outputSolution());
+				//System.out.println(solution.move_length + " " + solution.outputSolutionSep());
 			}
 			return false;
 		}

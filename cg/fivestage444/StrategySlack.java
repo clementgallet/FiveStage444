@@ -8,7 +8,7 @@ public class StrategySlack extends Strategy{
 	private static final Logger l = Logger.getLogger(StrategySlack.class.getName());
 
 	int slack;
-	static CubeAndSolution best_solution;
+	volatile static CubeAndSolution best_solution;
 
 	StrategySlack(int slack){
 		this.slack = slack;
@@ -20,23 +20,22 @@ public class StrategySlack extends Strategy{
 		l.info("Found a solution on stage "+(solution.current_stage-1));
 		l.info(solution.debugOutputMoves());
 		if (s == null){ // Last stage, we are done.
-			if((best_solution == null) || (solution.move_length <= best_solution.move_length)) {
+			if ((best_solution == null) || (solution.move_length <= best_solution.move_length)) {
 				best_solution = solution;
-				if(!solution.isSolved())
+				if (!solution.isSolved())
 					l.severe("Not a solution!");
-				System.out.println(solution.move_length+" "+solution.outputSolution());
+				System.out.println(solution.move_length + " " + solution.outputSolution());
 			}
 			return false;
 		}
 		StageSolver ss = new StageSolver(solution, this);
 
 		int length;
-		int best_solution_length = (best_solution == null) ? 1000 : best_solution.move_length;
-		for (length=0; length<best_solution_length-solution.move_length; length++){
+		for (length=0; length<=((best_solution == null) ? 1000 : best_solution.move_length)-solution.move_length; length++){
 			ss.search(length);
 			if(ss.solution_found) break;
 		}
-		for (int extra=1; (extra<=slack) && ((length+extra)<(best_solution_length-solution.move_length)); extra++){
+		for (int extra=1; (extra<=slack) && ((length+extra)<=(((best_solution == null) ? 1000 : best_solution.move_length)-solution.move_length)); extra++){
 			ss = new StageSolver(solution, new StrategySlack(slack-extra));
 			ss.search(length+extra);
 		}
