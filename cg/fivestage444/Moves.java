@@ -137,8 +137,14 @@ public final class Moves{
 
 	  			/* If two successive moves are from the same face and the same rotation, the first one should be either Ufx, Rfx or Ffx.
 	  			 * For example Rf Ls3 is ok but Lf2 Rs2 is not permitted because Lf2 Rs2 = Rf2 Ls2. */
-				if ((m/18 == n/18) && ((m%3) == (n%3)) && ((m%18) >= 3))
-					moves_mask[i] &= ~(1L << j);
+				if ((m/18 == n/18) && ((m%18) >= 3)) {
+					if (((m % 3) == 2) && ((n % 3) == 2))
+						moves_mask[i] &= ~(1L << j);
+					/*if ((m / 9 == n / 9) && (m % 3 == n % 3))
+						moves_mask[i] &= ~(1L << j);
+					if ((m / 9 != n / 9) && (((m % 3) + (n % 3)) == 1))
+						moves_mask[i] &= ~(1L << j);*/
+				}
 			}
 		}
 

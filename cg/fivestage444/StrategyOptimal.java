@@ -22,15 +22,14 @@ public class StrategyOptimal extends Strategy{
 			if(solution.move_length == olength) {
 				if (!solution.isSolved())
 					l.severe("Not a solution!");
-				System.out.print(solution.move_length + " ");
-				System.out.println(solution.outputSolution());
+				System.out.println(solution.move_length + " " + solution.outputSolution());
 			}
-			return true;
+			return false;
 		}
 		StageSolver ss = new StageSolver(solution, this);
 
 		int length;
-		for (length=0; length<=olength-solution.move_length; length++){
+		for (length=0; length<=(olength-solution.move_length); length++){
 			ss.search(length);
 		}
 		return false;

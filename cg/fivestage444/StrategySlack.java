@@ -20,9 +20,13 @@ public class StrategySlack extends Strategy{
 		l.info("Found a solution on stage "+(solution.current_stage-1));
 		l.info(solution.debugOutputMoves());
 		if (s == null){ // Last stage, we are done.
-			if((best_solution == null) || (solution.move_length < best_solution.move_length))
+			if((best_solution == null) || (solution.move_length <= best_solution.move_length)) {
 				best_solution = solution;
-			return true;
+				if(!solution.isSolved())
+					l.severe("Not a solution!");
+				System.out.println(solution.move_length+" "+solution.outputSolution());
+			}
+			return false;
 		}
 		StageSolver ss = new StageSolver(solution, this);
 

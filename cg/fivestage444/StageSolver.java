@@ -49,15 +49,20 @@ class StageSolver {
 	 * @return false: continue to search, true: don't go further.
 	 */
 	private boolean search(int depth, int moves_done, int last_move){
-		if( stage_list[moves_done].isSolved() ){
-			return depth == 0 && push(moves_done);
+		if (depth == 0){
+			if( stage_list[moves_done].isSolved() ) {
+				return push(moves_done);
+			}
+			return false;
 		}
 		long mask = Moves.moves_mask[last_move]; /* we use a mask to filter certain combinasion of moves. */
 		for (int move = 0; mask != 0 && move < n_moves; move++, mask >>>= 1) {
 			if (( mask & 1L ) == 0) /* not necessary to try this move */
 				continue;
 			stage_list[moves_done].moveTo( move, stage_list[moves_done+1] ); /* moving */
-			if (stage_list[moves_done+1].pruning() > depth-1) continue; /* no need to go further, */
+			int nd = stage_list[moves_done+1].pruning(); /* distance of new position to solved */
+			if (nd > depth-1) continue; /* no need to go further, */
+			if ((nd != depth-1) && (nd + depth - 1 < 5)) continue; /* When we are too close, we must not solved too early */
 			move_list[moves_done] = (byte)move; /* append the move to the move list */
 			//min1_list = Math.min( min1_list, moves_done );
 			if (search (depth - 1, moves_done + 1, move)) return true; /* recursive call */
