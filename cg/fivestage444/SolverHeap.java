@@ -12,7 +12,7 @@ final class SolverHeap {
 		 * The value used to order the solutions is:
 		 * the length of the current solution + the lower bound of the best solution of the next stage.
 		 */
-		PriorityQueue<CubeAndSolution> solutionQueue = new PriorityQueue<CubeAndSolution>(10, new CubeAndSolution.QueueComparator());
+		PriorityQueue<CubeAndSolution> solutionQueue = new PriorityQueue<>(10, new CubeAndSolution.QueueComparator());
 		StrategyHeap strategy = new StrategyHeap(solutionQueue);
 
 		/* We use a temporary array to export the priority queue to, before converting to... */
@@ -67,7 +67,7 @@ final class SolverHeap {
 			/* Then we convert all our partial solutions with a new stage solved to our array,
 			 * and we clear the priority queue.
 			 */
-			solutionArray = solutionQueue.toArray(new CubeAndSolution[0]);
+			solutionArray = solutionQueue.toArray(new CubeAndSolution[solutionQueue.size()]);
 			solutionQueue.clear();
 		}
 

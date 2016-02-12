@@ -18,16 +18,8 @@ class StageSolver {
 		this.strategy = strategy;
 		this.cas = cas;
 		stage_list[0] = cas.toCurrentStage();
-		try {
-			for (int s=1; s<20; s++)
-				stage_list[s] = stage_list[0].getClass().newInstance();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
 		n_moves = stage_list[0].getMovesNumber();
-		l.fine("Initialise with class "+stage_list[0].getClass().getName());
+		//l.fine("Initialise with class "+stage_list[0].getClass().getName());
 	}
 
 	/**
@@ -46,6 +38,16 @@ class StageSolver {
 			mask = 0b001000101001100100000000000011001010L;
 		else*/
 			mask = Moves.moves_mask[Moves.N_STAGE_MOVES];
+
+		try {
+			for (int s=1; s<=length; s++)
+				stage_list[s] = stage_list[0].getClass().newInstance();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+
 		return search(length, 0, mask);
 	}
 
@@ -72,7 +74,19 @@ class StageSolver {
 			if ((nd != depth-1) && (nd + depth - 1 < 5)) continue; /* When we are too close, we must not solved too early */
 			move_list[moves_done] = (byte)move; /* append the move to the move list */
 			//min1_list = Math.min( min1_list, moves_done );
-			if (search (depth - 1, moves_done + 1, Moves.moves_mask[move])) return true; /* recursive call */
+			if (depth == 2) {// No need to do the recursive call, just apply the moves
+				long mask2 = Moves.moves_mask[move];
+				for (int move2 = 0; mask2 != 0 && move2 < n_moves; move2++, mask2 >>>= 1) {
+					if (( mask2 & 1L ) == 0) /* not necessary to try this move */
+						continue;
+					stage_list[moves_done+1].moveTo( move2, stage_list[moves_done+2] ); /* moving */
+					if( stage_list[moves_done+2].isSolved() ) {
+						move_list[moves_done+1] = (byte)move2; /* append the move to the move list */
+						return push(moves_done+2);
+					}
+				}
+			}
+			else if (search (depth - 1, moves_done + 1, Moves.moves_mask[move])) return true; /* recursive call */
 		}
 		return false;
 	}
@@ -99,7 +113,7 @@ class StageSolver {
 		for (int move = 0; move < solution_length; move++ ){
 			newCas.move(Moves.stage2moves[move_list[move]]);
 		}
-		l.finest("Solution is "+newCas.debugOutputMoves());
+		//l.finest("Solution is "+newCas.debugOutputMoves());
 		newCas.rotate();
 		boolean doWeStop = strategy.processSolution(newCas);
 		return doWeStop;

@@ -15,7 +15,7 @@ public final class CubeState implements Cloneable {
 	public EdgeCubies edges = new EdgeCubies();
 	public CornerCubies corners = new CornerCubies();
 	public CenterCubies centers = new CenterCubies();
-	public Cubies[] cubies = {edges, corners, centers};
+	public final Cubies[] cubies = {edges, corners, centers};
 
 	public void init (){
 		edges.init();

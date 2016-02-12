@@ -179,4 +179,86 @@ public final class Moves{
 		}
 		return sb.toString().trim();
 	}
+
+	public static int sstm_metric (int count, byte[] move_list) {
+		return count;
+	}
+
+	public static int ssqtm_metric (int count, byte[] move_list) {
+		int n = 0;
+		for (int t = 0; t < count; t++) {
+			if ((move_list[t] % 3) == 2)
+				n += 2;
+			else
+				n += 1;
+		}
+		return n;
+	}
+
+	public static int obtm_metric (int count, byte[] move_list) {
+		int mod = 0;
+		for (int t = 0; t < (count-1); t++) {
+			byte move1 = move_list[t];
+			byte move2 = move_list[t+1];
+			if (((move1/9) == (move2/9)) && ((move1%3) == (move2%3)))
+				mod += 1;
+		}
+		return sstm_metric(count, move_list) - mod;
+	}
+
+	public static int obqtm_metric (int count, byte[] move_list) {
+		int mod = 0;
+		for (int t = 0; t < (count-1); t++) {
+			byte move1 = move_list[t];
+			byte move2 = move_list[t+1];
+			if (((move1/9) == (move2/9)) && ((move1%3) == (move2%3))) {
+				if ((move1 % 3) == 2)
+					mod += 2;
+				else
+					mod += 1;
+			}
+		}
+		return ssqtm_metric(count, move_list) - mod;
+	}
+
+	public static int btm_metric (int count, byte[] move_list) {
+		int mod = 0;
+		for (int t = 0; t < (count-1); t++) {
+			byte move1 = move_list[t];
+			byte move2 = move_list[t+1];
+			if (((move1/18) == (move2/18)) && ((move1/9) != (move2/9)) && (((move1%9)/3) == 1) && (((move2%9)/3) == 1)){
+				if (((move1 % 3) == 2) && ((move2 % 3) == 2))
+					mod += 1;
+				if (((move1 % 3) + (move2 % 3)) == 1)
+					mod += 1;
+			}
+		}
+		return obtm_metric(count, move_list) - mod;
+	}
+
+	public static int bqtm_metric (int count, byte[] move_list) {
+		int mod = 0;
+		for (int t = 0; t < (count-1); t++) {
+			byte move1 = move_list[t];
+			byte move2 = move_list[t+1];
+			if (((move1/18) == (move2/18)) && ((move1/9) != (move2/9)) && (((move1%9)/3) == 1) && (((move2%9)/3) == 1)){
+				if (((move1 % 3) == 2) && ((move2 % 3) == 2))
+					mod += 2;
+				if (((move1 % 3) + (move2 % 3)) == 1)
+					mod += 1;
+			}
+		}
+		return obqtm_metric(count, move_list) - mod;
+	}
+
+	public static String print_metrics (int count, byte[] move_list) {
+		String sb = String.valueOf(sstm_metric(count, move_list)) + ' ' +
+				ssqtm_metric(count, move_list) + ' ' +
+				obtm_metric(count, move_list) + ' ' +
+				obqtm_metric(count, move_list) + ' ' +
+				btm_metric(count, move_list) + ' ' +
+				bqtm_metric(count, move_list);
+
+		return sb;
+	}
 }

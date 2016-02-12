@@ -30,10 +30,10 @@ public class SolverSlack {
 				wk.cas.current_stage = 0;
 				threads[j] = new Thread(wk);
 			}
-			for (int j=0; j<12; j++) {
+			for (int j=0; j<12; j=j+3) {
 				threads[j].start();
 			}
-			for (int j=0; j<12; j++) {
+			for (int j=0; j<12; j=j+3) {
 				try {
 					threads[j].join();
 				} catch (InterruptedException e) {

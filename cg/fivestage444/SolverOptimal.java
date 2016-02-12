@@ -28,10 +28,10 @@ public class SolverOptimal {
 				wk.cas.current_stage = 0;
 				threads[j] = new Thread(wk);
 			}
-			for (int j=0; j<4; j++) {
+			for (int j=0; j<1; j++) {
 				threads[j].start();
 			}
-			for (int j=0; j<4; j++) {
+			for (int j=0; j<1; j++) {
 				try {
 					threads[j].join();
 				} catch (InterruptedException e) {

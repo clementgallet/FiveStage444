@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 public class StrategySlack extends Strategy{
 	private static final Logger l = Logger.getLogger(StrategySlack.class.getName());
 
-	int slack;
+	final int slack;
 	volatile static CubeAndSolution best_solution;
 
 	StrategySlack(int slack){
@@ -18,13 +18,13 @@ public class StrategySlack extends Strategy{
 	public boolean processSolution(CubeAndSolution solution){
 		Stage s = solution.toNextStage();
 		l.info("Found a solution on stage "+(solution.current_stage-1));
-		l.info(solution.debugOutputMoves());
+		//l.info(solution.debugOutputMoves());
 		if (s == null){ // Last stage, we are done.
 			if ((best_solution == null) || (solution.move_length <= best_solution.move_length)) {
 				best_solution = solution;
 				if (!solution.isSolved())
 					l.severe("Not a solution!");
-				System.out.println(solution.move_length + " " + solution.outputSolution());
+				System.out.println(Moves.print_metrics(solution.move_length, solution.move_list) + " " + solution.outputSolution());
 			}
 			return false;
 		}

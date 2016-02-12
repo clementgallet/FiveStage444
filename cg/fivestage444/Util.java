@@ -256,14 +256,28 @@ public final class Util {
 	 * @param times number of times to apply the permutation
 	 */
 	public static void cycle(byte[] tab, int a, int b, int c, int d, int times){
-		if(times <= 0) return;
 		byte temp = tab[d];
-		tab[d] = tab[c];
-		tab[c] = tab[b];
-		tab[b] = tab[a];
-		tab[a] = temp;
-		if(times > 1)
-			cycle(tab, a, b, c, d, times - 1);
+		switch (times) {
+			case 1:
+				tab[d] = tab[c];
+				tab[c] = tab[b];
+				tab[b] = tab[a];
+				tab[a] = temp;
+				break;
+			case 2:
+				tab[d] = tab[b];
+				tab[b] = temp;
+				temp = tab[c];
+				tab[c] = tab[a];
+				tab[a] = temp;
+				break;
+			case 3:
+				tab[d] = tab[a];
+				tab[a] = tab[b];
+				tab[b] = tab[c];
+				tab[c] = temp;
+				break;
+		}
 	}
 
 	/**

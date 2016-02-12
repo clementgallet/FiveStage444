@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 public class StrategyOptimal extends Strategy{
 	private static final Logger l = Logger.getLogger(StrategyOptimal.class.getName());
 
-	int olength;
+	final int olength;
 
 	StrategyOptimal(int olength){
 		this.olength = olength;
@@ -17,12 +17,12 @@ public class StrategyOptimal extends Strategy{
 	public boolean processSolution(CubeAndSolution solution){
 		Stage s = solution.toNextStage();
 		l.info("Found a solution on stage "+(solution.current_stage-1));
-		l.info(solution.debugOutputMoves());
+		//l.info(solution.debugOutputMoves());
 		if (s == null){ // Last stage, we are done.
 			if(solution.move_length == olength) {
 				if (!solution.isSolved())
 					l.severe("Not a solution!");
-				System.out.println(solution.move_length + " " + solution.outputSolution());
+				System.out.println(Moves.print_metrics(solution.move_length, solution.move_list) + " " + solution.outputSolution());
 				//System.out.println(solution.move_length + " " + solution.outputSolutionSep());
 			}
 			return false;

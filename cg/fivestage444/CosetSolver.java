@@ -103,7 +103,7 @@ public final class CosetSolver {
 	}
 
 	private class SubgroupSolverThread extends Thread{
-		long BATCH_SIZE = 7444;
+		final long BATCH_SIZE = 7444;
 
 		public void run(){
 			Stage s1 = subgroup_stage.newOne();

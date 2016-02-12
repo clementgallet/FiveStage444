@@ -9,7 +9,7 @@ class CubeAndSolution implements Cloneable, Comparable<CubeAndSolution> {
 	private static final Logger l = Logger.getLogger(StageSolver.class.getName());
 
 	private CubeState cube; /* the cube structure */
-	private byte[] move_list = new byte[100]; /* the list of moves that has been applied to the cube */
+	public byte[] move_list = new byte[100]; /* the list of moves that has been applied to the cube */
 	int move_length = 0;
 	private int[] stage_length = new int[5]; /* the length of the move list at each stage */
 	int comparator = 0; /* the value used to sort objects */
