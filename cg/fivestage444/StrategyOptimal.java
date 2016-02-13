@@ -27,10 +27,10 @@ public class StrategyOptimal extends Strategy{
 			}
 			return false;
 		}
-		StageSolver ss = new StageSolver(solution, this);
+		StageSolver ss = new StageSolver(solution, s, this);
 
 		int length;
-		for (length=0; length<=(olength-solution.move_length); length++){
+		for (length=s.pruning(); length<=(olength-solution.move_length); length++){
 			ss.search(length);
 		}
 		return false;

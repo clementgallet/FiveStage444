@@ -28,10 +28,10 @@ public class StrategySlack extends Strategy{
 			}
 			return false;
 		}
-		StageSolver ss = new StageSolver(solution, this);
+		StageSolver ss = new StageSolver(solution, s, this);
 
 		int length;
-		for (length=0; length<=((best_solution == null) ? 1000 : best_solution.move_length)-solution.move_length; length++){
+		for (length=s.pruning(); length<=((best_solution == null) ? 1000 : best_solution.move_length)-solution.move_length; length++){
 			ss.search(length);
 			if(ss.solution_found) break;
 		}

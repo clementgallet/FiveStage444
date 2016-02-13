@@ -22,6 +22,14 @@ class StageSolver {
 		//l.fine("Initialise with class "+stage_list[0].getClass().getName());
 	}
 
+	public StageSolver(CubeAndSolution cas, Stage s, Strategy strategy){
+		this.strategy = strategy;
+		this.cas = cas;
+		stage_list[0] = s;
+		n_moves = stage_list[0].getMovesNumber();
+		//l.fine("Initialise with class "+stage_list[0].getClass().getName());
+	}
+
 	/**
 	 * Search for solutions using move sequences of at most length moves.
 	 * Each time a solution is found, the push method is called.
